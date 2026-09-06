@@ -15,8 +15,8 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from app.config import settings  # noqa: E402
-from app.namaste.load import load_namaste  # noqa: E402
+from app.config import settings
+from app.namaste.load import load_namaste
 
 
 async def main() -> None:
