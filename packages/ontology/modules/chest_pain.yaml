@@ -1,0 +1,170 @@
+# Reference module. Copy this shape when adding a complaint.
+# Clinical basis: SOCRATES. Every slot has a non-voice input mode — no dead ends.
+id: chest_pain
+label: Chest pain
+framework: SOCRATES
+description: >
+  Adaptive history for chest pain. Red flags tuned for recall: a false alarm costs a
+  nurse thirty seconds, a miss costs everything else.
+source: >
+  SOCRATES pain assessment framework, standard clinical history teaching.
+  Red-flag criteria reviewed by a clinician before merge — record who, and when.
+
+triggers:
+  - chest pain
+  - seene mein dard
+  - छाती में दर्द
+  - सीने में दर्द
+  - chaati mein dard
+  - நெஞ்சு வலி
+  - ছাতিতে ব্যথা
+  - pain in chest
+  - heart pain
+
+slots:
+  - id: site
+    type: region
+    required: true
+    input: [voice, bodymap]
+    prompt:
+      en: Where exactly is the pain? You can tell me, or touch the place on the body.
+      hi: दर्द ठीक कहाँ हो रहा है? आप बता सकते हैं, या शरीर पर वह जगह छू सकते हैं।
+    examples:
+      - utterance: beech mein, yahan
+        lang: hi
+        value: central_chest
+
+  - id: onset
+    type: enum
+    required: true
+    input: [voice, chips]
+    options:
+      - { value: sudden,  label: { en: Suddenly, hi: अचानक },      icon: bolt }
+      - { value: gradual, label: { en: Slowly,   hi: धीरे-धीरे },  icon: wave }
+    prompt:
+      en: Did the pain start suddenly, or come on slowly?
+      hi: क्या दर्द अचानक शुरू हुआ, या धीरे-धीरे बढ़ा?
+
+  - id: duration
+    type: duration
+    required: true
+    input: [voice, duration]
+    prompt:
+      en: How long have you had this pain?
+      hi: यह दर्द कब से है?
+    examples:
+      - utterance: do din se
+        lang: hi
+        value: 2_days
+
+  - id: character
+    type: enum
+    required: true
+    input: [voice, chips]
+    options:
+      - { value: pressure,  label: { en: Heaviness or pressure, hi: भारीपन या दबाव } }
+      - { value: tightness, label: { en: Tightness,             hi: जकड़न } }
+      - { value: burning,   label: { en: Burning,               hi: जलन } }
+      - { value: stabbing,  label: { en: Sharp or stabbing,     hi: चुभन जैसा } }
+      - { value: dull,      label: { en: Dull ache,             hi: हल्का दर्द } }
+    prompt:
+      en: What does the pain feel like?
+      hi: दर्द कैसा महसूस होता है?
+
+  - id: radiation
+    type: region
+    required: true
+    input: [voice, bodymap]
+    prompt:
+      en: Does the pain move anywhere else — arm, jaw, back?
+      hi: क्या दर्द कहीं और जाता है — हाथ, जबड़ा, पीठ?
+
+  - id: associated
+    type: enum_multi
+    required: true
+    input: [voice, multi]
+    options:
+      - { value: sweating,       label: { en: Sweating,           hi: पसीना } }
+      - { value: nausea,         label: { en: Nausea or vomiting, hi: जी मिचलाना } }
+      - { value: breathlessness, label: { en: Breathlessness,     hi: साँस फूलना } }
+      - { value: palpitations,   label: { en: Fast heartbeat,     hi: धड़कन तेज़ } }
+      - { value: dizziness,      label: { en: Dizziness,          hi: चक्कर } }
+      - { value: none,           label: { en: None of these,      hi: इनमें से कोई नहीं } }
+    prompt:
+      en: Along with the pain, do you have any of these?
+      hi: दर्द के साथ इनमें से कुछ है?
+
+  - id: exacerbating
+    type: enum_multi
+    required: false
+    input: [voice, multi]
+    options:
+      - { value: exertion,  label: { en: Walking or effort, hi: चलने या मेहनत पर } }
+      - { value: rest,      label: { en: Even at rest,      hi: आराम में भी } }
+      - { value: food,      label: { en: After food,        hi: खाने के बाद } }
+      - { value: breathing, label: { en: Deep breathing,    hi: गहरी साँस लेने पर } }
+      - { value: position,  label: { en: Changing position, hi: करवट बदलने पर } }
+    prompt:
+      en: Does anything make it worse?
+      hi: किस चीज़ से दर्द बढ़ता है?
+
+  - id: timing
+    type: enum
+    required: true
+    input: [voice, chips]
+    options:
+      - { value: constant,  label: { en: All the time,   hi: लगातार } }
+      - { value: recurrent, label: { en: Comes and goes, hi: आता-जाता है } }
+      - { value: first,     label: { en: First time,     hi: पहली बार } }
+    prompt:
+      en: Is the pain there all the time, or does it come and go?
+      hi: दर्द हर समय रहता है या आता-जाता है?
+
+  - id: severity
+    type: number
+    required: true
+    input: [voice, facescale]
+    range: { min: 0, max: 10 }
+    prompt:
+      en: How bad is the pain right now? Show me on the faces.
+      hi: अभी दर्द कितना है? चेहरों पर दिखाइए।
+
+red_flags:
+  - id: acs_suspected
+    when: "character in ['pressure','tightness'] and 'sweating' in associated and severity >= 7"
+    action: escalate
+    severity: 1
+    rationale: >
+      Pressure-type chest pain with diaphoresis and high severity is the classic acute
+      coronary syndrome presentation. Escalate on recall — do not wait for more criteria.
+    speak:
+      en: Your symptoms may be serious. Please stay here — a nurse is coming to you now.
+      hi: आपके लक्षण गंभीर हो सकते हैं। कृपया यहीं रुकें, नर्स अभी आ रही हैं।
+
+  - id: acs_radiation
+    when: "radiation in ['left_arm','jaw','both_arms'] and 'sweating' in associated"
+    action: escalate
+    severity: 1
+    rationale: Radiation to arm or jaw with diaphoresis. Same escalation path.
+    speak:
+      en: Please stay here — a nurse is coming to you now.
+      hi: कृपया यहीं रुकें, नर्स अभी आ रही हैं।
+
+  - id: cardiac_with_dyspnoea
+    when: "'breathlessness' in associated and severity >= 6"
+    action: escalate
+    severity: 1
+    rationale: Chest pain with significant breathlessness needs immediate triage.
+    speak:
+      en: Please stay here — a nurse is coming to you now.
+      hi: कृपया यहीं रुकें, नर्स अभी आ रही हैं।
+
+  - id: exertional_angina
+    when: "'exertion' in exacerbating and timing == 'recurrent'"
+    action: flag
+    severity: 2
+    rationale: Exertional recurrent chest pain suggests stable angina. Physician attention.
+
+followups:
+  - if: "'breathlessness' in associated"
+    load_module: cough_breathlessness

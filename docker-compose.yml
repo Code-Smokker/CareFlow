@@ -1,0 +1,65 @@
+# CareFlow local stack. `make up` starts everything the app needs.
+# Application services run on the host during development (pnpm dev / uvicorn)
+# so hot-reload works; only stateful infra lives here.
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: careflow-postgres
+    environment:
+      POSTGRES_USER: careflow
+      POSTGRES_PASSWORD: careflow
+      POSTGRES_DB: careflow
+    ports: ["5432:5432"]
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./infra/postgres/init.sql:/docker-entrypoint-initdb.d/00-init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U careflow"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    container_name: careflow-redis
+    command: ["redis-server", "--appendonly", "yes"]
+    ports: ["6379:6379"]
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  minio:
+    image: minio/minio:latest
+    container_name: careflow-minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: careflow
+      MINIO_ROOT_PASSWORD: careflow123
+    ports: ["9000:9000", "9001:9001"]
+    volumes:
+      - miniodata:/data
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  # Local FHIR server. Every bundle we generate is validated against this
+  # before it ever goes near ABDM. Also our offline demo target.
+  fhir:
+    image: hapiproject/hapi:latest
+    container_name: careflow-fhir
+    environment:
+      hapi.fhir.fhir_version: R4
+      hapi.fhir.allow_external_references: "true"
+    ports: ["8090:8080"]
+
+volumes:
+  pgdata:
+  redisdata:
+  miniodata:

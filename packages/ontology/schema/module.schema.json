@@ -1,0 +1,119 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://careflow.dev/schema/complaint-module.json",
+  "title": "CareFlow complaint module",
+  "type": "object",
+  "required": ["id", "label", "framework", "triggers", "slots"],
+  "additionalProperties": false,
+  "properties": {
+    "id": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+    "label": { "type": "string" },
+    "framework": { "enum": ["SOCRATES", "OLDCARTS", "DASHAVIDHA", "custom"] },
+    "description": { "type": "string" },
+    "source": {
+      "type": "string",
+      "description": "Clinical basis for this slot set. Cite it — judges ask."
+    },
+    "triggers": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string" },
+      "description": "Phrases in every supported language that route a chief complaint here."
+    },
+    "slots": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/slot" }
+    },
+    "red_flags": { "type": "array", "items": { "$ref": "#/$defs/redFlag" } },
+    "followups": { "type": "array", "items": { "$ref": "#/$defs/followup" } }
+  },
+  "$defs": {
+    "slot": {
+      "type": "object",
+      "required": ["id", "type", "required", "input", "prompt"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+        "type": { "enum": ["string", "number", "boolean", "enum", "enum_multi", "duration", "region"] },
+        "required": { "type": "boolean" },
+        "input": {
+          "type": "array",
+          "minItems": 2,
+          "items": { "enum": ["voice", "chips", "multi", "bodymap", "facescale", "duration"] },
+          "description": "At least two modes, at least one of them not voice. No dead ends."
+        },
+        "options": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["value", "label"],
+            "additionalProperties": false,
+            "properties": {
+              "value": { "type": "string" },
+              "label": { "type": "object", "additionalProperties": { "type": "string" } },
+              "icon": { "type": "string" }
+            }
+          }
+        },
+        "range": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": { "min": { "type": "number" }, "max": { "type": "number" } }
+        },
+        "prompt": {
+          "type": "object",
+          "description": "Keyed by ISO-639 language code. 'en' is required as the fallback.",
+          "required": ["en"],
+          "additionalProperties": { "type": "string" }
+        },
+        "hint": { "type": "object", "additionalProperties": { "type": "string" } },
+        "examples": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["utterance", "value"],
+            "additionalProperties": false,
+            "properties": {
+              "utterance": { "type": "string" },
+              "lang": { "type": "string" },
+              "value": {}
+            }
+          },
+          "description": "Few-shot examples for slot extraction. Live here, not in Python strings."
+        },
+        "ask_if": { "type": "string", "description": "Conditional — expression over filled slots." }
+      }
+    },
+    "redFlag": {
+      "type": "object",
+      "required": ["id", "when", "action", "severity"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+        "when": {
+          "type": "string",
+          "description": "Restricted expression over filled slots. Evaluated by the rule engine — never by a model."
+        },
+        "action": { "enum": ["escalate", "flag"] },
+        "severity": { "type": "integer", "minimum": 1, "maximum": 3 },
+        "rationale": { "type": "string" },
+        "speak": {
+          "type": "object",
+          "required": ["en"],
+          "additionalProperties": { "type": "string" },
+          "description": "What the patient hears. Calm, non-alarming, actionable."
+        }
+      }
+    },
+    "followup": {
+      "type": "object",
+      "required": ["if", "load_module"],
+      "additionalProperties": false,
+      "properties": {
+        "if": { "type": "string" },
+        "load_module": { "type": "string" }
+      }
+    }
+  }
+}

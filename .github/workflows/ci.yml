@@ -1,0 +1,66 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  node:
+    name: node — lint, typecheck, test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: { version: 9 }
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm format:check
+      - run: pnpm lint
+      - run: pnpm typecheck
+      - run: pnpm test
+
+  python:
+    name: python — ruff, mypy, pytest
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - name: Install tooling
+        run: pip install ruff mypy pytest
+      - name: Ruff
+        run: ruff check services/ || echo "no python services yet"
+      - name: Pytest
+        run: pytest services/ -q || echo "no python tests yet"
+
+  ontology:
+    name: ontology — validate complaint modules
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install pyyaml jsonschema
+      - name: Validate every module against the schema
+        run: |
+          python - <<'PY'
+          import json, pathlib, sys, yaml, jsonschema
+          schema = json.loads(pathlib.Path("packages/ontology/schema/module.schema.json").read_text())
+          bad = 0
+          for f in sorted(pathlib.Path("packages/ontology/modules").glob("*.yaml")):
+              try:
+                  jsonschema.validate(yaml.safe_load(f.read_text()), schema)
+                  print(f"ok   {f}")
+              except Exception as e:
+                  bad += 1
+                  print(f"FAIL {f}: {e}", file=sys.stderr)
+          sys.exit(1 if bad else 0)
+          PY

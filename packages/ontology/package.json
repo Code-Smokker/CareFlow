@@ -1,0 +1,14 @@
+{
+  "name": "@careflow/ontology",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Clinical complaint modules — the interview graph, slots and red-flag rules. Core IP.",
+  "type": "module",
+  "main": "./src/index.ts",
+  "scripts": {
+    "validate": "python3 scripts/validate.py",
+    "lint": "echo 'ontology: validated in CI via jsonschema'",
+    "typecheck": "echo 'no ts yet'",
+    "test": "echo 'no tests yet'"
+  }
+}

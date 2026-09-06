@@ -1,0 +1,144 @@
+id: fever
+label: Fever
+framework: OLDCARTS
+description: >
+  Fever history with red flags for sepsis, meningism and dengue warning signs.
+  Second reference module — shows OLDCARTS alongside the SOCRATES example.
+source: >
+  OLDCARTS history framework. Warning-sign criteria to be reviewed against current
+  national dengue and sepsis guidance before the demo — record reviewer and date.
+
+triggers:
+  - fever
+  - bukhar
+  - बुखार
+  - तेज़ बुखार
+  - காய்ச்சல்
+  - জ্বর
+  - temperature
+  - taap
+
+slots:
+  - id: duration
+    type: duration
+    required: true
+    input: [voice, duration]
+    prompt:
+      en: How many days have you had the fever?
+      hi: बुखार कितने दिन से है?
+
+  - id: pattern
+    type: enum
+    required: true
+    input: [voice, chips]
+    options:
+      - { value: continuous,  label: { en: All day,             hi: पूरे दिन } }
+      - { value: intermittent,label: { en: Comes and goes,      hi: आता-जाता है } }
+      - { value: evening,     label: { en: Mostly evening,      hi: ज़्यादातर शाम को } }
+      - { value: with_chills, label: { en: With shivering,      hi: कंपकंपी के साथ } }
+    prompt:
+      en: When is the fever worst?
+      hi: बुखार कब सबसे ज़्यादा रहता है?
+
+  - id: measured
+    type: enum
+    required: false
+    input: [voice, chips]
+    options:
+      - { value: yes_high, label: { en: "Yes, above 102°F", hi: "हाँ, 102°F से ऊपर" } }
+      - { value: yes_mild, label: { en: "Yes, below 102°F", hi: "हाँ, 102°F से नीचे" } }
+      - { value: not_measured, label: { en: "Not measured", hi: "नापा नहीं" } }
+    prompt:
+      en: Did you measure the temperature?
+      hi: क्या आपने तापमान नापा?
+
+  - id: associated
+    type: enum_multi
+    required: true
+    input: [voice, multi]
+    options:
+      - { value: headache,      label: { en: Headache,           hi: सिरदर्द } }
+      - { value: neck_stiff,    label: { en: Neck stiffness,     hi: गर्दन में अकड़न } }
+      - { value: rash,          label: { en: Rash,               hi: चकत्ते } }
+      - { value: vomiting,      label: { en: Vomiting,           hi: उल्टी } }
+      - { value: bleeding,      label: { en: "Bleeding gums or nose", hi: "मसूड़ों या नाक से खून" } }
+      - { value: breathlessness,label: { en: Breathlessness,     hi: साँस फूलना } }
+      - { value: burning_urine, label: { en: Burning urine,      hi: पेशाब में जलन } }
+      - { value: loose_motion,  label: { en: Loose motions,      hi: दस्त } }
+      - { value: cough,         label: { en: Cough,              hi: खाँसी } }
+      - { value: none,          label: { en: None of these,      hi: इनमें से कोई नहीं } }
+    prompt:
+      en: Along with the fever, do you have any of these?
+      hi: बुखार के साथ इनमें से कुछ है?
+
+  - id: consciousness
+    type: enum
+    required: true
+    input: [voice, chips]
+    options:
+      - { value: normal,     label: { en: Fully alert,          hi: पूरी तरह होश में } }
+      - { value: drowsy,     label: { en: Very sleepy,          hi: बहुत नींद आना } }
+      - { value: confused,   label: { en: Confused,             hi: भ्रम की स्थिति } }
+    prompt:
+      en: Have you felt confused or unusually sleepy?
+      hi: क्या आपको भ्रम या बहुत ज़्यादा नींद महसूस हुई?
+
+  - id: travel_exposure
+    type: enum_multi
+    required: false
+    input: [voice, multi]
+    options:
+      - { value: travel,      label: { en: Recent travel,          hi: हाल में यात्रा } }
+      - { value: sick_contact, label: { en: "Someone at home is ill", hi: "घर में कोई बीमार" } }
+      - { value: mosquito,    label: { en: Mosquitoes at home,     hi: घर में मच्छर } }
+      - { value: none,        label: { en: None of these,          hi: इनमें से कोई नहीं } }
+    prompt:
+      en: Any recent travel, or is anyone at home unwell?
+      hi: हाल में कहीं यात्रा की, या घर में कोई बीमार है?
+
+red_flags:
+  - id: meningism
+    when: "'neck_stiff' in associated and 'headache' in associated"
+    action: escalate
+    severity: 1
+    rationale: Fever with headache and neck stiffness — possible meningitis. Immediate triage.
+    speak:
+      en: Please stay here — a nurse is coming to you now.
+      hi: कृपया यहीं रुकें, नर्स अभी आ रही हैं।
+
+  - id: altered_sensorium
+    when: "consciousness in ['drowsy','confused']"
+    action: escalate
+    severity: 1
+    rationale: Fever with altered sensorium. Escalate regardless of other findings.
+    speak:
+      en: Please stay here — a nurse is coming to you now.
+      hi: कृपया यहीं रुकें, नर्स अभी आ रही हैं।
+
+  - id: dengue_warning
+    when: "'bleeding' in associated or ('rash' in associated and 'vomiting' in associated)"
+    action: escalate
+    severity: 1
+    rationale: Bleeding manifestation, or rash with persistent vomiting — dengue warning signs.
+    speak:
+      en: Please stay here — a nurse is coming to you now.
+      hi: कृपया यहीं रुकें, नर्स अभी आ रही हैं।
+
+  - id: respiratory_distress
+    when: "'breathlessness' in associated"
+    action: escalate
+    severity: 1
+    rationale: Fever with breathlessness — possible pneumonia or sepsis.
+    speak:
+      en: Please stay here — a nurse is coming to you now.
+      hi: कृपया यहीं रुकें, नर्स अभी आ रही हैं।
+
+  - id: prolonged_fever
+    when: "duration in ['2_weeks','1_month','longer']"
+    action: flag
+    severity: 2
+    rationale: Fever beyond two weeks needs a workup for TB, malignancy and other causes.
+
+followups:
+  - if: "'cough' in associated"
+    load_module: cough_breathlessness

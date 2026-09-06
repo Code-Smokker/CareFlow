@@ -1,0 +1,49 @@
+# deps
+node_modules/
+.pnpm-store/
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# builds
+dist/
+build/
+.next/
+out/
+*.tsbuildinfo
+
+# env & secrets  — NEVER commit real credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+!**/public*.pem
+
+# data & artifacts
+/data/
+/uploads/
+*.sqlite
+*.db
+minio-data/
+pgdata/
+models/
+*.nemo
+*.gguf
+
+# tooling
+.turbo/
+coverage/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+playwright-report/
+test-results/
+
+# os / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
