@@ -1,0 +1,197 @@
+openapi: 3.1.0
+info:
+  title: CareFlow Terminology Service API
+  version: 0.1.0
+  description: >
+    Internal — NAMASTE ↔ ICD-11 TM2 crosswalk. FastAPI over PostgreSQL + pg_trgm + pgvector.
+    See docs/03-api-contracts.md and docs/07-ayush-terminology.md.
+servers:
+  - url: http://localhost:8003
+    description: Local terminology service
+
+paths:
+  /search:
+    get:
+      operationId: searchConcepts
+      summary: Ranked concept search (trigram + vector) across a terminology system
+      tags: [search]
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema: { type: string }
+        - name: system
+          in: query
+          required: true
+          schema: { $ref: "#/components/schemas/TerminologySystem" }
+      responses:
+        "200":
+          description: Ranked concepts
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/ConceptSummary" }
+        default: { $ref: "#/components/responses/Error" }
+
+  /concept/{system}/{code}:
+    parameters:
+      - name: system
+        in: path
+        required: true
+        schema: { $ref: "#/components/schemas/TerminologySystem" }
+      - name: code
+        in: path
+        required: true
+        schema: { type: string }
+    get:
+      operationId: getConcept
+      summary: Concept detail and synonyms
+      tags: [concept]
+      responses:
+        "200":
+          description: Concept detail
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ConceptDetail" }
+        default: { $ref: "#/components/responses/Error" }
+
+  /translate:
+    post:
+      operationId: translateConcept
+      summary: Translate a code between terminology systems (ConceptMap match)
+      tags: [translate]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [system, code, target]
+              properties:
+                system: { $ref: "#/components/schemas/TerminologySystem" }
+                code: { type: string }
+                target: { $ref: "#/components/schemas/TerminologySystem" }
+      responses:
+        "200":
+          description: ConceptMap match
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ConceptMapMatch" }
+        default: { $ref: "#/components/responses/Error" }
+
+  /fhir/CodeSystem/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema: { type: string }
+    get:
+      operationId: getFhirCodeSystem
+      summary: FHIR CodeSystem resource
+      tags: [fhir]
+      responses:
+        "200":
+          description: CodeSystem
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                description: FHIR R4 CodeSystem resource. Typed via packages/fhir, not here.
+        default: { $ref: "#/components/responses/Error" }
+
+  /fhir/ConceptMap/{id}/$translate:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema: { type: string }
+      - name: code
+        in: query
+        required: true
+        schema: { type: string }
+      - name: system
+        in: query
+        required: true
+        schema: { type: string, format: uri }
+      - name: target
+        in: query
+        required: true
+        schema: { type: string, format: uri }
+    get:
+      operationId: fhirConceptMapTranslate
+      summary: FHIR ConceptMap $translate operation
+      tags: [fhir]
+      responses:
+        "200":
+          description: FHIR Parameters resource with the translation result
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                description: FHIR R4 Parameters resource. Typed via packages/fhir, not here.
+        default: { $ref: "#/components/responses/Error" }
+
+components:
+  responses:
+    Error:
+      description: Error
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/ErrorResponse" }
+
+  schemas:
+    Error:
+      type: object
+      required: [code, message]
+      properties:
+        code: { type: string }
+        message: { type: string }
+        details:
+          type: [object, "null"]
+          additionalProperties: true
+
+    ErrorResponse:
+      type: object
+      required: [error]
+      properties:
+        error: { $ref: "#/components/schemas/Error" }
+
+    TerminologySystem:
+      type: string
+      enum: [namaste, icd11-tm2, icd11-bio]
+
+    ConceptSummary:
+      type: object
+      required: [system, code, display, score]
+      properties:
+        system: { $ref: "#/components/schemas/TerminologySystem" }
+        code: { type: string }
+        display: { type: string }
+        score: { type: number, minimum: 0, maximum: 1 }
+
+    ConceptDetail:
+      type: object
+      required: [system, code, display, synonyms]
+      properties:
+        system: { $ref: "#/components/schemas/TerminologySystem" }
+        code: { type: string }
+        display: { type: string }
+        synonyms:
+          type: array
+          items: { type: string }
+        definition: { type: [string, "null"] }
+
+    ConceptMapMatch:
+      type: object
+      required: [matched, equivalence]
+      properties:
+        matched: { type: boolean }
+        equivalence:
+          type: [string, "null"]
+          enum: [equivalent, wider, narrower, inexact, unmatched, null]
+        target_system: { $ref: "#/components/schemas/TerminologySystem" }
+        target_code: { type: [string, "null"] }
+        target_display: { type: [string, "null"] }

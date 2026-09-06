@@ -28,7 +28,8 @@ out/
 *.db
 minio-data/
 pgdata/
-models/
+/models/
+services/*/models/
 *.nemo
 *.gguf
 

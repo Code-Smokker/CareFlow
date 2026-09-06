@@ -1,0 +1,24 @@
+{
+  "name": "@careflow/contracts",
+  "version": "0.1.0",
+  "private": true,
+  "description": "OpenAPI specs → generated TS + Python clients. Source of truth for every interface between a client and the gateway, and between the gateway and a service.",
+  "type": "module",
+  "main": "./events.ts",
+  "scripts": {
+    "gen": "pnpm gen:ts && pnpm gen:python",
+    "gen:ts": "pnpm gen:ts:gateway && pnpm gen:ts:ai && pnpm gen:ts:docai && pnpm gen:ts:terminology",
+    "gen:ts:gateway": "openapi-typescript openapi/gateway.yaml -o generated/ts/gateway.ts",
+    "gen:ts:ai": "openapi-typescript openapi/ai.yaml -o generated/ts/ai.ts",
+    "gen:ts:docai": "openapi-typescript openapi/docai.yaml -o generated/ts/docai.ts",
+    "gen:ts:terminology": "openapi-typescript openapi/terminology.yaml -o generated/ts/terminology.ts",
+    "gen:python": "bash scripts/gen-python.sh",
+    "lint": "prettier --check \"openapi/**/*.yaml\" \"*.ts\"",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "echo 'contracts: validated by tsc + generation succeeding'"
+  },
+  "devDependencies": {
+    "openapi-typescript": "^7.13.0",
+    "typescript": "^5.7.2"
+  }
+}

@@ -1,0 +1,291 @@
+openapi: 3.1.0
+info:
+  title: CareFlow AI Service API
+  version: 0.1.0
+  description: >
+    Internal — gateway → ai service. Speech, dialogue, slot filling, summarisation, red flags.
+    FastAPI. See docs/03-api-contracts.md. /evaluate-flags must have no model call in its
+    implementation — if it ever gains one, that is a bug against CLAUDE.md rule 3.
+servers:
+  - url: http://localhost:8001
+    description: Local ai service
+
+paths:
+  /transcribe:
+    post:
+      operationId: transcribe
+      summary: Speech-to-text for one audio segment
+      tags: [speech]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [audio_ref, language, streaming]
+              properties:
+                audio_ref: { type: string }
+                language: { type: string, description: BCP-47 language tag }
+                streaming: { type: boolean }
+      responses:
+        "200":
+          description: Transcript
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [text, confidence, segments]
+                properties:
+                  text: { type: string }
+                  confidence: { type: number, minimum: 0, maximum: 1 }
+                  segments:
+                    type: array
+                    items: { $ref: "#/components/schemas/TranscriptSegment" }
+        default: { $ref: "#/components/responses/Error" }
+
+  /fill-slot:
+    post:
+      operationId: fillSlot
+      summary: Parse an utterance into a typed slot value against a slot schema
+      tags: [interview]
+      description: CLAUDE.md rule 1 — this endpoint parses; it never decides what to ask.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [slot_schema, utterance, context]
+              properties:
+                slot_schema:
+                  type: object
+                  additionalProperties: true
+                  description: JSON schema for the target slot, from packages/ontology.
+                utterance: { type: string }
+                context:
+                  type: object
+                  additionalProperties: true
+      responses:
+        "200":
+          description: Parsed slot value
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [value, confidence, needs_clarification]
+                properties:
+                  value: { $ref: "#/components/schemas/SlotValue" }
+                  confidence: { type: number, minimum: 0, maximum: 1 }
+                  needs_clarification: { type: boolean }
+        default: { $ref: "#/components/responses/Error" }
+
+  /next-question:
+    post:
+      operationId: nextQuestion
+      summary: Phrase the next question for the current interview state
+      tags: [interview]
+      description: >
+        CLAUDE.md rule 1 — question order comes from the ontology state machine; this endpoint
+        only phrases it in the patient's language.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [module_id, state, language]
+              properties:
+                module_id: { type: string }
+                state:
+                  type: object
+                  additionalProperties: true
+                  description: Serialized ontology state-machine snapshot.
+                language: { type: string }
+      responses:
+        "200":
+          description: Next question
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [text, tts_url, options]
+                properties:
+                  text: { type: string }
+                  tts_url: { type: [string, "null"], format: uri }
+                  options:
+                    type: array
+                    items: { $ref: "#/components/schemas/QuestionOption" }
+        default: { $ref: "#/components/responses/Error" }
+
+  /evaluate-flags:
+    post:
+      operationId: evaluateFlags
+      summary: Evaluate deterministic red-flag rules over filled slots
+      tags: [red-flags]
+      description: >
+        CLAUDE.md rule 3 — deterministic rules only, evaluated over filled slots. No model
+        judgement. Must have no model call in its implementation.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [module_id, slots]
+              properties:
+                module_id: { type: string }
+                slots:
+                  type: object
+                  additionalProperties: true
+      responses:
+        "200":
+          description: Fired red flags
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [fired]
+                properties:
+                  fired:
+                    type: array
+                    items: { $ref: "#/components/schemas/RedFlag" }
+        default: { $ref: "#/components/responses/Error" }
+
+  /summarise:
+    post:
+      operationId: summarise
+      summary: Produce a structured, bilingual physician-ready summary
+      tags: [summary]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [answers, extractions]
+              properties:
+                answers:
+                  type: array
+                  items: { $ref: "#/components/schemas/Answer" }
+                extractions:
+                  type: array
+                  items:
+                    type: object
+                    additionalProperties: true
+      responses:
+        "200":
+          description: Structured summary
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [structured, rendered_en, rendered_local]
+                properties:
+                  structured:
+                    type: object
+                    additionalProperties: true
+                  rendered_en: { type: string }
+                  rendered_local: { type: string }
+        default: { $ref: "#/components/responses/Error" }
+
+  /synthesise:
+    post:
+      operationId: synthesise
+      summary: Text-to-speech, cached by (text, language)
+      tags: [speech]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [text, language]
+              properties:
+                text: { type: string }
+                language: { type: string }
+      responses:
+        "200":
+          description: Synthesised audio
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [audio_url]
+                properties:
+                  audio_url: { type: string, format: uri }
+        default: { $ref: "#/components/responses/Error" }
+
+components:
+  responses:
+    Error:
+      description: Error
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/ErrorResponse" }
+
+  schemas:
+    Error:
+      type: object
+      required: [code, message]
+      properties:
+        code: { type: string }
+        message: { type: string }
+        details:
+          type: [object, "null"]
+          additionalProperties: true
+
+    ErrorResponse:
+      type: object
+      required: [error]
+      properties:
+        error: { $ref: "#/components/schemas/Error" }
+
+    TranscriptSegment:
+      type: object
+      required: [text, start_ms, end_ms, confidence]
+      properties:
+        text: { type: string }
+        start_ms: { type: integer, minimum: 0 }
+        end_ms: { type: integer, minimum: 0 }
+        confidence: { type: number, minimum: 0, maximum: 1 }
+
+    SlotValue:
+      description: Typed per the slot schema declared in packages/ontology.
+      oneOf:
+        - type: string
+        - type: number
+        - type: boolean
+        - type: array
+          items: { type: string }
+        - type: object
+          additionalProperties: true
+        - type: "null"
+
+    QuestionOption:
+      type: object
+      required: [value, label]
+      properties:
+        value: { type: string }
+        label: { type: string }
+        icon: { type: [string, "null"] }
+
+    RedFlag:
+      type: object
+      required: [rule_id, severity, quote, token_no]
+      properties:
+        rule_id: { type: string }
+        severity: { type: string, enum: [info, warning, critical] }
+        quote: { type: string }
+        token_no: { type: string }
+
+    Answer:
+      type: object
+      required: [slot_id, value, input_mode, confidence]
+      properties:
+        slot_id: { type: string }
+        value: { $ref: "#/components/schemas/SlotValue" }
+        input_mode:
+          type: string
+          enum: [voice, tap, bodymap, proxy, ocr]
+        confidence: { type: number, minimum: 0, maximum: 1 }
+        audio_uri: { type: [string, "null"], format: uri }

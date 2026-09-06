@@ -1,6 +1,6 @@
 # packages
 
-Shared code. `ontology` is the only one that exists so far.
+Shared code. `contracts` and `ontology` exist so far.
 
 | Package | Contains | Owner |
 |---|---|---|
