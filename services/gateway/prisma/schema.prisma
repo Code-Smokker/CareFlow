@@ -125,6 +125,16 @@ enum ConceptEquivalence {
   wider
   narrower
   related
+  /// Fuzzy/lexical match only, not exact — services/terminology's candidate-mapping generator
+  /// (docs/07-ayush-terminology.md step 4) uses this for anything below an exact code/title
+  /// match. FHIR's own ConceptMapEquivalence code.
+  ///
+  /// `unmatched` (the OpenAPI ConceptMapMatch.equivalence value for "no candidate found") is
+  /// deliberately NOT a member here: concept_map.target_concept is a NOT NULL FK, so there is
+  /// nothing to point it at when nothing matched. "No mapping exists" is the absence of a row,
+  /// never a row with a fabricated or null target — /translate returns `matched: false,
+  /// equivalence: null` in that case without writing anything.
+  inexact
 }
 
 // ---------------------------------------------------------------------------
@@ -332,12 +342,17 @@ model AuditLog {
 /// the client — the terminology service reads/writes it directly over SQL. No ivfflat index
 /// yet on purpose (docs/04-data-model.md: add it only once there is real data in the table).
 model Concept {
-  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  system    String
-  code      String
-  display   String
-  synonyms  String[]
-  embedding Unsupported("vector")?
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  system     String
+  code       String
+  display    String
+  synonyms   String[]
+  /// Backs the OpenAPI `ConceptDetail.definition` field (packages/contracts/openapi/
+  /// terminology.yaml) — free-text description carried by some terminology exports (e.g.
+  /// NAMASTE's short/long definition columns). Nullable: ICD-11 entities pulled via the WHO
+  /// API may or may not carry one.
+  definition String?
+  embedding  Unsupported("vector")?
 
   sourceMaps ConceptMap[] @relation("ConceptMapSource")
   targetMaps ConceptMap[] @relation("ConceptMapTarget")
@@ -354,7 +369,12 @@ model ConceptMap {
   targetConcept   Concept            @relation("ConceptMapTarget", fields: [targetConceptId], references: [id])
   equivalence     ConceptEquivalence
   reviewedBy      String?            @map("reviewed_by")
+  /// 'lexical' for every row the candidate-mapping generator writes (docs/07-ayush-terminology.md
+  /// step 4 — exact code, exact English title, then fuzzy); 'manual' once a clinician records a
+  /// mapping directly. Never absent — a mapping's origin is always stated, never implied.
+  provenance      String             @default("lexical")
 
+  @@unique([sourceConceptId, targetConceptId])
   @@map("concept_map")
 }
 

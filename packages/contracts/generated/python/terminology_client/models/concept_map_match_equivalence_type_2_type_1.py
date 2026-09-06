@@ -5,7 +5,7 @@ class ConceptMapMatchEquivalenceType2Type1(StrEnum):
     EQUIVALENT = "equivalent"
     INEXACT = "inexact"
     NARROWER = "narrower"
-    UNMATCHED = "unmatched"
+    RELATED = "related"
     WIDER = "wider"
 
     def __str__(self) -> str:

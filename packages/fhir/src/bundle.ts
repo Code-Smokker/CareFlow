@@ -3,6 +3,7 @@ import { z } from "zod";
 import { buildAllergyIntolerance } from "./allergy-intolerance";
 import { buildComposition, type CompositionSection } from "./composition";
 import { CodingSchema, urnReference } from "./common";
+import type { Coding } from "./common";
 import { buildCondition } from "./condition";
 import { buildDocumentReference } from "./document-reference";
 import { buildEncounter } from "./encounter";
@@ -40,9 +41,11 @@ export interface OPConsultRecordInput {
   encounterPeriodStart: string;
   encounterPeriodEnd?: string | null;
   chiefComplaintText: string | null;
+  /** NAMASTE + ICD-11 TM2/MMS codings for the chief complaint, from the terminology service —
+   * see BuildConditionInput.codings in ./condition for what "omitted" means and why. */
+  chiefComplaintCodings?: Coding[];
   /** One per HPI field (services/ai's SummaryField-shaped leaves, already flattened by the
-   * gateway) — each becomes an Observation. No LOINC coding (out of scope; see
-   * docs/07-ayush-terminology.md's PLACEHOLDER discipline for the same gap on Condition). */
+   * gateway) — each becomes an Observation. No LOINC coding (out of scope). */
   hpiObservations: { label: string; value: number | string | boolean }[];
   /** Only populated once a real source exists (docs/14-features.md section 4/docai) — omitted
    * entries render as an honest `emptyReason` in the Composition, never a fabricated entry. */
@@ -79,6 +82,7 @@ export function buildOPConsultRecordBundle(input: OPConsultRecordInput): Documen
     ? buildCondition({
         id: randomUUID(),
         displayText: input.chiefComplaintText,
+        codings: input.chiefComplaintCodings,
         patientRef,
         encounterRef,
         recordedDate: input.encounterPeriodStart,

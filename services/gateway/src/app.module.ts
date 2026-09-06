@@ -13,6 +13,7 @@ import { OntologyModule } from "./ontology/ontology.module";
 import { PrismaModule } from "./prisma/prisma.module";
 import { RedFlagsModule } from "./redflags/redflags.module";
 import { SessionsModule } from "./sessions/sessions.module";
+import { TerminologyModule } from "./terminology/terminology.module";
 import { VisitsModule } from "./visits/visits.module";
 import { WebsocketModule } from "./websocket/websocket.module";
 
@@ -30,6 +31,7 @@ import { WebsocketModule } from "./websocket/websocket.module";
     OntologyModule,
     AiModule,
     DocAiModule,
+    TerminologyModule,
     AbdmModule,
     WebsocketModule,
     HealthModule,

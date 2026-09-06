@@ -9,6 +9,13 @@ from .concept_map_match_equivalence_type_2_type_1 import (
 from .concept_map_match_equivalence_type_3_type_1 import (
     ConceptMapMatchEquivalenceType3Type1,
 )
+from .concept_map_match_provenance_type_1 import ConceptMapMatchProvenanceType1
+from .concept_map_match_provenance_type_2_type_1 import (
+    ConceptMapMatchProvenanceType2Type1,
+)
+from .concept_map_match_provenance_type_3_type_1 import (
+    ConceptMapMatchProvenanceType3Type1,
+)
 from .concept_summary import ConceptSummary
 from .error import Error
 from .error_details_type_0 import ErrorDetailsType0
@@ -24,6 +31,9 @@ __all__ = (
     "ConceptMapMatchEquivalenceType1",
     "ConceptMapMatchEquivalenceType2Type1",
     "ConceptMapMatchEquivalenceType3Type1",
+    "ConceptMapMatchProvenanceType1",
+    "ConceptMapMatchProvenanceType2Type1",
+    "ConceptMapMatchProvenanceType3Type1",
     "ConceptSummary",
     "Error",
     "ErrorDetailsType0",

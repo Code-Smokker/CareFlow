@@ -1,4 +1,5 @@
 import { buildOPConsultRecordBundle, validateBundleAgainstHapi } from "@careflow/fhir";
+import type { Coding } from "@careflow/fhir";
 import { Inject, Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import type { RedFlag, Summary, VisitPriority } from "@prisma/client";
@@ -9,6 +10,7 @@ import { AppException } from "../common/app-exception";
 import type { Env } from "../common/env";
 import { rootLogger } from "../common/logger";
 import { PrismaService } from "../prisma/prisma.service";
+import { TerminologyServiceClient, TerminologyServiceUnavailable } from "../terminology/terminology-service.client";
 import { EventsGateway } from "../websocket/events.gateway";
 
 interface SummaryFieldPayload {
@@ -88,7 +90,47 @@ export class VisitsService {
     private readonly events: EventsGateway,
     private readonly config: ConfigService<Env, true>,
     @Inject(ABDM_CLIENT) private readonly abdm: AbdmClient,
+    private readonly terminology: TerminologyServiceClient,
   ) {}
+
+  /** NAMASTE + ICD-11 TM2/MMS codings for the chief complaint, docs/07-ayush-terminology.md's
+   * dual coding — best-effort: any failure (service down, or simply no data loaded yet, which
+   * is the actual state until infra/seed/namaste/ has the real export and ICD-11 credentials
+   * exist) degrades to `[]`, exactly today's text-only Condition, never a thrown error and
+   * never a fabricated code (docs/03-api-contracts.md rule 2 — partial failure still returns
+   * something useful). */
+  private async buildChiefComplaintCodings(chiefComplaintText: string): Promise<Coding[]> {
+    try {
+      const matches = await this.terminology.search(chiefComplaintText, "namaste");
+      const best = matches[0];
+      // Below this, "best of what's there" isn't the same as "a confident match" — an empty
+      // codings array (today's text-only Condition) is more honest than a shaky one.
+      const MIN_CONFIDENT_SCORE = 0.3;
+      if (!best || best.score < MIN_CONFIDENT_SCORE) return [];
+
+      const codings: Coding[] = [
+        { system: "http://terminology.ayush.gov.in/namaste", code: best.code, display: best.display },
+      ];
+
+      for (const target of ["icd11-tm2", "icd11-bio"] as const) {
+        const translation = await this.terminology.translate("namaste", best.code, target);
+        if (translation.matched && translation.target_code) {
+          codings.push({
+            system: "http://id.who.int/icd/release/11/mms",
+            code: translation.target_code,
+            display: translation.target_display ?? undefined,
+          });
+        }
+      }
+      return codings;
+    } catch (err) {
+      if (err instanceof TerminologyServiceUnavailable) {
+        rootLogger.warn({ error: err.message }, "terminology service unavailable — signing with text-only Condition");
+        return [];
+      }
+      throw err;
+    }
+  }
 
   async getSummary(visitId: string) {
     const summary = await this.findLatestSummaryOrThrow(visitId);
@@ -125,6 +167,10 @@ export class VisitsService {
     const visit = await this.prisma.visit.findUniqueOrThrow({ where: { id: visitId } });
     const patient = await this.prisma.patient.findUniqueOrThrow({ where: { id: visit.patientId } });
     const structured = summary.structured as unknown as SummariseStructured;
+    const chiefComplaintText = structured.chief_complaint ? String(structured.chief_complaint.value) : null;
+    const chiefComplaintCodings = chiefComplaintText
+      ? await this.buildChiefComplaintCodings(chiefComplaintText)
+      : [];
 
     // patient.name/abhaNumber are AES-GCM ciphertext once an identity flow writes them
     // (src/common/crypto.ts) — always null today (no identity flow exists yet, ADR 0007), so
@@ -135,7 +181,8 @@ export class VisitsService {
       practitionerName: signedBy,
       encounterPeriodStart: visit.startedAt.toISOString(),
       encounterPeriodEnd: new Date().toISOString(),
-      chiefComplaintText: structured.chief_complaint ? String(structured.chief_complaint.value) : null,
+      chiefComplaintText,
+      chiefComplaintCodings,
       hpiObservations: Object.values(structured.history_of_present_illness ?? {}).map((leaf) => ({
         label: leaf.label,
         value: toObservationValue(leaf.value),

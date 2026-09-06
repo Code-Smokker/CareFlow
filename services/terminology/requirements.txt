@@ -1,0 +1,19 @@
+fastapi==0.141.1
+uvicorn[standard]==0.52.4
+pydantic==2.13.5
+pydantic-settings==2.15.0
+structlog==26.1.0
+httpx==0.28.1
+asyncpg==0.31.0
+pandas==2.3.3
+openpyxl==3.1.5
+
+pytest==9.1.1
+pytest-asyncio==1.4.0
+
+# Multilingual sentence embeddings — bridges Devanagari (आमवात) against Latin transliterations
+# (amavata, āmavāta, aam vaat), which pg_trgm cannot do (different Unicode ranges share no
+# trigrams regardless of lowercasing). Needs Python <=3.13 (no wheel for 3.14 on this machine,
+# same constraint as docai's paddlepaddle) — see app/search/embeddings.py and README.md's
+# "embedding model reality check" for what's actually been verified here.
+sentence-transformers==5.1.2

@@ -191,7 +191,19 @@ components:
         matched: { type: boolean }
         equivalence:
           type: [string, "null"]
-          enum: [equivalent, wider, narrower, inexact, unmatched, null]
+          enum: [equivalent, wider, narrower, related, inexact, null]
         target_system: { $ref: "#/components/schemas/TerminologySystem" }
         target_code: { type: [string, "null"] }
         target_display: { type: [string, "null"] }
+        reviewed_by:
+          type: [string, "null"]
+          description: >
+            Null until a human confirms this mapping (docs/07-ayush-terminology.md — "do not
+            present an unreviewed automatic mapping as authoritative"). Every mapping the
+            candidate generator writes has this null; nothing sets it yet.
+        provenance:
+          type: [string, "null"]
+          enum: [lexical, manual, null]
+          description: How this mapping was produced — 'lexical' for the candidate generator
+            (exact code, exact title, then fuzzy), 'manual' once a clinician records one
+            directly. Null only when `matched` is false.

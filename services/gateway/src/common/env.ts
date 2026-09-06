@@ -13,6 +13,7 @@ export const envSchema = z.object({
   PUBLIC_WEB_URL: z.url().default("http://localhost:3000"),
   AI_SERVICE_URL: z.url().default("http://localhost:8001"),
   DOCAI_SERVICE_URL: z.url().default("http://localhost:8002"),
+  TERMINOLOGY_SERVICE_URL: z.url().default("http://localhost:8003"),
   FHIR_SERVER_URL: z.url().default("http://localhost:8090/fhir"),
   DATABASE_URL: z.string().min(1, "DATABASE_URL is required"),
   S3_ENDPOINT: z.url().default("http://localhost:9000"),

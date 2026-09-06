@@ -15,6 +15,13 @@ from ..models.concept_map_match_equivalence_type_2_type_1 import (
 from ..models.concept_map_match_equivalence_type_3_type_1 import (
     ConceptMapMatchEquivalenceType3Type1,
 )
+from ..models.concept_map_match_provenance_type_1 import ConceptMapMatchProvenanceType1
+from ..models.concept_map_match_provenance_type_2_type_1 import (
+    ConceptMapMatchProvenanceType2Type1,
+)
+from ..models.concept_map_match_provenance_type_3_type_1 import (
+    ConceptMapMatchProvenanceType3Type1,
+)
 from ..models.terminology_system import TerminologySystem
 from ..types import UNSET, Unset
 
@@ -31,6 +38,13 @@ class ConceptMapMatch:
         target_system (TerminologySystem | Unset):
         target_code (None | str | Unset):
         target_display (None | str | Unset):
+        reviewed_by (None | str | Unset): Null until a human confirms this mapping (docs/07-ayush-terminology.md — "do
+            not present an unreviewed automatic mapping as authoritative"). Every mapping the candidate generator writes has
+            this null; nothing sets it yet.
+        provenance (ConceptMapMatchProvenanceType1 | ConceptMapMatchProvenanceType2Type1 |
+            ConceptMapMatchProvenanceType3Type1 | None | Unset): How this mapping was produced — 'lexical' for the candidate
+            generator (exact code, exact title, then fuzzy), 'manual' once a clinician records one directly. Null only when
+            `matched` is false.
     """
 
     matched: bool
@@ -43,6 +57,14 @@ class ConceptMapMatch:
     target_system: TerminologySystem | Unset = UNSET
     target_code: None | str | Unset = UNSET
     target_display: None | str | Unset = UNSET
+    reviewed_by: None | str | Unset = UNSET
+    provenance: (
+        ConceptMapMatchProvenanceType1
+        | ConceptMapMatchProvenanceType2Type1
+        | ConceptMapMatchProvenanceType3Type1
+        | None
+        | Unset
+    ) = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
@@ -74,6 +96,24 @@ class ConceptMapMatch:
         else:
             target_display = self.target_display
 
+        reviewed_by: None | str | Unset
+        if isinstance(self.reviewed_by, Unset):
+            reviewed_by = UNSET
+        else:
+            reviewed_by = self.reviewed_by
+
+        provenance: None | str | Unset
+        if isinstance(self.provenance, Unset):
+            provenance = UNSET
+        elif isinstance(self.provenance, ConceptMapMatchProvenanceType1):
+            provenance = self.provenance.value
+        elif isinstance(self.provenance, ConceptMapMatchProvenanceType2Type1):
+            provenance = self.provenance.value
+        elif isinstance(self.provenance, ConceptMapMatchProvenanceType3Type1):
+            provenance = self.provenance.value
+        else:
+            provenance = self.provenance
+
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
@@ -88,6 +128,10 @@ class ConceptMapMatch:
             field_dict["target_code"] = target_code
         if target_display is not UNSET:
             field_dict["target_display"] = target_display
+        if reviewed_by is not UNSET:
+            field_dict["reviewed_by"] = reviewed_by
+        if provenance is not UNSET:
+            field_dict["provenance"] = provenance
 
         return field_dict
 
@@ -165,12 +209,71 @@ class ConceptMapMatch:
 
         target_display = _parse_target_display(d.pop("target_display", UNSET))
 
+        def _parse_reviewed_by(data: object) -> None | str | Unset:
+            if data is None:
+                return data
+            if isinstance(data, Unset):
+                return data
+            return cast(None | str | Unset, data)
+
+        reviewed_by = _parse_reviewed_by(d.pop("reviewed_by", UNSET))
+
+        def _parse_provenance(
+            data: object,
+        ) -> (
+            ConceptMapMatchProvenanceType1
+            | ConceptMapMatchProvenanceType2Type1
+            | ConceptMapMatchProvenanceType3Type1
+            | None
+            | Unset
+        ):
+            if data is None:
+                return data
+            if isinstance(data, Unset):
+                return data
+            try:
+                if not isinstance(data, str):
+                    raise TypeError()
+                provenance_type_1 = ConceptMapMatchProvenanceType1(data)
+
+                return provenance_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            try:
+                if not isinstance(data, str):
+                    raise TypeError()
+                provenance_type_2_type_1 = ConceptMapMatchProvenanceType2Type1(data)
+
+                return provenance_type_2_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            try:
+                if not isinstance(data, str):
+                    raise TypeError()
+                provenance_type_3_type_1 = ConceptMapMatchProvenanceType3Type1(data)
+
+                return provenance_type_3_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(
+                ConceptMapMatchProvenanceType1
+                | ConceptMapMatchProvenanceType2Type1
+                | ConceptMapMatchProvenanceType3Type1
+                | None
+                | Unset,
+                data,
+            )
+
+        provenance = _parse_provenance(d.pop("provenance", UNSET))
+
         concept_map_match = cls(
             matched=matched,
             equivalence=equivalence,
             target_system=target_system,
             target_code=target_code,
             target_display=target_display,
+            reviewed_by=reviewed_by,
+            provenance=provenance,
         )
 
         concept_map_match.additional_properties = d

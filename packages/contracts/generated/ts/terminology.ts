@@ -132,10 +132,17 @@ export interface components {
         ConceptMapMatch: {
             matched: boolean;
             /** @enum {string|null} */
-            equivalence: "equivalent" | "wider" | "narrower" | "inexact" | "unmatched" | null;
+            equivalence: "equivalent" | "wider" | "narrower" | "related" | "inexact" | null;
             target_system?: components["schemas"]["TerminologySystem"];
             target_code?: string | null;
             target_display?: string | null;
+            /** @description Null until a human confirms this mapping (docs/07-ayush-terminology.md — "do not present an unreviewed automatic mapping as authoritative"). Every mapping the candidate generator writes has this null; nothing sets it yet. */
+            reviewed_by?: string | null;
+            /**
+             * @description How this mapping was produced — 'lexical' for the candidate generator (exact code, exact title, then fuzzy), 'manual' once a clinician records one directly. Null only when `matched` is false.
+             * @enum {string|null}
+             */
+            provenance?: "lexical" | "manual" | null;
         };
     };
     responses: {

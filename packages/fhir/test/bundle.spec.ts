@@ -39,6 +39,28 @@ describe("buildOPConsultRecordBundle", () => {
     expect(types).not.toContain("Condition");
   });
 
+  it("Condition carries no coding array when no terminology codings were found — text-only, not fabricated", () => {
+    const bundle = buildOPConsultRecordBundle(input);
+    const condition = bundle.entry.find((e) => e.resource.resourceType === "Condition")!
+      .resource as { code: { text: string; coding?: unknown[] } };
+    expect(condition.code.text).toBe("Fever");
+    expect(condition.code.coding).toBeUndefined();
+  });
+
+  it("Condition carries NAMASTE + ICD-11 codings when the terminology service found them", () => {
+    const bundle = buildOPConsultRecordBundle({
+      ...input,
+      chiefComplaintCodings: [
+        { system: "http://terminology.ayush.gov.in/namaste", code: "TEST-AAA-2.1", display: "Amavata" },
+        { system: "http://id.who.int/icd/release/11/mms", code: "TM2-1", display: "TM2 pattern" },
+      ],
+    });
+    const condition = bundle.entry.find((e) => e.resource.resourceType === "Condition")!
+      .resource as { code: { text: string; coding?: { system?: string; code?: string }[] } };
+    expect(condition.code.coding).toHaveLength(2);
+    expect(condition.code.coding?.[0].system).toBe("http://terminology.ayush.gov.in/namaste");
+  });
+
   it("gives empty sections (no allergies/medications/documents captured) real narrative text, not just emptyReason", () => {
     const bundle = buildOPConsultRecordBundle(input);
     const composition = bundle.entry[0].resource as { section: { title: string; text?: { div: string } }[] };
