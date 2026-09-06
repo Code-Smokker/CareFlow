@@ -132,6 +132,11 @@ Alternatives if VRAM is tight: GOT-OCR 2.0 (<3 GB, Apache-2.0) or classic Paddle
 text only. dots.ocr (MIT, ~1.7B) is strong on forms. DeepSeek-OCR (MIT, ~3B MoE) is for volume,
 which we do not have.
 
+The VRAM figure above is the model card's GPU number, not a claim about this team's actual dev
+machines. See docs/06-document-ai.md's "OCR reality check" for what was actually tested on
+Apple Silicon with no CUDA — what installs, what's slow, and what's genuinely unexercised —
+before `OCR_PROVIDER`'s hosted/local/stub cascade (`services/docai/app/ocr/`) was designed.
+
 **Keep bounding boxes through every stage.** They are the provenance chips, and retrofitting
 them later means re-running the pipeline.
 

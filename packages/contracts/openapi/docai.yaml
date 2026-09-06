@@ -98,6 +98,44 @@ paths:
                       - type: "null"
         default: { $ref: "#/components/responses/Error" }
 
+  /dictionary/search:
+    get:
+      operationId: searchDictionary
+      summary: Fuzzy-match a term against the seeded dictionaries (allopathic brands, AYUSH
+        classical formulations, Ayurvedic plants)
+      tags: [dictionary]
+      description: >
+        pg_trgm similarity search over dictionary_entry. Backs the confirm-one-of-N shortlist
+        CLAUDE.md rule 5 requires for handwritten OCR output.
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema: { type: string, minLength: 1 }
+        - name: system
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [allopathic, ayush_formulation, ayush_plant]
+        - name: limit
+          in: query
+          required: false
+          schema: { type: integer, minimum: 1, maximum: 50, default: 10 }
+      responses:
+        "200":
+          description: Ranked matches
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [results]
+                properties:
+                  results:
+                    type: array
+                    items: { $ref: "#/components/schemas/DictionaryMatch" }
+        default: { $ref: "#/components/responses/Error" }
+
 components:
   responses:
     Error:
@@ -168,6 +206,23 @@ components:
             enum: [visit, prescription, lab_report, symptom_onset],
           }
         summary: { type: string }
+
+    DictionaryMatch:
+      type: object
+      required: [id, system, canonical_name, synonyms, score]
+      properties:
+        id: { type: string }
+        system:
+          type: string
+          enum: [allopathic, ayush_formulation, ayush_plant]
+        canonical_name: { type: string }
+        synonyms:
+          type: array
+          items: { type: string }
+        metadata:
+          type: [object, "null"]
+          additionalProperties: true
+        score: { type: number, minimum: 0, maximum: 1 }
 
     ProcessResult:
       type: object

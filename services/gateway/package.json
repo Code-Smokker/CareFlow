@@ -16,6 +16,7 @@
     "db:studio": "prisma studio"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1127.0",
     "@careflow/contracts": "workspace:*",
     "@careflow/fhir": "workspace:*",
     "@nestjs/common": "^11.2.3",
@@ -34,9 +35,11 @@
   },
   "devDependencies": {
     "@types/express": "^5.0.1",
+    "@types/multer": "^2.2.0",
     "@types/node": "^22.10.2",
     "nodemon": "^3.1.14",
     "prisma": "6.19.3",
+    "socket.io-client": "^4.8.3",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.2",
     "vitest": "^5.0.0"

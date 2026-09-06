@@ -98,10 +98,15 @@ a bug against CLAUDE.md rule 3.
 ## Internal — docai service
 
 ```http
-POST /classify   { image_ref } → { doc_type, confidence }
-POST /process    { document_id, image_refs[] } → 202 Accepted, result via WS
-GET  /jobs/:id   → { status, result? }
+POST /classify           { image_ref } → { doc_type, confidence }
+POST /process            { document_id, image_refs[] } → 202 Accepted, result via WS
+GET  /jobs/:id           → { status, result? }
+GET  /dictionary/search?q=&system=  → ranked { results: [{ canonical_name, synonyms, score, ... }] }
 ```
+
+`/dictionary/search` backs the confirm-one-of-N shortlist CLAUDE.md rule 5 requires — pg_trgm
+fuzzy match over the seeded allopathic/ayush_formulation/ayush_plant dictionaries (see
+`services/docai/scripts/seed_dictionaries.py` and docs/06-document-ai.md).
 
 ## Internal — terminology service
 

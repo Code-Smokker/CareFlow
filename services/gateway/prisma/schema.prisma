@@ -109,6 +109,10 @@ enum ExtractionEntityType {
   medication
   observation
   procedure
+  /// The stub extractor (services/docai/app/extract/stub.py, this task's explicit "no model
+  /// work yet") has no real classification to offer — never mislabel its output as one of the
+  /// other four just to satisfy this enum. C2's GLiNER pass replaces `unknown` with a real type.
+  unknown
 }
 
 enum SummaryStatus {
@@ -352,4 +356,33 @@ model ConceptMap {
   reviewedBy      String?            @map("reviewed_by")
 
   @@map("concept_map")
+}
+
+// ---------------------------------------------------------------------------
+// Document extraction dictionaries (owned in practice by docai — fuzzy-matching OCR output
+// against known names, docs/06-document-ai.md stage 4). Migrated here for the same reason
+// Concept is: one Prisma schema owns the one Postgres instance.
+// ---------------------------------------------------------------------------
+
+enum DictionarySystem {
+  allopathic
+  ayush_formulation
+  ayush_plant
+}
+
+/// pg_trgm GIN indexes on canonical_name and synonyms are in the trigger migration file
+/// (Prisma's schema DSL can't express operator classes) — same pattern as concept.display.
+model DictionaryEntry {
+  id            String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  system        DictionarySystem
+  canonicalName String           @map("canonical_name")
+  synonyms      String[]
+  /// Per-system extras that don't warrant their own column: brand manufacturer, botanical
+  /// binomial, AFI category section, source row provenance (docs/06's "never silently drop a
+  /// low-confidence extraction" ethos extended to seed data — merges/reconciliations recorded
+  /// here, not just dropped).
+  metadata      Json?
+
+  @@unique([system, canonicalName])
+  @@map("dictionary_entry")
 }

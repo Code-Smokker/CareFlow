@@ -12,8 +12,13 @@ export const envSchema = z.object({
   GATEWAY_PORT: z.coerce.number().int().positive().default(4000),
   PUBLIC_WEB_URL: z.url().default("http://localhost:3000"),
   AI_SERVICE_URL: z.url().default("http://localhost:8001"),
+  DOCAI_SERVICE_URL: z.url().default("http://localhost:8002"),
   FHIR_SERVER_URL: z.url().default("http://localhost:8090/fhir"),
   DATABASE_URL: z.string().min(1, "DATABASE_URL is required"),
+  S3_ENDPOINT: z.url().default("http://localhost:9000"),
+  S3_ACCESS_KEY: z.string().default("careflow"),
+  S3_SECRET_KEY: z.string().default("careflow123"),
+  S3_BUCKET: z.string().default("careflow-documents"),
   FIELD_ENCRYPTION_KEY: z
     .string()
     .min(1, "FIELD_ENCRYPTION_KEY is required")

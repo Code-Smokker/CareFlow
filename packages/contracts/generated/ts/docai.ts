@@ -60,6 +60,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/dictionary/search": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Fuzzy-match a term against the seeded dictionaries (allopathic brands, AYUSH classical formulations, Ayurvedic plants)
+         * @description pg_trgm similarity search over dictionary_entry. Backs the confirm-one-of-N shortlist CLAUDE.md rule 5 requires for handwritten OCR output.
+         */
+        get: operations["searchDictionary"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -97,6 +117,17 @@ export interface components {
             /** @enum {string} */
             kind: "visit" | "prescription" | "lab_report" | "symptom_onset";
             summary: string;
+        };
+        DictionaryMatch: {
+            id: string;
+            /** @enum {string} */
+            system: "allopathic" | "ayush_formulation" | "ayush_plant";
+            canonical_name: string;
+            synonyms: string[];
+            metadata?: {
+                [key: string]: unknown;
+            } | null;
+            score: number;
         };
         ProcessResult: {
             document_id: string;
@@ -205,6 +236,33 @@ export interface operations {
                         /** @enum {string} */
                         status: "queued" | "processing" | "done" | "failed";
                         result?: components["schemas"]["ProcessResult"] | null;
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    searchDictionary: {
+        parameters: {
+            query: {
+                q: string;
+                system?: "allopathic" | "ayush_formulation" | "ayush_plant";
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Ranked matches */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        results: components["schemas"]["DictionaryMatch"][];
                     };
                 };
             };

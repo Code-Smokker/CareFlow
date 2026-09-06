@@ -4,6 +4,9 @@ import { ConfigModule } from "@nestjs/config";
 import { validateEnv } from "./common/env";
 import { AbdmModule } from "./abdm/abdm.module";
 import { AiModule } from "./ai/ai.module";
+import { StorageModule } from "./common/storage.module";
+import { DocAiModule } from "./docai/docai.module";
+import { DocumentsModule } from "./documents/documents.module";
 import { HealthModule } from "./health/health.module";
 import { IdentityModule } from "./identity/identity.module";
 import { OntologyModule } from "./ontology/ontology.module";
@@ -23,8 +26,10 @@ import { WebsocketModule } from "./websocket/websocket.module";
       validate: validateEnv,
     }),
     PrismaModule,
+    StorageModule,
     OntologyModule,
     AiModule,
+    DocAiModule,
     AbdmModule,
     WebsocketModule,
     HealthModule,
@@ -32,6 +37,7 @@ import { WebsocketModule } from "./websocket/websocket.module";
     VisitsModule,
     RedFlagsModule,
     IdentityModule,
+    DocumentsModule,
   ],
 })
 export class AppModule {}

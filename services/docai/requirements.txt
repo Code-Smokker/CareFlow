@@ -1,0 +1,23 @@
+fastapi==0.141.1
+uvicorn[standard]==0.52.4
+pydantic==2.13.5
+pydantic-settings==2.15.0
+structlog==26.1.0
+httpx==0.28.1
+PyYAML==6.0.3
+python-multipart==0.0.32
+asyncpg==0.31.0
+
+celery==5.6.3
+redis==8.1.0
+
+pytest==9.1.1
+pytest-asyncio==1.4.0
+
+# Offline OCR tier only (~2GB incl. weights on first use, and needs Python <=3.13 — no wheel
+# for 3.14 as of writing). Not required to import or start this service; app/ocr/local.py
+# imports these lazily inside the function body, same pattern as services/ai's offline ASR.
+# See docs/06-document-ai.md's "OCR reality check" for why this is unexercised here.
+# paddlepaddle==3.3.1
+# transformers==4.57.1
+# torch==2.9.1
