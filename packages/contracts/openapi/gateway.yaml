@@ -125,6 +125,47 @@ paths:
         "204": { description: Consent recorded }
         default: { $ref: "#/components/responses/Error" }
 
+  /v1/sessions/{id}/consent/resource:
+    parameters:
+      - $ref: "#/components/parameters/SessionIdParam"
+    get:
+      operationId: getConsentResource
+      summary: FHIR Consent resource assembled from this session's recorded consent rows
+      tags: [sessions]
+      responses:
+        "200":
+          description: FHIR R4 Consent resource
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                description: FHIR R4 Consent resource. Typed via packages/fhir, not here.
+        default: { $ref: "#/components/responses/Error" }
+
+  /v1/sessions/{id}/consent/revoke:
+    parameters:
+      - $ref: "#/components/parameters/SessionIdParam"
+    post:
+      operationId: revokeConsent
+      summary: Revoke one or more previously granted consent scopes (Kavach) — recorded as a
+        revocation event, never a deletion; use DELETE /v1/sessions/:id to erase entirely.
+      tags: [sessions]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [scopes]
+              properties:
+                scopes:
+                  type: array
+                  items: { $ref: "#/components/schemas/ConsentScope" }
+      responses:
+        "204": { description: Scopes revoked }
+        default: { $ref: "#/components/responses/Error" }
+
   /v1/sessions/{id}/answer:
     parameters:
       - $ref: "#/components/parameters/SessionIdParam"
@@ -450,6 +491,23 @@ paths:
                     description: >
                       Verbatim UI-facing string — under ABDM_MODE=mock this is always
                       "linked (mock)", never a fake "linked" success (docs/08-abdm-fhir.md).
+        default: { $ref: "#/components/responses/Error" }
+
+  /v1/visits/{id}/printable-summary:
+    parameters:
+      - $ref: "#/components/parameters/VisitIdParam"
+    get:
+      operationId: getPrintableSummary
+      summary: Server-rendered printable HTML summary with a QR code, for hospitals that
+        cannot integrate electronically (docs/14-features.md section 7 "Printable fallback")
+      tags: [clinician]
+      description: Only available once the visit's summary is signed.
+      responses:
+        "200":
+          description: HTML page
+          content:
+            text/html:
+              schema: { type: string }
         default: { $ref: "#/components/responses/Error" }
 
   /v1/visits/{id}/ask:

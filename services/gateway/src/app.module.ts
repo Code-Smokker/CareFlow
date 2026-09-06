@@ -4,10 +4,12 @@ import { ConfigModule } from "@nestjs/config";
 import { validateEnv } from "./common/env";
 import { AbdmModule } from "./abdm/abdm.module";
 import { AiModule } from "./ai/ai.module";
+import { DeidModule } from "./deid/deid.module";
 import { StorageModule } from "./common/storage.module";
 import { DocAiModule } from "./docai/docai.module";
 import { DocumentsModule } from "./documents/documents.module";
 import { HealthModule } from "./health/health.module";
+import { HisModule } from "./his/his.module";
 import { IdentityModule } from "./identity/identity.module";
 import { OntologyModule } from "./ontology/ontology.module";
 import { PrismaModule } from "./prisma/prisma.module";
@@ -32,6 +34,8 @@ import { WebsocketModule } from "./websocket/websocket.module";
     AiModule,
     DocAiModule,
     TerminologyModule,
+    HisModule,
+    DeidModule,
     AbdmModule,
     WebsocketModule,
     HealthModule,

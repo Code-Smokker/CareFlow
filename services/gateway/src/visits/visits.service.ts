@@ -3,12 +3,14 @@ import type { Coding } from "@careflow/fhir";
 import { Inject, Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import type { RedFlag, Summary, VisitPriority } from "@prisma/client";
+import QRCode from "qrcode";
 import { ABDM_CLIENT } from "../abdm/abdm.tokens";
 import type { AbdmClient } from "../abdm/abdm-client.interface";
 import type { SummaryLeaf, SummariseStructured } from "../ai/ai-service.client";
 import { AppException } from "../common/app-exception";
 import type { Env } from "../common/env";
 import { rootLogger } from "../common/logger";
+import { HisAdapterService } from "../his/his-adapter.service";
 import { PrismaService } from "../prisma/prisma.service";
 import { TerminologyServiceClient, TerminologyServiceUnavailable } from "../terminology/terminology-service.client";
 import { EventsGateway } from "../websocket/events.gateway";
@@ -77,6 +79,16 @@ function toRedFlagPayload(flag: RedFlag, tokenNo: string): RedFlagPayload {
 /** FHIR's Observation.value* is number | string | boolean — an enum_multi answer
  * (e.g. associated: ["neck_stiff", "headache"]) is an array, which isn't any of those, so it
  * needs flattening or buildObservation's Zod schema rejects it. */
+/** Printable-summary HTML is built with plain string interpolation (no template engine in
+ * this gateway) — every field goes through this before landing in the page. */
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
 function toObservationValue(value: unknown): number | string | boolean {
   if (typeof value === "number" || typeof value === "boolean") return value;
   if (Array.isArray(value)) return value.join(", ");
@@ -91,6 +103,7 @@ export class VisitsService {
     private readonly config: ConfigService<Env, true>,
     @Inject(ABDM_CLIENT) private readonly abdm: AbdmClient,
     private readonly terminology: TerminologyServiceClient,
+    private readonly hisAdapter: HisAdapterService,
   ) {}
 
   /** NAMASTE + ICD-11 TM2/MMS codings for the chief complaint, docs/07-ayush-terminology.md's
@@ -210,11 +223,20 @@ export class VisitsService {
     // docs/08-abdm-fhir.md: "After the physician signs, link the care context to the patient's
     // ABHA so the record appears in their PHR app." care_context_status is what the UI must
     // show verbatim — under ABDM_MODE=mock that's always "linked (mock)", never a fake success.
-    const careContext = await this.abdm.linkCareContext({
-      patientId: patient.id,
-      visitId,
-      fhirBundleId: bundle.id,
-    });
+    // Gated on a live `abha_lookup` consent scope (Consent.patientId, not session-scoped —
+    // a patient's ABHA-linking choice outlives any one session) — docs/09: "refusing a scope
+    // degrades gracefully," so a revoked/never-granted scope skips linking, it does not fail
+    // the sign (which is already complete and valid above).
+    const abhaConsented = (await this.prisma.consent.count({
+      where: { patientId: patient.id, revokedAt: null, scopes: { has: "abha_lookup" } },
+    })) > 0;
+    const careContext = abhaConsented
+      ? await this.abdm.linkCareContext({ patientId: patient.id, visitId, fhirBundleId: bundle.id })
+      : { status: "skipped (no ABHA-linking consent)" };
+
+    this.hisAdapter.pushBestEffort(bundle).catch((err) =>
+      rootLogger.warn({ visit_id: visitId, error: String(err) }, "HIS push failed, sign already succeeded"),
+    );
 
     return {
       fhir_bundle_id: bundle.id,
@@ -322,6 +344,43 @@ export class VisitsService {
       throw new AppException(404, "summary_not_found", `No summary for visit '${visitId}'. Has intake been completed?`);
     }
     return summary;
+  }
+
+  /** docs/14-features.md section 7 "Printable fallback for non-integrated hospitals" — a
+   * server-rendered HTML page (no new frontend app) with the signed summary's fields and a QR
+   * back to the patient's digital record, for a hospital whose HIS can't consume the FHIR push
+   * (his-adapter.service.ts) at all. Only available once signed — a draft summary can still
+   * change under a physician's edits, and a printed draft is exactly the "silent guess" this
+   * whole system exists to avoid presenting as final. */
+  async getPrintableSummary(visitId: string): Promise<string> {
+    const summary = await this.findLatestSummaryOrThrow(visitId);
+    if (summary.status !== "signed") {
+      throw new AppException(409, "not_signed", "Only a signed visit has a printable summary.");
+    }
+    const visit = await this.prisma.visit.findUniqueOrThrow({ where: { id: visitId } });
+    const fields = flattenStructured(summary.structured as unknown as SummariseStructured);
+    const publicWebUrl = this.config.get("PUBLIC_WEB_URL", { infer: true });
+    const recordUrl = `${publicWebUrl}/visits/${visitId}`;
+    const qrDataUrl = await QRCode.toDataURL(recordUrl);
+
+    const rows = fields
+      .map((f) => `<tr><td>${escapeHtml(f.field_path)}</td><td>${escapeHtml(String(f.value))}</td></tr>`)
+      .join("\n");
+
+    return `<!doctype html>
+<html><head><meta charset="utf-8"><title>CareFlow OP Consult Summary</title>
+<style>body{font-family:sans-serif;margin:2rem}table{border-collapse:collapse;width:100%}
+td{border:1px solid #ccc;padding:6px 10px}.qr{float:right}</style></head>
+<body>
+<img class="qr" src="${qrDataUrl}" width="140" height="140" alt="QR code linking to the digital record">
+<h1>CareFlow OP Consult Summary</h1>
+<p>Visit: ${escapeHtml(visitId)} · Token: ${escapeHtml(visit.tokenNo ?? visitId)} · Signed: ${escapeHtml(summary.signedBy ?? "")} at ${escapeHtml(summary.signedAt?.toISOString() ?? "")}</p>
+<table><tbody>
+${rows}
+</tbody></table>
+<p><small>Scan the QR code for this patient's full digital record. CareFlow does not diagnose —
+this is a structured history draft the physician has signed.</small></p>
+</body></html>`;
   }
 
   private async toVisitSummaryPayload(visitId: string, summary: Summary) {

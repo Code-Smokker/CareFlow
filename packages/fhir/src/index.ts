@@ -3,6 +3,7 @@ export * from "./patient";
 export * from "./practitioner";
 export * from "./encounter";
 export * from "./condition";
+export * from "./consent";
 export * from "./allergy-intolerance";
 export * from "./medication-statement";
 export * from "./observation";

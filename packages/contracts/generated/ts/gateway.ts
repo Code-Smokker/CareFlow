@@ -98,6 +98,44 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/sessions/{id}/consent/resource": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: components["parameters"]["SessionIdParam"];
+            };
+            cookie?: never;
+        };
+        /** FHIR Consent resource assembled from this session's recorded consent rows */
+        get: operations["getConsentResource"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/sessions/{id}/consent/revoke": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: components["parameters"]["SessionIdParam"];
+            };
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Revoke one or more previously granted consent scopes (Kavach) — recorded as a revocation event, never a deletion; use DELETE /v1/sessions/:id to erase entirely. */
+        post: operations["revokeConsent"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/sessions/{id}/answer": {
         parameters: {
             query?: never;
@@ -323,6 +361,28 @@ export interface paths {
          * @description No RBAC/auth exists yet (Day 4), so `signed_by` is a plain identifier passed by the caller rather than read from a session — additive until real auth lands.
          */
         post: operations["signVisit"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/visits/{id}/printable-summary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: components["parameters"]["VisitIdParam"];
+            };
+            cookie?: never;
+        };
+        /**
+         * Server-rendered printable HTML summary with a QR code, for hospitals that cannot integrate electronically (docs/14-features.md section 7 "Printable fallback")
+         * @description Only available once the visit's summary is signed.
+         */
+        get: operations["getPrintableSummary"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -733,6 +793,58 @@ export interface operations {
             default: components["responses"]["Error"];
         };
     };
+    getConsentResource: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: components["parameters"]["SessionIdParam"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description FHIR R4 Consent resource */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    revokeConsent: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: components["parameters"]["SessionIdParam"];
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    scopes: components["schemas"]["ConsentScope"][];
+                };
+            };
+        };
+        responses: {
+            /** @description Scopes revoked */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            default: components["responses"]["Error"];
+        };
+    };
     submitAnswer: {
         parameters: {
             query?: never;
@@ -1100,6 +1212,29 @@ export interface operations {
                         /** @description Verbatim UI-facing string — under ABDM_MODE=mock this is always "linked (mock)", never a fake "linked" success (docs/08-abdm-fhir.md). */
                         care_context_status: string;
                     };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    getPrintableSummary: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: components["parameters"]["VisitIdParam"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description HTML page */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": string;
                 };
             };
             default: components["responses"]["Error"];

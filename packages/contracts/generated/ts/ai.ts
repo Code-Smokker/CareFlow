@@ -194,6 +194,11 @@ export interface operations {
                     /** @description BCP-47 language tag */
                     language: string;
                     streaming: boolean;
+                    /**
+                     * @description docs/09-security-dpdp.md: raw audio is deleted after transcription unless the patient opted into provenance playback. Defaults to false (delete).
+                     * @default false
+                     */
+                    retain_audio?: boolean;
                 };
             };
         };

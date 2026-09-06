@@ -18,6 +18,7 @@ from .error_details_type_0 import ErrorDetailsType0
 from .error_response import ErrorResponse
 from .extraction import Extraction
 from .extraction_bounding_box_type_0 import ExtractionBoundingBoxType0
+from .get_consent_resource_response_200 import GetConsentResourceResponse200
 from .identify_by_abha_qr_body import IdentifyByAbhaQrBody
 from .identify_by_abha_qr_response_200 import IdentifyByAbhaQrResponse200
 from .input_mode import InputMode
@@ -35,6 +36,7 @@ from .register_patient_response_201 import RegisterPatientResponse201
 from .request_abha_otp_body import RequestAbhaOtpBody
 from .request_abha_otp_response_200 import RequestAbhaOtpResponse200
 from .resume_session_body import ResumeSessionBody
+from .revoke_consent_body import RevokeConsentBody
 from .session import Session
 from .session_status import SessionStatus
 from .set_session_language_body import SetSessionLanguageBody
@@ -73,6 +75,7 @@ __all__ = (
     "ErrorResponse",
     "Extraction",
     "ExtractionBoundingBoxType0",
+    "GetConsentResourceResponse200",
     "IdentifyByAbhaQrBody",
     "IdentifyByAbhaQrResponse200",
     "InputMode",
@@ -90,6 +93,7 @@ __all__ = (
     "RequestAbhaOtpBody",
     "RequestAbhaOtpResponse200",
     "ResumeSessionBody",
+    "RevokeConsentBody",
     "Session",
     "SessionStatus",
     "SetSessionLanguageBody",

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, Param, Patch, Post, Query } from "@nestjs/common";
+import { Body, Controller, Get, Header, HttpCode, Param, Patch, Post, Query } from "@nestjs/common";
 import { ZodValidationPipe } from "../common/zod-validation.pipe";
 import { type EditSummaryFieldDto, EditSummaryFieldSchema, type SignVisitDto, SignVisitSchema } from "./dto/visit.dto";
 import { VisitsService } from "./visits.service";
@@ -23,6 +23,12 @@ export class VisitsController {
   @Patch(":id/summary")
   editSummary(@Param("id") id: string, @Body(new ZodValidationPipe(EditSummaryFieldSchema)) body: EditSummaryFieldDto) {
     return this.visits.editSummaryField(id, body.field_path, body.value);
+  }
+
+  @Get(":id/printable-summary")
+  @Header("Content-Type", "text/html")
+  getPrintableSummary(@Param("id") id: string) {
+    return this.visits.getPrintableSummary(id);
   }
 
   @Post(":id/sign")

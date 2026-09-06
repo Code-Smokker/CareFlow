@@ -15,6 +15,15 @@ export const envSchema = z.object({
   DOCAI_SERVICE_URL: z.url().default("http://localhost:8002"),
   TERMINOLOGY_SERVICE_URL: z.url().default("http://localhost:8003"),
   FHIR_SERVER_URL: z.url().default("http://localhost:8090/fhir"),
+  HIS_PUSH_URL: z.union([z.url(), z.literal("")]).default(""),
+  DEID_ENABLED: z
+    .string()
+    .default("false")
+    .transform((v) => v === "true"),
+  DEID_STRICT: z
+    .string()
+    .default("false")
+    .transform((v) => v === "true"),
   DATABASE_URL: z.string().min(1, "DATABASE_URL is required"),
   S3_ENDPOINT: z.url().default("http://localhost:9000"),
   S3_ACCESS_KEY: z.string().default("careflow"),

@@ -27,6 +27,12 @@ paths:
                 audio_ref: { type: string }
                 language: { type: string, description: BCP-47 language tag }
                 streaming: { type: boolean }
+                retain_audio:
+                  type: boolean
+                  default: false
+                  description: >
+                    docs/09-security-dpdp.md: raw audio is deleted after transcription unless
+                    the patient opted into provenance playback. Defaults to false (delete).
       responses:
         "200":
           description: Transcript

@@ -31,6 +31,21 @@ export const ConsentBodySchema = z.object({
 });
 export type ConsentBodyDto = z.infer<typeof ConsentBodySchema>;
 
+export const RevokeConsentBodySchema = z.object({
+  scopes: z
+    .array(
+      z.enum([
+        "history",
+        "audio_recording",
+        "documents",
+        "abha_lookup",
+        "research_deidentified",
+      ]),
+    )
+    .min(1),
+});
+export type RevokeConsentBodyDto = z.infer<typeof RevokeConsentBodySchema>;
+
 export const ResumeBodySchema = z.object({
   resume_token: z.string().min(1),
 });

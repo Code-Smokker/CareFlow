@@ -19,6 +19,8 @@ import {
   ConsentBodySchema,
   LanguageBodySchema,
   ResumeBodySchema,
+  type RevokeConsentBodyDto,
+  RevokeConsentBodySchema,
 } from "./dto/session.dto";
 import { SessionsService } from "./sessions.service";
 
@@ -68,6 +70,20 @@ export class SessionsController {
     @Body(new ZodValidationPipe(ConsentBodySchema)) body: ConsentBodyDto,
   ) {
     await this.sessions.recordConsent(id, body);
+  }
+
+  @Get(":id/consent/resource")
+  async getConsentResource(@Param("id") id: string) {
+    return this.sessions.getConsentResource(id);
+  }
+
+  @Post(":id/consent/revoke")
+  @HttpCode(204)
+  async revokeConsent(
+    @Param("id") id: string,
+    @Body(new ZodValidationPipe(RevokeConsentBodySchema)) body: RevokeConsentBodyDto,
+  ) {
+    await this.sessions.revokeConsent(id, body.scopes);
   }
 
   @Post(":id/answer")

@@ -1,5 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { Injectable } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import { buildConsent, urnReference } from "@careflow/fhir";
 import type { Answer, IntakeSession } from "@prisma/client";
 import {
   AiServiceClient,
@@ -9,8 +11,10 @@ import {
   type SummariseStructured,
 } from "../ai/ai-service.client";
 import { AppException } from "../common/app-exception";
-import { generateResumeToken, hashResumeToken } from "../common/crypto";
+import { FieldCipher, generateResumeToken, hashResumeToken } from "../common/crypto";
+import type { Env } from "../common/env";
 import { sessionLogger } from "../common/logger";
+import { DeidService } from "../deid/deid.service";
 import { OntologyService } from "../ontology/ontology.service";
 import type { Slot } from "../ontology/ontology.types";
 import { PrismaService } from "../prisma/prisma.service";
@@ -64,13 +68,53 @@ interface RedFlagPayload {
 
 @Injectable()
 export class SessionsService {
+  private readonly cipher: FieldCipher;
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly ontology: OntologyService,
     private readonly events: EventsGateway,
     private readonly aiService: AiServiceClient,
     private readonly visits: VisitsService,
-  ) {}
+    private readonly deid: DeidService,
+    config: ConfigService<Env, true>,
+  ) {
+    this.cipher = new FieldCipher(config.get("FIELD_ENCRYPTION_KEY", { infer: true }));
+  }
+
+  /** The identifiers docs/09-security-dpdp.md names for the de-identification proxy — name,
+   * ABHA number, phone, address. There's no separate physical-address field on Patient today
+   * (only `abhaAddress`, the ABDM address, which is stored plaintext already — see
+   * identity.service.ts), so that's the closest real field; a genuine street address isn't
+   * captured anywhere yet, which is an honest gap, not something to fake here. */
+  private decryptPatientIdentifiers(patient: {
+    name: string | null;
+    abhaNumber: string | null;
+    abhaAddress: string | null;
+    phone: string | null;
+  }): (string | null)[] {
+    return [
+      patient.name ? this.cipher.decrypt(patient.name) : null,
+      patient.abhaNumber ? this.cipher.decrypt(patient.abhaNumber) : null,
+      patient.abhaAddress,
+      patient.phone,
+    ];
+  }
+
+  /** Restores any placeholder the ai service echoed back into `structured` — only string leaf
+   * values can carry a placeholder (numbers/booleans/null never do), so those are the only
+   * ones touched. */
+  private restoreStructured(sessionId: string, structured: SummariseStructured): SummariseStructured {
+    const restoreLeaf = (leaf: SummaryLeaf | null): SummaryLeaf | null =>
+      leaf && typeof leaf.value === "string" ? { ...leaf, value: this.deid.restore(sessionId, leaf.value) } : leaf;
+    return {
+      ...structured,
+      chief_complaint: restoreLeaf(structured.chief_complaint),
+      history_of_present_illness: Object.fromEntries(
+        Object.entries(structured.history_of_present_illness ?? {}).map(([k, v]) => [k, restoreLeaf(v)!]),
+      ),
+    };
+  }
 
   async create(publicWebUrl: string) {
     const patient = await this.prisma.patient.create({ data: {} });
@@ -154,6 +198,82 @@ export class SessionsService {
         scopes: body.scopes,
         audioUri: body.audio_uri ?? null,
       },
+    });
+  }
+
+  /** Revokes exactly the requested scopes, at scope granularity, not row granularity — a single
+   * `POST /consent` call can bundle several scopes onto one row, and revoking one of them must
+   * not silently revoke the others it happened to be granted alongside. For each live row that
+   * overlaps the requested scopes: if every one of its scopes is being revoked, the row itself
+   * is marked `revokedAt` (a recorded event, never a deletion — docs/09-security-dpdp.md; full
+   * erasure is the separate `purge()` path below). If only some of its scopes are being
+   * revoked, the row is split: it keeps its still-live scopes, and a new row — already
+   * `revokedAt` — is inserted carrying just the revoked ones, so `getConsentResource`'s
+   * `category` still shows a revoked scope was once granted. Revoking an already-revoked or
+   * never-granted scope is a no-op, not an error — idempotent by design. */
+  async revokeConsent(sessionId: string, scopes: string[]) {
+    await this.findSessionOrThrow(sessionId);
+    const requested = new Set(scopes);
+    const liveRows = await this.prisma.consent.findMany({
+      where: { sessionId, revokedAt: null, scopes: { hasSome: scopes } },
+    });
+
+    const now = new Date();
+    for (const row of liveRows) {
+      const toRevoke = row.scopes.filter((s) => requested.has(s));
+      const toKeep = row.scopes.filter((s) => !requested.has(s));
+      if (toKeep.length === 0) {
+        await this.prisma.consent.update({ where: { id: row.id }, data: { revokedAt: now } });
+      } else {
+        await this.prisma.$transaction([
+          this.prisma.consent.update({ where: { id: row.id }, data: { scopes: toKeep } }),
+          this.prisma.consent.create({
+            data: {
+              patientId: row.patientId,
+              sessionId,
+              scopes: toRevoke,
+              grantedAt: row.grantedAt,
+              revokedAt: now,
+            },
+          }),
+        ]);
+      }
+    }
+    sessionLogger(sessionId).info({ scopes }, "consent scope(s) revoked");
+  }
+
+  /** True only if a non-revoked consent row for this session grants `scope` — the one real
+   * behavioural consequence of revocation today (docs/09: "refusing a scope degrades
+   * gracefully"). Callers must never gate a feature on the session having *any* consent row;
+   * they must check the specific scope they're about to act on. */
+  async hasLiveConsentScope(sessionId: string, scope: string): Promise<boolean> {
+    const count = await this.prisma.consent.count({
+      where: { sessionId, revokedAt: null, scopes: { has: scope } },
+    });
+    return count > 0;
+  }
+
+  /** Assembles a FHIR Consent resource from every consent row ever recorded for this session —
+   * `category` lists every scope ever seen (granted or revoked), `provision.code` only the
+   * scopes still live, so a revoked scope stays visible on the resource rather than vanishing
+   * from the record (docs/14-features.md P1 "FHIR Consent resource"). */
+  async getConsentResource(sessionId: string) {
+    const session = await this.findSessionOrThrow(sessionId);
+    const visit = await this.prisma.visit.findUniqueOrThrow({ where: { id: session.visitId } });
+    const rows = await this.prisma.consent.findMany({ where: { sessionId }, orderBy: { grantedAt: "asc" } });
+    if (rows.length === 0) {
+      throw new AppException(404, "no_consent_recorded", `Session '${sessionId}' has no recorded consent.`);
+    }
+    const allScopes = [...new Set(rows.flatMap((r) => r.scopes))];
+    const grantedScopes = [...new Set(rows.filter((r) => r.revokedAt === null).flatMap((r) => r.scopes))];
+    const audioUri = rows.find((r) => r.audioUri)?.audioUri ?? null;
+    return buildConsent({
+      id: `consent-${sessionId}`,
+      patientRef: urnReference(visit.patientId),
+      grantedScopes,
+      allScopes,
+      grantedAt: rows[0].grantedAt.toISOString(),
+      audioUri,
     });
   }
 
@@ -313,13 +433,21 @@ export class SessionsService {
     const session = await this.findSessionOrThrow(sessionId);
     const state = parseSessionState(session.state);
 
+    const visit = await this.prisma.visit.findUniqueOrThrow({ where: { id: session.visitId } });
+    const patient = await this.prisma.patient.findUniqueOrThrow({ where: { id: visit.patientId } });
+    const identifiers = this.decryptPatientIdentifiers(patient);
+
     const answerRows = await this.prisma.answer.findMany({
       where: { sessionId },
       orderBy: { answeredAt: "asc" },
     });
+    // De-identification proxy (docs/09-security-dpdp.md): every free-text answer value is
+    // redacted before it crosses the process boundary to the ai service, which may be a
+    // hosted model call depending on that service's own LLM_PROVIDER — the gateway can't see
+    // inside that boundary, so it strips unconditionally as defense in depth.
     const summariseAnswers: SummariseAnswer[] = answerRows.map((a) => ({
       slot_id: a.slotId,
-      value: a.value,
+      value: typeof a.value === "string" ? this.deid.redact(sessionId, identifiers, a.value) : a.value,
       input_mode: a.inputMode,
       confidence: a.confidence,
       audio_uri: a.audioUri,
@@ -331,9 +459,9 @@ export class SessionsService {
     let renderedLocal: string | null;
     try {
       const result = await this.aiService.summarise(sessionId, state.module_id, session.language, summariseAnswers);
-      structured = result.structured;
-      renderedEn = result.rendered_en;
-      renderedLocal = result.rendered_local;
+      structured = this.restoreStructured(sessionId, result.structured);
+      renderedEn = this.deid.restore(sessionId, result.rendered_en);
+      renderedLocal = result.rendered_local ? this.deid.restore(sessionId, result.rendered_local) : result.rendered_local;
       sessionLogger(sessionId).info("summary generated via ai service");
     } catch (err) {
       if (!(err instanceof AiServiceUnavailable)) throw err;
@@ -373,8 +501,13 @@ export class SessionsService {
     return { summary_id: summary.id };
   }
 
-  async purge(sessionId: string) {
-    const session = await this.findSessionOrThrow(sessionId);
+  async purge(
+    sessionId: string,
+    options: { actorRole?: string; reason?: string } = {},
+  ) {
+    const actorRole = options.actorRole ?? "patient";
+    const reason = options.reason ?? "patient-initiated withdrawal";
+    await this.findSessionOrThrow(sessionId);
     await this.prisma.$transaction([
       this.prisma.redFlag.deleteMany({ where: { sessionId } }),
       this.prisma.answer.deleteMany({ where: { sessionId } }),
@@ -388,12 +521,29 @@ export class SessionsService {
           action: "session.withdraw",
           resource: "intake_session",
           resourceId: sessionId,
-          actorRole: "patient",
-          reason: "patient-initiated withdrawal",
+          actorRole,
+          reason,
         },
       }),
     ]);
-    sessionLogger(sessionId).info("session purged");
+    sessionLogger(sessionId).info({ reason }, "session purged");
+  }
+
+  /** docs/09-security-dpdp.md "session data expires" — `IntakeSession.expiresAt` is set at
+   * creation but nothing previously acted on it. Called on a schedule (see
+   * SessionCleanupScheduler) rather than lazily on read, so a session actually disappears at
+   * its TTL instead of only appearing to on the next unrelated request. Reuses `purge()`'s
+   * transaction rather than duplicating it — TTL expiry is erasure, same as patient withdrawal,
+   * just a different actor and reason on the audit row. */
+  async purgeExpiredSessions(): Promise<number> {
+    const expired = await this.prisma.intakeSession.findMany({
+      where: { expiresAt: { lt: new Date() }, status: { not: "withdrawn" } },
+      select: { id: true },
+    });
+    for (const { id } of expired) {
+      await this.purge(id, { actorRole: "system", reason: "session TTL expired" });
+    }
+    return expired.length;
   }
 
   // ---------------------------------------------------------------------------------------

@@ -6,6 +6,8 @@ from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
+from ..types import UNSET, Unset
+
 T = TypeVar("T", bound="TranscribeBody")
 
 
@@ -16,11 +18,15 @@ class TranscribeBody:
         audio_ref (str):
         language (str): BCP-47 language tag
         streaming (bool):
+        retain_audio (bool | Unset): docs/09-security-dpdp.md: raw audio is deleted after transcription unless the
+            patient opted into provenance playback. Defaults to false (delete).
+             Default: False.
     """
 
     audio_ref: str
     language: str
     streaming: bool
+    retain_audio: bool | Unset = False
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
@@ -29,6 +35,8 @@ class TranscribeBody:
         language = self.language
 
         streaming = self.streaming
+
+        retain_audio = self.retain_audio
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
@@ -39,6 +47,8 @@ class TranscribeBody:
                 "streaming": streaming,
             }
         )
+        if retain_audio is not UNSET:
+            field_dict["retain_audio"] = retain_audio
 
         return field_dict
 
@@ -51,10 +61,13 @@ class TranscribeBody:
 
         streaming = d.pop("streaming")
 
+        retain_audio = d.pop("retain_audio", UNSET)
+
         transcribe_body = cls(
             audio_ref=audio_ref,
             language=language,
             streaming=streaming,
+            retain_audio=retain_audio,
         )
 
         transcribe_body.additional_properties = d
