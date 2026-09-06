@@ -1,0 +1,157 @@
+id: cough_breathlessness
+label: Cough and breathlessness
+framework: OLDCARTS
+description: >
+  Respiratory history for cough and/or breathlessness. Red flags tuned for airway
+  compromise, TB suspicion and cardiac causes of breathlessness.
+source: >
+  OLDCARTS history framework. Red-flag criteria to be reviewed by a clinician before
+  merge — record who, and when.
+
+triggers:
+  - cough
+  - breathlessness
+  - shortness of breath
+  - khaansi
+  - saans phoolna
+  - खांसी
+  - सांस फूलना
+  - இருமல்
+  - কাশি
+  - can't breathe
+
+slots:
+  - id: duration
+    type: duration
+    required: true
+    input: [voice, duration]
+    prompt:
+      en: How long have you had the cough or breathlessness?
+      hi: खांसी या सांस फूलना कब से है?
+
+  - id: cough_type
+    type: enum
+    required: true
+    input: [voice, chips]
+    options:
+      - { value: dry, label: { en: Dry cough, hi: सूखी खांसी } }
+      - { value: productive, label: { en: "Cough with phlegm", hi: "बलगम वाली खांसी" } }
+      - { value: none, label: { en: "No cough, just breathlessness", hi: "खांसी नहीं, सिर्फ सांस फूलना" } }
+    prompt:
+      en: Is it a dry cough, or do you cough up phlegm?
+      hi: क्या यह सूखी खांसी है, या बलगम भी आता है?
+
+  - id: sputum_color
+    type: enum
+    required: false
+    input: [voice, chips]
+    ask_if: "cough_type == 'productive'"
+    options:
+      - { value: clear, label: { en: Clear or white, hi: साफ या सफेद } }
+      - { value: yellow_green, label: { en: Yellow or green, hi: पीला या हरा } }
+      - { value: blood_tinged, label: { en: "Blood in it", hi: "खून आता है" } }
+    prompt:
+      en: What colour is the phlegm?
+      hi: बलगम का रंग कैसा है?
+
+  - id: breathlessness_severity
+    type: number
+    required: true
+    input: [voice, facescale]
+    range: { min: 0, max: 4 }
+    prompt:
+      en: >
+        How breathless are you? 0 is not at all, 4 is breathless even at rest.
+      hi: सांस कितनी फूलती है? 0 का मतलब बिल्कुल नहीं, 4 का मतलब आराम करते समय भी।
+
+  - id: breathlessness_trigger
+    type: enum
+    required: true
+    input: [voice, chips]
+    options:
+      - { value: rest, label: { en: "Even at rest", hi: "आराम में भी" } }
+      - { value: walking, label: { en: Walking on level ground, hi: सीधा चलने पर } }
+      - { value: exertion, label: { en: "Climbing stairs or hurrying", hi: "सीढ़ी चढ़ने पर" } }
+      - { value: none, label: { en: "Not breathless", hi: "सांस नहीं फूलती" } }
+    prompt:
+      en: When does the breathlessness happen?
+      hi: सांस कब फूलती है?
+
+  - id: associated
+    type: enum_multi
+    required: true
+    input: [voice, multi]
+    options:
+      - { value: hemoptysis, label: { en: "Coughing up blood", hi: "खांसी में खून" } }
+      - { value: chest_pain, label: { en: Chest pain, hi: सीने में दर्द } }
+      - { value: fever, label: { en: Fever, hi: बुखार } }
+      - { value: weight_loss, label: { en: "Weight loss", hi: "वज़न कम होना" } }
+      - { value: night_sweats, label: { en: "Night sweats", hi: "रात में पसीना" } }
+      - { value: leg_swelling, label: { en: "Leg swelling", hi: "पैरों में सूजन" } }
+      - { value: wheeze, label: { en: "Wheezing / whistling sound", hi: "सांस में सीटी जैसी आवाज़" } }
+      - { value: none, label: { en: None of these, hi: इनमें से कोई नहीं } }
+    prompt:
+      en: Along with this, do you have any of these?
+      hi: इसके साथ इनमें से कुछ है?
+
+  - id: smoking_status
+    type: enum
+    required: false
+    input: [voice, chips]
+    options:
+      - { value: never, label: { en: Never smoked, hi: कभी नहीं पी } }
+      - { value: former, label: { en: Used to smoke, hi: पहले पीता/पीती था/थी } }
+      - { value: current, label: { en: Currently smokes, hi: अभी पीता/पीती है } }
+    prompt:
+      en: Do you smoke, or have you smoked before?
+      hi: क्या आप धूम्रपान करते हैं, या पहले करते थे?
+
+  - id: tb_contact
+    type: boolean
+    required: false
+    input: [voice, chips]
+    prompt:
+      en: Has anyone at home had tuberculosis (TB)?
+      hi: क्या घर में किसी को टीबी (क्षय रोग) हुआ है?
+
+red_flags:
+  - id: hemoptysis
+    when: "'hemoptysis' in associated or sputum_color == 'blood_tinged'"
+    action: escalate
+    severity: 1
+    rationale: Coughing up blood needs urgent evaluation — TB, malignancy or severe infection.
+    speak:
+      en: Please stay here — a nurse is coming to you now.
+      hi: कृपया यहीं रुकें, नर्स अभी आ रही हैं।
+
+  - id: breathless_at_rest
+    when: "breathlessness_trigger == 'rest' or breathlessness_severity >= 3"
+    action: escalate
+    severity: 1
+    rationale: Breathlessness at rest or severe on the mMRC-style scale needs immediate triage.
+    speak:
+      en: Please stay here — a nurse is coming to you now.
+      hi: कृपया यहीं रुकें, नर्स अभी आ रही हैं।
+
+  - id: cardiac_pattern
+    when: "'chest_pain' in associated and 'leg_swelling' in associated"
+    action: escalate
+    severity: 1
+    rationale: Breathlessness with chest pain and leg swelling suggests a cardiac cause — urgent review.
+    speak:
+      en: Please stay here — a nurse is coming to you now.
+      hi: कृपया यहीं रुकें, नर्स अभी आ रही हैं।
+
+  - id: possible_tb
+    when: "tb_contact and duration in ['2_weeks','1_month','longer']"
+    action: flag
+    severity: 2
+    rationale: >
+      Prolonged cough with a TB contact history needs workup per national TB programme
+      guidance — sputum test, chest X-ray.
+
+  - id: constitutional_symptoms
+    when: "'weight_loss' in associated and 'night_sweats' in associated"
+    action: flag
+    severity: 2
+    rationale: Weight loss with night sweats alongside respiratory symptoms needs TB/malignancy workup.

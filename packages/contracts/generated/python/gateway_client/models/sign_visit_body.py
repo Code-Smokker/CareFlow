@@ -6,34 +6,43 @@ from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
-T = TypeVar("T", bound="SummariseResponse200Structured")
+T = TypeVar("T", bound="SignVisitBody")
 
 
 @_attrs_define
-class SummariseResponse200Structured:
-    """Keys: chief_complaint, history_of_present_illness, past_history, drugs_and_allergy, family_history,
-    personal_history, review_of_systems, prior_investigations (docs/14-features.md's standard clinical order). Sections
-    with no data yet (nothing upstream of HPI is built) are null/[], never fabricated. Every leaf value is a
-    SummaryField-shaped object: { value, source, confidence, ref, low_confidence } — ref is the audio offset in ms
-    (voice answers) or the slot_id (everything else); low confidence is marked via the flag, the value is never dropped.
-
+class SignVisitBody:
+    """
+    Attributes:
+        signed_by (str):
     """
 
+    signed_by: str
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
+        signed_by = self.signed_by
+
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
+        field_dict.update(
+            {
+                "signed_by": signed_by,
+            }
+        )
 
         return field_dict
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        summarise_response_200_structured = cls()
+        signed_by = d.pop("signed_by")
 
-        summarise_response_200_structured.additional_properties = d
-        return summarise_response_200_structured
+        sign_visit_body = cls(
+            signed_by=signed_by,
+        )
+
+        sign_visit_body.additional_properties = d
+        return sign_visit_body
 
     @property
     def additional_keys(self) -> list[str]:

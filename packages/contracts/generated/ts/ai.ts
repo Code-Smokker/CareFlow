@@ -159,6 +159,7 @@ export interface components {
             confidence: number;
             /** Format: uri */
             audio_uri?: string | null;
+            audio_offset_ms?: number | null;
         };
     };
     responses: {
@@ -330,6 +331,13 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": {
+                    /** @description Which packages/ontology module the answers came from — needed to render slot order and labels. Omit if truly unknown; the chief_complaint answer's value is tried first as a fallback. */
+                    module_id?: string | null;
+                    /**
+                     * @description Language to render rendered_local in (BCP-47, e.g. "hi").
+                     * @default en
+                     */
+                    language?: string;
                     answers: components["schemas"]["Answer"][];
                     extractions: {
                         [key: string]: unknown;
@@ -345,6 +353,7 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
+                        /** @description Keys: chief_complaint, history_of_present_illness, past_history, drugs_and_allergy, family_history, personal_history, review_of_systems, prior_investigations (docs/14-features.md's standard clinical order). Sections with no data yet (nothing upstream of HPI is built) are null/[], never fabricated. Every leaf value is a SummaryField-shaped object: { value, source, confidence, ref, low_confidence } — ref is the audio offset in ms (voice answers) or the slot_id (everything else); low confidence is marked via the flag, the value is never dropped. */
                         structured: {
                             [key: string]: unknown;
                         };

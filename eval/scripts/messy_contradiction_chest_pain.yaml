@@ -1,0 +1,21 @@
+id: messy_contradiction_chest_pain
+module_id: chest_pain
+kind: messy
+description: >
+  Patient contradicts themselves about severity and onset within the same turn — tests
+  whether /fill-slot resolves to the corrected (later) value rather than the first-mentioned
+  one, or honestly flags needs_clarification instead of guessing. No escalation expected from
+  these two slots alone.
+reviewer: >
+  Not clinician-reviewed. Synthetic fixture authored for this eval-harness skeleton pass —
+  see docs/12-eval-plan.md's "deliberately messy" category.
+utterances:
+  - slot_id: severity
+    utterance: "it's like a 3 out of 10... actually no, thinking about it more it's really more like a 7"
+    slot_schema: { type: number, minimum: 0, maximum: 10 }
+    expected_value: 7
+  - slot_id: onset
+    utterance: "it came on slowly over the day, well actually now that I think about it, it was pretty sudden"
+    slot_schema: { type: string, enum: [sudden, gradual] }
+    expected_value: sudden
+expected_red_flags: []

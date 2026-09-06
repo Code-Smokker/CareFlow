@@ -1,0 +1,40 @@
+id: chest_pain_exertional_angina
+module_id: chest_pain
+kind: red_flag
+description: >
+  Recurrent chest pain brought on by exertion — must fire exertional_angina (flag, severity 2;
+  physician attention, not an immediate escalation). Included deliberately to cover a `flag`
+  action alongside the `escalate` cases the other four red-flag scripts exercise.
+reviewer: >
+  Not clinician-reviewed. Synthetic fixture authored directly from
+  packages/ontology/modules/chest_pain.yaml's own rule definition for this eval-harness
+  skeleton pass — see docs/12-eval-plan.md.
+answers:
+  - slot_id: site
+    value: central_chest
+    input_mode: tap
+  - slot_id: onset
+    value: gradual
+    input_mode: tap
+  - slot_id: duration
+    value: "1_month"
+    input_mode: tap
+  - slot_id: character
+    value: dull
+    input_mode: tap
+  - slot_id: radiation
+    value: none
+    input_mode: tap
+  - slot_id: associated
+    value: [none]
+    input_mode: tap
+  - slot_id: exacerbating
+    value: [exertion]
+    input_mode: tap
+  - slot_id: timing
+    value: recurrent
+    input_mode: tap
+  - slot_id: severity
+    value: 4
+    input_mode: tap
+expected_red_flags: [exertional_angina]

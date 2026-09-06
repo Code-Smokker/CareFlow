@@ -318,7 +318,10 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Physician sign-off; assembles the FHIR bundle (Setu) */
+        /**
+         * Physician sign-off; assembles the FHIR bundle (Setu)
+         * @description No RBAC/auth exists yet (Day 4), so `signed_by` is a plain identifier passed by the caller rather than read from a session — additive until real auth lands.
+         */
         post: operations["signVisit"];
         delete?: never;
         options?: never;
@@ -498,6 +501,8 @@ export interface components {
             } | null;
             /** @default false */
             physician_edited: boolean;
+            /** @description Never drop a low-confidence field, never guess — the UI demotes it, it doesn't hide it (CLAUDE.md rule 4, docs/05-interview-engine.md). */
+            low_confidence: boolean;
         };
         VisitSummary: {
             visit_id: string;
@@ -1043,7 +1048,13 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": {
+                    signed_by: string;
+                };
+            };
+        };
         responses: {
             /** @description Signed */
             200: {

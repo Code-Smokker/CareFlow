@@ -1,5 +1,5 @@
 """Loads packages/ontology/modules/*.yaml once and keeps them in memory. Mirrors
-services/gateway/src/ontology/ontology.service.py's loadModules — same source YAML, two
+services/gateway/src/ontology/ontology.service.ts's loadModules — same source YAML, two
 independent loaders, one per service."""
 
 from __future__ import annotations
@@ -24,7 +24,9 @@ class UnknownModuleError(Exception):
 def _load_all() -> dict[str, OntologyModule]:
     modules: dict[str, OntologyModule] = {}
     directory: Path = settings.ontology_modules_path
-    for path in sorted(directory.glob("*.yaml")) + sorted(directory.glob("*.yml")):
+    # **/*.yaml (recursive) so modules/ayush/*.yaml is picked up too, matching
+    # packages/ontology/scripts/validate.py's own glob.
+    for path in sorted(directory.glob("**/*.yaml")) + sorted(directory.glob("**/*.yml")):
         raw = yaml.safe_load(path.read_text(encoding="utf-8"))
         try:
             module = OntologyModule.model_validate(raw)

@@ -1,7 +1,13 @@
 import { randomUUID } from "node:crypto";
 import { Injectable } from "@nestjs/common";
-import type { IntakeSession } from "@prisma/client";
-import { AiServiceClient, AiServiceUnavailable } from "../ai/ai-service.client";
+import type { Answer, IntakeSession } from "@prisma/client";
+import {
+  AiServiceClient,
+  AiServiceUnavailable,
+  type SummariseAnswer,
+  type SummaryLeaf,
+  type SummariseStructured,
+} from "../ai/ai-service.client";
 import { AppException } from "../common/app-exception";
 import { generateResumeToken, hashResumeToken } from "../common/crypto";
 import { sessionLogger } from "../common/logger";
@@ -288,15 +294,47 @@ export class SessionsService {
     const session = await this.findSessionOrThrow(sessionId);
     const state = parseSessionState(session.state);
 
+    const answerRows = await this.prisma.answer.findMany({
+      where: { sessionId },
+      orderBy: { answeredAt: "asc" },
+    });
+    const summariseAnswers: SummariseAnswer[] = answerRows.map((a) => ({
+      slot_id: a.slotId,
+      value: a.value,
+      input_mode: a.inputMode,
+      confidence: a.confidence,
+      audio_uri: a.audioUri,
+      audio_offset_ms: a.audioOffsetMs,
+    }));
+
+    let structured: SummariseStructured;
+    let renderedEn: string;
+    let renderedLocal: string | null;
+    try {
+      const result = await this.aiService.summarise(sessionId, state.module_id, session.language, summariseAnswers);
+      structured = result.structured;
+      renderedEn = result.rendered_en;
+      renderedLocal = result.rendered_local;
+      sessionLogger(sessionId).info("summary generated via ai service");
+    } catch (err) {
+      if (!(err instanceof AiServiceUnavailable)) throw err;
+      sessionLogger(sessionId).warn(
+        { error: err.message },
+        "ai service unavailable, building summary from the local ontology walk",
+      );
+      // Same leaf shape the ai service would have produced (services/ai/app/summary/build.py)
+      // — GET/PATCH/sign downstream don't need to know which path built this.
+      structured = this.buildFallbackStructured(state.module_id, answerRows);
+      renderedEn = "Draft summary — ai service unavailable, generated locally.";
+      renderedLocal = null;
+    }
+
     const summary = await this.prisma.summary.create({
       data: {
         visitId: session.visitId,
-        structured: {
-          module_id: state.module_id,
-          slots: state.filled,
-        } as never,
-        renderedEn: "Draft summary — awaiting AI summarisation.",
-        renderedLocal: null,
+        structured: structured as never,
+        renderedEn,
+        renderedLocal,
         status: "draft",
       },
     });
@@ -497,6 +535,62 @@ export class SessionsService {
         label: o.label[language] ?? o.label.en,
         icon: o.icon ?? null,
       })),
+    };
+  }
+
+  private static readonly LOW_CONFIDENCE_THRESHOLD = 0.6;
+
+  /** Mirrors services/ai/app/summary/build.py's leaf-shaping exactly (same threshold, same
+   * "tap defaults to full confidence, voice/ocr defaults conservative" rule, same ref
+   * convention) — used only when the ai service is unreachable at /complete time, so GET/PATCH
+   * /visits/:id/summary never need to know which path built a given Summary row. */
+  private buildFallbackStructured(moduleId: string | null, answerRows: Answer[]): SummariseStructured {
+    const effectiveConfidence = (inputMode: string, confidence: number | null): number =>
+      confidence ?? (["tap", "bodymap", "proxy"].includes(inputMode) ? 1 : 0.5);
+    const ref = (inputMode: string, slotId: string, audioOffsetMs: number | null): string =>
+      inputMode === "voice" && audioOffsetMs !== null ? String(audioOffsetMs) : slotId;
+    const toLeaf = (label: string, value: unknown, row: Answer): SummaryLeaf => {
+      const confidence = effectiveConfidence(row.inputMode, row.confidence);
+      return {
+        label,
+        value,
+        source: row.inputMode as SummaryLeaf["source"],
+        confidence,
+        ref: ref(row.inputMode, row.slotId, row.audioOffsetMs),
+        low_confidence: confidence < SessionsService.LOW_CONFIDENCE_THRESHOLD,
+      };
+    };
+
+    let module_: ReturnType<OntologyService["getModule"]> | null = null;
+    if (moduleId) {
+      try {
+        module_ = this.ontology.getModule(moduleId);
+      } catch {
+        module_ = null;
+      }
+    }
+
+    const chiefComplaintRow = answerRows.find((a) => a.slotId === "chief_complaint");
+    const chiefComplaint = chiefComplaintRow
+      ? toLeaf("Chief complaint", module_ ? module_.label : chiefComplaintRow.value, chiefComplaintRow)
+      : null;
+
+    const historyOfPresentIllness: Record<string, SummaryLeaf> = {};
+    for (const row of answerRows) {
+      if (row.slotId === "chief_complaint") continue;
+      const slot = module_?.slots.find((s) => s.id === row.slotId);
+      historyOfPresentIllness[row.slotId] = toLeaf(slot?.prompt.en ?? row.slotId, row.value, row);
+    }
+
+    return {
+      chief_complaint: chiefComplaint,
+      history_of_present_illness: historyOfPresentIllness,
+      past_history: null,
+      drugs_and_allergy: null,
+      family_history: null,
+      personal_history: null,
+      review_of_systems: null,
+      prior_investigations: [],
     };
   }
 

@@ -38,6 +38,7 @@ from .session import Session
 from .session_status import SessionStatus
 from .set_session_language_body import SetSessionLanguageBody
 from .sex import Sex
+from .sign_visit_body import SignVisitBody
 from .sign_visit_response_200 import SignVisitResponse200
 from .submit_answer_response_200 import SubmitAnswerResponse200
 from .summary_field import SummaryField
@@ -91,6 +92,7 @@ __all__ = (
     "SessionStatus",
     "SetSessionLanguageBody",
     "Sex",
+    "SignVisitBody",
     "SignVisitResponse200",
     "SubmitAnswerResponse200",
     "SummaryField",

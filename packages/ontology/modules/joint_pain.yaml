@@ -1,0 +1,157 @@
+id: joint_pain
+label: Joint pain
+framework: SOCRATES
+description: >
+  Adaptive history for joint pain. Red flags tuned for septic arthritis and inflammatory
+  arthritis needing prompt workup. Relevant to the AYUSH path too — joint pain with morning
+  stiffness is a common presenting complaint mapped to Amavata (see docs/07-ayush-terminology.md);
+  that dual coding happens in the terminology service, not here.
+source: >
+  SOCRATES pain assessment framework, adapted for joint/musculoskeletal history with standard
+  inflammatory-vs-mechanical differentiators (morning stiffness duration, symmetry, pattern).
+  Red-flag criteria reviewed by a clinician before merge — record who, and when.
+
+triggers:
+  - joint pain
+  - jodo mein dard
+  - जोड़ों में दर्द
+  - मुझे जोड़ों में दर्द है
+  - மூட்டு வலி
+  - জয়েন্টে ব্যথা
+  - knee pain
+  - back pain
+
+slots:
+  - id: site
+    type: region
+    required: true
+    input: [voice, bodymap]
+    prompt:
+      en: Which joint or joints hurt? You can tell me, or touch the place on the body.
+      hi: कौन सा जोड़ दर्द कर रहा है? आप बता सकते हैं, या शरीर पर वह जगह छू सकते हैं।
+
+  - id: pattern
+    type: enum
+    required: true
+    input: [voice, chips]
+    options:
+      - { value: single_joint, label: { en: "One joint", hi: "एक जोड़" } }
+      - { value: few_joints, label: { en: "A few joints", hi: "कुछ जोड़" } }
+      - { value: many_joints, label: { en: "Many joints", hi: "कई जोड़" } }
+    prompt:
+      en: Is it one joint, a few, or many?
+      hi: क्या यह एक जोड़ है, कुछ हैं, या कई हैं?
+
+  - id: onset
+    type: enum
+    required: true
+    input: [voice, chips]
+    options:
+      - { value: sudden, label: { en: Suddenly, hi: अचानक }, icon: bolt }
+      - { value: gradual, label: { en: Slowly, hi: धीरे-धीरे }, icon: wave }
+    prompt:
+      en: Did the pain start suddenly, or come on slowly?
+      hi: क्या दर्द अचानक शुरू हुआ, या धीरे-धीरे बढ़ा?
+
+  - id: duration
+    type: duration
+    required: true
+    input: [voice, duration]
+    prompt:
+      en: How long have you had this pain?
+      hi: यह दर्द कब से है?
+
+  - id: morning_stiffness_duration
+    type: enum
+    required: true
+    input: [voice, chips]
+    options:
+      - { value: none, label: { en: "No stiffness", hi: "अकड़न नहीं" } }
+      - { value: under_30min, label: { en: "Under 30 minutes", hi: "30 मिनट से कम" } }
+      - { value: "30_60min", label: { en: "30 minutes to an hour", hi: "30 मिनट से 1 घंटा" } }
+      - { value: over_1hr, label: { en: "Over an hour", hi: "1 घंटे से ज़्यादा" } }
+    prompt:
+      en: When you wake up, how long does the joint feel stiff before it eases?
+      hi: सुबह उठने पर जोड़ कितनी देर अकड़ा रहता है, फिर ठीक होता है?
+
+  - id: symmetry
+    type: boolean
+    required: false
+    input: [voice, chips]
+    prompt:
+      en: Does it affect both sides of the body equally?
+      hi: क्या यह शरीर के दोनों तरफ़ बराबर होता है?
+
+  - id: associated
+    type: enum_multi
+    required: true
+    input: [voice, multi]
+    options:
+      - { value: swelling, label: { en: Swelling, hi: सूजन } }
+      - { value: redness, label: { en: Redness, hi: लालिमा } }
+      - { value: warmth, label: { en: "Warm to touch", hi: "छूने पर गर्म" } }
+      - { value: fever, label: { en: Fever, hi: बुखार } }
+      - { value: rash, label: { en: Rash, hi: चकत्ते } }
+      - { value: weight_loss, label: { en: "Weight loss", hi: "वज़न कम होना" } }
+      - { value: none, label: { en: None of these, hi: इनमें से कोई नहीं } }
+    prompt:
+      en: Along with the pain, do you have any of these?
+      hi: दर्द के साथ इनमें से कुछ है?
+
+  - id: aggravating
+    type: enum_multi
+    required: false
+    input: [voice, multi]
+    options:
+      - { value: movement, label: { en: Movement, hi: हिलने-डुलने पर } }
+      - { value: rest, label: { en: "Rest / after sitting", hi: "आराम करने पर" } }
+      - { value: weight_bearing, label: { en: "Standing or walking", hi: "खड़े होने या चलने पर" } }
+      - { value: none, label: { en: Nothing in particular, hi: कुछ खास नहीं } }
+    prompt:
+      en: Does anything make it worse?
+      hi: किस चीज़ से दर्द बढ़ता है?
+
+  - id: severity
+    type: number
+    required: true
+    input: [voice, facescale]
+    range: { min: 0, max: 10 }
+    prompt:
+      en: How bad is the pain right now? Show me on the faces.
+      hi: अभी दर्द कितना है? चेहरों पर दिखाइए।
+
+  - id: trauma_history
+    type: boolean
+    required: false
+    input: [voice, chips]
+    prompt:
+      en: Did this start after a fall or an injury?
+      hi: क्या यह गिरने या चोट लगने के बाद शुरू हुआ?
+
+red_flags:
+  - id: septic_arthritis_suspected
+    when: "'swelling' in associated and 'warmth' in associated and 'fever' in associated"
+    action: escalate
+    severity: 1
+    rationale: A hot, swollen joint with fever raises concern for septic arthritis — urgent evaluation.
+    speak:
+      en: Please stay here — a nurse is coming to you now.
+      hi: कृपया यहीं रुकें, नर्स अभी आ रही हैं।
+
+  - id: trauma_severe
+    when: "trauma_history and severity >= 8"
+    action: flag
+    severity: 2
+    rationale: Significant pain following trauma — consider fracture, needs imaging.
+
+  - id: inflammatory_pattern
+    when: "pattern == 'many_joints' and morning_stiffness_duration == 'over_1hr'"
+    action: flag
+    severity: 2
+    rationale: Polyarticular pain with prolonged morning stiffness suggests an inflammatory arthritis needing workup.
+
+  - id: constitutional_symptoms
+    when: "'weight_loss' in associated and 'fever' in associated"
+    action: flag
+    severity: 2
+    rationale: Weight loss and fever alongside joint pain needs broader systemic workup.

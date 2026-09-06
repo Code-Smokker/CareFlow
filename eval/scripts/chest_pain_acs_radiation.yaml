@@ -1,0 +1,39 @@
+id: chest_pain_acs_radiation
+module_id: chest_pain
+kind: red_flag
+description: >
+  Chest pain radiating to the left arm with sweating — must fire acs_radiation (escalate,
+  severity 1), independent of the severity score.
+reviewer: >
+  Not clinician-reviewed. Synthetic fixture authored directly from
+  packages/ontology/modules/chest_pain.yaml's own rule definition for this eval-harness
+  skeleton pass — see docs/12-eval-plan.md.
+answers:
+  - slot_id: site
+    value: central_chest
+    input_mode: tap
+  - slot_id: onset
+    value: gradual
+    input_mode: tap
+  - slot_id: duration
+    value: "1_hour"
+    input_mode: tap
+  - slot_id: character
+    value: tightness
+    input_mode: tap
+  - slot_id: radiation
+    value: left_arm
+    input_mode: tap
+  - slot_id: associated
+    value: [sweating]
+    input_mode: tap
+  - slot_id: exacerbating
+    value: [rest]
+    input_mode: tap
+  - slot_id: timing
+    value: constant
+    input_mode: tap
+  - slot_id: severity
+    value: 5
+    input_mode: tap
+expected_red_flags: [acs_radiation]

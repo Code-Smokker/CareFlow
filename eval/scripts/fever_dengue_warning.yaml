@@ -1,0 +1,28 @@
+id: fever_dengue_warning
+module_id: fever
+kind: red_flag
+description: >
+  Fever with bleeding gums — must fire the dengue_warning rule (escalate, severity 1).
+reviewer: >
+  Not clinician-reviewed. Synthetic fixture authored directly from packages/ontology/modules/fever.yaml's
+  own rule definition for this eval-harness skeleton pass — see docs/12-eval-plan.md.
+answers:
+  - slot_id: duration
+    value: "2_days"
+    input_mode: tap
+  - slot_id: pattern
+    value: with_chills
+    input_mode: tap
+  - slot_id: measured
+    value: yes_high
+    input_mode: tap
+  - slot_id: associated
+    value: [bleeding]
+    input_mode: tap
+  - slot_id: consciousness
+    value: normal
+    input_mode: tap
+  - slot_id: travel_exposure
+    value: [mosquito]
+    input_mode: tap
+expected_red_flags: [dengue_warning]

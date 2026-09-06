@@ -7,6 +7,7 @@ import { HealthModule } from "./health/health.module";
 import { OntologyModule } from "./ontology/ontology.module";
 import { PrismaModule } from "./prisma/prisma.module";
 import { SessionsModule } from "./sessions/sessions.module";
+import { VisitsModule } from "./visits/visits.module";
 import { WebsocketModule } from "./websocket/websocket.module";
 
 @Module({
@@ -24,6 +25,7 @@ import { WebsocketModule } from "./websocket/websocket.module";
     WebsocketModule,
     HealthModule,
     SessionsModule,
+    VisitsModule,
   ],
 })
 export class AppModule {}

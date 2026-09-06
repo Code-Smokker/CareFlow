@@ -1,0 +1,152 @@
+id: generic
+label: Something else
+framework: OLDCARTS
+description: >
+  Fallback module for a chief complaint that doesn't match one of the five built complaint
+  modules. Walks the full OLDCARTS framework (Onset, Location, Duration, Character, Aggravating/
+  Alleviating, Radiation, Timing, Severity) generically, since the specific complaint isn't
+  known in advance. Conservative, non-specific red flags only — anything more specific belongs
+  in a real complaint module, not here.
+source: >
+  OLDCARTS history framework, applied generically. Not a substitute for building a proper
+  complaint module once a fifth+ common presentation is identified — see docs/11-sprint-plan.md.
+
+triggers:
+  - something else
+  - other problem
+  - kuch aur
+  - कुछ और
+  - मेरी समस्या अलग है
+  - வேறு பிரச்சனை
+  - অন্য সমস্যা
+  - not listed
+
+slots:
+  - id: site
+    type: region
+    required: true
+    input: [voice, bodymap]
+    prompt:
+      en: Where is the problem? You can tell me, or touch the place on the body.
+      hi: समस्या कहाँ है? आप बता सकते हैं, या शरीर पर वह जगह छू सकते हैं।
+
+  - id: onset
+    type: enum
+    required: true
+    input: [voice, chips]
+    options:
+      - { value: sudden, label: { en: Suddenly, hi: अचानक }, icon: bolt }
+      - { value: gradual, label: { en: Slowly, hi: धीरे-धीरे }, icon: wave }
+    prompt:
+      en: Did it start suddenly, or come on slowly?
+      hi: क्या यह अचानक शुरू हुआ, या धीरे-धीरे बढ़ा?
+
+  - id: duration
+    type: duration
+    required: true
+    input: [voice, duration]
+    prompt:
+      en: How long has this been going on?
+      hi: यह कब से है?
+
+  - id: character
+    type: enum
+    required: false
+    input: [voice, chips]
+    options:
+      - { value: dull_ache, label: { en: "Dull ache", hi: "हल्का दर्द" } }
+      - { value: sharp, label: { en: "Sharp", hi: "तेज़ चुभन जैसा" } }
+      - { value: burning, label: { en: Burning, hi: जलन } }
+      - { value: pressure, label: { en: "Heaviness or pressure", hi: "भारीपन या दबाव" } }
+      - { value: other, label: { en: "Something else", hi: "और कुछ" } }
+    prompt:
+      en: What does it feel like?
+      hi: यह कैसा महसूस होता है?
+
+  - id: radiation
+    type: region
+    required: false
+    input: [voice, bodymap]
+    prompt:
+      en: Does it move anywhere else in the body?
+      hi: क्या यह शरीर में कहीं और जाता है?
+
+  - id: aggravating
+    type: enum_multi
+    required: false
+    input: [voice, multi]
+    options:
+      - { value: movement, label: { en: Movement, hi: हिलने-डुलने पर } }
+      - { value: food, label: { en: After food, hi: खाने के बाद } }
+      - { value: rest, label: { en: "Even at rest", hi: "आराम में भी" } }
+      - { value: breathing, label: { en: "Deep breathing", hi: "गहरी सांस लेने पर" } }
+      - { value: none, label: { en: Nothing in particular, hi: कुछ खास नहीं } }
+    prompt:
+      en: Does anything make it worse?
+      hi: किस चीज़ से यह बढ़ता है?
+
+  - id: alleviating
+    type: enum_multi
+    required: false
+    input: [voice, multi]
+    options:
+      - { value: rest, label: { en: Rest, hi: आराम } }
+      - { value: medication, label: { en: Medicine, hi: दवा } }
+      - { value: position, label: { en: "Changing position", hi: "करवट बदलने पर" } }
+      - { value: none, label: { en: Nothing helps, hi: कुछ भी मदद नहीं करता } }
+    prompt:
+      en: Does anything make it better?
+      hi: किस चीज़ से यह बेहतर होता है?
+
+  - id: timing
+    type: enum
+    required: false
+    input: [voice, chips]
+    options:
+      - { value: constant, label: { en: "All the time", hi: "लगातार" } }
+      - { value: recurrent, label: { en: "Comes and goes", hi: "आता-जाता है" } }
+      - { value: first, label: { en: "First time", hi: "पहली बार" } }
+    prompt:
+      en: Is it there all the time, or does it come and go?
+      hi: क्या यह हर समय रहता है या आता-जाता है?
+
+  - id: associated
+    type: enum_multi
+    required: false
+    input: [voice, multi]
+    options:
+      - { value: fever, label: { en: Fever, hi: बुखार } }
+      - { value: nausea, label: { en: "Nausea or vomiting", hi: "जी मिचलाना" } }
+      - { value: weakness, label: { en: Weakness, hi: कमज़ोरी } }
+      - { value: none, label: { en: None of these, hi: इनमें से कोई नहीं } }
+    prompt:
+      en: Along with this, do you have any of these?
+      hi: इसके साथ इनमें से कुछ है?
+
+  - id: severity
+    type: number
+    required: true
+    input: [voice, facescale]
+    range: { min: 0, max: 10 }
+    prompt:
+      en: How bad is it right now? Show me on the faces.
+      hi: अभी यह कितना है? चेहरों पर दिखाइए।
+
+red_flags:
+  - id: sudden_severe_onset
+    when: "onset == 'sudden' and severity >= 8"
+    action: escalate
+    severity: 1
+    rationale: >
+      Sudden-onset severe symptoms of unknown cause warrant prompt clinical review
+      regardless of site — this module doesn't know the complaint specifically enough
+      to rule anything out.
+    speak:
+      en: Please stay here — a nurse is coming to you now.
+      hi: कृपया यहीं रुकें, नर्स अभी आ रही हैं।
+
+  - id: severe_at_rest
+    when: "severity >= 8 and 'rest' in aggravating"
+    action: flag
+    severity: 2
+    rationale: Severe symptoms not relieved by rest need physician attention.

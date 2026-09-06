@@ -1,0 +1,9 @@
+script_id,kind,expected,fired,sensitivity_ok,specificity_ok
+chest_pain_acs_radiation,red_flag,acs_radiation,acs_radiation,True,True
+chest_pain_acs_suspected,red_flag,acs_suspected,acs_suspected,True,True
+chest_pain_exertional_angina,red_flag,exertional_angina,exertional_angina,True,True
+fever_dengue_warning,red_flag,dengue_warning,dengue_warning,True,True
+fever_meningism,red_flag,meningism,meningism,True,True
+messy_codeswitch_fever,messy,,,True,True
+messy_contradiction_chest_pain,messy,,,True,True
+messy_mumbling_fever,messy,,,True,True

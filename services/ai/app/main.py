@@ -17,7 +17,7 @@ log = get_logger()
 from app.config import settings  # noqa: E402
 from app.errors import AppError, app_error_handler, unhandled_error_handler  # noqa: E402
 from app.logging import bind_session  # noqa: E402
-from app.routers import evaluate_flags, fill_slot, health, synthesise, transcribe  # noqa: E402
+from app.routers import evaluate_flags, fill_slot, health, summarise, synthesise, transcribe  # noqa: E402
 
 
 @asynccontextmanager
@@ -37,6 +37,7 @@ app.include_router(health.router)
 app.include_router(transcribe.router)
 app.include_router(fill_slot.router)
 app.include_router(evaluate_flags.router)
+app.include_router(summarise.router)
 app.include_router(synthesise.router)
 
 app.add_exception_handler(AppError, app_error_handler)

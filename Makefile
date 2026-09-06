@@ -42,6 +42,9 @@ test: ## Run all tests
 	pnpm test
 
 eval: ## Run the clinical eval harness and print the metrics table
-	@echo "not built yet — see docs/12-eval-plan.md"
+	@test -d eval/.venv || python3 -m venv eval/.venv
+	@eval/.venv/bin/pip install -q -U pip
+	@eval/.venv/bin/pip install -q -r eval/requirements.txt
+	@eval/.venv/bin/python3 eval/run.py
 
 .PHONY: help setup py-setup up down reset dev lint typecheck test eval

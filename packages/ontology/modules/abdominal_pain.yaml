@@ -1,0 +1,150 @@
+id: abdominal_pain
+label: Abdominal pain
+framework: SOCRATES
+description: >
+  Adaptive history for abdominal pain. Red flags tuned for peritonitis, GI bleeding and
+  hepatobiliary causes.
+source: >
+  SOCRATES pain assessment framework. Red-flag criteria reviewed by a clinician before
+  merge — record who, and when.
+
+triggers:
+  - stomach pain
+  - abdominal pain
+  - pet mein dard
+  - पेट में दर्द
+  - வயிற்று வலி
+  - পেটে ব্যথা
+  - belly pain
+  - tummy ache
+
+slots:
+  - id: site
+    type: region
+    required: true
+    input: [voice, bodymap]
+    prompt:
+      en: Where exactly is the pain? You can tell me, or touch the place on the body.
+      hi: दर्द ठीक कहाँ हो रहा है? आप बता सकते हैं, या शरीर पर वह जगह छू सकते हैं।
+
+  - id: onset
+    type: enum
+    required: true
+    input: [voice, chips]
+    options:
+      - { value: sudden, label: { en: Suddenly, hi: अचानक }, icon: bolt }
+      - { value: gradual, label: { en: Slowly, hi: धीरे-धीरे }, icon: wave }
+    prompt:
+      en: Did the pain start suddenly, or come on slowly?
+      hi: क्या दर्द अचानक शुरू हुआ, या धीरे-धीरे बढ़ा?
+
+  - id: duration
+    type: duration
+    required: true
+    input: [voice, duration]
+    prompt:
+      en: How long have you had this pain?
+      hi: यह दर्द कब से है?
+
+  - id: character
+    type: enum
+    required: true
+    input: [voice, chips]
+    options:
+      - { value: colicky, label: { en: "Comes in waves", hi: "लहरों की तरह आता है" } }
+      - { value: constant_ache, label: { en: "Constant ache", hi: "लगातार दर्द" } }
+      - { value: burning, label: { en: Burning, hi: जलन } }
+      - { value: sharp_stabbing, label: { en: "Sharp or stabbing", hi: "चुभन जैसा" } }
+    prompt:
+      en: What does the pain feel like?
+      hi: दर्द कैसा महसूस होता है?
+
+  - id: radiation
+    type: region
+    required: false
+    input: [voice, bodymap]
+    prompt:
+      en: Does the pain move anywhere else — back, shoulder, groin?
+      hi: क्या दर्द कहीं और जाता है — पीठ, कंधा, कमर के नीचे?
+
+  - id: associated
+    type: enum_multi
+    required: true
+    input: [voice, multi]
+    options:
+      - { value: vomiting, label: { en: Vomiting, hi: उल्टी } }
+      - { value: fever, label: { en: Fever, hi: बुखार } }
+      - { value: blood_in_stool, label: { en: "Blood in stool", hi: "मल में खून" } }
+      - { value: black_stool, label: { en: "Black, tarry stool", hi: "काला मल" } }
+      - { value: jaundice, label: { en: "Yellow eyes or skin", hi: "आंखें या त्वचा पीली" } }
+      - { value: distension, label: { en: "Bloated belly", hi: "पेट फूला हुआ" } }
+      - { value: none, label: { en: None of these, hi: इनमें से कोई नहीं } }
+    prompt:
+      en: Along with the pain, do you have any of these?
+      hi: दर्द के साथ इनमें से कुछ है?
+
+  - id: bowel_habit
+    type: enum
+    required: false
+    input: [voice, chips]
+    options:
+      - { value: normal, label: { en: Normal, hi: सामान्य } }
+      - { value: constipated, label: { en: "Constipated", hi: "कब्ज़" } }
+      - { value: loose, label: { en: "Loose motions", hi: "दस्त" } }
+      - { value: alternating, label: { en: "Alternating", hi: "बदलता रहता है" } }
+    prompt:
+      en: How have your bowel movements been?
+      hi: मल त्याग कैसा रहा है?
+
+  - id: aggravating
+    type: enum_multi
+    required: false
+    input: [voice, multi]
+    options:
+      - { value: food, label: { en: After food, hi: खाने के बाद } }
+      - { value: movement, label: { en: Movement, hi: हिलने-डुलने पर } }
+      - { value: lying_down, label: { en: "Lying down", hi: "लेटने पर" } }
+      - { value: none, label: { en: Nothing in particular, hi: कुछ खास नहीं } }
+    prompt:
+      en: Does anything make it worse?
+      hi: किस चीज़ से दर्द बढ़ता है?
+
+  - id: severity
+    type: number
+    required: true
+    input: [voice, facescale]
+    range: { min: 0, max: 10 }
+    prompt:
+      en: How bad is the pain right now? Show me on the faces.
+      hi: अभी दर्द कितना है? चेहरों पर दिखाइए।
+
+red_flags:
+  - id: gi_bleed
+    when: "'blood_in_stool' in associated or 'black_stool' in associated"
+    action: escalate
+    severity: 1
+    rationale: Signs of GI bleeding with abdominal pain need urgent evaluation.
+    speak:
+      en: Please stay here — a nurse is coming to you now.
+      hi: कृपया यहीं रुकें, नर्स अभी आ रही हैं।
+
+  - id: peritonitis_suspected
+    when: "severity >= 8 and 'distension' in associated"
+    action: escalate
+    severity: 1
+    rationale: Severe pain with abdominal distension may indicate peritonitis or obstruction.
+    speak:
+      en: Please stay here — a nurse is coming to you now.
+      hi: कृपया यहीं रुकें, नर्स अभी आ रही हैं।
+
+  - id: jaundice_flag
+    when: "'jaundice' in associated"
+    action: flag
+    severity: 2
+    rationale: Jaundice with abdominal pain needs hepatobiliary workup.
+
+  - id: persistent_vomiting
+    when: "'vomiting' in associated and duration in ['1_week','2_weeks','1_month','longer']"
+    action: flag
+    severity: 2
+    rationale: Vomiting persisting beyond a week with pain needs further workup for obstruction or other cause.

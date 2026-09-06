@@ -24,6 +24,8 @@ class SummaryField:
         value (Any):
         source (InputMode): How the patient supplied this answer. Maps to answer.source (CLAUDE.md rule 4).
         confidence (float):
+        low_confidence (bool): Never drop a low-confidence field, never guess — the UI demotes it, it doesn't hide it
+            (CLAUDE.md rule 4, docs/05-interview-engine.md).
         audio_offset_ms (int | None | Unset):
         bounding_box (None | SummaryFieldBoundingBoxType0 | Unset):
         physician_edited (bool | Unset):  Default: False.
@@ -33,6 +35,7 @@ class SummaryField:
     value: Any
     source: InputMode
     confidence: float
+    low_confidence: bool
     audio_offset_ms: int | None | Unset = UNSET
     bounding_box: None | SummaryFieldBoundingBoxType0 | Unset = UNSET
     physician_edited: bool | Unset = False
@@ -50,6 +53,8 @@ class SummaryField:
         source = self.source.value
 
         confidence = self.confidence
+
+        low_confidence = self.low_confidence
 
         audio_offset_ms: int | None | Unset
         if isinstance(self.audio_offset_ms, Unset):
@@ -75,6 +80,7 @@ class SummaryField:
                 "value": value,
                 "source": source,
                 "confidence": confidence,
+                "low_confidence": low_confidence,
             }
         )
         if audio_offset_ms is not UNSET:
@@ -100,6 +106,8 @@ class SummaryField:
         source = InputMode(d.pop("source"))
 
         confidence = d.pop("confidence")
+
+        low_confidence = d.pop("low_confidence")
 
         def _parse_audio_offset_ms(data: object) -> int | None | Unset:
             if data is None:
@@ -136,6 +144,7 @@ class SummaryField:
             value=value,
             source=source,
             confidence=confidence,
+            low_confidence=low_confidence,
             audio_offset_ms=audio_offset_ms,
             bounding_box=bounding_box,
             physician_edited=physician_edited,

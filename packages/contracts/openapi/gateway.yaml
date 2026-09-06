@@ -422,6 +422,18 @@ paths:
       operationId: signVisit
       summary: Physician sign-off; assembles the FHIR bundle (Setu)
       tags: [clinician]
+      description: >
+        No RBAC/auth exists yet (Day 4), so `signed_by` is a plain identifier passed by the
+        caller rather than read from a session — additive until real auth lands.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [signed_by]
+              properties:
+                signed_by: { type: string }
       responses:
         "200":
           description: Signed
@@ -711,7 +723,7 @@ components:
 
     SummaryField:
       type: object
-      required: [field_path, value, source, confidence]
+      required: [field_path, value, source, confidence, low_confidence]
       properties:
         field_path: { type: string }
         value: {}
@@ -727,6 +739,11 @@ components:
             width: { type: number }
             height: { type: number }
         physician_edited: { type: boolean, default: false }
+        low_confidence:
+          type: boolean
+          description: >
+            Never drop a low-confidence field, never guess — the UI demotes it, it doesn't
+            hide it (CLAUDE.md rule 4, docs/05-interview-engine.md).
 
     VisitSummary:
       type: object

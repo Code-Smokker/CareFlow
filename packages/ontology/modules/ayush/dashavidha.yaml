@@ -1,0 +1,156 @@
+id: dashavidha
+label: Dashavidha Pariksha
+framework: DASHAVIDHA
+description: >
+  The ten classical Ayurvedic examination axes (Dashavidha Pariksha), captured as typed,
+  report-only fields — docs/07-ayush-terminology.md. This module never computes or asserts a
+  dominant dosha or constitution; it records item-level responses for the vaidya to review and
+  confirm. The word "diagnosis" does not appear anywhere in this file.
+source: >
+  Prakriti and Vikriti items are a condensed, demo-scope proxy over the classical tridosha
+  characteristic domains (a handful of representative items per dosha, not the full instrument)
+  — they are NOT the validated CCRAS Prakriti Assessment Scale (PAS: 91 predictors across 30
+  domains in four traits — physical, physiological, psychological, behavioural; Singh & Ota,
+  "Development of a standardized assessment scale for assessing Prakriti (psychosomatic
+  constitution)", AYU journal) and MUST be replaced with the real PAS instrument (or the CCRAS
+  AYUR-Prakriti web portal SOP, ccras.nic.in) before this is presented as a validated
+  assessment — see docs/07-ayush-terminology.md's verification checklist. The other eight axes
+  (Sara, Samhanana, Pramana, Satmya, Sattva, Ahara Shakti, Vyayama Shakti, Vaya) use the
+  standard pravara/madhyama/avara (excellent/moderate/poor) three-point grading taught in
+  classical Ayurvedic clinical assessment, which is not instrument-specific in the same way.
+
+triggers:
+  - ayush assessment
+  - dashavidha pariksha
+  - ayurveda history
+  - आयुष जांच
+  - दशविध परीक्षा
+
+slots:
+  - id: prakriti_characteristics
+    type: enum_multi
+    required: true
+    input: [voice, multi]
+    prompt:
+      en: >
+        Which of these has generally described you, for most of your life — not just
+        recently?
+      hi: इनमें से कौन सी बातें ज़्यादातर आप पर, पूरी ज़िंदगी में, लागू होती हैं?
+    options:
+      - { value: vata_frame, label: { en: "Thin or light body frame", hi: "पतला या हल्का शरीर" } }
+      - { value: vata_variable, label: { en: "Variable appetite and sleep", hi: "भूख और नींद बदलती रहती है" } }
+      - { value: pitta_sharp, label: { en: "Sharp appetite, warm body", hi: "तेज़ भूख, शरीर गर्म रहता है" } }
+      - { value: pitta_temper, label: { en: "Medium build, quick temper", hi: "मध्यम शरीर, गुस्सा जल्दी आता है" } }
+      - { value: kapha_steady, label: { en: "Steady, heavier build", hi: "स्थिर, भारी शरीर" } }
+      - { value: kapha_calm, label: { en: "Calm nature, slow digestion", hi: "शांत स्वभाव, पाचन धीमा" } }
+    hint:
+      en: This is a condensed set of items, not the full validated instrument. See the module's source note.
+
+  - id: vikriti_symptoms
+    type: enum_multi
+    required: true
+    input: [voice, multi]
+    prompt:
+      en: Right now, do you notice any of these changes from how you usually are?
+      hi: अभी, क्या आपको अपने सामान्य स्वभाव से कुछ बदलाव महसूस होता है?
+    options:
+      - { value: vata_dryness, label: { en: "Dryness, anxiety, irregular sleep", hi: "सूखापन, चिंता, नींद अनियमित" } }
+      - { value: pitta_heat, label: { en: "Burning sensation, irritability", hi: "जलन, चिड़चिड़ापन" } }
+      - { value: kapha_heaviness, label: { en: "Heaviness, sluggishness", hi: "भारीपन, सुस्ती" } }
+      - { value: none, label: { en: "No change from usual", hi: "सामान्य से कोई बदलाव नहीं" } }
+
+  - id: sara
+    type: enum
+    required: true
+    input: [voice, chips]
+    prompt:
+      en: How would you describe your overall vitality, strength and complexion — most of the time?
+      hi: आपकी सामान्य जीवनशक्ति, ताकत और रंगत कैसी रहती है?
+    options:
+      - { value: pravara, label: { en: "Strong / excellent", hi: "उत्तम" } }
+      - { value: madhyama, label: { en: "Moderate", hi: "मध्यम" } }
+      - { value: avara, label: { en: "Weak / poor", hi: "कमज़ोर" } }
+
+  - id: samhanana
+    type: enum
+    required: true
+    input: [voice, chips]
+    prompt:
+      en: How would you describe the firmness of your build — muscles and joints?
+      hi: आपकी शारीरिक बनावट कितनी मज़बूत है — मांसपेशियां और जोड़?
+    options:
+      - { value: pravara, label: { en: "Well-compact / firm", hi: "मज़बूत" } }
+      - { value: madhyama, label: { en: "Moderate", hi: "मध्यम" } }
+      - { value: avara, label: { en: "Loose / poorly built", hi: "ढीला" } }
+
+  - id: pramana
+    type: enum
+    required: true
+    input: [voice, chips]
+    prompt:
+      en: How would you describe your body frame and proportions?
+      hi: आपका शरीर किस तरह का है?
+    options:
+      - { value: compact, label: { en: "Slim / compact", hi: "पतला" } }
+      - { value: average, label: { en: "Average / proportionate", hi: "सामान्य" } }
+      - { value: large, label: { en: "Large / heavy", hi: "भारी" } }
+
+  - id: satmya
+    type: enum
+    required: true
+    input: [voice, chips]
+    prompt:
+      en: How well do you generally adjust to new food, climate or situations?
+      hi: नए खाने, मौसम या परिस्थितियों में आप कितनी आसानी से ढल जाते हैं?
+    options:
+      - { value: pravara, label: { en: "Adjusts easily", hi: "आसानी से ढल जाता/जाती है" } }
+      - { value: madhyama, label: { en: "Moderately", hi: "मध्यम रूप से" } }
+      - { value: avara, label: { en: "Adjusts poorly", hi: "मुश्किल से ढलता/ढलती है" } }
+
+  - id: sattva
+    type: enum
+    required: true
+    input: [voice, chips]
+    prompt:
+      en: How would you describe your mental resilience under stress?
+      hi: तनाव में आपकी मानसिक मज़बूती कैसी रहती है?
+    options:
+      - { value: pravara, label: { en: "Strong / resilient", hi: "मज़बूत" } }
+      - { value: madhyama, label: { en: "Moderate", hi: "मध्यम" } }
+      - { value: avara, label: { en: "Easily affected", hi: "जल्दी प्रभावित होता/होती है" } }
+
+  - id: ahara_shakti
+    type: enum
+    required: true
+    input: [voice, chips]
+    prompt:
+      en: How would you describe your appetite and digestion?
+      hi: आपकी भूख और पाचन कैसा है?
+    options:
+      - { value: pravara, label: { en: "Strong appetite, digests well", hi: "अच्छी भूख, अच्छा पाचन" } }
+      - { value: madhyama, label: { en: "Moderate", hi: "मध्यम" } }
+      - { value: avara, label: { en: "Weak appetite or digestion", hi: "कमज़ोर भूख या पाचन" } }
+
+  - id: vyayama_shakti
+    type: enum
+    required: true
+    input: [voice, chips]
+    prompt:
+      en: How much physical activity or exercise can you comfortably do?
+      hi: आप कितना शारीरिक श्रम या व्यायाम आराम से कर सकते हैं?
+    options:
+      - { value: pravara, label: { en: "A lot, without tiring", hi: "बहुत, बिना थके" } }
+      - { value: madhyama, label: { en: "A moderate amount", hi: "मध्यम मात्रा में" } }
+      - { value: avara, label: { en: "Very little", hi: "बहुत कम" } }
+
+  - id: vaya
+    type: enum
+    required: true
+    input: [voice, chips]
+    prompt:
+      en: Which age group are you in?
+      hi: आपकी उम्र किस वर्ग में आती है?
+    options:
+      - { value: balya, label: { en: "Child / young (Balya)", hi: "बाल्य" } }
+      - { value: madhya, label: { en: "Middle age (Madhya)", hi: "मध्य" } }
+      - { value: vriddha, label: { en: "Elderly (Vriddha)", hi: "वृद्ध" } }

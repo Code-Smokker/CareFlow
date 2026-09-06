@@ -1,0 +1,29 @@
+id: fever_meningism
+module_id: fever
+kind: red_flag
+description: >
+  Fever with neck stiffness and headache — must fire the meningism rule (escalate, severity 1).
+reviewer: >
+  Not clinician-reviewed. Synthetic fixture authored directly from packages/ontology/modules/fever.yaml's
+  own rule definition for this eval-harness skeleton pass — see docs/12-eval-plan.md's call for
+  a medical student or Ayurveda faculty sign-off before this is presented as validated.
+answers:
+  - slot_id: duration
+    value: "2_days"
+    input_mode: tap
+  - slot_id: pattern
+    value: continuous
+    input_mode: tap
+  - slot_id: measured
+    value: not_measured
+    input_mode: tap
+  - slot_id: associated
+    value: [neck_stiff, headache]
+    input_mode: tap
+  - slot_id: consciousness
+    value: normal
+    input_mode: tap
+  - slot_id: travel_exposure
+    value: [none]
+    input_mode: tap
+expected_red_flags: [meningism]

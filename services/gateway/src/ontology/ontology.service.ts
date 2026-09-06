@@ -30,8 +30,10 @@ export class OntologyService implements OnModuleInit {
     const dir =
       process.env.ONTOLOGY_MODULES_PATH ??
       resolve(__dirname, "../../../../packages/ontology/modules");
-    const files = readdirSync(dir).filter(
-      (f) => f.endsWith(".yaml") || f.endsWith(".yml"),
+    // recursive: true (Node 20+) so modules/ayush/*.yaml is picked up too, matching
+    // packages/ontology/scripts/validate.py's modules/**/*.yaml glob.
+    const files = readdirSync(dir, { recursive: true }).filter(
+      (f): f is string => typeof f === "string" && (f.endsWith(".yaml") || f.endsWith(".yml")),
     );
     for (const file of files) {
       const raw = load(readFileSync(join(dir, file), "utf8"));

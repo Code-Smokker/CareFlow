@@ -1,0 +1,22 @@
+id: messy_mumbling_fever
+module_id: fever
+kind: messy
+description: >
+  Mumbled, hesitant speech with filler words and a self-correction mid-sentence — tests
+  /fill-slot extraction robustness, not red-flag logic. No escalation expected.
+reviewer: >
+  Not clinician-reviewed. Synthetic fixture authored for this eval-harness skeleton pass —
+  see docs/12-eval-plan.md's "deliberately messy" category (mumbling, background noise,
+  self-contradiction, code-switching).
+utterances:
+  - slot_id: duration
+    utterance: "umm... it's been like... maybe two days? no wait, I think it's three now"
+    slot_schema: { type: string, enum: ["2_days", "3_days", "1_week"] }
+    expected_value: "3_days"
+  - slot_id: associated
+    utterance: "and uh- my head kind of hurts too I guess, hard to tell over this noise"
+    slot_schema:
+      type: array
+      items: { type: string, enum: [headache, neck_stiff, rash, vomiting, bleeding, breathlessness, burning_urine, loose_motion, cough, none] }
+    expected_value: [headache]
+expected_red_flags: []

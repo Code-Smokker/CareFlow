@@ -1,0 +1,20 @@
+id: messy_codeswitch_fever
+module_id: fever
+kind: messy
+description: >
+  Code-switched Hinglish, the normal case in an Indian OPD, not an edge case
+  (docs/15-ai-stack.md — Saaras `codemix` mode exists exactly for this). Tests whether
+  /fill-slot extracts correctly across the language mix. No escalation expected.
+reviewer: >
+  Not clinician-reviewed. Synthetic fixture authored for this eval-harness skeleton pass —
+  see docs/12-eval-plan.md's "deliberately messy" category.
+utterances:
+  - slot_id: pattern
+    utterance: "bukhar poore din rehta hai, subah se raat tak, continuous jaisa"
+    slot_schema: { type: string, enum: [continuous, intermittent, evening, with_chills] }
+    expected_value: continuous
+  - slot_id: measured
+    utterance: "haan maine thermometer se check kiya tha, it was above 102"
+    slot_schema: { type: string, enum: [yes_high, yes_mild, not_measured] }
+    expected_value: yes_high
+expected_red_flags: []

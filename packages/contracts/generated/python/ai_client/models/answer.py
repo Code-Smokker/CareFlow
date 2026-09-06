@@ -26,6 +26,7 @@ class Answer:
         input_mode (AnswerInputMode):
         confidence (float):
         audio_uri (None | str | Unset):
+        audio_offset_ms (int | None | Unset):
     """
 
     slot_id: str
@@ -33,6 +34,7 @@ class Answer:
     input_mode: AnswerInputMode
     confidence: float
     audio_uri: None | str | Unset = UNSET
+    audio_offset_ms: int | None | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
@@ -59,6 +61,12 @@ class Answer:
         else:
             audio_uri = self.audio_uri
 
+        audio_offset_ms: int | None | Unset
+        if isinstance(self.audio_offset_ms, Unset):
+            audio_offset_ms = UNSET
+        else:
+            audio_offset_ms = self.audio_offset_ms
+
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
@@ -71,6 +79,8 @@ class Answer:
         )
         if audio_uri is not UNSET:
             field_dict["audio_uri"] = audio_uri
+        if audio_offset_ms is not UNSET:
+            field_dict["audio_offset_ms"] = audio_offset_ms
 
         return field_dict
 
@@ -119,12 +129,22 @@ class Answer:
 
         audio_uri = _parse_audio_uri(d.pop("audio_uri", UNSET))
 
+        def _parse_audio_offset_ms(data: object) -> int | None | Unset:
+            if data is None:
+                return data
+            if isinstance(data, Unset):
+                return data
+            return cast(int | None | Unset, data)
+
+        audio_offset_ms = _parse_audio_offset_ms(d.pop("audio_offset_ms", UNSET))
+
         answer = cls(
             slot_id=slot_id,
             value=value,
             input_mode=input_mode,
             confidence=confidence,
             audio_uri=audio_uri,
+            audio_offset_ms=audio_offset_ms,
         )
 
         answer.additional_properties = d
