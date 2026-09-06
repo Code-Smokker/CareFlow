@@ -24,6 +24,7 @@ const TimelineEventSchema = z.object({
   occurred_at: z.string(),
   kind: z.enum(["visit", "prescription", "lab_report", "symptom_onset"]),
   summary: z.string(),
+  approximate: z.boolean(),
 });
 
 export const ProcessCallbackSchema = z.object({

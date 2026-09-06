@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { Injectable, NotFoundException } from "@nestjs/common";
-import type { DocumentType, Prisma } from "@prisma/client";
+import { Prisma, type DocumentType } from "@prisma/client";
 import { PrismaService } from "../prisma/prisma.service";
 import { S3StorageClient } from "../common/s3.client";
 import { DocAiServiceClient } from "../docai/docai-service.client";
@@ -18,6 +18,24 @@ const DOC_TYPE_HINTS: Record<string, DocumentType> = {
   discharge_summary: "discharge",
   discharge: "discharge",
   imaging: "imaging",
+};
+
+/** docai's GLiNER field labels (app/extract/gliner_ner.py, C2) -> the coarse
+ * ExtractionEntityType Prisma enum. Anything not clearly one of the four stays `unknown`
+ * rather than guessing — the enum's own schema comment: "never mislabel its output as one
+ * of the other four just to satisfy this enum." */
+const ENTITY_TYPE_BY_FIELD: Record<string, "condition" | "medication" | "observation" | "procedure"> = {
+  diagnosis: "condition",
+  drug: "medication",
+  dose: "medication",
+  frequency: "medication",
+  duration: "medication",
+  ayush_formulation: "medication",
+  ayush_plant: "medication",
+  analyte: "observation",
+  value: "observation",
+  unit: "observation",
+  procedure: "procedure",
 };
 
 @Injectable()
@@ -82,13 +100,17 @@ export class DocumentsService {
     await this.prisma.$transaction([
       this.prisma.document.update({
         where: { id: document.id },
-        data: { ocrStatus: "done", qualityScore: payload.quality_score },
+        data: {
+          ocrStatus: "done",
+          qualityScore: payload.quality_score,
+          timelineEvents: payload.timeline_events as unknown as Prisma.InputJsonValue,
+        },
       }),
       ...payload.extractions.map((extraction) =>
         this.prisma.extraction.create({
           data: {
             documentId: document.id,
-            entityType: "unknown", // stub extractor doesn't classify — see the enum's own comment
+            entityType: ENTITY_TYPE_BY_FIELD[extraction.field] ?? "unknown",
             payload: { field: extraction.field, value: extraction.value },
             bbox: extraction.bounding_box ?? undefined,
             confidence: extraction.confidence,
@@ -108,12 +130,23 @@ export class DocumentsService {
     });
   }
 
-  /** Real timeline assembly (approximate-date handling, prescription/lab/visit ordering) is
-   * C2 work — the stub extractor always returns an empty timeline_events (services/docai/app/
-   * tasks.py), so there's nothing to assemble from yet. Returns [] honestly rather than
-   * fabricating placeholder events. */
+  /** Cross-document ordering: each Document carries its own docai-assembled TimelineEvent[]
+   * (C2, services/docai/app/timeline/assemble.py) verbatim in `timelineEvents` — this just
+   * concatenates every document's events for the session and sorts by occurred_at. A document
+   * still queued/failed contributes nothing (docai hasn't produced events for it yet). */
   async getTimeline(sessionId: string) {
     await this.prisma.intakeSession.findUniqueOrThrow({ where: { id: sessionId } });
-    return [];
+    const documents = await this.prisma.document.findMany({
+      where: { sessionId, timelineEvents: { not: Prisma.JsonNull } },
+      select: { timelineEvents: true },
+    });
+    const events = documents.flatMap((d) => d.timelineEvents as unknown as {
+      event_id: string;
+      occurred_at: string;
+      kind: string;
+      summary: string;
+      approximate: boolean;
+    }[]);
+    return events.sort((a, b) => a.occurred_at.localeCompare(b.occurred_at));
   }
 }

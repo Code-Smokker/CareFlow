@@ -244,6 +244,10 @@ model Document {
   qualityScore Float?       @map("quality_score")
   ocrStatus    OcrStatus    @default(queued) @map("ocr_status")
   createdAt    DateTime     @default(now()) @map("created_at")
+  /// docai's ProcessResult.timeline_events for this document, verbatim — one TimelineEvent[]
+  /// per document (docai processes one document per job). DocumentsService.getTimeline reads
+  /// this across every document in a session rather than recomputing it from extractions.
+  timelineEvents Json?      @map("timeline_events")
 
   extractions  Extraction[]
 
