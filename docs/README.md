@@ -21,9 +21,18 @@ before you touch it.
 | 11 | [Sprint plan](11-sprint-plan.md) | Every morning. |
 | 12 | [Eval plan](12-eval-plan.md) | Day 5, and whenever adding a clinical rule. |
 | 13 | [Demo script](13-demo-script.md) | Continuously. This is the acceptance test. |
+| 14 | [Feature checklist](14-features.md) | The build backlog. Tick things off. |
+| 15 | [AI stack](15-ai-stack.md) | **Before integrating any model or AI API.** |
 | — | [API keys](API_KEYS.md) | When obtaining credentials. |
 | — | [Contributing](CONTRIBUTING.md) | Before your first PR. |
 | — | [ADRs](adr/) | When you disagree with a decision. |
+
+## The one rule about models
+
+**We integrate, we do not invent.** Nothing here trains a model. Every AI component is a hosted
+API or an open-weight model we run and adapt. Doc 15 records which one, why, what the fallback
+is, and what it costs — read it before writing a single line of model integration code, or you
+will pick the wrong thing and find out on Day 3.
 
 ## Conventions in these docs
 
