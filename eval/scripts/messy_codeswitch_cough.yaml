@@ -1,0 +1,22 @@
+id: messy_codeswitch_cough
+module_id: cough_breathlessness
+kind: messy
+description: >
+  Hindi-English code-switching mid-sentence — tests /fill-slot extraction robustness
+  for cough_breathlessness, which has zero messy coverage before this script. No
+  escalation expected (this only exercises two slots in isolation, not a full answered
+  session).
+reviewer: >
+  Not clinician-reviewed. Synthetic fixture authored for this eval-harness skeleton
+  pass — see docs/12-eval-plan.md's "deliberately messy" category (mumbling, background
+  noise, self-contradiction, code-switching).
+utterances:
+  - slot_id: sputum_color
+    utterance: "khaansi mein... it's kind of yellow-green type cheez aati hai"
+    slot_schema: { type: string, enum: [clear, yellow_green, blood_tinged] }
+    expected_value: yellow_green
+  - slot_id: breathlessness_trigger
+    utterance: "seedha chalte waqt hi saans phoolti hai, warna theek hoon"
+    slot_schema: { type: string, enum: [rest, walking, exertion, none] }
+    expected_value: walking
+expected_red_flags: []

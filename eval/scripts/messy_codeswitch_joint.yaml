@@ -1,0 +1,21 @@
+id: messy_codeswitch_joint
+module_id: joint_pain
+kind: messy
+description: >
+  Code-switched Hinglish describing joint involvement pattern and morning stiffness —
+  joint_pain had zero messy/slot-accuracy coverage before this script. Tests /fill-slot
+  extraction, not red-flag logic. No escalation expected.
+reviewer: >
+  Not clinician-reviewed. Synthetic fixture authored directly from
+  packages/ontology/modules/joint_pain.yaml's own slot definitions for this eval-harness
+  skeleton pass — see docs/12-eval-plan.md's "deliberately messy" category.
+utterances:
+  - slot_id: pattern
+    utterance: "sirf ek hi joint hai, left knee, baaki sab theek hai"
+    slot_schema: { type: string, enum: [single_joint, few_joints, many_joints] }
+    expected_value: single_joint
+  - slot_id: morning_stiffness_duration
+    utterance: "subah uthke... umm... karib ek ghante se zyada time lagta hai loosen hone mein"
+    slot_schema: { type: string, enum: [none, under_30min, "30_60min", over_1hr] }
+    expected_value: over_1hr
+expected_red_flags: []

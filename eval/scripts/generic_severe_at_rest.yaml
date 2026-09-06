@@ -1,0 +1,28 @@
+id: generic_severe_at_rest
+module_id: generic
+kind: red_flag
+description: >
+  Gradual-onset, severity-8 complaint worsened even at rest — must fire severe_at_rest
+  (flag, severity 2). Onset is deliberately gradual so this does not also trip
+  sudden_severe_onset (which needs onset == 'sudden').
+reviewer: >
+  Not clinician-reviewed. Synthetic fixture authored directly from
+  packages/ontology/modules/generic.yaml's own rule definition for this eval-harness
+  skeleton pass — see docs/12-eval-plan.md.
+answers:
+  - slot_id: site
+    value: lower_back
+    input_mode: tap
+  - slot_id: onset
+    value: gradual
+    input_mode: tap
+  - slot_id: duration
+    value: "1_week"
+    input_mode: tap
+  - slot_id: aggravating
+    value: [rest]
+    input_mode: tap
+  - slot_id: severity
+    value: 8
+    input_mode: tap
+expected_red_flags: [severe_at_rest]

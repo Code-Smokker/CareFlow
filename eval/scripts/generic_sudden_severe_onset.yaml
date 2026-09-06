@@ -1,0 +1,25 @@
+id: generic_sudden_severe_onset
+module_id: generic
+kind: red_flag
+description: >
+  Sudden-onset, severity-9 complaint that doesn't match one of the five built complaint
+  modules — must fire sudden_severe_onset (escalate, severity 1). The generic module's
+  own red flags have zero eval coverage before this script.
+reviewer: >
+  Not clinician-reviewed. Synthetic fixture authored directly from
+  packages/ontology/modules/generic.yaml's own rule definition for this eval-harness
+  skeleton pass — see docs/12-eval-plan.md.
+answers:
+  - slot_id: site
+    value: lower_back
+    input_mode: tap
+  - slot_id: onset
+    value: sudden
+    input_mode: tap
+  - slot_id: duration
+    value: "2_days"
+    input_mode: tap
+  - slot_id: severity
+    value: 9
+    input_mode: tap
+expected_red_flags: [sudden_severe_onset]

@@ -1,0 +1,24 @@
+id: messy_mumbling_abdominal
+module_id: abdominal_pain
+kind: messy
+description: >
+  Mumbled, hesitant speech with a self-correction and an embarrassed aside — tests
+  /fill-slot extraction robustness for abdominal_pain, which has zero messy coverage
+  before this script. No escalation expected (this only exercises two slots in
+  isolation, not a full answered session).
+reviewer: >
+  Not clinician-reviewed. Synthetic fixture authored for this eval-harness skeleton
+  pass — see docs/12-eval-plan.md's "deliberately messy" category (mumbling, background
+  noise, self-contradiction, code-switching).
+utterances:
+  - slot_id: duration
+    utterance: "it's been... uh, two days I think? no, maybe three by now"
+    slot_schema: { type: string, enum: ["2_days", "3_days", "1_week"] }
+    expected_value: "3_days"
+  - slot_id: associated
+    utterance: "and umm, I saw some black... like tarry stool yesterday, sorry that's gross to say"
+    slot_schema:
+      type: array
+      items: { type: string, enum: [vomiting, fever, blood_in_stool, black_stool, jaundice, distension, none] }
+    expected_value: [black_stool]
+expected_red_flags: []

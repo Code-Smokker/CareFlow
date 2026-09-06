@@ -1,0 +1,24 @@
+id: fever_prolonged
+module_id: fever
+kind: red_flag
+description: >
+  Fever for two weeks with no other warning sign — must fire prolonged_fever (flag,
+  severity 2), not an escalation, a workup-needed flag for TB/malignancy/other causes.
+reviewer: >
+  Not clinician-reviewed. Synthetic fixture authored directly from
+  packages/ontology/modules/fever.yaml's own rule definition for this eval-harness
+  skeleton pass — see docs/12-eval-plan.md.
+answers:
+  - slot_id: duration
+    value: "2_weeks"
+    input_mode: tap
+  - slot_id: pattern
+    value: intermittent
+    input_mode: tap
+  - slot_id: associated
+    value: [none]
+    input_mode: tap
+  - slot_id: consciousness
+    value: normal
+    input_mode: tap
+expected_red_flags: [prolonged_fever]

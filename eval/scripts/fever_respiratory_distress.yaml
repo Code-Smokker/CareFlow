@@ -1,0 +1,24 @@
+id: fever_respiratory_distress
+module_id: fever
+kind: red_flag
+description: >
+  Fever with breathlessness — must fire respiratory_distress (escalate, severity 1),
+  possible pneumonia or sepsis.
+reviewer: >
+  Not clinician-reviewed. Synthetic fixture authored directly from
+  packages/ontology/modules/fever.yaml's own rule definition for this eval-harness
+  skeleton pass — see docs/12-eval-plan.md.
+answers:
+  - slot_id: duration
+    value: "2_days"
+    input_mode: tap
+  - slot_id: pattern
+    value: continuous
+    input_mode: tap
+  - slot_id: associated
+    value: [breathlessness]
+    input_mode: tap
+  - slot_id: consciousness
+    value: normal
+    input_mode: tap
+expected_red_flags: [respiratory_distress]
