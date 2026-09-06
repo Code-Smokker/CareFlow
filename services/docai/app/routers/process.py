@@ -12,6 +12,7 @@ router = APIRouter()
 class ProcessRequest(BaseModel):
     document_id: str
     image_refs: list[str]
+    doc_type: str | None = None
 
 
 class ProcessResponse(BaseModel):
@@ -20,5 +21,5 @@ class ProcessResponse(BaseModel):
 
 @router.post("/process", response_model=ProcessResponse, status_code=202)
 async def process(body: ProcessRequest) -> ProcessResponse:
-    task = process_document.delay(body.document_id, body.image_refs)
+    task = process_document.delay(body.document_id, body.image_refs, body.doc_type)
     return ProcessResponse(job_id=task.id)

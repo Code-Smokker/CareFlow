@@ -41,5 +41,10 @@ class Settings(BaseSettings):
     llm_api_key: str = Field(default="", alias="LLM_API_KEY")
     llm_base_url: str = Field(default="", alias="LLM_BASE_URL")
 
+    # C2 — GLiNER-BioMed zero-shot NER for the structured extraction pass (docs/15-ai-stack.md
+    # "Medical entity extraction"). Lazy-loaded in app/extract/gliner_ner.py, same pattern as
+    # ocr/local.py's PaddleOCR-VL — absence of the package/weights degrades, never crashes.
+    ner_model: str = Field(default="Ihor/gliner-biomed-base-v1.0", alias="NER_MODEL")
+
 
 settings = Settings()

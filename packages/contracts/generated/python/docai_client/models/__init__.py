@@ -14,6 +14,13 @@ from .extracted_field import ExtractedField
 from .get_job_response_200 import GetJobResponse200
 from .get_job_response_200_status import GetJobResponse200Status
 from .process_document_body import ProcessDocumentBody
+from .process_document_body_doc_type_type_1 import ProcessDocumentBodyDocTypeType1
+from .process_document_body_doc_type_type_2_type_1 import (
+    ProcessDocumentBodyDocTypeType2Type1,
+)
+from .process_document_body_doc_type_type_3_type_1 import (
+    ProcessDocumentBodyDocTypeType3Type1,
+)
 from .process_document_response_202 import ProcessDocumentResponse202
 from .process_result import ProcessResult
 from .search_dictionary_response_200 import SearchDictionaryResponse200
@@ -36,6 +43,9 @@ __all__ = (
     "GetJobResponse200",
     "GetJobResponse200Status",
     "ProcessDocumentBody",
+    "ProcessDocumentBodyDocTypeType1",
+    "ProcessDocumentBodyDocTypeType2Type1",
+    "ProcessDocumentBodyDocTypeType3Type1",
     "ProcessDocumentResponse202",
     "ProcessResult",
     "SearchDictionaryResponse200",

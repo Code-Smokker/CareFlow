@@ -13,32 +13,32 @@ import httpx
 
 from app.celery_app import celery_app
 from app.config import settings
-from app.extract import stub as stub_extractor
+from app.extract import pipeline as extract_pipeline
 from app.logging import get_logger
 from app.ocr import service as ocr_service
+from app.timeline import assemble as timeline_assemble
 
 log = get_logger()
 
 
 @celery_app.task(name="docai.process_document", bind=True)
-def process_document(self, document_id: str, image_refs: list[str]) -> dict[str, Any]:
-    result = asyncio.run(_process_document_async(document_id, image_refs))
+def process_document(self, document_id: str, image_refs: list[str], doc_type: str | None = None) -> dict[str, Any]:
+    result = asyncio.run(_process_document_async(document_id, image_refs, doc_type))
     return result
 
 
-async def _process_document_async(document_id: str, image_refs: list[str]) -> dict[str, Any]:
+async def _process_document_async(document_id: str, image_refs: list[str], doc_type: str | None) -> dict[str, Any]:
     extractions: list[dict[str, Any]] = []
     for image_ref in image_refs:
         ocr_result = await ocr_service.read(image_ref)
-        extractions.extend(stub_extractor.extract(ocr_result))
+        extractions.extend(await extract_pipeline.extract(ocr_result))
 
-    # Stub tier: no dates are read from the document yet (that's C2's timeline assembly over
-    # real extractions), so there is nothing honest to report here — an empty list, not an
-    # invented one (docs/06-document-ai.md: never invent a precise date).
+    timeline_events = timeline_assemble.assemble(document_id, doc_type, extractions) if extractions else []
+
     result = {
         "document_id": document_id,
         "extractions": extractions,
-        "timeline_events": [],
+        "timeline_events": timeline_events,
         "quality_score": 1.0 if extractions else 0.0,
     }
 

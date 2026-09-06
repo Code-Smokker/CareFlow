@@ -58,6 +58,13 @@ paths:
                 image_refs:
                   type: array
                   items: { type: string }
+                doc_type:
+                  type: [string, "null"]
+                  enum: [prescription, lab_report, discharge_summary, other, null]
+                  description: >
+                    From a prior /classify call, if the caller already has one — used to pick
+                    the TimelineEvent.kind for this document. Optional: omitted or null falls
+                    back to a generic "visit" kind rather than blocking processing on it.
       responses:
         "202":
           description: Accepted
@@ -196,7 +203,7 @@ components:
 
     TimelineEvent:
       type: object
-      required: [event_id, occurred_at, kind, summary]
+      required: [event_id, occurred_at, kind, summary, approximate]
       properties:
         event_id: { type: string }
         occurred_at: { type: string, format: date-time }
@@ -206,6 +213,13 @@ components:
             enum: [visit, prescription, lab_report, symptom_onset],
           }
         summary: { type: string }
+        approximate:
+          type: boolean
+          description: >
+            True when occurred_at is a relative-ordering placeholder, not a date read from the
+            document (docs/06-document-ai.md timeline assembly rule 3 — never invent a precise
+            date; an approximate marker is the honest alternative). Required, not optional, so
+            no caller can silently omit the honesty signal.
 
     DictionaryMatch:
       type: object

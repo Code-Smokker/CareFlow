@@ -7,9 +7,17 @@ httpx==0.28.1
 PyYAML==6.0.3
 python-multipart==0.0.32
 asyncpg==0.31.0
+python-dateutil==2.9.0.post0
 
 celery==5.6.3
 redis==8.1.0
+
+# C2 medical entity extraction (docs/15-ai-stack.md). Unlike paddlepaddle (OCR local tier,
+# below), gliner's torch dependency does ship a Python 3.14 wheel — verified on this machine:
+# installs clean, downloads Ihor/gliner-biomed-base-v1.0 (~756MB), and runs real inference.
+# app/extract/gliner_ner.py still lazy-imports it so a deployment without it installed just
+# can't serve this one tier (same defensive pattern as ocr/local.py).
+gliner==0.2.28
 
 pytest==9.1.1
 pytest-asyncio==1.4.0

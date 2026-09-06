@@ -117,6 +117,8 @@ export interface components {
             /** @enum {string} */
             kind: "visit" | "prescription" | "lab_report" | "symptom_onset";
             summary: string;
+            /** @description True when occurred_at is a relative-ordering placeholder, not a date read from the document (docs/06-document-ai.md timeline assembly rule 3 — never invent a precise date; an approximate marker is the honest alternative). Required, not optional, so no caller can silently omit the honesty signal. */
+            approximate: boolean;
         };
         DictionaryMatch: {
             id: string;
@@ -197,6 +199,11 @@ export interface operations {
                 "application/json": {
                     document_id: string;
                     image_refs: string[];
+                    /**
+                     * @description From a prior /classify call, if the caller already has one — used to pick the TimelineEvent.kind for this document. Optional: omitted or null falls back to a generic "visit" kind rather than blocking processing on it.
+                     * @enum {string|null}
+                     */
+                    doc_type?: "prescription" | "lab_report" | "discharge_summary" | "other" | null;
                 };
             };
         };

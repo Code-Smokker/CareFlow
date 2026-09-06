@@ -20,12 +20,16 @@ class TimelineEvent:
         occurred_at (datetime.datetime):
         kind (TimelineEventKind):
         summary (str):
+        approximate (bool): True when occurred_at is a relative-ordering placeholder, not a date read from the document
+            (docs/06-document-ai.md timeline assembly rule 3 — never invent a precise date; an approximate marker is the
+            honest alternative). Required, not optional, so no caller can silently omit the honesty signal.
     """
 
     event_id: str
     occurred_at: datetime.datetime
     kind: TimelineEventKind
     summary: str
+    approximate: bool
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
@@ -37,6 +41,8 @@ class TimelineEvent:
 
         summary = self.summary
 
+        approximate = self.approximate
+
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
@@ -45,6 +51,7 @@ class TimelineEvent:
                 "occurred_at": occurred_at,
                 "kind": kind,
                 "summary": summary,
+                "approximate": approximate,
             }
         )
 
@@ -61,11 +68,14 @@ class TimelineEvent:
 
         summary = d.pop("summary")
 
+        approximate = d.pop("approximate")
+
         timeline_event = cls(
             event_id=event_id,
             occurred_at=occurred_at,
             kind=kind,
             summary=summary,
+            approximate=approximate,
         )
 
         timeline_event.additional_properties = d
