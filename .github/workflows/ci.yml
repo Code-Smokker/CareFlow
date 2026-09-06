@@ -36,10 +36,26 @@ jobs:
         with: { python-version: "3.12" }
       - name: Install tooling
         run: pip install ruff mypy pytest
+      - name: Install services/ai's own dependencies
+        run: |
+          if [ -f services/ai/requirements.txt ]; then
+            pip install -r services/ai/requirements.txt
+          fi
       - name: Ruff
-        run: ruff check services/ || echo "no python services yet"
+        run: |
+          if [ -d services/ai ]; then ruff check services/ai; fi
+          if [ -d services/docai ]; then ruff check services/docai; fi
+          if [ -d services/terminology ]; then ruff check services/terminology; fi
       - name: Pytest
-        run: pytest services/ -q || echo "no python tests yet"
+        run: |
+          found=0
+          for svc in services/ai services/docai services/terminology; do
+            if [ -d "$svc/test" ] || [ -d "$svc/tests" ]; then
+              found=1
+              pytest "$svc" -q
+            fi
+          done
+          if [ "$found" -eq 0 ]; then echo "no python tests yet"; fi
 
   ontology:
     name: ontology — validate complaint modules
@@ -49,18 +65,45 @@ jobs:
       - uses: actions/setup-python@v5
         with: { python-version: "3.12" }
       - run: pip install pyyaml jsonschema
-      - name: Validate every module against the schema
+      # Runs the real validator (packages/ontology/scripts/validate.py), not a duplicated
+      # inline copy — a prior duplicated version here used a non-recursive glob and would
+      # never have checked packages/ontology/modules/ayush/*.yaml.
+      - run: python packages/ontology/scripts/validate.py
+
+  fhir:
+    name: fhir — validate a synthetic OPConsultRecord bundle against HAPI
+    runs-on: ubuntu-latest
+    services:
+      hapi-fhir:
+        image: hapiproject/hapi:latest
+        ports: ["8090:8080"]
+        env:
+          hapi.fhir.fhir_version: R4
+          hapi.fhir.allow_external_references: "true"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: { version: 9 }
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Wait for HAPI to be ready
         run: |
-          python - <<'PY'
-          import json, pathlib, sys, yaml, jsonschema
-          schema = json.loads(pathlib.Path("packages/ontology/schema/module.schema.json").read_text())
-          bad = 0
-          for f in sorted(pathlib.Path("packages/ontology/modules").glob("*.yaml")):
-              try:
-                  jsonschema.validate(yaml.safe_load(f.read_text()), schema)
-                  print(f"ok   {f}")
-              except Exception as e:
-                  bad += 1
-                  print(f"FAIL {f}: {e}", file=sys.stderr)
-          sys.exit(1 if bad else 0)
-          PY
+          for i in $(seq 1 30); do
+            if curl -sf http://localhost:8090/fhir/metadata > /dev/null; then echo "HAPI ready"; exit 0; fi
+            sleep 5
+          done
+          echo "HAPI never became ready" >&2
+          exit 1
+      - name: Build @careflow/fhir
+        run: pnpm --filter @careflow/fhir build
+      # A malformed bundle fails this step, which fails the job — docs/08-abdm-fhir.md:
+      # "Validate every bundle against the local HAPI server in CI. A red test on a malformed
+      # bundle is a great thing to show a judge."
+      - name: Validate a synthetic OPConsultRecord bundle
+        working-directory: packages/fhir
+        env:
+          FHIR_SERVER_URL: http://localhost:8090/fhir
+        run: pnpm exec tsx scripts/validate-against-hapi.ts

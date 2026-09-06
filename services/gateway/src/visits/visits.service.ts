@@ -1,9 +1,15 @@
-import { randomUUID } from "node:crypto";
-import { Injectable } from "@nestjs/common";
-import type { Summary } from "@prisma/client";
+import { buildOPConsultRecordBundle, validateBundleAgainstHapi } from "@careflow/fhir";
+import { Inject, Injectable } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import type { RedFlag, Summary, VisitPriority } from "@prisma/client";
+import { ABDM_CLIENT } from "../abdm/abdm.tokens";
+import type { AbdmClient } from "../abdm/abdm-client.interface";
 import type { SummaryLeaf, SummariseStructured } from "../ai/ai-service.client";
 import { AppException } from "../common/app-exception";
+import type { Env } from "../common/env";
+import { rootLogger } from "../common/logger";
 import { PrismaService } from "../prisma/prisma.service";
+import { EventsGateway } from "../websocket/events.gateway";
 
 interface SummaryFieldPayload {
   field_path: string;
@@ -16,9 +22,73 @@ interface SummaryFieldPayload {
   low_confidence: boolean;
 }
 
+type ContractSeverity = "info" | "warning" | "critical";
+
+interface RedFlagPayload {
+  id: string;
+  rule_id: string;
+  severity: ContractSeverity;
+  quote: string;
+  token_no: string;
+  acknowledged_by: string | null;
+  acknowledged_at: string | null;
+}
+
+interface QueueTokenPayload {
+  visit_id: string;
+  token_no: string;
+  patient_id: string;
+  department: string;
+  priority: VisitPriority;
+  waiting_minutes: number;
+  red_flags: RedFlagPayload[];
+}
+
+// Ranked so "is this an upgrade" is a plain numeric comparison — never downgrades a visit a
+// worse rule already escalated (docs/05-interview-engine.md: firing re-prioritises the token).
+const PRIORITY_RANK: Record<VisitPriority, number> = { routine: 0, priority: 1, urgent: 2 };
+
+function severityToContract(severity: number): ContractSeverity {
+  if (severity === 1) return "critical";
+  if (severity === 2) return "warning";
+  return "info";
+}
+
+function severityToPriority(severity: number): VisitPriority {
+  if (severity === 1) return "urgent";
+  if (severity === 2) return "priority";
+  return "routine";
+}
+
+function toRedFlagPayload(flag: RedFlag, tokenNo: string): RedFlagPayload {
+  return {
+    id: flag.id,
+    rule_id: flag.ruleId,
+    severity: severityToContract(flag.severity),
+    quote: flag.quote ?? flag.ruleId,
+    token_no: tokenNo,
+    acknowledged_by: flag.acknowledgedBy,
+    acknowledged_at: flag.acknowledgedAt?.toISOString() ?? null,
+  };
+}
+
+/** FHIR's Observation.value* is number | string | boolean — an enum_multi answer
+ * (e.g. associated: ["neck_stiff", "headache"]) is an array, which isn't any of those, so it
+ * needs flattening or buildObservation's Zod schema rejects it. */
+function toObservationValue(value: unknown): number | string | boolean {
+  if (typeof value === "number" || typeof value === "boolean") return value;
+  if (Array.isArray(value)) return value.join(", ");
+  return String(value);
+}
+
 @Injectable()
 export class VisitsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly events: EventsGateway,
+    private readonly config: ConfigService<Env, true>,
+    @Inject(ABDM_CLIENT) private readonly abdm: AbdmClient,
+  ) {}
 
   async getSummary(visitId: string) {
     const summary = await this.findLatestSummaryOrThrow(visitId);
@@ -46,19 +116,152 @@ export class VisitsService {
     return this.toVisitSummaryPayload(visitId, updated);
   }
 
+  /** Assembles the OPConsultRecord bundle from the signed summary (packages/fhir — never an
+   * inline object literal, docs/08-abdm-fhir.md) and validates it against the local HAPI
+   * server before this counts as signed. A bundle HAPI rejects fails the sign, it does not
+   * silently succeed — "a red test on a malformed bundle is a great thing to show a judge." */
   async sign(visitId: string, signedBy: string) {
     const summary = await this.findLatestSummaryOrThrow(visitId);
+    const visit = await this.prisma.visit.findUniqueOrThrow({ where: { id: visitId } });
+    const patient = await this.prisma.patient.findUniqueOrThrow({ where: { id: visit.patientId } });
+    const structured = summary.structured as unknown as SummariseStructured;
+
+    // patient.name/abhaNumber are AES-GCM ciphertext once an identity flow writes them
+    // (src/common/crypto.ts) — always null today (no identity flow exists yet, ADR 0007), so
+    // there's nothing to decrypt in practice. Whoever wires real identity into /sign needs to
+    // decrypt here first, not pass ciphertext into a FHIR Patient.name.
+    const bundle = buildOPConsultRecordBundle({
+      patient: { id: patient.id, name: patient.name, abhaNumber: patient.abhaNumber },
+      practitionerName: signedBy,
+      encounterPeriodStart: visit.startedAt.toISOString(),
+      encounterPeriodEnd: new Date().toISOString(),
+      chiefComplaintText: structured.chief_complaint ? String(structured.chief_complaint.value) : null,
+      hpiObservations: Object.values(structured.history_of_present_illness ?? {}).map((leaf) => ({
+        label: leaf.label,
+        value: toObservationValue(leaf.value),
+      })),
+      signedAt: new Date().toISOString(),
+    });
+
+    const fhirServerUrl = this.config.get("FHIR_SERVER_URL", { infer: true });
+    const validation = await validateBundleAgainstHapi(bundle, fhirServerUrl);
+    if (!validation.valid) {
+      throw new AppException(
+        422,
+        "invalid_fhir_bundle",
+        "The assembled FHIR bundle failed validation against the local HAPI server.",
+        { issues: validation.issues },
+      );
+    }
+
     await this.prisma.summary.update({
       where: { id: summary.id },
-      data: { status: "signed", signedBy, signedAt: new Date() },
+      data: { status: "signed", signedBy, signedAt: new Date(), fhirBundle: bundle as never },
     });
+    rootLogger.info({ visit_id: visitId, fhir_bundle_id: bundle.id }, "visit signed, bundle validated against HAPI");
+
+    // docs/08-abdm-fhir.md: "After the physician signs, link the care context to the patient's
+    // ABHA so the record appears in their PHR app." care_context_status is what the UI must
+    // show verbatim — under ABDM_MODE=mock that's always "linked (mock)", never a fake success.
+    const careContext = await this.abdm.linkCareContext({
+      patientId: patient.id,
+      visitId,
+      fhirBundleId: bundle.id,
+    });
+
     return {
-      // Not a real assembled FHIR bundle — fhir-bridge doesn't exist yet (Day 4). A stable
-      // opaque id now is what lets the *shape* of this response be right today; docs/06 and
-      // ADR 0006 already establish the mock-first, say-so-honestly pattern this follows.
-      fhir_bundle_id: randomUUID(),
+      fhir_bundle_id: bundle.id,
+      // FHIR validity and ABDM submission are separate claims — the bundle is genuinely
+      // HAPI-validated above; pushing it to ABDM is still mocked (ADR 0006, docs/08).
       abdm_status: "mocked" as const,
+      care_context_status: careContext.status,
     };
+  }
+
+  /** GET /v1/visits/queue — prioritised token queue with waiting time (Nadi). Postgres enums
+   * sort by declaration order (routine, priority, urgent), which is also clinical urgency
+   * order, so `orderBy: priority desc` needs no special-casing here. */
+  async getQueue(department?: string): Promise<QueueTokenPayload[]> {
+    const visits = await this.prisma.visit.findMany({
+      where: { status: { not: "closed" }, ...(department ? { department } : {}) },
+      include: { sessions: { include: { redFlags: true } } },
+      orderBy: [{ priority: "desc" }, { tokenNo: "asc" }],
+    });
+
+    const now = Date.now();
+    return visits.map((visit) => {
+      const redFlags = visit.sessions.flatMap((s) => s.redFlags);
+      return {
+        visit_id: visit.id,
+        token_no: visit.tokenNo ?? visit.id,
+        patient_id: visit.patientId,
+        department: visit.department ?? "general",
+        priority: visit.priority,
+        waiting_minutes: Math.max(0, Math.floor((now - visit.startedAt.getTime()) / 60_000)),
+        red_flags: redFlags.map((f) => toRedFlagPayload(f, visit.tokenNo ?? visit.id)),
+      };
+    });
+  }
+
+  /** Called after a turn fires one or more new red flags (SessionsService.submitAnswer). Bumps
+   * the visit's queue priority if warranted, and pushes both `redflag.fired` and a refreshed
+   * `queue.updated` to the department room — this is what makes "firing re-prioritises the
+   * token" true rather than just a row in a table (docs/05-interview-engine.md "Red flags"). */
+  async applyRedFlagsToQueue(visitId: string, firedRows: RedFlag[]): Promise<void> {
+    if (firedRows.length === 0) return;
+
+    const visit = await this.prisma.visit.findUniqueOrThrow({ where: { id: visitId } });
+    const department = visit.department ?? "general";
+    const tokenNo = visit.tokenNo ?? visit.id;
+
+    const worstSeverity = Math.min(...firedRows.map((f) => f.severity));
+    const desiredPriority = severityToPriority(worstSeverity);
+    if (PRIORITY_RANK[desiredPriority] > PRIORITY_RANK[visit.priority]) {
+      await this.prisma.visit.update({ where: { id: visitId }, data: { priority: desiredPriority } });
+      rootLogger.info({ visit_id: visitId, from: visit.priority, to: desiredPriority }, "visit re-prioritised");
+    }
+
+    for (const flag of firedRows) {
+      this.events.emitToDepartment(department, "redflag.fired", toRedFlagPayload(flag, tokenNo));
+    }
+    const tokens = await this.getQueue(department);
+    this.events.emitToDepartment(department, "queue.updated", { tokens: tokens as never });
+  }
+
+  /** POST /v1/redflags/{id}/acknowledge — one-tap acknowledge, logged with who and when. Also
+   * writes an audit_log row: genuinely append-only (DB-trigger-enforced), unlike red_flag's
+   * own acknowledged_by/at columns which an application bug could still overwrite twice. */
+  async acknowledge(redFlagId: string, actorId: string, actorRole: string) {
+    const flag = await this.prisma.redFlag.findUnique({ where: { id: redFlagId } });
+    if (!flag) {
+      throw new AppException(404, "red_flag_not_found", `No red flag with id '${redFlagId}'.`);
+    }
+    if (flag.acknowledgedAt) {
+      throw new AppException(409, "already_acknowledged", "This red flag was already acknowledged.", {
+        acknowledged_by: flag.acknowledgedBy,
+        acknowledged_at: flag.acknowledgedAt.toISOString(),
+      });
+    }
+
+    const session = await this.prisma.intakeSession.findUniqueOrThrow({ where: { id: flag.sessionId } });
+    const visit = await this.prisma.visit.findUniqueOrThrow({ where: { id: session.visitId } });
+
+    const [updated] = await this.prisma.$transaction([
+      this.prisma.redFlag.update({
+        where: { id: redFlagId },
+        data: { acknowledgedBy: actorId, acknowledgedAt: new Date() },
+      }),
+      this.prisma.auditLog.create({
+        data: {
+          actorId,
+          actorRole,
+          action: "redflag.acknowledge",
+          resource: "red_flag",
+          resourceId: redFlagId,
+        },
+      }),
+    ]);
+    return toRedFlagPayload(updated, visit.tokenNo ?? visit.id);
   }
 
   // ---------------------------------------------------------------------------------------
@@ -80,11 +283,19 @@ export class VisitsService {
       orderBy: { createdAt: "desc" },
       select: { id: true },
     });
+    const visit = await this.prisma.visit.findUniqueOrThrow({ where: { id: visitId } });
+    const unacknowledged = session
+      ? await this.prisma.redFlag.findMany({ where: { sessionId: session.id, acknowledgedAt: null } })
+      : [];
     return {
       visit_id: visitId,
       session_id: session?.id ?? null,
       fields: flattenStructured(summary.structured as unknown as SummariseStructured),
       signed: summary.status === "signed",
+      // Derived live from red_flag on every request — never a separate stamped flag that
+      // could drift out of sync with it. A non-empty array is the clinician console's cue to
+      // open on the red banner (docs/05-interview-engine.md).
+      red_flags: unacknowledged.map((f) => toRedFlagPayload(f, visit.tokenNo ?? visit.id)),
     };
   }
 }

@@ -1,0 +1,25 @@
+id: cough_breathless_at_rest
+module_id: cough_breathlessness
+kind: red_flag
+description: Breathless even at rest — must fire breathless_at_rest (escalate, severity 1).
+reviewer: >
+  Not clinician-reviewed. Synthetic fixture authored directly from
+  packages/ontology/modules/cough_breathlessness.yaml's own rule definition — see
+  docs/12-eval-plan.md.
+answers:
+  - slot_id: duration
+    value: "2_days"
+    input_mode: tap
+  - slot_id: cough_type
+    value: dry
+    input_mode: tap
+  - slot_id: breathlessness_severity
+    value: 4
+    input_mode: tap
+  - slot_id: breathlessness_trigger
+    value: rest
+    input_mode: tap
+  - slot_id: associated
+    value: [none]
+    input_mode: tap
+expected_red_flags: [breathless_at_rest]

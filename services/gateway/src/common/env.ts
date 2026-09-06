@@ -12,6 +12,7 @@ export const envSchema = z.object({
   GATEWAY_PORT: z.coerce.number().int().positive().default(4000),
   PUBLIC_WEB_URL: z.url().default("http://localhost:3000"),
   AI_SERVICE_URL: z.url().default("http://localhost:8001"),
+  FHIR_SERVER_URL: z.url().default("http://localhost:8090/fhir"),
   DATABASE_URL: z.string().min(1, "DATABASE_URL is required"),
   FIELD_ENCRYPTION_KEY: z
     .string()

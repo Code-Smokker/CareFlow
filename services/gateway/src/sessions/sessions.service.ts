@@ -14,6 +14,7 @@ import { sessionLogger } from "../common/logger";
 import { OntologyService } from "../ontology/ontology.service";
 import type { Slot } from "../ontology/ontology.types";
 import { PrismaService } from "../prisma/prisma.service";
+import { VisitsService } from "../visits/visits.service";
 import { EventsGateway } from "../websocket/events.gateway";
 import type {
   AnswerSubmissionDto,
@@ -54,6 +55,7 @@ interface NextQuestionPayload {
 }
 
 interface RedFlagPayload {
+  id: string;
   rule_id: string;
   severity: "info" | "warning" | "critical";
   quote: string;
@@ -67,12 +69,24 @@ export class SessionsService {
     private readonly ontology: OntologyService,
     private readonly events: EventsGateway,
     private readonly aiService: AiServiceClient,
+    private readonly visits: VisitsService,
   ) {}
 
   async create(publicWebUrl: string) {
     const patient = await this.prisma.patient.create({ data: {} });
+    // No registration/department-selection flow exists yet (ADR 0007) — every visit lands in
+    // one placeholder department so the queue is genuinely usable today rather than empty.
+    // Token numbering has a known benign race under concurrent creates (read-then-write, no
+    // lock) — acceptable at demo scale, not for the department to actually run on.
+    const department = "general";
+    const startOfToday = new Date();
+    startOfToday.setHours(0, 0, 0, 0);
+    const todaysCount = await this.prisma.visit.count({
+      where: { department, startedAt: { gte: startOfToday } },
+    });
+    const tokenNo = `${department.toUpperCase()}-${String(todaysCount + 1).padStart(3, "0")}`;
     const visit = await this.prisma.visit.create({
-      data: { patientId: patient.id, status: "in_intake" },
+      data: { patientId: patient.id, status: "in_intake", department, tokenNo },
     });
     const rawToken = generateResumeToken();
     const session = await this.prisma.intakeSession.create({
@@ -211,17 +225,18 @@ export class SessionsService {
       : [];
     const newlyFired = fired.filter((f) => !existingRuleIds.has(f.rule_id));
 
-    if (newlyFired.length > 0) {
-      await this.prisma.redFlag.createMany({
-        data: newlyFired.map((f) => ({
-          sessionId,
-          ruleId: f.rule_id,
-          severity: f.severity,
-          quote: f.quote,
-        })),
-        skipDuplicates: true,
-      });
-    }
+    const newlyFiredRows =
+      newlyFired.length > 0
+        ? await this.prisma.redFlag.createManyAndReturn({
+            data: newlyFired.map((f) => ({
+              sessionId,
+              ruleId: f.rule_id,
+              severity: f.severity,
+              quote: f.quote,
+            })),
+            skipDuplicates: true,
+          })
+        : [];
 
     const progress = nextState.module_id
       ? this.ontology.progress(nextState.module_id, nextState.filled)
@@ -250,11 +265,11 @@ export class SessionsService {
     const visit = await this.prisma.visit.findUniqueOrThrow({
       where: { id: session.visitId },
     });
-    const redFlagPayloads: RedFlagPayload[] = newlyFired.map((f) => ({
-      rule_id: f.rule_id,
-      severity: severityToContract(f.severity),
-      quote: f.quote,
-      // No queue/token wiring yet (Day 2) — session_id stands in so this field is never empty.
+    const redFlagPayloads: RedFlagPayload[] = newlyFiredRows.map((row) => ({
+      id: row.id,
+      rule_id: row.ruleId,
+      severity: severityToContract(row.severity),
+      quote: row.quote ?? row.ruleId,
       token_no: visit.tokenNo ?? sessionId,
     }));
 
@@ -273,6 +288,10 @@ export class SessionsService {
     for (const flag of redFlagPayloads) {
       this.events.emitToSession(sessionId, "redflag.fired", flag);
     }
+    // Queue re-prioritisation + the department-room broadcast (redflag.fired there too, plus a
+    // refreshed queue.updated) — this is what makes firing a rule actually move the token,
+    // not just write a row (docs/05-interview-engine.md "Red flags").
+    await this.visits.applyRedFlagsToQueue(session.visitId, newlyFiredRows);
 
     sessionLogger(sessionId).info(
       {
@@ -629,9 +648,7 @@ export class SessionsService {
   }
 }
 
-function severityToContract(
-  severity: 1 | 2 | 3,
-): "critical" | "warning" | "info" {
+function severityToContract(severity: number): "critical" | "warning" | "info" {
   if (severity === 1) return "critical";
   if (severity === 2) return "warning";
   return "info";

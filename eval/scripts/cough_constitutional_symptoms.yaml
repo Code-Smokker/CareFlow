@@ -1,0 +1,27 @@
+id: cough_constitutional_symptoms
+module_id: cough_breathlessness
+kind: red_flag
+description: >
+  Weight loss and night sweats alongside respiratory symptoms — must fire
+  constitutional_symptoms (flag, severity 2; TB/malignancy workup).
+reviewer: >
+  Not clinician-reviewed. Synthetic fixture authored directly from
+  packages/ontology/modules/cough_breathlessness.yaml's own rule definition — see
+  docs/12-eval-plan.md.
+answers:
+  - slot_id: duration
+    value: "1_month"
+    input_mode: tap
+  - slot_id: cough_type
+    value: dry
+    input_mode: tap
+  - slot_id: breathlessness_severity
+    value: 1
+    input_mode: tap
+  - slot_id: breathlessness_trigger
+    value: none
+    input_mode: tap
+  - slot_id: associated
+    value: [weight_loss, night_sweats]
+    input_mode: tap
+expected_red_flags: [constitutional_symptoms]

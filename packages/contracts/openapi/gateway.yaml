@@ -441,10 +441,15 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [fhir_bundle_id, abdm_status]
+                required: [fhir_bundle_id, abdm_status, care_context_status]
                 properties:
                   fhir_bundle_id: { type: string }
                   abdm_status: { $ref: "#/components/schemas/AbdmStatus" }
+                  care_context_status:
+                    type: string
+                    description: >
+                      Verbatim UI-facing string — under ABDM_MODE=mock this is always
+                      "linked (mock)", never a fake "linked" success (docs/08-abdm-fhir.md).
         default: { $ref: "#/components/responses/Error" }
 
   /v1/visits/{id}/ask:
@@ -491,6 +496,38 @@ paths:
           content:
             application/json:
               schema: { $ref: "#/components/schemas/VisitDiff" }
+        default: { $ref: "#/components/responses/Error" }
+
+  /v1/redflags/{id}/acknowledge:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema: { type: string }
+    post:
+      operationId: acknowledgeRedFlag
+      summary: One-tap acknowledge, logged with who and when
+      tags: [triage]
+      description: >
+        No RBAC/auth exists yet (Day 4), so actor_id/actor_role are plain identifiers passed
+        by the caller — same pattern as POST /v1/visits/{id}/sign's signed_by. Acknowledging
+        also writes an audit_log row (genuinely append-only, DB-trigger-enforced).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [actor_id, actor_role]
+              properties:
+                actor_id: { type: string }
+                actor_role: { type: string }
+      responses:
+        "200":
+          description: Acknowledged
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/RedFlag" }
         default: { $ref: "#/components/responses/Error" }
 
 components:
@@ -636,12 +673,19 @@ components:
 
     RedFlag:
       type: object
-      required: [rule_id, severity, quote, token_no]
+      required: [id, rule_id, severity, quote, token_no]
       properties:
+        id:
+          {
+            type: string,
+            description: "The fired red_flag row's id — acknowledge it via POST /v1/redflags/{id}/acknowledge.",
+          }
         rule_id: { type: string }
         severity: { type: string, enum: [info, warning, critical] }
         quote: { type: string }
         token_no: { type: string }
+        acknowledged_by: { type: [string, "null"] }
+        acknowledged_at: { type: [string, "null"], format: date-time }
 
     Session:
       type: object
@@ -666,6 +710,7 @@ components:
         age: { type: integer, minimum: 0 }
         sex: { $ref: "#/components/schemas/Sex" }
         phone: { type: [string, "null"] }
+        abha_address: { type: [string, "null"] }
 
     Extraction:
       type: object
@@ -711,12 +756,23 @@ components:
 
     QueueToken:
       type: object
-      required: [token_no, patient_id, department, priority, red_flags]
+      required:
+        [
+          visit_id,
+          token_no,
+          patient_id,
+          department,
+          priority,
+          waiting_minutes,
+          red_flags,
+        ]
       properties:
+        visit_id: { type: string }
         token_no: { type: string }
         patient_id: { type: string }
         department: { type: string }
         priority: { type: string, enum: [routine, priority, urgent] }
+        waiting_minutes: { type: number, minimum: 0 }
         red_flags:
           type: array
           items: { $ref: "#/components/schemas/RedFlag" }
@@ -747,7 +803,7 @@ components:
 
     VisitSummary:
       type: object
-      required: [visit_id, session_id, fields, signed]
+      required: [visit_id, session_id, fields, signed, red_flags]
       properties:
         visit_id: { type: string }
         session_id: { $ref: "#/components/schemas/SessionId" }
@@ -755,6 +811,14 @@ components:
           type: array
           items: { $ref: "#/components/schemas/SummaryField" }
         signed: { type: boolean }
+        red_flags:
+          type: array
+          description: >
+            Unacknowledged red flags for this visit — a non-empty array is what the clinician
+            console reads as "open this on the red banner" (docs/05-interview-engine.md); this
+            is derived live from the red_flag table on every request, not a separate stamped
+            flag that could drift out of sync with it.
+          items: { $ref: "#/components/schemas/RedFlag" }
 
     VisitDiff:
       type: object

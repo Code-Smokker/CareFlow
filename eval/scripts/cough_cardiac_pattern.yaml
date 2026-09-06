@@ -1,0 +1,27 @@
+id: cough_cardiac_pattern
+module_id: cough_breathlessness
+kind: red_flag
+description: >
+  Breathlessness with chest pain and leg swelling — suggests a cardiac cause. Must fire
+  cardiac_pattern (escalate, severity 1).
+reviewer: >
+  Not clinician-reviewed. Synthetic fixture authored directly from
+  packages/ontology/modules/cough_breathlessness.yaml's own rule definition — see
+  docs/12-eval-plan.md.
+answers:
+  - slot_id: duration
+    value: "1_week"
+    input_mode: tap
+  - slot_id: cough_type
+    value: none
+    input_mode: tap
+  - slot_id: breathlessness_severity
+    value: 2
+    input_mode: tap
+  - slot_id: breathlessness_trigger
+    value: walking
+    input_mode: tap
+  - slot_id: associated
+    value: [chest_pain, leg_swelling]
+    input_mode: tap
+expected_red_flags: [cardiac_pattern]

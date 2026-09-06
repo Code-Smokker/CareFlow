@@ -1,0 +1,33 @@
+id: cough_possible_tb
+module_id: cough_breathlessness
+kind: red_flag
+description: >
+  Prolonged cough with a TB contact history — must fire possible_tb (flag, severity 2; needs
+  workup, not an immediate escalation).
+reviewer: >
+  Not clinician-reviewed. Synthetic fixture authored directly from
+  packages/ontology/modules/cough_breathlessness.yaml's own rule definition — see
+  docs/12-eval-plan.md.
+answers:
+  - slot_id: duration
+    value: "1_month"
+    input_mode: tap
+  - slot_id: cough_type
+    value: productive
+    input_mode: tap
+  - slot_id: sputum_color
+    value: yellow_green
+    input_mode: tap
+  - slot_id: breathlessness_severity
+    value: 1
+    input_mode: tap
+  - slot_id: breathlessness_trigger
+    value: none
+    input_mode: tap
+  - slot_id: associated
+    value: [none]
+    input_mode: tap
+  - slot_id: tb_contact
+    value: true
+    input_mode: tap
+expected_red_flags: [possible_tb]

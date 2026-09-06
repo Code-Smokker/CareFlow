@@ -1,0 +1,31 @@
+id: abdominal_jaundice_flag
+module_id: abdominal_pain
+kind: red_flag
+description: Jaundice with abdominal pain — must fire jaundice_flag (flag, severity 2).
+reviewer: >
+  Not clinician-reviewed. Synthetic fixture authored directly from
+  packages/ontology/modules/abdominal_pain.yaml's own rule definition — see
+  docs/12-eval-plan.md.
+answers:
+  - slot_id: site
+    value: right_upper_quadrant
+    input_mode: tap
+  - slot_id: onset
+    value: gradual
+    input_mode: tap
+  - slot_id: duration
+    value: "1_week"
+    input_mode: tap
+  - slot_id: character
+    value: constant_ache
+    input_mode: tap
+  - slot_id: associated
+    value: [jaundice]
+    input_mode: tap
+  - slot_id: bowel_habit
+    value: normal
+    input_mode: tap
+  - slot_id: severity
+    value: 4
+    input_mode: tap
+expected_red_flags: [jaundice_flag]

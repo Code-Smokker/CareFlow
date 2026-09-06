@@ -7,6 +7,7 @@ from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
 if TYPE_CHECKING:
+    from ..models.red_flag import RedFlag
     from ..models.summary_field import SummaryField
 
 
@@ -21,12 +22,16 @@ class VisitSummary:
         session_id (str): Opaque session identifier.
         fields (list[SummaryField]):
         signed (bool):
+        red_flags (list[RedFlag]): Unacknowledged red flags for this visit — a non-empty array is what the clinician
+            console reads as "open this on the red banner" (docs/05-interview-engine.md); this is derived live from the
+            red_flag table on every request, not a separate stamped flag that could drift out of sync with it.
     """
 
     visit_id: str
     session_id: str
     fields: list[SummaryField]
     signed: bool
+    red_flags: list[RedFlag]
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
@@ -41,6 +46,11 @@ class VisitSummary:
 
         signed = self.signed
 
+        red_flags = []
+        for red_flags_item_data in self.red_flags:
+            red_flags_item = red_flags_item_data.to_dict()
+            red_flags.append(red_flags_item)
+
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
@@ -49,6 +59,7 @@ class VisitSummary:
                 "session_id": session_id,
                 "fields": fields,
                 "signed": signed,
+                "red_flags": red_flags,
             }
         )
 
@@ -56,6 +67,7 @@ class VisitSummary:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
+        from ..models.red_flag import RedFlag  # noqa: PLC0415
         from ..models.summary_field import SummaryField  # noqa: PLC0415
 
         d = dict(src_dict)
@@ -72,11 +84,19 @@ class VisitSummary:
 
         signed = d.pop("signed")
 
+        red_flags = []
+        _red_flags = d.pop("red_flags")
+        for red_flags_item_data in _red_flags:
+            red_flags_item = RedFlag.from_dict(red_flags_item_data)
+
+            red_flags.append(red_flags_item)
+
         visit_summary = cls(
             visit_id=visit_id,
             session_id=session_id,
             fields=fields,
             signed=signed,
+            red_flags=red_flags,
         )
 
         visit_summary.additional_properties = d

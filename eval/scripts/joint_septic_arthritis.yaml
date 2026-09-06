@@ -1,0 +1,31 @@
+id: joint_septic_arthritis
+module_id: joint_pain
+kind: red_flag
+description: >
+  Hot, swollen joint with fever — must fire septic_arthritis_suspected (escalate, severity 1).
+reviewer: >
+  Not clinician-reviewed. Synthetic fixture authored directly from
+  packages/ontology/modules/joint_pain.yaml's own rule definition — see docs/12-eval-plan.md.
+answers:
+  - slot_id: site
+    value: right_knee
+    input_mode: tap
+  - slot_id: pattern
+    value: single_joint
+    input_mode: tap
+  - slot_id: onset
+    value: sudden
+    input_mode: tap
+  - slot_id: duration
+    value: "2_days"
+    input_mode: tap
+  - slot_id: morning_stiffness_duration
+    value: under_30min
+    input_mode: tap
+  - slot_id: associated
+    value: [swelling, warmth, fever]
+    input_mode: tap
+  - slot_id: severity
+    value: 8
+    input_mode: tap
+expected_red_flags: [septic_arthritis_suspected]

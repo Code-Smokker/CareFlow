@@ -1,0 +1,28 @@
+id: cough_hemoptysis
+module_id: cough_breathlessness
+kind: red_flag
+description: Coughing up blood — must fire hemoptysis (escalate, severity 1).
+reviewer: >
+  Not clinician-reviewed. Synthetic fixture authored directly from
+  packages/ontology/modules/cough_breathlessness.yaml's own rule definition — see
+  docs/12-eval-plan.md.
+answers:
+  - slot_id: duration
+    value: "1_week"
+    input_mode: tap
+  - slot_id: cough_type
+    value: productive
+    input_mode: tap
+  - slot_id: sputum_color
+    value: blood_tinged
+    input_mode: tap
+  - slot_id: breathlessness_severity
+    value: 1
+    input_mode: tap
+  - slot_id: breathlessness_trigger
+    value: exertion
+    input_mode: tap
+  - slot_id: associated
+    value: [hemoptysis]
+    input_mode: tap
+expected_red_flags: [hemoptysis]

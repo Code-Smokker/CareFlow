@@ -1,0 +1,33 @@
+id: abdominal_peritonitis_suspected
+module_id: abdominal_pain
+kind: red_flag
+description: >
+  Severe pain with abdominal distension — must fire peritonitis_suspected (escalate,
+  severity 1).
+reviewer: >
+  Not clinician-reviewed. Synthetic fixture authored directly from
+  packages/ontology/modules/abdominal_pain.yaml's own rule definition — see
+  docs/12-eval-plan.md.
+answers:
+  - slot_id: site
+    value: generalised
+    input_mode: tap
+  - slot_id: onset
+    value: sudden
+    input_mode: tap
+  - slot_id: duration
+    value: "1_hour"
+    input_mode: tap
+  - slot_id: character
+    value: sharp_stabbing
+    input_mode: tap
+  - slot_id: associated
+    value: [distension]
+    input_mode: tap
+  - slot_id: bowel_habit
+    value: constipated
+    input_mode: tap
+  - slot_id: severity
+    value: 9
+    input_mode: tap
+expected_red_flags: [peritonitis_suspected]

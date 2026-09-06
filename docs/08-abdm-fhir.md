@@ -85,6 +85,31 @@ Hospitals run everything from a modern HMIS to a desktop application from 2009. 
 The printable fallback matters more than it looks. It is what makes a pilot possible in a
 hospital that cannot integrate anything.
 
+## DOCUMENTED vs ASSUMED — read this before touching the mock
+
+Published ABDM docs drift from the live sandbox. `services/gateway/src/abdm/mock-abdm-gateway.ts`
+mirrors the shapes below behind `AbdmClient` (`abdm-client.interface.ts`) — every shape in that
+file is marked, in code, as one of:
+
+- **DOCUMENTED** — checked against this doc or a cited source (below).
+- **ASSUMED** — this repo's best guess, not checked against a live sandbox response.
+
+| Shape | Status | Source |
+|---|---|---|
+| Endpoint paths (table above) | DOCUMENTED | This doc, verify again before the demo per its own warning |
+| `REQUEST-ID`, `TIMESTAMP`, `X-CM-ID` headers | DOCUMENTED | This doc |
+| Aadhaar/OTP fields must be RSA-encrypted | DOCUMENTED | This doc; [ABDM ABHA V3 API reference](https://devlprnitish.medium.com/abdm-abha-v3-api-complete-reference-guide-761d91cefb94) |
+| Error codes `HIS-1026` (txn not found), `HIS-2022` (invalid OTP), `HIS-2001` (invalid Aadhaar), `HIS-1056` (OTP expired) | DOCUMENTED | [ABDM Annexure 2 — error codes](https://docs.coronasafe.network/abdm-documentation/abha-number-service-or-milestone-1/annexure-2-error-codes-and-description) |
+| Actual RSA encryption of Aadhaar/OTP payloads | **ASSUMED — not implemented.** The mock stubs this (`encryptForAbdm` returns a labelled placeholder, never real ciphertext) because there's no real ABDM public certificate to encrypt against and nowhere to send the result in mock mode. This is the single biggest gap to close once sandbox credentials arrive. | — |
+| `requestOtp`/`identifyByQr` response body field names (`txnId`, demographics shape) | ASSUMED | Not checked against a live response |
+| OPConsultRecord `Composition.type` = SNOMED `371530004` | ASSUMED (plausible, commonly cited) | Public NRCES IG examples, not the primary spec itself |
+
+**Tomorrow, once sandbox credentials arrive:** set `ABDM_MODE=sandbox`, run the real flow against
+the ABHA v3 sandbox, diff every ASSUMED row above against what the sandbox actually returns, fix
+`mock-abdm-gateway.ts` (and a new `SandboxAbdmGateway` implementing the same `AbdmClient`) so both
+modes stay in parity, and update this table with the real endpoint paths/error codes observed.
+Keep `ABDM_MODE=mock` as the default regardless — the demo has to run offline.
+
 ## Care-context linking
 
 After the physician signs, link the care context to the patient's ABHA so the record appears

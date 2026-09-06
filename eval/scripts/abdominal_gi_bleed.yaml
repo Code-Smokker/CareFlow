@@ -1,0 +1,31 @@
+id: abdominal_gi_bleed
+module_id: abdominal_pain
+kind: red_flag
+description: Black, tarry stool with abdominal pain — must fire gi_bleed (escalate, severity 1).
+reviewer: >
+  Not clinician-reviewed. Synthetic fixture authored directly from
+  packages/ontology/modules/abdominal_pain.yaml's own rule definition — see
+  docs/12-eval-plan.md.
+answers:
+  - slot_id: site
+    value: epigastric
+    input_mode: tap
+  - slot_id: onset
+    value: gradual
+    input_mode: tap
+  - slot_id: duration
+    value: "2_days"
+    input_mode: tap
+  - slot_id: character
+    value: burning
+    input_mode: tap
+  - slot_id: associated
+    value: [black_stool]
+    input_mode: tap
+  - slot_id: bowel_habit
+    value: normal
+    input_mode: tap
+  - slot_id: severity
+    value: 5
+    input_mode: tap
+expected_red_flags: [gi_bleed]

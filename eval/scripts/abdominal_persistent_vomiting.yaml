@@ -1,0 +1,33 @@
+id: abdominal_persistent_vomiting
+module_id: abdominal_pain
+kind: red_flag
+description: >
+  Vomiting persisting beyond a week alongside abdominal pain — must fire
+  persistent_vomiting (flag, severity 2).
+reviewer: >
+  Not clinician-reviewed. Synthetic fixture authored directly from
+  packages/ontology/modules/abdominal_pain.yaml's own rule definition — see
+  docs/12-eval-plan.md.
+answers:
+  - slot_id: site
+    value: epigastric
+    input_mode: tap
+  - slot_id: onset
+    value: gradual
+    input_mode: tap
+  - slot_id: duration
+    value: "2_weeks"
+    input_mode: tap
+  - slot_id: character
+    value: colicky
+    input_mode: tap
+  - slot_id: associated
+    value: [vomiting]
+    input_mode: tap
+  - slot_id: bowel_habit
+    value: normal
+    input_mode: tap
+  - slot_id: severity
+    value: 5
+    input_mode: tap
+expected_red_flags: [persistent_vomiting]

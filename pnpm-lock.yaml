@@ -27,6 +27,25 @@ importers:
         specifier: ^5.7.2
         version: 5.9.3
 
+  packages/fhir:
+    dependencies:
+      zod:
+        specifier: ^4.5.4
+        version: 4.5.4
+    devDependencies:
+      '@types/node':
+        specifier: ^22.10.2
+        version: 22.20.1
+      tsx:
+        specifier: ^4.19.2
+        version: 4.23.13
+      typescript:
+        specifier: ^5.7.2
+        version: 5.9.3
+      vitest:
+        specifier: ^5.0.0
+        version: 5.0.0(@types/node@22.20.1)(vite@8.2.2(@types/node@22.20.1)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.13))
+
   packages/ontology: {}
 
   services/gateway:
@@ -34,6 +53,9 @@ importers:
       '@careflow/contracts':
         specifier: workspace:*
         version: link:../../packages/contracts
+      '@careflow/fhir':
+        specifier: workspace:*
+        version: link:../../packages/fhir
       '@nestjs/common':
         specifier: ^11.2.3
         version: 11.2.3(reflect-metadata@0.2.2)(rxjs@7.8.2)
@@ -2354,7 +2376,6 @@ snapshots:
       '@esbuild/win32-arm64': 0.28.2
       '@esbuild/win32-ia32': 0.28.2
       '@esbuild/win32-x64': 0.28.2
-    optional: true
 
   escape-html@1.0.3: {}
 
@@ -3038,7 +3059,6 @@ snapshots:
       esbuild: 0.28.2
     optionalDependencies:
       fsevents: 2.3.3
-    optional: true
 
   turbo@2.10.12:
     optionalDependencies:

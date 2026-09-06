@@ -1,6 +1,7 @@
 """Contains all the data models used in inputs/outputs"""
 
 from .abdm_status import AbdmStatus
+from .acknowledge_red_flag_body import AcknowledgeRedFlagBody
 from .answer_submission import AnswerSubmission
 from .answer_value_type_4 import AnswerValueType4
 from .ask_visit_body import AskVisitBody
@@ -55,6 +56,7 @@ from .visit_summary import VisitSummary
 
 __all__ = (
     "AbdmStatus",
+    "AcknowledgeRedFlagBody",
     "AnswerSubmission",
     "AnswerValueType4",
     "AskVisitBody",

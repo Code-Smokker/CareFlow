@@ -71,6 +71,7 @@ export class SessionsController {
   }
 
   @Post(":id/answer")
+  @HttpCode(200)
   submitAnswer(
     @Param("id") id: string,
     @ReqHeaders("idempotency-key") idempotencyKey: string | undefined,
@@ -88,6 +89,7 @@ export class SessionsController {
   }
 
   @Post(":id/complete")
+  @HttpCode(200)
   complete(@Param("id") id: string) {
     return this.sessions.complete(id);
   }

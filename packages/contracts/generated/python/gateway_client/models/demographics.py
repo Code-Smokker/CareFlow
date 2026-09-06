@@ -20,12 +20,14 @@ class Demographics:
         age (int):
         sex (Sex):
         phone (None | str | Unset):
+        abha_address (None | str | Unset):
     """
 
     name: str
     age: int
     sex: Sex
     phone: None | str | Unset = UNSET
+    abha_address: None | str | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
@@ -41,6 +43,12 @@ class Demographics:
         else:
             phone = self.phone
 
+        abha_address: None | str | Unset
+        if isinstance(self.abha_address, Unset):
+            abha_address = UNSET
+        else:
+            abha_address = self.abha_address
+
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
@@ -52,6 +60,8 @@ class Demographics:
         )
         if phone is not UNSET:
             field_dict["phone"] = phone
+        if abha_address is not UNSET:
+            field_dict["abha_address"] = abha_address
 
         return field_dict
 
@@ -73,11 +83,21 @@ class Demographics:
 
         phone = _parse_phone(d.pop("phone", UNSET))
 
+        def _parse_abha_address(data: object) -> None | str | Unset:
+            if data is None:
+                return data
+            if isinstance(data, Unset):
+                return data
+            return cast(None | str | Unset, data)
+
+        abha_address = _parse_abha_address(d.pop("abha_address", UNSET))
+
         demographics = cls(
             name=name,
             age=age,
             sex=sex,
             phone=phone,
+            abha_address=abha_address,
         )
 
         demographics.additional_properties = d

@@ -1,0 +1,32 @@
+id: joint_inflammatory_pattern
+module_id: joint_pain
+kind: red_flag
+description: >
+  Many joints affected with over an hour of morning stiffness — must fire
+  inflammatory_pattern (flag, severity 2; suggests an inflammatory arthritis needing workup).
+reviewer: >
+  Not clinician-reviewed. Synthetic fixture authored directly from
+  packages/ontology/modules/joint_pain.yaml's own rule definition — see docs/12-eval-plan.md.
+answers:
+  - slot_id: site
+    value: hands
+    input_mode: tap
+  - slot_id: pattern
+    value: many_joints
+    input_mode: tap
+  - slot_id: onset
+    value: gradual
+    input_mode: tap
+  - slot_id: duration
+    value: "1_month"
+    input_mode: tap
+  - slot_id: morning_stiffness_duration
+    value: over_1hr
+    input_mode: tap
+  - slot_id: associated
+    value: [none]
+    input_mode: tap
+  - slot_id: severity
+    value: 5
+    input_mode: tap
+expected_red_flags: [inflammatory_pattern]

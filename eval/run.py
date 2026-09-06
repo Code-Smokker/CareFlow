@@ -163,16 +163,22 @@ def print_table(results: Results) -> str:
     slot_correct_n = sum(s.correct for s in messy_slots)
 
     def row(label: str, result: str, detail: str) -> str:
-        return f"{label:40} {result:>8}  {detail}"
+        return f"{label:44} {result:>8}  {detail}"
 
     lines = []
     lines.append("CareFlow eval — " + f"{len(results.slots)} slot checks, {len(results.red_flags)} scripts")
     lines.append("=" * 88)
     lines.append(row("Metric", "Result", "Detail"))
     lines.append("-" * 88)
-    lines.append(row("Red-flag sensitivity (5 red_flag cases)", f"{sensitivity_n}/{len(red_flag_cases)}", "target 100%"))
     lines.append(
-        row("Red-flag specificity (3 messy cases)", f"{specificity_n}/{len(messy_cases)}", "non-flag cases correctly not escalated")
+        row(f"Red-flag sensitivity ({len(red_flag_cases)} red_flag cases)", f"{sensitivity_n}/{len(red_flag_cases)}", "target 100%")
+    )
+    lines.append(
+        row(
+            f"Red-flag specificity ({len(messy_cases)} messy cases)",
+            f"{specificity_n}/{len(messy_cases)}",
+            "non-flag cases correctly not escalated",
+        )
     )
     lines.append(
         row(

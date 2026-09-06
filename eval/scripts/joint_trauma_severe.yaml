@@ -1,0 +1,35 @@
+id: joint_trauma_severe
+module_id: joint_pain
+kind: red_flag
+description: >
+  Significant joint pain following trauma — must fire trauma_severe (flag, severity 2;
+  consider fracture, needs imaging).
+reviewer: >
+  Not clinician-reviewed. Synthetic fixture authored directly from
+  packages/ontology/modules/joint_pain.yaml's own rule definition — see docs/12-eval-plan.md.
+answers:
+  - slot_id: site
+    value: left_ankle
+    input_mode: tap
+  - slot_id: pattern
+    value: single_joint
+    input_mode: tap
+  - slot_id: onset
+    value: sudden
+    input_mode: tap
+  - slot_id: duration
+    value: today
+    input_mode: tap
+  - slot_id: morning_stiffness_duration
+    value: none
+    input_mode: tap
+  - slot_id: associated
+    value: [swelling]
+    input_mode: tap
+  - slot_id: severity
+    value: 9
+    input_mode: tap
+  - slot_id: trauma_history
+    value: true
+    input_mode: tap
+expected_red_flags: [trauma_severe]

@@ -2,10 +2,13 @@ import { resolve } from "node:path";
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { validateEnv } from "./common/env";
+import { AbdmModule } from "./abdm/abdm.module";
 import { AiModule } from "./ai/ai.module";
 import { HealthModule } from "./health/health.module";
+import { IdentityModule } from "./identity/identity.module";
 import { OntologyModule } from "./ontology/ontology.module";
 import { PrismaModule } from "./prisma/prisma.module";
+import { RedFlagsModule } from "./redflags/redflags.module";
 import { SessionsModule } from "./sessions/sessions.module";
 import { VisitsModule } from "./visits/visits.module";
 import { WebsocketModule } from "./websocket/websocket.module";
@@ -22,10 +25,13 @@ import { WebsocketModule } from "./websocket/websocket.module";
     PrismaModule,
     OntologyModule,
     AiModule,
+    AbdmModule,
     WebsocketModule,
     HealthModule,
     SessionsModule,
     VisitsModule,
+    RedFlagsModule,
+    IdentityModule,
   ],
 })
 export class AppModule {}

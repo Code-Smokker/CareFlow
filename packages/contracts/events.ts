@@ -24,6 +24,7 @@ export interface QuestionOption {
 }
 
 export interface RedFlagPayload {
+  id: string;
   rule_id: string;
   severity: RedFlagSeverity;
   quote: string;
@@ -38,10 +39,12 @@ export interface ExtractionPayload {
 }
 
 export interface QueueTokenPayload {
+  visit_id: string;
   token_no: string;
   patient_id: string;
   department: string;
   priority: "routine" | "priority" | "urgent";
+  waiting_minutes: number;
   red_flags: RedFlagPayload[];
 }
 

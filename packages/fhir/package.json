@@ -1,0 +1,24 @@
+{
+  "name": "@careflow/fhir",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Zod schemas and builders for the ABDM R4 profiles CareFlow emits (OPConsultRecord). Never construct a bundle as an inline object literal at a call site — docs/08-abdm-fhir.md.",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "lint": "echo 'fhir: no eslint config yet'",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "vitest run",
+    "validate:hapi": "tsx scripts/validate-against-hapi.ts"
+  },
+  "dependencies": {
+    "zod": "^4.5.4"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2",
+    "vitest": "^5.0.0"
+  }
+}

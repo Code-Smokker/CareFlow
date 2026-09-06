@@ -367,6 +367,28 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/redflags/{id}/acknowledge": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * One-tap acknowledge, logged with who and when
+         * @description No RBAC/auth exists yet (Day 4), so actor_id/actor_role are plain identifiers passed by the caller — same pattern as POST /v1/visits/{id}/sign's signed_by. Acknowledging also writes an audit_log row (genuinely append-only, DB-trigger-enforced).
+         */
+        post: operations["acknowledgeRedFlag"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -432,11 +454,16 @@ export interface components {
             audio_uri?: string | null;
         };
         RedFlag: {
+            /** @description The fired red_flag row's id — acknowledge it via POST /v1/redflags/{id}/acknowledge. */
+            id: string;
             rule_id: string;
             /** @enum {string} */
             severity: "info" | "warning" | "critical";
             quote: string;
             token_no: string;
+            acknowledged_by?: string | null;
+            /** Format: date-time */
+            acknowledged_at?: string | null;
         };
         Session: {
             session_id: components["schemas"]["SessionId"];
@@ -452,6 +479,7 @@ export interface components {
             age: number;
             sex: components["schemas"]["Sex"];
             phone?: string | null;
+            abha_address?: string | null;
         };
         Extraction: {
             field: string;
@@ -480,11 +508,13 @@ export interface components {
             source_document_id: string | null;
         };
         QueueToken: {
+            visit_id: string;
             token_no: string;
             patient_id: string;
             department: string;
             /** @enum {string} */
             priority: "routine" | "priority" | "urgent";
+            waiting_minutes: number;
             red_flags: components["schemas"]["RedFlag"][];
         };
         SummaryField: {
@@ -509,6 +539,8 @@ export interface components {
             session_id: components["schemas"]["SessionId"];
             fields: components["schemas"]["SummaryField"][];
             signed: boolean;
+            /** @description Unacknowledged red flags for this visit — a non-empty array is what the clinician console reads as "open this on the red banner" (docs/05-interview-engine.md); this is derived live from the red_flag table on every request, not a separate stamped flag that could drift out of sync with it. */
+            red_flags: components["schemas"]["RedFlag"][];
         };
         VisitDiff: {
             previous_visit_id: string | null;
@@ -1065,6 +1097,8 @@ export interface operations {
                     "application/json": {
                         fhir_bundle_id: string;
                         abdm_status: components["schemas"]["AbdmStatus"];
+                        /** @description Verbatim UI-facing string — under ABDM_MODE=mock this is always "linked (mock)", never a fake "linked" success (docs/08-abdm-fhir.md). */
+                        care_context_status: string;
                     };
                 };
             };
@@ -1121,6 +1155,36 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["VisitDiff"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    acknowledgeRedFlag: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    actor_id: string;
+                    actor_role: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Acknowledged */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RedFlag"];
                 };
             };
             default: components["responses"]["Error"];
