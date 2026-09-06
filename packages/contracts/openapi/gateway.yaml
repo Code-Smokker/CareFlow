@@ -523,6 +523,14 @@ components:
       description: How the patient supplied this answer. Maps to answer.source (CLAUDE.md rule 4).
       enum: [voice, tap, bodymap, proxy, ocr]
 
+    QuestionInputMode:
+      type: string
+      description: >
+        UI affordances a question can be answered with — packages/ontology slot.input, not the
+        answer-provenance InputMode. Every slot supports at least two, none requires typing
+        (docs/05-interview-engine.md).
+      enum: [voice, chips, multi, bodymap, facescale, duration]
+
     ConsentScope:
       type: string
       enum:
@@ -583,7 +591,7 @@ components:
         tts_url: { type: [string, "null"], format: uri }
         input_modes:
           type: array
-          items: { $ref: "#/components/schemas/InputMode" }
+          items: { $ref: "#/components/schemas/QuestionInputMode" }
         options:
           type: array
           items: { $ref: "#/components/schemas/QuestionOption" }

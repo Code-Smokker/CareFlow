@@ -22,6 +22,7 @@ from .identify_by_abha_qr_response_200 import IdentifyByAbhaQrResponse200
 from .input_mode import InputMode
 from .next_question import NextQuestion
 from .progress import Progress
+from .question_input_mode import QuestionInputMode
 from .question_option import QuestionOption
 from .queue_token import QueueToken
 from .queue_token_priority import QueueTokenPriority
@@ -74,6 +75,7 @@ __all__ = (
     "InputMode",
     "NextQuestion",
     "Progress",
+    "QuestionInputMode",
     "QuestionOption",
     "QueueToken",
     "QueueTokenPriority",

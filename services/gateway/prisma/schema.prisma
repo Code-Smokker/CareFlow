@@ -1,0 +1,355 @@
+// CareFlow data model. This file is the source of truth for the schema; docs/04-data-model.md
+// is the intent behind it. Prisma (this schema) owns every migration against the single
+// Postgres instance — the Python services (ai, docai, terminology) read and write the same
+// tables directly, but never migrate them.
+//
+// Three additive deviations from docs/04-data-model.md, and why, are recorded in
+// docs/adr/0007-session-scaffold-schema-deviations.md:
+//   1. Patient/Visit are auto-created as placeholders when a session starts (identity is
+//      resolved later by the /v1/identity/* endpoints), instead of making session -> visit ->
+//      patient nullable.
+//   2. IntakeSession gets a `status` column not listed in the doc, backing the contract's
+//      Session.status.
+//   3. Answer gets an `idempotency_key` column, backing contract rule 4 (POST /answer must not
+//      double-advance the interview on retry).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// Pinned to Prisma 6 (not 7): Prisma 7 requires a prisma.config.ts + driver adapter instead of
+// `url = env(...)` here — real setup cost this five-day sprint doesn't need. Revisit post-demo.
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---------------------------------------------------------------------------
+// Enums
+// ---------------------------------------------------------------------------
+
+enum Sex {
+  male
+  female
+  other
+  unknown
+}
+
+enum VisitStatus {
+  waiting
+  in_intake
+  ready
+  consulting
+  closed
+}
+
+enum VisitPriority {
+  routine
+  priority
+  urgent
+}
+
+enum IntakeMode {
+  kiosk
+  phone
+  assisted
+  proxy
+}
+
+/// A session's own lifecycle. Distinct from VisitStatus — one visit can span more than one
+/// session over time (e.g. a resumed follow-up), so this is not derived from the visit.
+enum SessionStatus {
+  created
+  in_progress
+  completed
+  withdrawn
+}
+
+/// The UI modality the patient actually used. Distinct from AnswerSource — see
+/// docs/adr/0007-session-scaffold-schema-deviations.md #4. `ocr` is not in
+/// docs/04-data-model.md's version of this enum, but the wire value that populates this column
+/// (contracts' single `input_mode` field) legitimately carries it — added rather than mapped
+/// away, so this column never lies about provenance.
+enum AnswerInputMode {
+  voice
+  tap
+  bodymap
+  facescale
+  proxy
+  ocr
+}
+
+/// Provenance category, matches CLAUDE.md rule 4 and @careflow/contracts' InputMode enum
+/// exactly. This is what the UI reads to decide whether to demote/render "unclear".
+enum AnswerSource {
+  voice
+  tap
+  bodymap
+  proxy
+  ocr
+}
+
+enum DocumentType {
+  prescription
+  lab
+  discharge
+  imaging
+  unknown
+}
+
+enum OcrStatus {
+  queued
+  processing
+  done
+  failed
+}
+
+enum ExtractionEntityType {
+  condition
+  medication
+  observation
+  procedure
+}
+
+enum SummaryStatus {
+  draft
+  signed
+}
+
+enum ConceptEquivalence {
+  equivalent
+  wider
+  narrower
+  related
+}
+
+// ---------------------------------------------------------------------------
+// Core clinical tables
+// ---------------------------------------------------------------------------
+
+/// Demographic columns are all optional: a session can — and by default does — start against
+/// a placeholder patient before /v1/identity/* resolves a real one. Name/phone/ABHA number are
+/// AES-GCM ciphertext at the application layer (FIELD_ENCRYPTION_KEY), never plaintext here —
+/// see src/common/crypto.ts. A database dump must not yield identities.
+model Patient {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  abhaNumber   String?  @map("abha_number")
+  abhaAddress  String?  @map("abha_address")
+  name         String?
+  dob          DateTime? @db.Date
+  sex          Sex?
+  phone        String?
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  visits       Visit[]
+  consents     Consent[]
+
+  @@map("patient")
+}
+
+model Visit {
+  id         String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  patientId  String        @map("patient_id") @db.Uuid
+  patient    Patient       @relation(fields: [patientId], references: [id])
+  department String?
+  tokenNo    String?       @map("token_no")
+  priority   VisitPriority @default(routine)
+  status     VisitStatus   @default(waiting)
+  startedAt  DateTime      @default(now()) @map("started_at")
+  closedAt   DateTime?     @map("closed_at")
+
+  sessions   IntakeSession[]
+  summaries  Summary[]
+
+  @@index([department, priority(sort: Desc), tokenNo])
+  @@map("visit")
+}
+
+/// `state` is the serialized interview snapshot (module id, current slot, filled values) —
+/// on Day 1 a plain JSON object written by OntologyService, forward-compatible with an actual
+/// XState snapshot once the ai service phases questions. Written on every /answer turn so a
+/// session can resume on any device (docs/01-architecture.md "State and resumability").
+model IntakeSession {
+  id              String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  visitId         String        @map("visit_id") @db.Uuid
+  visit           Visit         @relation(fields: [visitId], references: [id])
+  mode            IntakeMode    @default(kiosk)
+  language        String?
+  deviceId        String?       @map("device_id")
+  /// SHA-256 of the resume token. The raw token is only ever returned once, at creation.
+  resumeTokenHash String        @map("resume_token_hash")
+  status          SessionStatus @default(created)
+  state           Json          @default("{}")
+  progress        Json?
+  resumedCount    Int           @default(0) @map("resumed_count")
+  expiresAt       DateTime      @map("expires_at")
+  createdAt       DateTime      @default(now()) @map("created_at")
+  updatedAt       DateTime      @updatedAt @map("updated_at")
+
+  answers    Answer[]
+  documents  Document[]
+  redFlags   RedFlag[]
+  consents   Consent[]
+
+  @@map("intake_session")
+}
+
+/// `input_mode` and `source` are populated from the same wire value today — see
+/// docs/adr/0007-session-scaffold-schema-deviations.md #4 for why the two enums differ and how
+/// that's reconciled until voice/bodymap/facescale clients exist.
+model Answer {
+  id             String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  sessionId      String          @map("session_id") @db.Uuid
+  session        IntakeSession   @relation(fields: [sessionId], references: [id])
+  slotId         String          @map("slot_id")
+  value          Json
+  inputMode      AnswerInputMode @map("input_mode")
+  source         AnswerSource
+  confidence     Float?
+  audioUri       String?         @map("audio_uri")
+  audioOffsetMs  Int?            @map("audio_offset_ms")
+  startedAt      DateTime?       @map("started_at")
+  answeredAt     DateTime        @default(now()) @map("answered_at")
+  /// Backs the Idempotency-Key header on POST /answer (contracts rule 4). NULL for any answer
+  /// submitted without one; Postgres treats multiple NULLs in a unique index as distinct, so
+  /// this only ever constrains genuine key collisions.
+  idempotencyKey String?         @map("idempotency_key")
+
+  @@unique([sessionId, idempotencyKey])
+  @@index([sessionId, slotId])
+  @@map("answer")
+}
+
+model Document {
+  id           String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  sessionId    String       @map("session_id") @db.Uuid
+  session      IntakeSession @relation(fields: [sessionId], references: [id])
+  type         DocumentType
+  storageUri   String       @map("storage_uri")
+  pageCount    Int?         @map("page_count")
+  qualityScore Float?       @map("quality_score")
+  ocrStatus    OcrStatus    @default(queued) @map("ocr_status")
+  createdAt    DateTime     @default(now()) @map("created_at")
+
+  extractions  Extraction[]
+
+  @@map("document")
+}
+
+/// `confirmed_by`/`confirmed_at` are what make CLAUDE.md rule 5 real: handwritten OCR output
+/// is never auto-accepted, a human confirms a dictionary-matched shortlist before this counts.
+model Extraction {
+  id           String               @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  documentId   String               @map("document_id") @db.Uuid
+  document     Document             @relation(fields: [documentId], references: [id])
+  entityType   ExtractionEntityType @map("entity_type")
+  payload      Json
+  bbox         Json?
+  page         Int?
+  confidence   Float?
+  confirmedBy  String?              @map("confirmed_by")
+  confirmedAt  DateTime?            @map("confirmed_at")
+
+  @@map("extraction")
+}
+
+/// Written by OntologyService.evaluateRedFlags — deterministic predicates only, never a model
+/// (CLAUDE.md rule 3). One row per (session, rule) — a rule that keeps matching across turns
+/// does not re-fire; the partial index over unacknowledged rows is added in the trigger
+/// migration (Prisma's schema DSL can't express a WHERE-qualified index).
+model RedFlag {
+  id             String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  sessionId      String        @map("session_id") @db.Uuid
+  session        IntakeSession @relation(fields: [sessionId], references: [id])
+  ruleId         String        @map("rule_id")
+  severity       Int
+  quote          String?
+  payload        Json?
+  firedAt        DateTime      @default(now()) @map("fired_at")
+  acknowledgedBy String?       @map("acknowledged_by")
+  acknowledgedAt DateTime?     @map("acknowledged_at")
+
+  @@unique([sessionId, ruleId])
+  @@map("red_flag")
+}
+
+model Summary {
+  id            String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  visitId       String        @map("visit_id") @db.Uuid
+  visit         Visit         @relation(fields: [visitId], references: [id])
+  structured    Json
+  renderedEn    String?       @map("rendered_en")
+  renderedLocal String?       @map("rendered_local")
+  fhirBundle    Json?         @map("fhir_bundle")
+  status        SummaryStatus @default(draft)
+  signedBy      String?       @map("signed_by")
+  signedAt      DateTime?     @map("signed_at")
+  createdAt     DateTime      @default(now()) @map("created_at")
+
+  @@map("summary")
+}
+
+model Consent {
+  id         String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  patientId  String        @map("patient_id") @db.Uuid
+  patient    Patient       @relation(fields: [patientId], references: [id])
+  sessionId  String        @map("session_id") @db.Uuid
+  session    IntakeSession @relation(fields: [sessionId], references: [id])
+  scopes     String[]
+  audioUri   String?       @map("audio_uri")
+  grantedAt  DateTime      @default(now()) @map("granted_at")
+  revokedAt  DateTime?     @map("revoked_at")
+
+  @@map("consent")
+}
+
+/// APPEND ONLY. No application code may UPDATE or DELETE a row here — enforced by a Postgres
+/// trigger (see the trigger migration), not just this convention. Records every read of a
+/// patient record with actor, role and reason: reads matter more than writes for the DPDP story.
+model AuditLog {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  actorId   String?  @map("actor_id")
+  actorRole String?  @map("actor_role")
+  action    String
+  resource  String
+  resourceId String? @map("resource_id")
+  reason    String?
+  at        DateTime @default(now())
+
+  @@map("audit_log")
+}
+
+// ---------------------------------------------------------------------------
+// Terminology (owned in practice by the terminology service; migrated here per
+// docs/04-data-model.md — one Prisma schema for the one Postgres instance)
+// ---------------------------------------------------------------------------
+
+/// `embedding` is `Unsupported("vector")`: Prisma migrates the column but does not expose it on
+/// the client — the terminology service reads/writes it directly over SQL. No ivfflat index
+/// yet on purpose (docs/04-data-model.md: add it only once there is real data in the table).
+model Concept {
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  system    String
+  code      String
+  display   String
+  synonyms  String[]
+  embedding Unsupported("vector")?
+
+  sourceMaps ConceptMap[] @relation("ConceptMapSource")
+  targetMaps ConceptMap[] @relation("ConceptMapTarget")
+
+  @@unique([system, code])
+  @@map("concept")
+}
+
+model ConceptMap {
+  id              String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  sourceConceptId String             @map("source_concept") @db.Uuid
+  sourceConcept   Concept            @relation("ConceptMapSource", fields: [sourceConceptId], references: [id])
+  targetConceptId String             @map("target_concept") @db.Uuid
+  targetConcept   Concept            @relation("ConceptMapTarget", fields: [targetConceptId], references: [id])
+  equivalence     ConceptEquivalence
+  reviewedBy      String?            @map("reviewed_by")
+
+  @@map("concept_map")
+}

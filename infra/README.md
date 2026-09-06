@@ -9,9 +9,14 @@ containers mount.
 
 ## Notes
 
-- The stock `postgres:16-alpine` image does **not** ship pgvector. If `CREATE EXTENSION vector`
-  fails, switch the image to `pgvector/pgvector:pg16` in `docker-compose.yml`. Trigram search
-  alone is enough to demo terminology lookup, so this is not day-1 blocking.
+- Postgres is exposed on host port **5433**, not the default 5432 — some dev machines already
+  run a native Postgres on 5432 that silently shadows a container mapped to the same port on
+  `localhost`. `.env.example`'s `DATABASE_URL` already points at 5433; if you hand-roll a
+  connection string, don't forget it.
+- Postgres runs on `pgvector/pgvector:pg16`, not the stock `postgres:16-alpine` — that image
+  does not ship pgvector and `CREATE EXTENSION vector` fails on it. Trigram search alone is
+  enough to demo terminology lookup if this ever needs to fall back, so it is not day-1 blocking,
+  but the pgvector image is the default now.
 - MinIO console: http://localhost:9001 (careflow / careflow123). Create the
   `careflow-documents` bucket on first run.
 - HAPI FHIR UI: http://localhost:8090 — use it to validate every bundle before claiming

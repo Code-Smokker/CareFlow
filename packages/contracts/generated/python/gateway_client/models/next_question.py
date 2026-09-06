@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Any, TypeVar, cast
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
-from ..models.input_mode import InputMode
+from ..models.question_input_mode import QuestionInputMode
 
 if TYPE_CHECKING:
     from ..models.question_option import QuestionOption
@@ -22,14 +22,14 @@ class NextQuestion:
         slot_id (None | str):
         text (str):
         tts_url (None | str):
-        input_modes (list[InputMode]):
+        input_modes (list[QuestionInputMode]):
         options (list[QuestionOption]):
     """
 
     slot_id: None | str
     text: str
     tts_url: None | str
-    input_modes: list[InputMode]
+    input_modes: list[QuestionInputMode]
     options: list[QuestionOption]
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
@@ -91,7 +91,7 @@ class NextQuestion:
         input_modes = []
         _input_modes = d.pop("input_modes")
         for input_modes_item_data in _input_modes:
-            input_modes_item = InputMode(input_modes_item_data)
+            input_modes_item = QuestionInputMode(input_modes_item_data)
 
             input_modes.append(input_modes_item)
 

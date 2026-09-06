@@ -377,6 +377,11 @@ export interface components {
          * @enum {string}
          */
         InputMode: "voice" | "tap" | "bodymap" | "proxy" | "ocr";
+        /**
+         * @description UI affordances a question can be answered with — packages/ontology slot.input, not the answer-provenance InputMode. Every slot supports at least two, none requires typing (docs/05-interview-engine.md).
+         * @enum {string}
+         */
+        QuestionInputMode: "voice" | "chips" | "multi" | "bodymap" | "facescale" | "duration";
         /** @enum {string} */
         ConsentScope: "history" | "audio_recording" | "documents" | "abha_lookup" | "research_deidentified";
         /** @enum {string} */
@@ -408,7 +413,7 @@ export interface components {
             text: string;
             /** Format: uri */
             tts_url: string | null;
-            input_modes: components["schemas"]["InputMode"][];
+            input_modes: components["schemas"]["QuestionInputMode"][];
             options: components["schemas"]["QuestionOption"][];
         };
         /** @description Typed per the slot schema declared in packages/ontology. */

@@ -7,6 +7,14 @@
 
 export type InputMode = "voice" | "tap" | "bodymap" | "proxy" | "ocr";
 
+/**
+ * UI affordances a question can be answered with — packages/ontology slot.input, not the
+ * answer-provenance InputMode above. Every slot supports at least two, none requires typing
+ * (docs/05-interview-engine.md).
+ */
+export type QuestionInputMode =
+  "voice" | "chips" | "multi" | "bodymap" | "facescale" | "duration";
+
 export type RedFlagSeverity = "info" | "warning" | "critical";
 
 export interface QuestionOption {
@@ -59,7 +67,7 @@ export interface SlotFilledPayload {
 export interface QuestionNextPayload {
   question: string;
   tts_url: string | null;
-  input_modes: InputMode[];
+  input_modes: QuestionInputMode[];
   options: QuestionOption[];
 }
 

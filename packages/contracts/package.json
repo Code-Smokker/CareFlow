@@ -3,9 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "description": "OpenAPI specs → generated TS + Python clients. Source of truth for every interface between a client and the gateway, and between the gateway and a service.",
-  "type": "module",
-  "main": "./events.ts",
+  "main": "./dist/events.js",
+  "types": "./dist/events.d.ts",
   "scripts": {
+    "build": "tsc -p tsconfig.build.json",
     "gen": "pnpm gen:ts && pnpm gen:python",
     "gen:ts": "pnpm gen:ts:gateway && pnpm gen:ts:ai && pnpm gen:ts:docai && pnpm gen:ts:terminology",
     "gen:ts:gateway": "openapi-typescript openapi/gateway.yaml -o generated/ts/gateway.ts",
