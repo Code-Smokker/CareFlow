@@ -1,0 +1,19 @@
+fastapi==0.141.1
+uvicorn[standard]==0.52.4
+pydantic==2.13.5
+pydantic-settings==2.15.0
+structlog==26.1.0
+httpx==0.28.1
+PyYAML==6.0.3
+sarvamai==0.1.32
+python-multipart==0.0.32
+
+pytest==9.1.1
+pytest-asyncio==1.4.0
+
+# Offline fallback tier only — heavy (~2GB incl. weights on first use). Not required to import
+# or start this service; services/ai/app/speech/local.py imports these lazily inside the
+# function body so a missing install only breaks the local ASR/TTS tier, not the whole service.
+# transformers==4.57.1
+# torch==2.9.1
+# soundfile==0.13.1

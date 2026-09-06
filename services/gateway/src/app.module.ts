@@ -2,6 +2,7 @@ import { resolve } from "node:path";
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { validateEnv } from "./common/env";
+import { AiModule } from "./ai/ai.module";
 import { HealthModule } from "./health/health.module";
 import { OntologyModule } from "./ontology/ontology.module";
 import { PrismaModule } from "./prisma/prisma.module";
@@ -19,6 +20,7 @@ import { WebsocketModule } from "./websocket/websocket.module";
     }),
     PrismaModule,
     OntologyModule,
+    AiModule,
     WebsocketModule,
     HealthModule,
     SessionsModule,

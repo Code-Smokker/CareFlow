@@ -7,7 +7,7 @@ from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
 if TYPE_CHECKING:
-    from ..models.red_flag import RedFlag
+    from ..models.red_flag_finding import RedFlagFinding
 
 
 T = TypeVar("T", bound="EvaluateFlagsResponse200")
@@ -17,10 +17,10 @@ T = TypeVar("T", bound="EvaluateFlagsResponse200")
 class EvaluateFlagsResponse200:
     """
     Attributes:
-        fired (list[RedFlag]):
+        fired (list[RedFlagFinding]):
     """
 
-    fired: list[RedFlag]
+    fired: list[RedFlagFinding]
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
@@ -41,13 +41,13 @@ class EvaluateFlagsResponse200:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.red_flag import RedFlag  # noqa: PLC0415
+        from ..models.red_flag_finding import RedFlagFinding  # noqa: PLC0415
 
         d = dict(src_dict)
         fired = []
         _fired = d.pop("fired")
         for fired_item_data in _fired:
-            fired_item = RedFlag.from_dict(fired_item_data)
+            fired_item = RedFlagFinding.from_dict(fired_item_data)
 
             fired.append(fired_item)
 

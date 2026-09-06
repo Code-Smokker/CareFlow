@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { Injectable } from "@nestjs/common";
 import type { IntakeSession } from "@prisma/client";
+import { AiServiceClient, AiServiceUnavailable } from "../ai/ai-service.client";
 import { AppException } from "../common/app-exception";
 import { generateResumeToken, hashResumeToken } from "../common/crypto";
 import { sessionLogger } from "../common/logger";
@@ -59,6 +60,7 @@ export class SessionsService {
     private readonly prisma: PrismaService,
     private readonly ontology: OntologyService,
     private readonly events: EventsGateway,
+    private readonly aiService: AiServiceClient,
   ) {}
 
   async create(publicWebUrl: string) {
@@ -199,7 +201,7 @@ export class SessionsService {
       : [];
     const existingRuleIds = new Set(existingRedFlags.map((f) => f.ruleId));
     const fired = nextState.module_id
-      ? this.ontology.evaluateRedFlags(nextState.module_id, nextState.filled)
+      ? await this.evaluateRedFlagsPreferringAiService(sessionId, nextState.module_id, nextState.filled)
       : [];
     const newlyFired = fired.filter((f) => !existingRuleIds.has(f.rule_id));
 
@@ -338,6 +340,29 @@ export class SessionsService {
   }
 
   // ---------------------------------------------------------------------------------------
+
+  /** Prefers the ai service's /evaluate-flags, falls back to the local ontology walk when it's
+   * unreachable — the ai service is stateless and re-derivable from packages/ontology, so this
+   * is a pure availability fallback, not a data-loss risk. Both paths implement the exact same
+   * deterministic rules (CLAUDE.md rule 3): no model call in either. */
+  private async evaluateRedFlagsPreferringAiService(
+    sessionId: string,
+    moduleId: string,
+    filled: Record<string, unknown>,
+  ) {
+    try {
+      const fired = await this.aiService.evaluateFlags(sessionId, moduleId, filled);
+      sessionLogger(sessionId).debug({ module_id: moduleId }, "red flags evaluated via ai service");
+      return fired;
+    } catch (err) {
+      if (!(err instanceof AiServiceUnavailable)) throw err;
+      sessionLogger(sessionId).warn(
+        { module_id: moduleId, error: err.message },
+        "ai service unavailable, falling back to local ontology red-flag evaluation",
+      );
+      return this.ontology.evaluateRedFlags(moduleId, filled);
+    }
+  }
 
   private async findSessionOrThrow(sessionId: string): Promise<IntakeSession> {
     const session = await this.prisma.intakeSession.findUnique({

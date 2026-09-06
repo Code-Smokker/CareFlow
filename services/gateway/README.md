@@ -3,18 +3,26 @@
 API gateway — sessions, consent, queue, WebSocket, audit log. NestJS 11 + Prisma 6 against
 PostgreSQL 16. See `docs/01-architecture.md`, `docs/04-data-model.md`.
 
-Day 1 scope: the session lifecycle end to end with **zero AI dependency** — `POST /answer`
+Day 1 scope was the session lifecycle end to end with **zero AI dependency** — `POST /answer`
 walks `packages/ontology` directly and returns the next question straight from the loaded
-YAML modules. Voice/slot-filling via the `ai` service is a swap-in later, not a prerequisite.
+YAML modules. That path still exists and still works with `services/ai` stopped or unreachable:
+red-flag evaluation now prefers calling `ai.evaluate-flags` (see `src/ai/ai-service.client.ts`),
+falling back to the local ontology walk on any failure — the interview never stalls because the
+AI service is down.
 
 ## Run it
 
 ```
 cp ../../.env.example ../../.env   # first time only, then fill in FIELD_ENCRYPTION_KEY etc.
 docker compose up -d postgres      # from the repo root — Postgres on host port 5433, not 5432
+pnpm --filter @careflow/contracts build   # dist/events.js — gateway imports the compiled output,
+                                          # not the raw .ts (see @careflow/contracts' README)
 pnpm db:deploy                     # applies prisma/migrations/
 pnpm dev                           # nodemon + ts-node, http://localhost:4000
 ```
+
+`services/ai` (`cd ../ai && pnpm dev` — see its own README) is optional for `/answer` to work,
+but start it if you want to see the ai-service path exercised instead of the fallback.
 
 `pnpm build && pnpm start` runs the compiled output (`node dist/main.js`) the same way it would
 run in production.
@@ -32,6 +40,12 @@ compiler, so this actually works.
 - Chief-complaint selection is a plain chip-select slot over the loaded ontology modules —
   there's no AI classifier yet, so this stands in for docs/05-interview-engine.md's phase 3
   without skipping it.
+- Red-flag evaluation calls `services/ai`'s `/evaluate-flags` (see `src/ai/`), falling back to
+  the local `OntologyService.evaluateRedFlags` on any failure — both are the same deterministic
+  rules (CLAUDE.md rule 3), just two implementations, one per service.
+- `fill-slot` (voice utterance -> typed slot value) isn't wired here yet — `AnswerSubmission`
+  still carries an already-typed `value`, not a raw utterance. That wiring is Day 2's actual
+  voice-in-the-browser work, not something this endpoint's current shape can use yet.
 - `/complete` creates a `draft` `Summary` row from the raw filled slots verbatim — no
   structuring, no bilingual render. That's `ai.summarise`'s job once it exists.
 - No queue/token/department wiring yet (Day 2) — red flags fire, persist, and push

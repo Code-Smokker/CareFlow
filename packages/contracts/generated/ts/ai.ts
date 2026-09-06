@@ -144,12 +144,12 @@ export interface components {
             label: string;
             icon?: string | null;
         };
-        RedFlag: {
+        /** @description No token_no here (unlike gateway.yaml's RedFlag) — this service evaluates rules over slots with no visit/queue context. The caller (gateway) attaches token_no when it relays a finding onward as a RedFlag. */
+        RedFlagFinding: {
             rule_id: string;
             /** @enum {string} */
             severity: "info" | "warning" | "critical";
             quote: string;
-            token_no: string;
         };
         Answer: {
             slot_id: string;
@@ -313,7 +313,7 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
-                        fired: components["schemas"]["RedFlag"][];
+                        fired: components["schemas"]["RedFlagFinding"][];
                     };
                 };
             };

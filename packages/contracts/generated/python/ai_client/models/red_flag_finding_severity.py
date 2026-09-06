@@ -1,7 +1,7 @@
 from enum import StrEnum
 
 
-class RedFlagSeverity(StrEnum):
+class RedFlagFindingSeverity(StrEnum):
     CRITICAL = "critical"
     INFO = "info"
     WARNING = "warning"

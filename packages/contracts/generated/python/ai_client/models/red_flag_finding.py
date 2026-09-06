@@ -6,25 +6,25 @@ from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
-from ..models.red_flag_severity import RedFlagSeverity
+from ..models.red_flag_finding_severity import RedFlagFindingSeverity
 
-T = TypeVar("T", bound="RedFlag")
+T = TypeVar("T", bound="RedFlagFinding")
 
 
 @_attrs_define
-class RedFlag:
-    """
-    Attributes:
-        rule_id (str):
-        severity (RedFlagSeverity):
-        quote (str):
-        token_no (str):
+class RedFlagFinding:
+    """No token_no here (unlike gateway.yaml's RedFlag) — this service evaluates rules over slots with no visit/queue
+    context. The caller (gateway) attaches token_no when it relays a finding onward as a RedFlag.
+
+        Attributes:
+            rule_id (str):
+            severity (RedFlagFindingSeverity):
+            quote (str):
     """
 
     rule_id: str
-    severity: RedFlagSeverity
+    severity: RedFlagFindingSeverity
     quote: str
-    token_no: str
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
@@ -34,8 +34,6 @@ class RedFlag:
 
         quote = self.quote
 
-        token_no = self.token_no
-
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
@@ -43,7 +41,6 @@ class RedFlag:
                 "rule_id": rule_id,
                 "severity": severity,
                 "quote": quote,
-                "token_no": token_no,
             }
         )
 
@@ -54,21 +51,18 @@ class RedFlag:
         d = dict(src_dict)
         rule_id = d.pop("rule_id")
 
-        severity = RedFlagSeverity(d.pop("severity"))
+        severity = RedFlagFindingSeverity(d.pop("severity"))
 
         quote = d.pop("quote")
 
-        token_no = d.pop("token_no")
-
-        red_flag = cls(
+        red_flag_finding = cls(
             rule_id=rule_id,
             severity=severity,
             quote=quote,
-            token_no=token_no,
         )
 
-        red_flag.additional_properties = d
-        return red_flag
+        red_flag_finding.additional_properties = d
+        return red_flag_finding
 
     @property
     def additional_keys(self) -> list[str]:

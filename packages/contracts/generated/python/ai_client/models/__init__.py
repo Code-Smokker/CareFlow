@@ -16,8 +16,8 @@ from .next_question_body import NextQuestionBody
 from .next_question_body_state import NextQuestionBodyState
 from .next_question_response_200 import NextQuestionResponse200
 from .question_option import QuestionOption
-from .red_flag import RedFlag
-from .red_flag_severity import RedFlagSeverity
+from .red_flag_finding import RedFlagFinding
+from .red_flag_finding_severity import RedFlagFindingSeverity
 from .slot_value_type_4 import SlotValueType4
 from .summarise_body import SummariseBody
 from .summarise_body_extractions_item import SummariseBodyExtractionsItem
@@ -46,8 +46,8 @@ __all__ = (
     "NextQuestionBodyState",
     "NextQuestionResponse200",
     "QuestionOption",
-    "RedFlag",
-    "RedFlagSeverity",
+    "RedFlagFinding",
+    "RedFlagFindingSeverity",
     "SlotValueType4",
     "SummariseBody",
     "SummariseBodyExtractionsItem",

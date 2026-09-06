@@ -100,11 +100,17 @@ document scanning.
 
 ## 6. Red flags and triage
 
-- [ ] **P0** Deterministic rules evaluated after every slot fill — **no model call**
+- [ ] **P0** Deterministic rules evaluated after every slot fill — **no model call** ✅ *done:
+      two independent implementations, `services/gateway/src/ontology/expression.ts` and
+      `services/ai/app/ontology/expression.py`, evaluated against the same YAML — the gateway
+      calls the ai service first, falls back to its own copy if that's unreachable*
 - [ ] **P0** Chest pain + diaphoresis + radiation; fever + neck stiffness; altered sensorium; bleeding; breathlessness
 - [ ] **P0** Token actually re-prioritises in the queue — not a badge
-- [ ] **P0** Live push to the nurse tablet and wall display
-- [ ] **P0** The patient's exact words quoted on the alert
+- [ ] **P0** Live push to the nurse tablet and wall display *(pushes to the session room now;
+      no `department:{code}` room yet — no queue/token model exists to push to)*
+- [ ] **P0** The patient's exact words quoted on the alert *(currently the rule's own
+      `rationale` text, not a real transcript quote — there's no ASR transcript to quote until
+      voice lands)*
 - [ ] **P1** Calm spoken instruction to the patient, not an alarm
 - [ ] **P1** One-tap acknowledge, logged with who and when
 - [ ] **P2** Waiting-time heat so nobody is forgotten mid-list
@@ -130,13 +136,17 @@ document scanning.
 - [ ] **P1** FHIR Consent resource plus recorded audio assent
 - [ ] **P1** Raw audio deleted after transcription unless opted in
 - [ ] **P1** Visible countdown to session wipe on the kiosk
-- [ ] **P1** Patient-initiated purge
+- [ ] **P1** Patient-initiated purge ✅ *done: `DELETE /v1/sessions/:id` — see services/gateway*
 - [ ] **P2** De-identification proxy strips identifiers before any hosted model call, restores after
 - [ ] **P2** Debug view showing the proxy's before/after — demos in five seconds
 - [ ] **P1** `LLM_PROVIDER=local` runs the whole pipeline on-premise, nothing leaves
-- [ ] **P1** Field-level encryption on identifier columns
+- [ ] **P1** Field-level encryption on identifier columns *(AES-256-GCM helper exists —
+      services/gateway/src/common/crypto.ts — but nothing calls it yet: no identity flow writes
+      patient.name/phone/abha_number, so there's nothing to encrypt today)*
 - [ ] **P1** RBAC: patient / kiosk / nurse / physician / admin
-- [ ] **P0** Append-only audit log recording every **read** with actor and reason, enforced by a database trigger ✅ *done in gateway*
+- [ ] **P0** Append-only audit log, enforced by a database trigger ✅ *done: the table + trigger
+      exist and genuinely block UPDATE/DELETE (services/gateway), but only one write path exists
+      so far — session withdrawal. "Every read, with actor and reason" is not implemented.*
 - [ ] **P2** Kiosk lockdown mode
 - [ ] **P1** Idempotency keys on mutating endpoints ✅ *done for /answer*
 - [ ] **P1** Rate limiting, stricter on OTP endpoints

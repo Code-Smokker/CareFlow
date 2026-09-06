@@ -11,6 +11,7 @@ export const envSchema = z.object({
   LOG_LEVEL: z.string().default("info"),
   GATEWAY_PORT: z.coerce.number().int().positive().default(4000),
   PUBLIC_WEB_URL: z.url().default("http://localhost:3000"),
+  AI_SERVICE_URL: z.url().default("http://localhost:8001"),
   DATABASE_URL: z.string().min(1, "DATABASE_URL is required"),
   FIELD_ENCRYPTION_KEY: z
     .string()
