@@ -1,0 +1,82 @@
+#!/usr/bin/env bash
+# `make dev` — starts infra (docker compose) + all four services, waits for every health
+# check to go green, then prints every URL a human needs. Services are started with `nohup`
+# and their PIDs recorded in .dev-pids/ so `make dev-down` can stop exactly these processes
+# without touching anything else running on the machine.
+set -euo pipefail
+cd "$(dirname "${BASH_SOURCE[0]}")/.."
+ROOT="$(pwd)"
+LOG_DIR="$ROOT/.dev-logs"
+PID_DIR="$ROOT/.dev-pids"
+mkdir -p "$LOG_DIR" "$PID_DIR"
+
+echo "→ infra: postgres, redis, minio, hapi-fhir"
+docker compose up -d
+
+wait_for() {
+  local name="$1" url="$2" tries="${3:-60}"
+  for _ in $(seq 1 "$tries"); do
+    if curl -fsS -m 2 "$url" >/dev/null 2>&1; then
+      echo "  ✓ $name"
+      return 0
+    fi
+    sleep 1
+  done
+  echo "  ✗ $name did not become healthy at $url within ${tries}s — see $LOG_DIR/${name}.log" >&2
+  return 1
+}
+
+start() {
+  local name="$1"; shift
+  if [ -f "$PID_DIR/$name.pid" ] && kill -0 "$(cat "$PID_DIR/$name.pid")" 2>/dev/null; then
+    echo "  → $name already running (pid $(cat "$PID_DIR/$name.pid"))"
+    return 0
+  fi
+  # `exec` inside bash -lc so the recorded PID is the real server process, not a wrapper shell
+  # `make dev-down` can't reach through — best-effort even so: nodemon/celery may still leave a
+  # grandchild behind, in which case `lsof -ti:4000,8001,8002,8003 | xargs kill` is the fallback.
+  "$@" >"$LOG_DIR/$name.log" 2>&1 &
+  echo $! >"$PID_DIR/$name.pid"
+  disown
+}
+
+echo "→ waiting for infra..."
+until docker exec careflow-postgres pg_isready -U careflow >/dev/null 2>&1; do sleep 1; done
+echo "  ✓ postgres"
+until docker exec careflow-redis redis-cli ping >/dev/null 2>&1; do sleep 1; done
+echo "  ✓ redis"
+wait_for minio "http://localhost:9001/minio/health/live" 60
+wait_for hapi-fhir "http://localhost:8090/fhir/metadata" 90
+
+echo "→ starting services"
+start gateway bash -lc 'cd services/gateway && exec pnpm dev'
+start ai bash -lc 'exec services/ai/.venv/bin/uvicorn app.main:app --app-dir services/ai --port 8001'
+start docai bash -lc 'exec services/docai/.venv/bin/uvicorn app.main:app --app-dir services/docai --port 8002'
+start docai-worker bash -lc 'cd services/docai && exec .venv/bin/celery -A app.celery_app worker --loglevel=info'
+start terminology bash -lc 'exec services/terminology/.venv/bin/uvicorn app.main:app --app-dir services/terminology --port 8003'
+
+echo "→ waiting for services..."
+wait_for gateway "http://localhost:4000/health"
+wait_for ai "http://localhost:8001/health"
+wait_for docai "http://localhost:8002/health"
+wait_for terminology "http://localhost:8003/health"
+
+cat <<'URLS'
+
+================================================================
+CareFlow dev stack is up.
+
+  Gateway API        http://localhost:4000        (health: /health)
+  Gateway WebSocket   ws://localhost:4000          (?session_id=...&department=...)
+  ai service docs     http://localhost:8001/docs
+  docai service docs  http://localhost:8002/docs
+  terminology docs    http://localhost:8003/docs
+  MinIO console        http://localhost:9001       (careflow / careflow123)
+  HAPI FHIR UI         http://localhost:8090
+  Postgres             localhost:5433              (careflow / careflow)
+  Redis                localhost:6379
+
+  Logs:  .dev-logs/<service>.log
+  Stop:  make dev-down   (infra stays up — use `make down` for that)
+================================================================
+URLS

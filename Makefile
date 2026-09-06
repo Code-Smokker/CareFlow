@@ -21,7 +21,7 @@ py-setup: ## Create venvs for the Python services
 
 up: ## Start postgres, redis, minio, hapi-fhir
 	docker compose up -d
-	@echo "→ postgres:5432  redis:6379  minio:9000 (console 9001)  fhir:8090"
+	@echo "→ postgres:5433  redis:6379  minio:9000 (console 9001)  fhir:8090"
 
 down: ## Stop infra
 	docker compose down
@@ -29,8 +29,17 @@ down: ## Stop infra
 reset: ## Wipe all local data and restart infra
 	docker compose down -v && docker compose up -d
 
-dev: ## Run all apps and services in watch mode
-	pnpm dev
+dev: ## Start infra + all four services, wait for health, print every URL
+	@bash scripts/dev-up.sh
+
+dev-down: ## Stop the services `make dev` started (infra stays up)
+	@bash scripts/dev-down.sh
+
+demo: ## Seed a patient and walk the entire path (needs `make dev` running)
+	@test -d scripts/demo/.venv || python3 -m venv scripts/demo/.venv
+	@scripts/demo/.venv/bin/pip install -q -U pip
+	@scripts/demo/.venv/bin/pip install -q -r scripts/demo/requirements.txt
+	@scripts/demo/.venv/bin/python3 scripts/demo/demo.py
 
 lint: ## Lint everything
 	pnpm lint
@@ -47,4 +56,4 @@ eval: ## Run the clinical eval harness and print the metrics table
 	@eval/.venv/bin/pip install -q -r eval/requirements.txt
 	@eval/.venv/bin/python3 eval/run.py
 
-.PHONY: help setup py-setup up down reset dev lint typecheck test eval
+.PHONY: help setup py-setup up down reset dev dev-down demo lint typecheck test eval

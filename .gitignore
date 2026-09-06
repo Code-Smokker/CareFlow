@@ -43,6 +43,11 @@ coverage/
 playwright-report/
 test-results/
 
+# local dev runtime (make dev / make demo)
+.cache/
+.dev-logs/
+.dev-pids/
+
 # os / editor
 .DS_Store
 Thumbs.db
