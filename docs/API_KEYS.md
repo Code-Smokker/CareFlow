@@ -140,9 +140,9 @@ validating. Do not claim a live integration you do not have.
 | Credential | Owner | Status |
 |---|---|---|
 | Bhashini | | ☐ not obtained |
-| LLM provider | | ☐ not obtained |
-| WHO ICD-11 | | ☐ not obtained |
-| NAMASTE export | | ☐ not obtained |
+| Sarvam (ASR/TTS/LLM) | | ✅ obtained — verified live 2026-09-07 |
+| WHO ICD-11 | | ✅ obtained — verified live 2026-09-07 (see app/icd11/client.py: real API deviates from the publicly documented shape in two ways, corrected there) |
+| NAMASTE export | | ✅ obtained — `infra/seed/namaste/NATIONAL AYURVEDA MORBIDITY CODES.xls`, loaded 2026-09-07 (2,909 concepts) |
 | ABDM sandbox | | ☐ not obtained — mock in use |
 
 Keep this table current. It is also the honest answer when a judge asks what is live.

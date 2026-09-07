@@ -41,6 +41,12 @@ demo: ## Seed a patient and walk the entire path (needs `make dev` running)
 	@scripts/demo/.venv/bin/pip install -q -r scripts/demo/requirements.txt
 	@scripts/demo/.venv/bin/python3 scripts/demo/demo.py
 
+seed-session: ## Create one intake session and print its id + resume token (needs `make dev` running)
+	@test -d scripts/demo/.venv || python3 -m venv scripts/demo/.venv
+	@scripts/demo/.venv/bin/pip install -q -U pip
+	@scripts/demo/.venv/bin/pip install -q -r scripts/demo/requirements.txt
+	@scripts/demo/.venv/bin/python3 scripts/demo/seed_session.py
+
 lint: ## Lint everything
 	pnpm lint
 
@@ -56,4 +62,4 @@ eval: ## Run the clinical eval harness and print the metrics table
 	@eval/.venv/bin/pip install -q -r eval/requirements.txt
 	@eval/.venv/bin/python3 eval/run.py
 
-.PHONY: help setup py-setup up down reset dev dev-down demo lint typecheck test eval
+.PHONY: help setup py-setup up down reset dev dev-down demo seed-session lint typecheck test eval
