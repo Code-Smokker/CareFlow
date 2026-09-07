@@ -11,6 +11,9 @@ export const envSchema = z.object({
   LOG_LEVEL: z.string().default("info"),
   GATEWAY_PORT: z.coerce.number().int().positive().default(4000),
   PUBLIC_WEB_URL: z.url().default("http://localhost:3000"),
+  // Comma-separated extra allowed CORS origins beyond PUBLIC_WEB_URL (e.g. a kiosk build's own
+  // origin, a staging host). Empty by default — most environments only need PUBLIC_WEB_URL.
+  CORS_ORIGINS: z.string().default(""),
   AI_SERVICE_URL: z.url().default("http://localhost:8001"),
   DOCAI_SERVICE_URL: z.url().default("http://localhost:8002"),
   TERMINOLOGY_SERVICE_URL: z.url().default("http://localhost:8003"),

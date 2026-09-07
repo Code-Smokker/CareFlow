@@ -23,7 +23,14 @@ async function bootstrap() {
   });
   app.useGlobalFilters(new HttpExceptionFilter());
   app.useWebSocketAdapter(new IoAdapter(app));
-  app.enableCors({ origin: "*" });
+  // Wildcard origin can't be combined with credentials (browsers reject it outright), and the
+  // intake PWA needs credentials for its session cookie — so this is an explicit origin list,
+  // not "*". PUBLIC_WEB_URL covers the primary client; CORS_ORIGINS adds any others (a kiosk
+  // build, a staging host) as a comma-separated list.
+  const publicWebUrl = config.get("PUBLIC_WEB_URL", { infer: true });
+  const extraOrigins = config.get("CORS_ORIGINS", { infer: true });
+  const origins = [publicWebUrl, ...extraOrigins.split(",").map((o) => o.trim()).filter(Boolean)];
+  app.enableCors({ origin: origins, credentials: true });
 
   const port = config.get("GATEWAY_PORT", { infer: true });
   await app.listen(port);
