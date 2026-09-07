@@ -7,7 +7,7 @@ Metric                                         Result  Detail
 ----------------------------------------------------------------------------------------
 Red-flag sensitivity (24 red_flag cases)        24/24  target 100%
 Red-flag specificity (6 messy cases)              6/6  non-flag cases correctly not escalated
-Slot accuracy — messy/extraction cases          12/12  via /fill-slot, 11/12 calls answered by a live LLM provider
+Slot accuracy — messy/extraction cases          11/12  via /fill-slot, 10/12 calls answered by a live LLM provider
 ----------------------------------------------------------------------------------------
 Per-script detail:
   [PASS] abdominal_gi_bleed               expected=['gi_bleed'] fired=['gi_bleed']
@@ -47,7 +47,7 @@ Per-script detail:
   [PASS] messy_codeswitch_joint.pattern              expected='single_joint' actual='single_joint'
   [PASS] messy_codeswitch_joint.morning_stiffness_duration expected='over_1hr' actual='over_1hr'
   [PASS] messy_contradiction_chest_pain.severity             expected=7 actual=7
-  [PASS] messy_contradiction_chest_pain.onset                expected='sudden' actual='sudden'
+  [FAIL] messy_contradiction_chest_pain.onset                expected='sudden' actual=None (needs_clarification)
   [PASS] messy_mumbling_abdominal.duration             expected='3_days' actual='3_days' (needs_clarification)
   [PASS] messy_mumbling_abdominal.associated           expected=['black_stool'] actual=['black_stool']
   [PASS] messy_mumbling_fever.duration             expected='3_days' actual='3_days'

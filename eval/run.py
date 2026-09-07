@@ -107,7 +107,16 @@ def run_messy_script(client: httpx.Client, script: dict[str, Any], results: Resu
         response = client.post(
             f"{AI_SERVICE_URL}/fill-slot",
             json={"slot_schema": item["slot_schema"], "utterance": item["utterance"], "context": {}},
-            timeout=15.0,
+            # Real hosted-LLM latency for a genuinely ambiguous/mumbled utterance (self-
+            # correction, hesitation) varies more than a clean one — timed directly against the
+            # live provider 2026-09-07: same call to messy_mumbling_abdominal's duration slot
+            # took anywhere from ~5s to ~20s across repeated attempts, nothing else changing.
+            # 15s intermittently clipped a real, in-flight answer as a timeout — not a hung
+            # service, just tight headroom against real API variance. 30s matches what was
+            # actually observed with margin, same reasoning as /evaluate-flags' 10s (also
+            # checked live this session, found NOT tight — see docs/12-eval-plan.md if that
+            # ever needs revisiting).
+            timeout=30.0,
         )
         response.raise_for_status()
         body = response.json()

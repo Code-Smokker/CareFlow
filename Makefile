@@ -9,15 +9,24 @@ setup: ## First-time setup: env file, node deps, python venvs
 	pnpm install
 	@echo "→ node workspace ready. Python services: make py-setup"
 
-py-setup: ## Create venvs for the Python services
+py-setup: ## Create venvs for the Python services (always from scratch — see comment below)
 	@for s in ai docai terminology; do \
 		if [ -d services/$$s ]; then \
-			python3 -m venv services/$$s/.venv && \
+			py=python3; \
+			[ "$$s" = terminology ] && py=python3.12; \
+			rm -rf services/$$s/.venv && \
+			$$py -m venv services/$$s/.venv && \
 			services/$$s/.venv/bin/pip install -q -U pip && \
 			services/$$s/.venv/bin/pip install -q -r services/$$s/requirements.txt && \
-			echo "→ services/$$s venv ready"; \
+			echo "→ services/$$s venv ready ($$($$py --version))"; \
 		fi; \
 	done
+	# terminology is pinned to python3.12 (see services/terminology/README.md): its
+	# sentence-transformers dependency was undocumented territory on 3.14 as of this writing.
+	# `rm -rf` before creating: `python3 -m venv` on an *existing* venv directory doesn't
+	# reliably reset it — it can leave scripts (uvicorn, pip) pointing at a different interpreter
+	# than the one already-installed packages were built for, a broken half-upgraded state that
+	# still imports but was never actually verified to run correctly. Always start clean.
 
 up: ## Start postgres, redis, minio, hapi-fhir
 	docker compose up -d

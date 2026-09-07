@@ -10,12 +10,29 @@ from __future__ import annotations
 
 from typing import Any
 
+from app.cascade import AllProvidersUnavailable, cascade
 from app.config import settings
 from app.llm import openai_compatible, sarvam
-from app.llm.base import ProviderUnavailable
 from app.logging import get_logger
 
 log = get_logger(component="fill_slot")
+
+# Same two real tiers as app/ocr/service.py's hosted -> local (that module's own docstring notes
+# OCR has no documented second-cloud option either) — docs/15-ai-stack.md's LLM table is
+# "Sarvam-30B (API) -> same weights self-hosted", not three distinct providers. Before this, a
+# plain if/elif on LLM_PROVIDER meant a down/unreachable Sarvam returned "unclear" straight
+# away instead of falling through to local — CLAUDE.md rule 9 (every external dependency has a
+# local fallback) was violated for every fill-slot call, not just ones on LLM_PROVIDER=local.
+_CANONICAL_ORDER = ["sarvam", "local"]
+_ADAPTERS = {"sarvam": sarvam.call_tool, "local": openai_compatible.call_tool}
+
+
+def _tiers_from(provider: str) -> list[str]:
+    if provider not in _CANONICAL_ORDER:
+        raise ValueError(f"Unknown LLM_PROVIDER '{provider}', expected one of {_CANONICAL_ORDER}")
+    start = _CANONICAL_ORDER.index(provider)
+    return _CANONICAL_ORDER[start:]
+
 
 _SYSTEM_PROMPT = (
     "You extract exactly one clinical intake slot's value from a patient's utterance. "
@@ -66,31 +83,23 @@ async def fill_slot(slot_schema: dict[str, Any], utterance: str, context: dict[s
     parameters_schema = _wrapped_schema(slot_schema)
     user_prompt = _user_prompt(slot_schema, utterance, context)
 
+    def _call(name: str):
+        return _ADAPTERS[name](
+            model=settings.llm_slot_model,
+            system_prompt=_SYSTEM_PROMPT,
+            user_prompt=user_prompt,
+            tool_name=_TOOL_NAME,
+            tool_description=_TOOL_DESCRIPTION,
+            parameters_schema=parameters_schema,
+        )
+
+    tiers = [(name, lambda name=name: _call(name)) for name in _tiers_from(settings.llm_provider)]
     try:
-        if settings.llm_provider == "sarvam":
-            args = await sarvam.call_tool(
-                model=settings.llm_slot_model,
-                system_prompt=_SYSTEM_PROMPT,
-                user_prompt=user_prompt,
-                tool_name=_TOOL_NAME,
-                tool_description=_TOOL_DESCRIPTION,
-                parameters_schema=parameters_schema,
-            )
-        elif settings.llm_provider == "local":
-            args = await openai_compatible.call_tool(
-                model=settings.llm_slot_model,
-                system_prompt=_SYSTEM_PROMPT,
-                user_prompt=user_prompt,
-                tool_name=_TOOL_NAME,
-                tool_description=_TOOL_DESCRIPTION,
-                parameters_schema=parameters_schema,
-            )
-        else:
-            raise ProviderUnavailable(f"LLM_PROVIDER={settings.llm_provider!r} is not implemented yet")
-    except ProviderUnavailable as exc:
-        # Never guess (docs/05-interview-engine.md "Always honest") — an unreachable model
+        args = await cascade(tiers)
+    except AllProvidersUnavailable as exc:
+        # Never guess (docs/05-interview-engine.md "Always honest") — every tier unreachable
         # means an honest "unclear", not a fabricated value.
-        log.warning("fill_slot provider unavailable, returning unclear", error=str(exc))
+        log.warning("fill_slot: all LLM providers unavailable, returning unclear", error=str(exc))
         return FillSlotResult(value=None, confidence=0.0, needs_clarification=True)
 
     value = args.get("value")

@@ -1,3 +1,5 @@
+import os
+import sys
 import time
 from contextlib import asynccontextmanager
 
@@ -20,7 +22,15 @@ from app.routers import classify, dictionary, health, jobs, process  # noqa: E40
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
-    log.info("docai service starting", ocr_provider=settings.ocr_provider)
+    log.info(
+        "docai service starting",
+        ocr_provider=settings.ocr_provider,
+        # See services/ai/app/main.py's identical fields: a process still running from a
+        # deleted/renamed directory answers /health fine but fails every request touching a
+        # path baked in at import time. Mismatch here means restart, not "it's healthy."
+        python_executable=sys.executable,
+        cwd=os.getcwd(),
+    )
     yield
     await close_pool()
 

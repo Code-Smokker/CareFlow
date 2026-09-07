@@ -40,6 +40,34 @@ start() {
   disown
 }
 
+# A moved/renamed repo (e.g. off an iCloud-synced Desktop) leaves every existing Python venv's
+# console scripts with a shebang line pip baked in at install time, pointing at the *old*
+# absolute path. `python3 -m venv` on an already-existing venv dir does not rewrite that — so the
+# venv silently keeps launching the old, now-nonexistent interpreter path. The process this
+# starts still answers /health (bash resolved `uvicorn` fine, or an already-running process from
+# before the move is still alive) while every request touching a lazily-imported path (an SSL
+# cert bundle, a model file) 500s or hangs — the worst kind of failure, because it looks green.
+# Catch it here, before starting anything, instead of downstream as a mystery 500.
+check_venv() {
+  local svc="$1" shebang_path
+  local script="$ROOT/services/$svc/.venv/bin/python3"
+  [ -e "$script" ] || return 0  # no venv yet — py-setup's problem, not this check's
+  shebang_path="$(readlink "$script" 2>/dev/null || true)"
+  case "$shebang_path" in
+    "$ROOT"/*|/opt/*|/usr/*) return 0 ;;  # resolves under this repo, or a system/homebrew python
+  esac
+  # Fall back to the actual shebang line of an installed console script, which is where pip
+  # bakes an absolute interpreter path (the bin/python3 symlink itself is usually fine).
+  shebang_path="$(head -1 "$ROOT/services/$svc/.venv/bin/pip" 2>/dev/null | sed 's/^#!//')"
+  if [ -n "$shebang_path" ] && [[ "$shebang_path" != "$ROOT"/* ]]; then
+    echo "✗ services/$svc/.venv is stale: its scripts point at '$shebang_path', not this repo ($ROOT)." >&2
+    echo "  Run: rm -rf services/$svc/.venv && make py-setup" >&2
+    exit 1
+  fi
+}
+
+for svc in ai docai terminology; do check_venv "$svc"; done
+
 echo "→ waiting for infra..."
 until docker exec careflow-postgres pg_isready -U careflow >/dev/null 2>&1; do sleep 1; done
 echo "  ✓ postgres"

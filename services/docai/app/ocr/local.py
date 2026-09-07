@@ -1,11 +1,14 @@
-"""Offline tier — what runs when the venue network dies. **Exercised live 2026-09-07, still
-broken** — not for the reason this docstring used to claim (transformers/torch DO have Python
-3.14 wheels; that part was wrong). The real blocker: PaddleOCR-VL's remote modeling code
-doesn't register its config class into transformers' AutoModelForImageTextToText mapping, so
-the pipeline() call below fails to load the model on every transformers version tried
-(4.55.0/4.57.1/5.13.1 — see services/docai/requirements.txt's comment for the exact errors).
-Loading the model's own class directly instead of through pipeline() is the real fix; not done
-here yet. Separately (and already fixed here): the pipeline() call is missing
+"""Offline tier — what runs when the venue network dies. **Exercised live, still broken** — not
+for the reason this docstring used to claim (transformers/torch DO have Python 3.14 wheels;
+that part was wrong). The real blocker, diagnosed two levels deep as of 2026-09-07: PaddleOCR-VL's
+remote modeling code doesn't register its config class into transformers' AutoModelForImageTextToText
+mapping, so the pipeline() call below fails on every transformers version tried. Loading the
+model's own class directly (bypassing pipeline()) was tried as the suspected real fix and hits
+a *second*, unrelated incompatibility instead — a RoPE init function KeyError, since transformers
+5.13.1 removed the 'default' rope_type this vendor's code still expects. See
+docs/06-document-ai.md's "OCR reality check" for the full diagnosis (both errors, exact
+versions) — kept there, not duplicated here, so there's one place to update instead of two
+drifting copies. Separately (and already fixed here): the pipeline() call is missing
 trust_remote_code=True — a straight bug, not a version issue — which made this hang forever on
 an interactive y/N confirmation prompt in any non-interactive process instead of raising
 ProviderUnavailable like every other tier failure.
@@ -22,6 +25,7 @@ import io
 from app.cascade import ProviderUnavailable
 from app.config import settings
 from app.ocr.base import BoundingBox, OcrRegion, OcrResult
+from app.ocr.image_source import read_bytes
 
 _pipe = None
 
@@ -65,8 +69,8 @@ async def read(image_ref: str) -> OcrResult:
         raise ProviderUnavailable(f"Pillow not installed: {exc}") from exc
 
     try:
-        with open(image_ref, "rb") as f:
-            image = Image.open(io.BytesIO(f.read()))
+        image_bytes = await read_bytes(image_ref)
+        image = Image.open(io.BytesIO(image_bytes))
         messages = [{"role": "user", "content": [{"type": "image", "image": image}, {"type": "text", "text": "OCR:"}]}]
         result = pipe(text=messages)
         text = result[0]["generated_text"]

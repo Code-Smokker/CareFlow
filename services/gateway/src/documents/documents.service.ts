@@ -20,18 +20,22 @@ const DOC_TYPE_HINTS: Record<string, DocumentType> = {
   imaging: "imaging",
 };
 
-/** docai's GLiNER field labels (app/extract/gliner_ner.py, C2) -> the coarse
+/** docai's extraction pipeline field labels (app/extract/pipeline.py, C2) -> the coarse
  * ExtractionEntityType Prisma enum. Anything not clearly one of the four stays `unknown`
  * rather than guessing — the enum's own schema comment: "never mislabel its output as one
- * of the other four just to satisfy this enum." */
+ * of the other four just to satisfy this enum." `ayurveda` is the dictionary-decided system
+ * for a medication span that matched the AFI formulation or AYUSH plant dictionary (the AYUSH
+ * labelling fix — pipeline.py no longer emits the old `ayush_formulation`/`ayush_plant` split
+ * here); `unknown` is a medication span that matched no dictionary at all — still "medication"
+ * shaped, so it still belongs in this category, just without a resolved identity yet. */
 const ENTITY_TYPE_BY_FIELD: Record<string, "condition" | "medication" | "observation" | "procedure"> = {
   diagnosis: "condition",
   drug: "medication",
   dose: "medication",
   frequency: "medication",
   duration: "medication",
-  ayush_formulation: "medication",
-  ayush_plant: "medication",
+  ayurveda: "medication",
+  unknown: "medication",
   analyte: "observation",
   value: "observation",
   unit: "observation",

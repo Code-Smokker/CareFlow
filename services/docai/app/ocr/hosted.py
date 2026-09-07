@@ -21,6 +21,7 @@ import httpx
 from app.cascade import ProviderUnavailable
 from app.config import settings
 from app.ocr.base import BoundingBox, OcrRegion, OcrResult
+from app.ocr.image_source import read_bytes
 
 _WHOLE_PAGE_BBOX = BoundingBox(x=0.0, y=0.0, width=1.0, height=1.0)
 _OCR_PROMPT = (
@@ -38,11 +39,7 @@ async def read(image_ref: str) -> OcrResult:
             "key rather than guessing a name here (see .env's OCR_MODEL comment)"
         )
 
-    try:
-        with open(image_ref, "rb") as f:
-            image_bytes = f.read()
-    except OSError as exc:
-        raise ProviderUnavailable(f"Could not read image_ref '{image_ref}': {exc}") from exc
+    image_bytes = await read_bytes(image_ref)
 
     mime_type = mimetypes.guess_type(image_ref)[0] or "image/jpeg"
     image_b64 = base64.b64encode(image_bytes).decode("ascii")

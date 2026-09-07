@@ -43,22 +43,55 @@ Tested before choosing, not assumed:
   ship a working `macosx_11_0_arm64` wheel for **3.9–3.13** — installed and verified on 3.12:
   imports, reports `is_compiled_with_cuda() == False` (correct — no CUDA on Apple Silicon,
   runs CPU-only), creates a tensor correctly. So the framework genuinely runs here, given the
-  right Python.
+  right Python. (This service's own venv now runs Python 3.14 for everything else — GLiNER's
+  torch dependency does ship a 3.14 wheel, verified — so `paddlepaddle` itself stays uninstalled;
+  it's not actually what `local.py` uses. See below.)
+- **The disk-space blocker this section used to describe is gone.** PaddleOCR-VL-1.6's ~1.8 GB
+  weights (`model.safetensors`) are downloaded and cached
+  (`~/.cache/huggingface/hub/models--PaddlePaddle--PaddleOCR-VL`). The actual, current blocker
+  is a code incompatibility, diagnosed two levels deep as of 2026-09-07:
+
+  1. **`local.py`'s approach — `pipeline("image-text-to-text", ...)`** fails because
+     PaddleOCR-VL's remote modeling code never registers `PaddleOCRVLConfig` into
+     transformers' `AutoModelForImageTextToText` mapping. Tried on transformers 4.55.0 (the
+     exact version this model's own `config.json` says it was authored against), 4.57.1, and
+     5.13.1 — all fail the same way ("Unrecognized configuration class ... for this kind of
+     AutoModel"), except 5.13.1, which gets further and fails differently (next point).
+  2. **The suspected real fix — load the model's own class directly** (`AutoModelForCausalLM
+     .from_pretrained(model_id, trust_remote_code=True)`, bypassing `pipeline()`'s generic
+     factory entirely) was tried live against transformers 5.13.1 / torch 2.14.0 and gets
+     further — the processor loads fine — but the model constructor itself fails:
+     `KeyError: 'default'` in `transformers.modeling_rope_utils.ROPE_INIT_FUNCTIONS`, raised
+     from the vendor's own `modeling_paddleocr_vl.py` (`RotaryEmbedding.__init__` looks up
+     `ROPE_INIT_FUNCTIONS[self.rope_type]` where `rope_type` is `"default"`). Transformers
+     5.13.1's `ROPE_INIT_FUNCTIONS` registry no longer has a `"default"` key at all — only
+     `linear, dynamic, yarn, longrope, llama3, proportional` — a breaking change in
+     transformers' RoPE API (matching the deprecation warning this same run prints:
+     `rope_config_validation is deprecated ... moved to
+     RotaryEmbeddingConfigMixin.validate_rope`). PaddleOCR-VL's vendored code was written
+     against an older RoPE API shape and was never updated for this rename.
+
+  **What this means:** the fix is not "call the model differently" — that was tried and hits a
+  second, unrelated incompatibility. What's needed is either (a) a transformers version that
+  satisfies both constraints (registers `PaddleOCRVLConfig` for `AutoModel` dispatch *and*
+  still has `ROPE_INIT_FUNCTIONS["default"]`) — not yet found among 4.55.0/4.57.1/5.13.1 — or
+  (b) patching the vendor's remote code locally to use a registered rope_type. Neither is done.
+  Downgrading transformers repo-wide to hunt for that window was not attempted here: this
+  service's GLiNER extraction tier (packages/ontology's C2 pass) already depends on and is
+  verified against transformers 5.13.1 in the same venv, and an untested downgrade right before
+  a demo risks breaking a tier that currently works to chase one that doesn't.
 - **It's slow to import.** A bare `import paddle` plus one tensor op took ~7 minutes wall-clock
-  on this machine the first time. That's before loading any OCR model. Any `local` tier here
-  needs a generous timeout and needs to warm up once at startup, not per-request.
-- **PaddleOCR-VL-1.6's weights are ~1.8 GB** (`model.safetensors`, confirmed via HTTP
-  `content-length`), loadable through `transformers` (merged into the library December 2025).
-  It has never been run on this machine: **disk was at 100% capacity (359 MB free) when
-  checked**, genuinely insufficient to download it regardless of whether the framework works.
-  This is an environment problem, not a PaddleOCR-VL-on-Apple-Silicon problem — but it's the
-  actual, current blocker, and designing around "it should theoretically work" instead of this
-  would have been dishonest.
+  on this machine the first time it was tried (see git history) — before loading any OCR model.
+  Moot while `paddlepaddle` itself stays uninstalled (see above), but any future `local` tier
+  built on it needs a generous timeout and a startup-time warm-up, not per-request loading.
 
 **What this means for the design:** the `local` tier is written correctly (lazy-loaded, same
 pattern as `services/ai/app/speech/local.py`'s offline ASR — matching PaddleOCR-VL's own model
-card usage) but is **unexercised in this environment**, exactly like that ASR tier already is.
-The `stub` tier is what's actually verified end-to-end today. See `services/docai/app/ocr/`.
+card usage, and `trust_remote_code=True` is set, fixing the separate interactive-hang bug this
+tier used to have) but **cannot actually serve a request in this environment** — it fails fast
+with `ProviderUnavailable`, not a hang, so the hosted → local → stub cascade still degrades
+honestly. The `hosted` tier (Gemini) is what's actually verified end-to-end today, S3 refs
+included — see `services/docai/app/ocr/hosted.py` and `test/test_ocr_s3.py`.
 
 ## Capture quality gate
 

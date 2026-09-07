@@ -1,3 +1,5 @@
+import os
+import sys
 import time
 from contextlib import asynccontextmanager
 
@@ -27,6 +29,12 @@ async def lifespan(_app: FastAPI):
         asr_provider=settings.asr_provider,
         tts_provider=settings.tts_provider,
         llm_provider=settings.llm_provider,
+        # A process running from a since-deleted directory (e.g. the repo got moved/renamed
+        # after this process started) still answers /health — it just fails every request that
+        # touches a path baked in at import time. These two lines are the tell: if they don't
+        # match this repo's actual location, restart the service, don't trust its health check.
+        python_executable=sys.executable,
+        cwd=os.getcwd(),
     )
     yield
 

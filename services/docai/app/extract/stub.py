@@ -28,6 +28,7 @@ def extract(ocr_result: OcrResult) -> list[dict[str, Any]]:
             },
             "needs_confirmation": region.is_handwritten,
             "dictionary_matches": [],
+            "matched_dictionary": None,
         }
         for region in ocr_result.regions
     ]
