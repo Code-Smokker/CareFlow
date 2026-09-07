@@ -1,16 +1,20 @@
-"""Hosted tier — a vision-capable model through the same LLM adapter shape services/ai uses
-(OpenAI-compatible chat completions, image content block). **Unverified against a live
-provider**: this repo has confirmed Sarvam's chat completions API for text (services/ai/app/llm/
-sarvam.py), not for vision input — whether `sarvam-30b`/`105b` accept an `image_url` content
-block hasn't been checked (no SARVAM_API_KEY in this environment, and docs/15-ai-stack.md
-doesn't cover vision). Written against the widely-standardised OpenAI vision message format so
-it's a small, contained fix if the real provider needs a different shape — same ASSUMED
-discipline as docs/08-abdm-fhir.md's mock ABDM shapes.
+"""Hosted tier — Gemini (Google AI Studio), not the Sarvam-shaped LLM_* adapter services/ai
+uses. Verified live 2026-09-07: Sarvam's chat completions API rejects an OpenAI-style
+`image_url` content block outright ("body.messages.0.user.content: Input should be a valid
+string") — it's a text-only endpoint, not a config gap this repo can just point elsewhere.
+Gemini's `generateContent` REST API (inline base64 image data, not a data: URL) is what's
+actually wired here, confirmed against a real prescription photo (see the README's OCR reality
+check for the timing/output).
+
+OCR_MODEL is picked by calling `GET {OCR_BASE_URL}/models` with the real key and choosing from
+what's actually returned — see docs/API_KEYS.md and .env's OCR_MODEL comment for the specific
+model and why. Never hardcode a guessed model name here; Gemini's lineup changes.
 """
 
 from __future__ import annotations
 
 import base64
+import mimetypes
 
 import httpx
 
@@ -26,39 +30,41 @@ _OCR_PROMPT = (
 
 
 async def read(image_ref: str) -> OcrResult:
-    if not settings.llm_base_url:
-        raise ProviderUnavailable("LLM_BASE_URL is not set for the hosted OCR tier")
+    if not settings.ocr_api_key:
+        raise ProviderUnavailable("OCR_API_KEY is not set for the hosted OCR tier")
+    if not settings.ocr_model:
+        raise ProviderUnavailable(
+            "OCR_MODEL is not set — pick one from GET {OCR_BASE_URL}/models against the real "
+            "key rather than guessing a name here (see .env's OCR_MODEL comment)"
+        )
 
     try:
         with open(image_ref, "rb") as f:
-            image_b64 = base64.b64encode(f.read()).decode("ascii")
+            image_bytes = f.read()
     except OSError as exc:
         raise ProviderUnavailable(f"Could not read image_ref '{image_ref}': {exc}") from exc
 
-    headers = {"Content-Type": "application/json"}
-    if settings.llm_api_key:
-        headers["Authorization"] = f"Bearer {settings.llm_api_key}"
+    mime_type = mimetypes.guess_type(image_ref)[0] or "image/jpeg"
+    image_b64 = base64.b64encode(image_bytes).decode("ascii")
 
     payload = {
-        "model": "sarvam-30b",
-        "messages": [
+        "contents": [
             {
-                "role": "user",
-                "content": [
-                    {"type": "text", "text": _OCR_PROMPT},
-                    {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{image_b64}"}},
-                ],
+                "parts": [
+                    {"text": _OCR_PROMPT},
+                    {"inline_data": {"mime_type": mime_type, "data": image_b64}},
+                ]
             }
-        ],
-        "temperature": 0.0,
+        ]
     }
+    url = f"{settings.ocr_base_url.rstrip('/')}/models/{settings.ocr_model}:generateContent"
 
     try:
         async with httpx.AsyncClient(timeout=30.0) as client:
-            response = await client.post(f"{settings.llm_base_url.rstrip('/')}/chat/completions", json=payload, headers=headers)
+            response = await client.post(url, params={"key": settings.ocr_api_key}, json=payload)
             response.raise_for_status()
             data = response.json()
-        text = data["choices"][0]["message"]["content"]
+        text = data["candidates"][0]["content"]["parts"][0]["text"]
     except (httpx.HTTPError, KeyError, IndexError, ValueError) as exc:
         raise ProviderUnavailable(f"Hosted OCR call failed: {exc}") from exc
 

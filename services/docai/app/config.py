@@ -33,9 +33,16 @@ class Settings(BaseSettings):
         default="http://localhost:4000/v1/internal/documents/callback", alias="GATEWAY_CALLBACK_URL"
     )
 
-    # docs/06-document-ai.md's "OCR reality check" — hosted (vision model via the LLM adapter)
-    # -> local (PaddleOCR-VL, unexercised on this machine — see that doc) -> stub (always on).
+    # docs/06-document-ai.md's "OCR reality check" — hosted -> local (PaddleOCR-VL) -> stub
+    # (always on). hosted is Gemini (Google AI Studio), not the LLM_* adapter above — Sarvam
+    # (the LLM_PROVIDER default) has no vision-capable chat completions endpoint, confirmed live
+    # 2026-09-07 (see app/ocr/hosted.py's module docstring).
     ocr_provider: str = Field(default="stub", alias="OCR_PROVIDER")
+    ocr_api_key: str = Field(default="", alias="OCR_API_KEY")
+    ocr_model: str = Field(default="", alias="OCR_MODEL")
+    ocr_base_url: str = Field(
+        default="https://generativelanguage.googleapis.com/v1beta", alias="OCR_BASE_URL"
+    )
 
     llm_provider: str = Field(default="sarvam", alias="LLM_PROVIDER")
     llm_api_key: str = Field(default="", alias="LLM_API_KEY")
