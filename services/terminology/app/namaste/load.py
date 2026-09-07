@@ -57,8 +57,14 @@ def read_export(path: str | Path) -> pd.DataFrame:
             "namaste.ayush.gov.in is obtained (docs/API_KEYS.md priority 4) — do not point "
             "this at anything re-saved through a spreadsheet app."
         )
-    if path.suffix.lower() in (".xlsx", ".xls"):
+    if path.suffix.lower() == ".xlsx":
         return pd.read_excel(path, engine="openpyxl", dtype=str)
+    if path.suffix.lower() == ".xls":
+        # The real namaste.ayush.gov.in export ships as legacy binary .xls (OLE2/BIFF), not
+        # OOXML — openpyxl only reads .xlsx and raises InvalidFileException on this format.
+        # xlrd 2.x is the inverse: .xls only. Still the untouched original bytes, just parsed
+        # with the library that actually supports this container.
+        return pd.read_excel(path, engine="xlrd", dtype=str)
     return pd.read_csv(path, dtype=str)
 
 

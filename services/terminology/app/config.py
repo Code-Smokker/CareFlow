@@ -35,6 +35,11 @@ class Settings(BaseSettings):
         default="https://icdaccessmanagement.who.int/connect/token", alias="ICD_TOKEN_URL"
     )
     icd_api_url: str = Field(default="https://id.who.int", alias="ICD_API_URL")
+    # Pinned MMS release id. Verified live 2026-09-07: "2024-01" (the old assumed default)
+    # 404s — WHO has moved the release forward; "2026-01" is the current `latestRelease`.
+    # There is no "latest" alias on the search endpoint, so this has to be a real, occasionally
+    # bumped version string. Confirm against GET {icd_api_url}/icd/release/11/mms before bumping.
+    icd_release: str = Field(default="2026-01", alias="ICD_RELEASE")
 
     # Lazy-loaded inside app/search/embeddings.py, same pattern as docai's local OCR tier and
     # services/ai's local ASR/TTS tiers — a missing/failed install only disables the

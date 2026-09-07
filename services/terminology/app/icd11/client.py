@@ -1,17 +1,17 @@
-"""WHO ICD-11 API client — OAuth2 client_credentials, then the linearization search endpoint,
-per docs/15-ai-stack.md ("There is also an official FHIR-facing surface worth looking at before
-writing a custom client" — noted, not yet done: this is the plain REST surface, not the FHIR
-one, since nobody has been able to exercise either against a live token in this environment).
+"""WHO ICD-11 API client — OAuth2 client_credentials, then the MMS search endpoint, per
+docs/15-ai-stack.md.
 
-**Unverified against a live provider.** `ICD_CLIENT_ID`/`ICD_CLIENT_SECRET` are both empty in
-this environment (docs/API_KEYS.md: WHO ICD-11 "not obtained") — every request this client
-makes will fail at the token step with `ProviderUnavailable` before touching the network. The
-request/response shapes below are written from WHO's publicly documented API (OAuth2 token at
-`ICD_TOKEN_URL`, `GET {ICD_API_URL}/icd/release/11/2024-01/{linearization}/search?q=`, Bearer
-auth, `API-Version: v2` header, `destinationEntities[].title` with `<em class='found'>` marking
-the matched substring) — same ASSUMED-shape discipline as services/docai/app/ocr/hosted.py's
-unverified vision tier. Confirm the exact shape against the real API the first time credentials
-exist, and fix this in one place if it differs.
+**Verified live 2026-09-07** against a real WHO account. Two things the original
+publicly-documented-shape guess got wrong, corrected here:
+
+1. There is no standalone `tm2` linearization to search — `GET .../release/11/{version}/tm2/
+   search` 404s. Traditional Medicine Module 2 is **Chapter 26 of the MMS linearization**;
+   the way to search it is an MMS search with `chapterFilter=26`, which real TM2 entities
+   confirm (title suffixed `(TM2)`, codes like `SK8Y`, `SS56`).
+2. The release id must be a real, current version — the assumed default `2024-01` also 404s.
+   `icd_release` (settings, default `2026-01`) is WHO's `latestRelease` as of the verification
+   date above; there is no `latest` alias, so this needs bumping by hand occasionally (check
+   `GET {icd_api_url}/icd/release/11/mms`'s `latestRelease` field).
 
 Cascade (app/cascade.py): live WHO API call -> cached Postgres snapshot (Concept rows already
 loaded for this system on some earlier successful live call) -> ProviderUnavailable if neither
@@ -34,7 +34,9 @@ from app.logging import get_logger
 
 log = get_logger(component="icd11_client")
 
-_LINEARIZATION_BY_SYSTEM = {"icd11-tm2": "tm2", "icd11-bio": "mms"}
+# Both systems search the MMS linearization — TM2 has no linearization of its own, it's
+# Chapter 26 of MMS, isolated at search time with chapterFilter.
+_CHAPTER_FILTER_BY_SYSTEM = {"icd11-tm2": "26", "icd11-bio": None}
 _FOUND_TAG = re.compile(r"</?em[^>]*>")
 
 _token: str | None = None
@@ -75,29 +77,41 @@ def _strip_found_markup(title: str) -> str:
     return _FOUND_TAG.sub("", title)
 
 
-def _parse_search_response(data: dict[str, Any]) -> list[dict[str, Any]]:
+def _parse_search_response(data: dict[str, Any], *, title_suffix: str | None = None) -> list[dict[str, Any]]:
     entities = data.get("destinationEntities", [])
     results = []
     for entity in entities:
+        title = _strip_found_markup(entity.get("title", ""))
+        # Chapter 26 interleaves TM1 (Kampo/Chinese/Korean-derived) and TM2 (Ayurveda/Unani/
+        # Siddha-derived) entities — chapterFilter alone doesn't separate them, but WHO suffixes
+        # every title with its module, so that's the actual discriminator.
+        if title_suffix is not None and not title.endswith(title_suffix):
+            continue
         code = entity.get("theCode") or entity.get("code")
         entity_id = entity.get("id", "")
         results.append(
             {
                 "code": code or entity_id.rstrip("/").rsplit("/", 1)[-1],
-                "display": _strip_found_markup(entity.get("title", "")),
+                "display": title,
                 "uri": entity_id,
             }
         )
     return results
 
 
+_TITLE_SUFFIX_BY_SYSTEM = {"icd11-tm2": "(TM2)", "icd11-bio": None}
+
+
 async def _search_live(query: str, system: str) -> list[dict[str, Any]]:
-    linearization = _LINEARIZATION_BY_SYSTEM.get(system)
-    if linearization is None:
-        raise ProviderUnavailable(f"No ICD-11 linearization mapped for system={system!r}")
+    if system not in _CHAPTER_FILTER_BY_SYSTEM:
+        raise ProviderUnavailable(f"No ICD-11 mapping for system={system!r}")
+    chapter_filter = _CHAPTER_FILTER_BY_SYSTEM[system]
 
     token = await _get_token()
-    url = f"{settings.icd_api_url}/icd/release/11/2024-01/{linearization}/search"
+    url = f"{settings.icd_api_url}/icd/release/11/{settings.icd_release}/mms/search"
+    params = {"q": query}
+    if chapter_filter is not None:
+        params["chapterFilter"] = chapter_filter
     headers = {
         "Authorization": f"Bearer {token}",
         "Accept": "application/json",
@@ -106,13 +120,13 @@ async def _search_live(query: str, system: str) -> list[dict[str, Any]]:
     }
     try:
         async with httpx.AsyncClient(timeout=10.0) as client:
-            response = await client.get(url, params={"q": query}, headers=headers)
+            response = await client.get(url, params=params, headers=headers)
             response.raise_for_status()
             data = response.json()
     except (httpx.HTTPError, ValueError) as exc:
         raise ProviderUnavailable(f"WHO ICD-11 search call failed: {exc}") from exc
 
-    return _parse_search_response(data)
+    return _parse_search_response(data, title_suffix=_TITLE_SUFFIX_BY_SYSTEM[system])
 
 
 async def _search_cached(query: str, system: str) -> list[dict[str, Any]]:

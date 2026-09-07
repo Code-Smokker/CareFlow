@@ -1,8 +1,7 @@
-"""Unit tests against a mocked httpx client — never a live call. ICD_CLIENT_ID/SECRET are both
-empty in this environment (docs/API_KEYS.md: WHO ICD-11 not obtained), so the real OAuth2 flow
-and response shape are unverified; these tests only prove this client's own logic (token
-caching, response parsing, cascade fallback) is correct given a response shaped the way WHO's
-publicly documented API says it should be."""
+"""Unit tests against a mocked httpx client — never a live call. Fixture shapes here match the
+real WHO ICD-11 API, verified live 2026-09-07 (see app/icd11/client.py's module docstring):
+MMS search with chapterFilter=26 for TM2, titles suffixed "(TM2)"/"(TM1)" to tell the two
+traditional-medicine modules apart within that one chapter."""
 
 from __future__ import annotations
 
@@ -40,9 +39,13 @@ async def test_search_live_parses_destination_entities_and_strips_found_markup(m
 
     async def fake_get(self, url, params=None, headers=None, **kwargs):
         assert headers["Authorization"] == "Bearer test-token"
+        assert params["chapterFilter"] == "26"
         body = {
             "destinationEntities": [
-                {"id": "http://id.who.int/icd/entity/12345", "theCode": "TM2-1", "title": "<em class='found'>Amavata</em> pattern"}
+                # A same-chapter TM1 result mixed in, exactly as the real API returns them —
+                # the title suffix is what the client filters on, not chapterFilter alone.
+                {"id": "http://id.who.int/icd/entity/99999", "theCode": "SD93", "title": "Alternating <em class='found'>fever</em> disorder (TM1)"},
+                {"id": "http://id.who.int/icd/entity/12345", "theCode": "TM2-1", "title": "<em class='found'>Amavata</em> pattern (TM2)"},
             ]
         }
         return httpx.Response(200, json=body, request=httpx.Request("GET", url))
@@ -51,7 +54,7 @@ async def test_search_live_parses_destination_entities_and_strips_found_markup(m
     monkeypatch.setattr(httpx.AsyncClient, "get", fake_get)
 
     results = await icd11_client.search("amavata", "icd11-tm2")
-    assert results == [{"code": "TM2-1", "display": "Amavata pattern", "uri": "http://id.who.int/icd/entity/12345"}]
+    assert results == [{"code": "TM2-1", "display": "Amavata pattern (TM2)", "uri": "http://id.who.int/icd/entity/12345"}]
 
 
 async def test_falls_back_to_cached_snapshot_when_live_call_fails(monkeypatch, pool):
