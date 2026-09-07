@@ -153,6 +153,19 @@ def run_all(client: httpx.Client, scripts: list[dict[str, Any]]) -> Results:
     return results
 
 
+def _slot_accuracy_detail(messy_slots: list[SlotResult]) -> str:
+    # fill_slot.py never fabricates a value — no reachable LLM provider means every call comes
+    # back needs_clarification=True (app/llm/fill_slot.py). So "how many of these needed
+    # clarification" is an honest, self-reporting signal for whether a live provider actually
+    # answered this run, without this script having to know which provider or credential.
+    if not messy_slots:
+        return "via /fill-slot"
+    unclear = sum(s.needs_clarification for s in messy_slots)
+    if unclear == len(messy_slots):
+        return "via /fill-slot, no LLM provider answered — every call came back needs_clarification"
+    return f"via /fill-slot, {len(messy_slots) - unclear}/{len(messy_slots)} calls answered by a live LLM provider"
+
+
 def print_table(results: Results) -> str:
     red_flag_cases = [r for r in results.red_flags if r.kind == "red_flag"]
     messy_cases = [r for r in results.red_flags if r.kind == "messy"]
@@ -184,7 +197,7 @@ def print_table(results: Results) -> str:
         row(
             "Slot accuracy — messy/extraction cases",
             f"{slot_correct_n}/{len(messy_slots)}" if messy_slots else "n/a",
-            "via /fill-slot, no LLM credentials configured in this run",
+            _slot_accuracy_detail(messy_slots),
         )
     )
     lines.append("-" * 88)

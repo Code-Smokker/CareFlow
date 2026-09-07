@@ -27,5 +27,5 @@ messy_codeswitch_cough,messy,,,True,True
 messy_codeswitch_fever,messy,,,True,True
 messy_codeswitch_joint,messy,,,True,True
 messy_contradiction_chest_pain,messy,,,True,True
-messy_mumbling_abdominal,messy,,,True,True
+messy_mumbling_abdominal,messy,gi_bleed,gi_bleed,True,True
 messy_mumbling_fever,messy,,,True,True

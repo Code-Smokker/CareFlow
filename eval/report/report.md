@@ -7,7 +7,7 @@ Metric                                         Result  Detail
 ----------------------------------------------------------------------------------------
 Red-flag sensitivity (24 red_flag cases)        24/24  target 100%
 Red-flag specificity (6 messy cases)              6/6  non-flag cases correctly not escalated
-Slot accuracy — messy/extraction cases           0/12  via /fill-slot, no LLM credentials configured in this run
+Slot accuracy — messy/extraction cases          12/12  via /fill-slot, 11/12 calls answered by a live LLM provider
 ----------------------------------------------------------------------------------------
 Per-script detail:
   [PASS] abdominal_gi_bleed               expected=['gi_bleed'] fired=['gi_bleed']
@@ -38,18 +38,18 @@ Per-script detail:
   [PASS] messy_codeswitch_fever           expected=[] fired=[]
   [PASS] messy_codeswitch_joint           expected=[] fired=[]
   [PASS] messy_contradiction_chest_pain   expected=[] fired=[]
-  [PASS] messy_mumbling_abdominal         expected=[] fired=[]
+  [PASS] messy_mumbling_abdominal         expected=['gi_bleed'] fired=['gi_bleed']
   [PASS] messy_mumbling_fever             expected=[] fired=[]
-  [FAIL] messy_codeswitch_cough.sputum_color         expected='yellow_green' actual=None (needs_clarification)
-  [FAIL] messy_codeswitch_cough.breathlessness_trigger expected='walking' actual=None (needs_clarification)
-  [FAIL] messy_codeswitch_fever.pattern              expected='continuous' actual=None (needs_clarification)
-  [FAIL] messy_codeswitch_fever.measured             expected='yes_high' actual=None (needs_clarification)
-  [FAIL] messy_codeswitch_joint.pattern              expected='single_joint' actual=None (needs_clarification)
-  [FAIL] messy_codeswitch_joint.morning_stiffness_duration expected='over_1hr' actual=None (needs_clarification)
-  [FAIL] messy_contradiction_chest_pain.severity             expected=7 actual=None (needs_clarification)
-  [FAIL] messy_contradiction_chest_pain.onset                expected='sudden' actual=None (needs_clarification)
-  [FAIL] messy_mumbling_abdominal.duration             expected='3_days' actual=None (needs_clarification)
-  [FAIL] messy_mumbling_abdominal.associated           expected=['black_stool'] actual=None (needs_clarification)
-  [FAIL] messy_mumbling_fever.duration             expected='3_days' actual=None (needs_clarification)
-  [FAIL] messy_mumbling_fever.associated           expected=['headache'] actual=None (needs_clarification)
+  [PASS] messy_codeswitch_cough.sputum_color         expected='yellow_green' actual='yellow_green'
+  [PASS] messy_codeswitch_cough.breathlessness_trigger expected='walking' actual='walking'
+  [PASS] messy_codeswitch_fever.pattern              expected='continuous' actual='continuous'
+  [PASS] messy_codeswitch_fever.measured             expected='yes_high' actual='yes_high'
+  [PASS] messy_codeswitch_joint.pattern              expected='single_joint' actual='single_joint'
+  [PASS] messy_codeswitch_joint.morning_stiffness_duration expected='over_1hr' actual='over_1hr'
+  [PASS] messy_contradiction_chest_pain.severity             expected=7 actual=7
+  [PASS] messy_contradiction_chest_pain.onset                expected='sudden' actual='sudden'
+  [PASS] messy_mumbling_abdominal.duration             expected='3_days' actual='3_days' (needs_clarification)
+  [PASS] messy_mumbling_abdominal.associated           expected=['black_stool'] actual=['black_stool']
+  [PASS] messy_mumbling_fever.duration             expected='3_days' actual='3_days'
+  [PASS] messy_mumbling_fever.associated           expected=['headache'] actual=['headache']
 ```

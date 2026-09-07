@@ -4,8 +4,13 @@ kind: messy
 description: >
   Mumbled, hesitant speech with a self-correction and an embarrassed aside — tests
   /fill-slot extraction robustness for abdominal_pain, which has zero messy coverage
-  before this script. No escalation expected (this only exercises two slots in
-  isolation, not a full answered session).
+  before this script. Escalation IS expected: packages/ontology/modules/abdominal_pain.yaml's
+  gi_bleed rule fires on `black_stool` alone (melena is a genuine red flag on its own, no
+  other slot needed), and this utterance's "tarry stool" correctly extracts to black_stool.
+  (Originally written expecting no escalation — that only looked right while /fill-slot had
+  no LLM credentials and never actually extracted the slot, so the rule had nothing to see.
+  Once extraction started working, gi_bleed correctly fired and this fixture's assumption
+  needed fixing, not the rule.)
 reviewer: >
   Not clinician-reviewed. Synthetic fixture authored for this eval-harness skeleton
   pass — see docs/12-eval-plan.md's "deliberately messy" category (mumbling, background
@@ -21,4 +26,4 @@ utterances:
       type: array
       items: { type: string, enum: [vomiting, fever, blood_in_stool, black_stool, jaundice, distension, none] }
     expected_value: [black_stool]
-expected_red_flags: []
+expected_red_flags: [gi_bleed]
