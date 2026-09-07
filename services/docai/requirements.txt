@@ -22,10 +22,23 @@ gliner==0.2.28
 pytest==9.1.1
 pytest-asyncio==1.4.0
 
-# Offline OCR tier only (~2GB incl. weights on first use, and needs Python <=3.13 — no wheel
-# for 3.14 as of writing). Not required to import or start this service; app/ocr/local.py
+# Offline OCR tier only. Not required to import or start this service; app/ocr/local.py
 # imports these lazily inside the function body, same pattern as services/ai's offline ASR.
-# See docs/06-document-ai.md's "OCR reality check" for why this is unexercised here.
+#
+# Verified live 2026-09-07, and the "no wheel for 3.14" claim this comment used to make is
+# WRONG — transformers, torch and torchvision all install and run cleanly on this machine's
+# Python 3.14. What's actually broken: PaddlePaddle/PaddleOCR-VL's own remote modeling code
+# never registers its config class into transformers' AutoModelForImageTextToText mapping, so
+# app/ocr/local.py's `pipeline("image-text-to-text", ...)` call fails with "Unrecognized
+# configuration class ... for this kind of AutoModel" on every transformers version tried —
+# 4.55.0 (the exact version this model's own config.json says it was authored against),
+# 4.57.1, and 5.13.1 (which gets further, then fails differently: `PaddleOCRVLConfig` object
+# has no attribute `text_config`). This needs loading the model's own class directly instead
+# of through the generic pipeline() factory — real follow-up work, not a version pin fix.
+# Separately, and already fixed in local.py regardless of the above: the pipeline() call did
+# not pass trust_remote_code=True, which made it hang forever (not fail) on an interactive
+# y/N prompt in any non-interactive process — a container, this service under uvicorn, CI.
 # paddlepaddle==3.3.1
 # transformers==4.57.1
 # torch==2.9.1
+# torchvision==0.29.0

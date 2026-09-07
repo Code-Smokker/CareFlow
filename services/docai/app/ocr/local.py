@@ -1,9 +1,14 @@
-"""Offline tier — what runs when the venue network dies. **Unexercised on this development
-machine** — see docs/06-document-ai.md's "OCR reality check": paddlepaddle has no wheel for
-this machine's Python 3.14 (works on 3.9-3.13, verified), and disk was at 100% capacity when
-checked (PaddleOCR-VL-1.6's weights alone are ~1.8GB). Written correctly against the model's
-own documented `transformers` usage (huggingface.co/docs/transformers/main/en/model_doc/paddleocr_vl),
-same "correct but unexercised" status as services/ai/app/speech/local.py's offline ASR.
+"""Offline tier — what runs when the venue network dies. **Exercised live 2026-09-07, still
+broken** — not for the reason this docstring used to claim (transformers/torch DO have Python
+3.14 wheels; that part was wrong). The real blocker: PaddleOCR-VL's remote modeling code
+doesn't register its config class into transformers' AutoModelForImageTextToText mapping, so
+the pipeline() call below fails to load the model on every transformers version tried
+(4.55.0/4.57.1/5.13.1 — see services/docai/requirements.txt's comment for the exact errors).
+Loading the model's own class directly instead of through pipeline() is the real fix; not done
+here yet. Separately (and already fixed here): the pipeline() call is missing
+trust_remote_code=True — a straight bug, not a version issue — which made this hang forever on
+an interactive y/N confirmation prompt in any non-interactive process instead of raising
+ProviderUnavailable like every other tier failure.
 
 transformers/torch aren't in requirements.txt's default install (see the comment there) — this
 module only imports them inside the function body, so a service without them installed still
@@ -37,7 +42,16 @@ def _load_pipeline():
     except ImportError as exc:
         raise ProviderUnavailable(f"transformers/torch not installed for local OCR: {exc}") from exc
     try:
-        _pipe = pipeline("image-text-to-text", model="PaddlePaddle/PaddleOCR-VL", dtype="bfloat16")
+        # trust_remote_code=True is required, not optional — PaddleOCR-VL ships custom modeling
+        # code, and without this flag transformers blocks on an interactive y/N confirmation
+        # prompt at load time. In any non-interactive process (this service under uvicorn, a
+        # container, CI) that prompt never gets an answer: the call hangs forever rather than
+        # raising ProviderUnavailable, silently breaking the tier's whole "never crashes, always
+        # fails over" cascade contract. Verified live 2026-09-07 — this hung indefinitely
+        # (~0% CPU, no output) until the flag was added.
+        _pipe = pipeline(
+            "image-text-to-text", model="PaddlePaddle/PaddleOCR-VL", dtype="bfloat16", trust_remote_code=True
+        )
     except Exception as exc:  # noqa: BLE001 - model download/load can fail in many ways
         raise ProviderUnavailable(f"Failed to load PaddleOCR-VL: {exc}") from exc
     return _pipe
