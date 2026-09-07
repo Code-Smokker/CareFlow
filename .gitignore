@@ -24,6 +24,9 @@ out/
 # data & artifacts
 /data/
 /uploads/
+# Real patient-adjacent inputs for manual integration testing (CLAUDE.md rule 8: no real
+# patient data in the repo, ever) — a real prescription photo and a real voice clip.
+/eval/real-inputs/
 *.sqlite
 *.db
 minio-data/
