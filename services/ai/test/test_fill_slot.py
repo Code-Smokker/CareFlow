@@ -79,3 +79,82 @@ async def test_fill_slot_does_not_try_local_once_sarvam_succeeds(monkeypatch):
     result = await fill_slot(_SCHEMA, "it started gradually", {})
     assert calls == ["sarvam"]
     assert result.value == "gradual"
+
+
+# --- loosely-typed local-model tool-call output ------------------------------------------
+# confirmed live against llama3.2:3b via Ollama's OpenAI-compatible endpoint 2026-09-07: its
+# tool-call arguments are sometimes JSON string literals ("true"/"7") where the schema calls
+# for a native bool/array/number. Python's bare bool("false") is True (any non-empty string is
+# truthy) — silently inverting the field — and a bare "sweating" fails an array-typed
+# comparison outright. These guard the fix (_coerce_bool / _coerce_value in fill_slot.py).
+
+
+def test_coerce_bool_handles_string_true_false_and_native_bool():
+    from app.llm.fill_slot import _coerce_bool
+
+    assert _coerce_bool("true") is True
+    assert _coerce_bool("false") is False
+    assert _coerce_bool("True") is True
+    assert _coerce_bool(True) is True
+    assert _coerce_bool(False) is False
+
+
+def test_coerce_value_wraps_a_bare_string_into_a_list_for_array_schema():
+    from app.llm.fill_slot import _coerce_value
+
+    array_schema = {"type": "array", "items": {"type": "string"}}
+    assert _coerce_value("sweating", array_schema) == ["sweating"]
+    assert _coerce_value(["sweating"], array_schema) == ["sweating"]
+    assert _coerce_value(None, array_schema) is None
+
+
+def test_coerce_value_converts_numeric_string_for_number_schema():
+    from app.llm.fill_slot import _coerce_value
+
+    number_schema = {"type": "number", "minimum": 0, "maximum": 10}
+    assert _coerce_value("7", number_schema) == 7
+    assert _coerce_value(7, number_schema) == 7
+    assert _coerce_value("not a number", number_schema) == "not a number"
+
+
+async def test_fill_slot_passes_the_local_specific_model_name_to_the_local_tier(monkeypatch):
+    """The actual bug this guards: fill_slot used to pass settings.llm_slot_model (sarvam's
+    model name, e.g. "sarvam-105b") to whichever adapter the cascade tried, including local —
+    a self-hosted Ollama server asked for a model literally named "sarvam-105b" would 404. Never
+    exercised before because LLM_BASE_URL was always empty until the local tier was wired up."""
+    seen_models: dict[str, str] = {}
+
+    async def _sarvam_down(**kwargs):
+        seen_models["sarvam"] = kwargs["model"]
+        raise ProviderUnavailable("simulated: sarvam down")
+
+    async def _local_ok(**kwargs):
+        seen_models["local"] = kwargs["model"]
+        return {"value": "sudden", "confidence": 0.9, "needs_clarification": False}
+
+    monkeypatch.setitem(fill_slot_module._ADAPTERS, "sarvam", _sarvam_down)
+    monkeypatch.setitem(fill_slot_module._ADAPTERS, "local", _local_ok)
+    monkeypatch.setattr(settings, "llm_provider", "sarvam")
+    monkeypatch.setattr(settings, "llm_slot_model", "sarvam-105b")
+    monkeypatch.setattr(settings, "llm_local_slot_model", "llama3.2:3b")
+
+    await fill_slot(_SCHEMA, "it started suddenly", {})
+    assert seen_models == {"sarvam": "sarvam-105b", "local": "llama3.2:3b"}
+
+
+async def test_fill_slot_end_to_end_with_stringly_typed_local_model_output(monkeypatch):
+    """The actual regression this guards: a local model (llama3.2:3b) returning
+    needs_clarification as the string "false" and an array value as a bare string used to make
+    a CORRECTLY extracted answer look wrong — bool("false") is True, and "sweating" != ["sweating"]."""
+
+    async def _local_stringly_typed(**kwargs):
+        return {"value": "sweating", "confidence": "1", "needs_clarification": "false"}
+
+    monkeypatch.setitem(fill_slot_module._ADAPTERS, "sarvam", _local_stringly_typed)
+    monkeypatch.setattr(settings, "llm_provider", "sarvam")
+
+    array_schema = {"type": "array", "items": {"type": "string", "enum": ["sweating", "nausea"]}}
+    result = await fill_slot(array_schema, "पसीना भी आता है", {})
+    assert result.value == ["sweating"]
+    assert result.confidence == 1.0
+    assert result.needs_clarification is False

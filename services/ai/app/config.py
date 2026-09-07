@@ -49,9 +49,16 @@ class Settings(BaseSettings):
     # ---- LLM ----
     llm_provider: str = Field(default="sarvam", alias="LLM_PROVIDER")
     llm_api_key: str = Field(default="", alias="LLM_API_KEY")
-    llm_slot_model: str = Field(default="sarvam-30b", alias="LLM_SLOT_MODEL")
+    llm_slot_model: str = Field(default="sarvam-105b", alias="LLM_SLOT_MODEL")
     llm_summary_model: str = Field(default="sarvam-105b", alias="LLM_SUMMARY_MODEL")
     llm_base_url: str = Field(default="", alias="LLM_BASE_URL")
+    # Same reason app/config.py keeps local_asr_model separate from sarvam_stt_model: the
+    # hosted and local tiers are different providers with different model catalogues, so one
+    # shared "the model name" setting can't name both correctly. Passing llm_slot_model to a
+    # local Ollama server asking for a model called "sarvam-105b" would 404 — confirmed live
+    # 2026-09-07 wiring the local tier for the first time, this had silently never been
+    # exercised before because LLM_BASE_URL was always empty.
+    llm_local_slot_model: str = Field(default="", alias="LLM_LOCAL_SLOT_MODEL")
 
     # ---- ontology ----
     ontology_modules_path: Path = Field(

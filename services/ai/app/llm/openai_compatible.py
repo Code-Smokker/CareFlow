@@ -52,7 +52,13 @@ async def call_tool(
     }
 
     try:
-        async with httpx.AsyncClient(timeout=10.0) as client:
+        # A local/self-hosted server serving this tier from cold (model not yet resident in
+        # memory/VRAM) can take far longer than a warm inference call — timed live against
+        # Ollama serving a 3B model on an M-series Mac under real memory pressure 2026-09-07:
+        # ~24s to load, vs ~2-3s once warm. 10s here was clipping a real, in-flight cold-load
+        # response as a timeout, the same "generous timeout, not a hung service" lesson
+        # documented for the OCR local tier's paddle import in docs/06-document-ai.md.
+        async with httpx.AsyncClient(timeout=45.0) as client:
             response = await client.post(f"{base_url.rstrip('/')}/chat/completions", json=payload, headers=headers)
             response.raise_for_status()
             data = response.json()

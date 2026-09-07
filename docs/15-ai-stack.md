@@ -106,6 +106,65 @@ Two call sites, two shapes:
 
 Never "extract everything from this transcript". Never "decide what to ask next".
 
+## Language model — local tier reality check (this machine — Apple M2, arm64, 16GB RAM)
+
+The "same model, on-premise" story above is true in principle — Sarvam-30B/105B are
+Apache-2.0 and can genuinely be self-hosted — but 30B needs real GPU infra to serve at
+interactive latency, not a laptop. `LLM_PROVIDER=local` needed *something* reachable on
+`LLM_BASE_URL` to be a real fallback rather than a config flag pointing at nothing, so a
+smaller stand-in model runs the same OpenAI-compatible adapter
+(`services/ai/app/llm/openai_compatible.py` — unchanged, no new provider path) via
+[Ollama](https://ollama.com), which exposes exactly that API at `/v1/chat/completions`.
+
+**Two 3B-class instruct models compared, forced tool-calling, against the real Hindi
+transcript from `eval/real-inputs/hindi_audio_clip.m4a`** ("2 दिन से सीने में दर्द है, पसीना भी
+आता है।" — "2 days of chest pain, also sweating"), through the actual `/fill-slot` code path,
+not a raw API call:
+
+| Model | `duration` → `2_days` | `associated` → `[sweating]` | Warm latency |
+|---|---|---|---|
+| `qwen2.5:3b-instruct` | ✅ correct | ❌ hallucinated `nausea` | ~2-3s |
+| `llama3.2:3b` | ✅ correct | ✅ correct | ~2-4s |
+
+**Picked `llama3.2:3b`.** Getting the actual clinical content right on real Hindi speech
+matters more than qwen2.5's slightly more consistent JSON typing (see below) — a wrong
+extracted symptom is a real risk; a display-confidence quirk is not. A third candidate
+(`hermes3:3b`) was abandoned mid-download after 20+ minutes under 1MB/s — not evaluated.
+
+**A real bug this surfaced, now fixed:** llama3.2:3b's tool-call arguments are sometimes JSON
+string literals (`"false"`, `"7"`) where the schema calls for a native bool/array/number.
+`bool("false")` in Python is `True` — any non-empty string is truthy — which was silently
+inverting `needs_clarification` on every correctly-extracted local-tier answer, and a bare
+`"sweating"` failed an array-typed comparison outright. `_coerce_bool` / `_coerce_value` in
+`services/ai/app/llm/fill_slot.py` reshape the value to match the schema's declared type
+without altering its content — same principle as the OCR/local-tier fixes elsewhere in this
+doc set: reshape what the model actually said, never guess. Covered by
+`services/ai/test/test_fill_slot.py`.
+
+**A real timeout this surfaced, also fixed:** `openai_compatible.py`'s httpx client had a
+hardcoded 10s timeout. A cold model load in Ollama (not yet resident in memory) took **~24s**
+on this machine under real memory pressure (Docker Desktop, docai's torch/transformers, and an
+Ollama model all resident at once — genuinely tight on a 16GB Air) — 10s was clipping a real
+in-flight response as a timeout, not catching a hung service. Raised to 45s. The same "generous
+timeout, not a hung service" lesson as `docs/06-document-ai.md`'s PaddleOCR-VL note.
+
+**Offline slot accuracy with this tier, all three hosted keys invalidated, measured live:**
+**10/12 (83%)** — both misses are `duration` extractions on the *same* pattern: a mumbled,
+self-correcting utterance ("it's been... two days I think? no, maybe three by now") where the
+3B model locks onto the first-mentioned number and misses the correction, extracting `2_days`
+instead of the correct `3_days`. Red-flag sensitivity and specificity stay **24/24** and **6/6**
+regardless — CLAUDE.md rule 3, red flags never touch a model. This is a real, honest
+degradation versus the hosted 105B path (which gets these right — see `eval/report/report.md`
+for the current online baseline), not parity. **Setup**, for a teammate or judge reproducing this: `brew install ollama && brew services
+start ollama && ollama pull llama3.2:3b`, then in `.env` (see `.env.example`) set
+`LLM_BASE_URL=http://localhost:11434/v1` and `LLM_LOCAL_SLOT_MODEL=llama3.2:3b` (kept separate
+from `LLM_SLOT_MODEL`, which stays sarvam's model name — sarvam and a self-hosted Ollama server
+are different providers with different model catalogues) — no API key needed
+for this tier. Leave `LLM_PROVIDER=sarvam` for normal operation (hosted-first, automatic
+fallback to this local tier if Sarvam is unreachable — the actual rule 9 behaviour); set
+`LLM_PROVIDER=local` only to force local-only, e.g. for docs/13-demo-script.md's "run it once
+with the network physically off" rehearsal.
+
 ## Document capture
 
 **`jscanify`** — MIT, OpenCV.js underneath, does live edge detection, corner extraction and

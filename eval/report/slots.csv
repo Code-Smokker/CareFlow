@@ -159,7 +159,7 @@ messy_codeswitch_fever,measured,yes_high,yes_high,True,False
 messy_codeswitch_joint,pattern,single_joint,single_joint,True,False
 messy_codeswitch_joint,morning_stiffness_duration,over_1hr,over_1hr,True,False
 messy_contradiction_chest_pain,severity,7,7,True,False
-messy_contradiction_chest_pain,onset,sudden,,False,True
+messy_contradiction_chest_pain,onset,sudden,sudden,True,False
 messy_mumbling_abdominal,duration,3_days,3_days,True,True
 messy_mumbling_abdominal,associated,['black_stool'],['black_stool'],True,False
 messy_mumbling_fever,duration,3_days,3_days,True,False
