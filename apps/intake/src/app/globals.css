@@ -1,0 +1,26 @@
+@import url("https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;600;700&family=JetBrains+Mono:wght@500;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+    background-color: #f7f9f8;
+    color: #0d1f1b;
+  }
+  body {
+    overscroll-behavior: none;
+    -webkit-font-smoothing: antialiased;
+  }
+  /* No shadows on patient screens — depth is border and ground, not blur (docs/16). Discipline,
+     not a global box-shadow reset: that would also kill focus rings, which WCAG 2.2 AA needs. */
+  :focus-visible {
+    outline: 3px solid #0e6f5c;
+    outline-offset: 2px;
+  }
+}
