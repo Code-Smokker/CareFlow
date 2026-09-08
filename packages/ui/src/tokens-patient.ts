@@ -4,6 +4,13 @@
  * unrelated to tokens.ts (the staff palette): patient screens are flat, high-contrast signage
  * read at arm's length by someone who may not read at all, not the staff console's dense
  * Material-style information design. Two products, two systems, on purpose.
+ *
+ * accent/accent-deep/accent-soft were retuned against design/patient-ui (the team's AI-Studio
+ * design source, imported as reference material only — see docs/16) — its teal
+ * (#0d6e6e/#005454/#ccfbf1) was close enough to our original green (#0E6F5C) that merging was
+ * low-drama, not a rebuild. Everything else here (paper/ink/uncertain/critical/good) is
+ * unchanged: that source had no equivalent principled system for "uncertain" vs "critical", so
+ * there was nothing to merge.
  */
 
 export const patientColors = {
@@ -18,9 +25,9 @@ export const patientColors = {
   line: "#DCE5E1",
   "line-strong": "#C3D0CB",
 
-  accent: "#0E6F5C",
-  "accent-deep": "#0A5546",
-  "accent-soft": "#DCEDE7",
+  accent: "#0D6E6E",
+  "accent-deep": "#005454",
+  "accent-soft": "#CCFBF1",
 
   /** Low confidence, approximate, needs confirming — never decoration, never a highlight. */
   uncertain: "#A9700F",
@@ -49,10 +56,12 @@ export const patientFontSize = {
   headline: ["40px", { lineHeight: "1.2", fontWeight: "700" }],
 } as const;
 
-/** Loaded via next/font/google in apps/intake's layout — see docs/16's <link> block for the
- * exact family list (Familjen Grotesk, Noto Sans Devanagari, JetBrains Mono). */
+/** Loaded via @import in apps/intake/src/app/globals.css — see docs/16's font block. Plus
+ * Jakarta Sans replaced Familjen Grotesk during the design/patient-ui merge; its handwriting
+ * accent (Caveat) was dropped, not adopted — a clinical interface a judge is assessing doesn't
+ * get handwriting fonts. */
 export const patientFontFamily = {
-  question: ["var(--font-familjen)", "Familjen Grotesk", "sans-serif"],
-  native: ["var(--font-noto-devanagari)", "Noto Sans Devanagari", "sans-serif"],
-  mono: ["var(--font-mono)", "JetBrains Mono", "monospace"],
+  question: ["Plus Jakarta Sans", "sans-serif"],
+  native: ["Noto Sans Devanagari", "sans-serif"],
+  mono: ["JetBrains Mono", "monospace"],
 } as const;

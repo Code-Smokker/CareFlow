@@ -1,10 +1,44 @@
-# 19 — Frontend status (`apps/console`)
+# 19 — Frontend status (`apps/console`, `apps/intake`)
 
-Route-by-route LIVE/MOCK status for the staff console, as of the PS-26047 scope cut described
-in `apps/README.md`. "LIVE" means the page fetches real data from a running service at render
-or action time — not that the code compiles, and not that seed data happens to be populated for
-every visit. Verified against a running gateway (`:4000`), terminology service (`:8003`), local
-HAPI FHIR (`:8090`), and Postgres/Redis/MinIO (`docker-compose.yml`) with real seeded visits.
+Route/screen-by-screen LIVE/MOCK status for both patient-facing and staff frontends, as of the
+PS-26047 scope cut described in `apps/README.md`. "LIVE" means the page fetches real data from
+a running service at render or action time — not that the code compiles, and not that seed data
+happens to be populated for every visit. Verified against a running gateway (`:4000`),
+terminology service (`:8003`), local HAPI FHIR (`:8090`), and Postgres/Redis/MinIO
+(`docker-compose.yml`) with real seeded visits.
+
+## `apps/intake` — screen-by-screen, all LIVE
+
+Every screen below was walked end-to-end at a phone viewport against a real running gateway
+(`make dev`), not against mocked fetches — verified 2026-09-09, the same pass that merged
+`design/patient-ui` (a Google AI Studio export, imported as a design source only — see docs/16)
+into this app's look. `packages/ontology`'s `chest_pain` and `fever` modules drove the actual
+question sequence; two different red-flag rules (`acs_radiation`, `cardiac_with_dyspnoea`) fired
+for real off real answers, and one fever-only run completed with zero red flags — both paths
+checked. The completed visit and both red flags were confirmed showing up in `apps/console` at
+`:3001` (`/queue` and `/visit/[id]/dossier`) with correct `Proxy · 100%` provenance badges on
+every field — the full patient → gateway → Postgres → console chain, not a single-app demo.
+
+| Screen | Wired to | Notes |
+|---|---|---|
+| Check-in (`/`) | `POST /v1/sessions` (walk-in) or in-page QR scan (`BarcodeDetector` + `getUserMedia`, no backend call) | ADR 0002 made visible: a shared device attaches to *a* session via QR, it isn't *the* session. The imported design's fake 6-digit manual-code modal was dropped — no endpoint resolves a short code to a session, and inventing one would mean a component shape ahead of the contract (CLAUDE.md's contracts-first rule). Camera permission is a native browser dialog automation can't drive; see docs/13's manual checklist. |
+| Language | `POST /v1/sessions/{id}/language` | Unchanged by this pass. |
+| Consent | `POST /v1/sessions/{id}/consent` | Fixed during this pass: the speaker button was a no-op (`onPlay={() => {}}`) — now actually reads the consent copy aloud. |
+| ABHA (scan / mobile+OTP) | `POST /v1/identity/abha/{qr,otp/request,otp/verify}` — the real mock-ABDM-gateway endpoints (ADR 0006), not stubbed for this screen | New this pass — one of design/patient-ui's orphan screens, adopted. Verified live: OTP request → wrong code correctly rejected with the mock's real `HIS-2022 Invalid OTP value` error → correct demo code (`000000`, since `ABDM_MODE=mock` fixes it) verified successfully. Known gap, not papered over: `identity.service.ts` doesn't take a `session_id`, so a successful link isn't yet persisted onto the session server-side — kept client-side in `IntakeContext` for display only. Skip is always present and never blocks progress. |
+| Attendant / proxy | Client-side only — sets `IntakeContext.isProxy`, which forces every subsequent `POST /v1/sessions/{id}/answer`'s `input_mode` to `"proxy"` regardless of how it was actually answered | New this pass — the other orphan screen, adopted "strongly" per product decision: CLAUDE.md rule 4's `proxy` provenance source existed in the schema with nothing producing it until now. Verified in the database directly (not just the UI): `SELECT input_mode, source FROM answer` showed `proxy`/`proxy` for both a chip-tap and a bodymap-tap answer. Also verified downstream in `apps/console`'s dossier, which renders it as `Proxy · 100%`. |
+| Question (voice / chips / multi / duration / bodymap / facescale) | `POST /v1/sessions/{id}/answer` | Unchanged by this pass except the restyle (palette/type/motion) and the proxy override above. Voice input itself still can't be verified by automation — getUserMedia's permission prompt — see docs/13. |
+| Red flag | Reacts to `red_flags` in the `/answer` response; no separate call | Tone deliberately did **not** adopt design/patient-ui's alarm styling (pulsing red "IMPORTANT" badge) — verified live that the calm, non-alarming copy and verbatim quote survived the restyle unchanged. |
+| Documents | `POST /v1/sessions/{id}/documents` | Unchanged by this pass. |
+| Read-back | Renders `IntakeContext.answered`; submit is `POST /v1/sessions/{id}/complete` | Bug found and fixed during this pass: `ProvenanceChip`'s source was hardcoded to only ever resolve to `voice`/`tap`/`bodymap`, silently collapsing `proxy` (and `ocr`) into `tap` — exactly the fact the new attendant screen exists to surface. Now passes `line.input_mode` straight through. Still review-and-confirm, not review-and-edit, by design (see `machine.ts`'s `readback` state comment) — a patient can't edit an already-answered slot; correction is by re-answering, and the clinician edits after. |
+| Complete | None (terminal state) | "What happens next" panel folded in from design/patient-ui's `ScreenComplete`, adopted per product decision — cheap, answers the one question every patient in a queue actually has. |
+
+Not carried over from design/patient-ui, and not silently added: `SplashScreen` (costs seconds,
+buys nothing in a queue app), `ProfileScreen` (implies patient accounts, out of PS scope), the
+duplicate unused `screens/CompleteScreen.tsx`, and `ScreenHandoff` (a second review-and-consent
+gate that duplicates Read-back's job, plus an unearned "ISO 27001" compliance badge) — all
+explicit product decisions, not oversights.
+
+## `apps/console`
 
 ## LIVE
 

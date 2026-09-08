@@ -19,7 +19,13 @@ export function ConsentScreen({ onAccept }: { onAccept: (scopes: string[]) => vo
   return (
     <div className="flex min-h-dvh flex-col justify-center gap-cf-4 bg-paper p-cf-4">
       <div className="flex items-center gap-cf-3">
-        <SpeakerButton onPlay={() => {}} />
+        <SpeakerButton
+          onPlay={() => {
+            if (!("speechSynthesis" in window)) return;
+            const text = `Before we start. We'll ask you some questions about how you're feeling. Here's what we save, and why. ${SCOPES.map((s) => `${s.label}. ${s.description}`).join(" ")}`;
+            window.speechSynthesis.speak(new SpeechSynthesisUtterance(text));
+          }}
+        />
         <h1 className="font-question text-question font-bold text-ink">Before we start</h1>
       </div>
       <p className="font-question text-support text-muted">

@@ -30,7 +30,7 @@ export function ReadbackScreen({ answered, onSubmit }: { answered: AnsweredLine[
           <div key={line.slot_id} className="rounded-2xl border-2 border-line bg-surface p-cf-3">
             <div className="flex items-start justify-between gap-cf-2">
               <p className="font-question text-support text-muted">{line.question_text}</p>
-              <ProvenanceChip source={line.input_mode === "bodymap" ? "bodymap" : line.input_mode === "voice" ? "voice" : "tap"} confidence={line.confidence} />
+              <ProvenanceChip source={line.input_mode} confidence={line.confidence} />
             </div>
             <p className="font-question text-answer font-bold text-ink">{formatValue(line.value)}</p>
           </div>

@@ -8,3 +8,4 @@ export * from "./components/patient/FaceScale";
 export * from "./components/patient/ProgressFigure";
 export * from "./components/patient/RedFlagBanner";
 export * from "./components/patient/ProvenanceChip";
+export * from "./components/patient/NumberPad";

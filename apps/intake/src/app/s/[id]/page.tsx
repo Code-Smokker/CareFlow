@@ -6,6 +6,8 @@ import { intakeMachine, type NextQuestion } from "@/lib/machine";
 import { completeSession, giveConsent, setLanguage, submitAnswer } from "@/lib/api";
 import { LanguageScreen } from "@/components/screens/LanguageScreen";
 import { ConsentScreen } from "@/components/screens/ConsentScreen";
+import { AbhaScreen } from "@/components/screens/AbhaScreen";
+import { AttendantScreen } from "@/components/screens/AttendantScreen";
 import { QuestionScreen } from "@/components/screens/QuestionScreen";
 import { RedFlagScreen } from "@/components/screens/RedFlagScreen";
 import { DocumentsScreen } from "@/components/screens/DocumentsScreen";
@@ -76,12 +78,30 @@ export default function SessionPage({ params }: { params: Promise<{ id: string }
     );
   }
 
+  if (state.matches("abha")) {
+    return (
+      <AbhaScreen
+        onLinked={(abha) => send({ type: "ABHA_LINKED", abha })}
+        onSkip={() => send({ type: "ABHA_SKIPPED" })}
+      />
+    );
+  }
+
+  if (state.matches("attendant")) {
+    return (
+      <AttendantScreen
+        onContinue={({ isProxy, relation }) => send({ type: "ATTENDANT_SET", isProxy, relation })}
+      />
+    );
+  }
+
   if (state.matches("chiefComplaint")) {
     return (
       <QuestionScreen
         question={CHIEF_COMPLAINT_QUESTION}
         language={state.context.language}
         progressPercent={0}
+        isProxy={state.context.isProxy}
         onAnswer={async (value, inputMode, confidence) => {
           if (pending) return;
           setPending(true);
@@ -91,7 +111,7 @@ export default function SessionPage({ params }: { params: Promise<{ id: string }
               "chief_complaint",
               CHIEF_COMPLAINT_QUESTION.text,
               value,
-              inputMode,
+              state.context.isProxy ? "proxy" : inputMode,
               confidence,
             );
             send({ type: "CHIEF_COMPLAINT_SET", question: result.question, redFlags: result.redFlags });
@@ -118,11 +138,19 @@ export default function SessionPage({ params }: { params: Promise<{ id: string }
         question={question}
         language={state.context.language}
         progressPercent={state.context.progressPercent}
+        isProxy={state.context.isProxy}
         onAnswer={async (value, inputMode, confidence) => {
           if (pending) return;
           setPending(true);
           try {
-            const result = await submitAnswer(sessionId, question.slot_id!, question.text, value, inputMode, confidence);
+            const result = await submitAnswer(
+              sessionId,
+              question.slot_id!,
+              question.text,
+              value,
+              state.context.isProxy ? "proxy" : inputMode,
+              confidence,
+            );
             send({
               type: "ANSWER_SUBMITTED",
               line: result.line,

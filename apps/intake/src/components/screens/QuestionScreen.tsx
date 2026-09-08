@@ -18,12 +18,16 @@ export interface QuestionScreenProps {
   language: string;
   progressPercent: number;
   onAnswer: (value: unknown, inputMode: "voice" | "tap" | "bodymap", confidence: number) => void;
+  /** Set once AttendantScreen records someone answering on the patient's behalf — shown so the
+   * attendant sees it's still recording, not a silent backend flag (docs/16). The gateway call
+   * always sends input_mode="proxy" in this case regardless of what's passed here (page.tsx). */
+  isProxy?: boolean;
 }
 
 /** One question per screen, nothing else on it (docs/10). Renders whichever tap widget the
  * question's input_modes call for; voice (via MicOrb) is layered on top of every one of them —
  * every slot supports at least two modes, none requires typing. */
-export function QuestionScreen({ question, language, progressPercent, onAnswer }: QuestionScreenProps) {
+export function QuestionScreen({ question, language, progressPercent, onAnswer, isProxy }: QuestionScreenProps) {
   const [multiSelected, setMultiSelected] = useState<string[]>([]);
   const [bodySelected, setBodySelected] = useState<string[]>([]);
   const [voiceStatus, setVoiceStatus] = useState<"idle" | "thinking" | "unclear">("idle");
@@ -71,6 +75,12 @@ export function QuestionScreen({ question, language, progressPercent, onAnswer }
         <ProgressFigure percent={progressPercent} />
         <SpeakerButton onPlay={speakQuestion} />
       </div>
+
+      {isProxy && (
+        <span className="w-fit rounded-full bg-accent-soft px-cf-3 py-1 font-mono text-[11px] font-bold uppercase tracking-wide text-accent-deep">
+          Answering for the patient
+        </span>
+      )}
 
       <h1 className="font-question text-question font-bold text-ink">{question.text}</h1>
 

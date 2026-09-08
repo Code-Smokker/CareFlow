@@ -82,6 +82,32 @@ export async function uploadDocument(sessionId: string, file: File) {
   return data;
 }
 
+/** ADR 0006 / docs/08: served by the mock ABDM gateway (ABDM_MODE=mock, the default) — same
+ * request/response shapes a real sandbox client would use, just answered locally. Known gap
+ * (services/gateway/src/identity/identity.service.ts): these endpoints don't take a
+ * session_id, so a successful link here identifies a *patient* record but doesn't yet attach
+ * it to this intake session server-side — the ABHA result below is kept client-side in
+ * IntakeContext for display only, not sent anywhere else. */
+export async function identifyByAbhaQr(qrPayload: string) {
+  const { data, error } = await gateway.POST("/v1/identity/abha/qr", { body: { qr_payload: qrPayload } });
+  if (error) throw new Error(error.error.message);
+  return data;
+}
+
+export async function requestAbhaOtp(input: { abhaNumber?: string; mobile?: string }) {
+  const { data, error } = await gateway.POST("/v1/identity/abha/otp/request", {
+    body: { abha_number: input.abhaNumber ?? null, mobile: input.mobile ?? null },
+  });
+  if (error) throw new Error(error.error.message);
+  return data;
+}
+
+export async function verifyAbhaOtp(txnId: string, otp: string) {
+  const { data, error } = await gateway.POST("/v1/identity/abha/otp/verify", { body: { txn_id: txnId, otp } });
+  if (error) throw new Error(error.error.message);
+  return data;
+}
+
 export async function completeSession(sessionId: string) {
   const { data, error } = await gateway.POST("/v1/sessions/{id}/complete", {
     params: { path: { id: sessionId } },

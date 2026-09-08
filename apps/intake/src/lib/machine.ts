@@ -25,6 +25,11 @@ export interface AnsweredLine {
   confidence: number;
 }
 
+export interface AbhaLink {
+  patientId: string;
+  abhaAddress: string | null;
+}
+
 export interface IntakeContext {
   sessionId: string;
   resumeToken: string | null;
@@ -34,11 +39,21 @@ export interface IntakeContext {
   pendingRedFlags: RedFlag[];
   answered: AnsweredLine[];
   error: string | null;
+  abha: AbhaLink | null;
+  /** Set on the attendant screen (docs/16). When true, every downstream ANSWER_SUBMITTED /
+   * CHIEF_COMPLAINT_SET forces input_mode to "proxy" before it reaches the gateway — the
+   * screen never sends its own voice/tap/bodymap mode once a proxy is answering, per CLAUDE.md
+   * rule 4 (provenance is about who answered, not how). */
+  isProxy: boolean;
+  attendantRelation: string | null;
 }
 
 export type IntakeEvent =
   | { type: "LANGUAGE_SET"; language: string }
   | { type: "CONSENT_GIVEN" }
+  | { type: "ABHA_LINKED"; abha: AbhaLink }
+  | { type: "ABHA_SKIPPED" }
+  | { type: "ATTENDANT_SET"; isProxy: boolean; relation: string | null }
   | { type: "CHIEF_COMPLAINT_SET"; question: NextQuestion | null; redFlags: RedFlag[] }
   | { type: "ANSWER_SUBMITTED"; line: AnsweredLine; question: NextQuestion | null; progressPercent: number; redFlags: RedFlag[] }
   | { type: "RED_FLAG_ACKNOWLEDGED" }
@@ -66,6 +81,9 @@ export const intakeMachine = setup({
     pendingRedFlags: [],
     answered: [],
     error: null,
+    abha: null,
+    isProxy: false,
+    attendantRelation: null,
   }),
   states: {
     language: {
@@ -74,7 +92,24 @@ export const intakeMachine = setup({
       },
     },
     consent: {
-      on: { CONSENT_GIVEN: "chiefComplaint" },
+      on: { CONSENT_GIVEN: "abha" },
+    },
+    abha: {
+      on: {
+        ABHA_LINKED: { target: "attendant", actions: assign({ abha: ({ event }) => event.abha }) },
+        ABHA_SKIPPED: "attendant",
+      },
+    },
+    attendant: {
+      on: {
+        ATTENDANT_SET: {
+          target: "chiefComplaint",
+          actions: assign({
+            isProxy: ({ event }) => event.isProxy,
+            attendantRelation: ({ event }) => event.relation,
+          }),
+        },
+      },
     },
     chiefComplaint: {
       on: {
