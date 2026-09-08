@@ -1,0 +1,6 @@
+{
+  "name": "CareFlow",
+  "description": "Official ABDM-compliant patient intake and clinical pre-assessment app with multilingual voice assistance, ABHA verification, and smart symptom triage.",
+  "requestFramePermissions": ["microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
