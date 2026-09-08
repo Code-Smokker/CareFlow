@@ -3,7 +3,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { CheckCircleIcon } from "@/components/Icons";
+import { CheckCircleIcon } from "@careflow/ui";
 
 interface Patient {
   id: string;

@@ -78,10 +78,11 @@ Full detail in `docs/01-architecture.md`.
 ## Layout
 
 ```
-apps/intake       Next.js PWA — the patient. XState interview runner.
-apps/clinician    Next.js — the 8-second summary and sign-off.
-apps/triage       Next.js — realtime red-flag board.
-apps/admin        Next.js — impact analytics.
+apps/intake       Next.js PWA — the patient. XState interview runner. Not scaffolded yet.
+apps/console      Next.js — staff. Queue, triage board, case record (dossier/timeline/
+                  summary/sign), documents, medications, terminology, FHIR, audit, consent,
+                  rules, integrations, analytics. Folds the original clinician/triage/admin
+                  split into one staff app — see apps/README.md.
 services/gateway  NestJS — Prisma, WebSocket hub, consent, queue, de-ID proxy.
 services/ai       FastAPI — speech, dialogue, slot filling, summarisation, red flags.
 services/docai    FastAPI + Celery — OCR, entity extraction, timeline.

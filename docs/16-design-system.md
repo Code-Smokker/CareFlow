@@ -1,15 +1,76 @@
 # 16 — Design system (`packages/ui`)
 
-The visual spec, in code. The canvas is the picture; this file is what you build from.
-Screen-by-screen behaviour is in doc 10; this is tokens and components.
+The visual spec, in code. Screen-by-screen behaviour is in doc 10; this is tokens and
+components.
 
-**One system, two densities.** Patient screens are *signage* — huge type, flat colour, no
-ornament, read at arm's length by someone anxious and possibly unable to read at all. Staff
-screens are *information design* — dense, keyboard-first, legible across a room.
+**One system, two densities, two different states of completeness.** Patient screens are
+*signage* — huge type, flat colour, no ornament, read at arm's length by someone anxious and
+possibly unable to read at all. Staff screens are *information design* — dense, keyboard-first,
+legible across a room. As of this doc's last rewrite, **the staff system is built and shipped**
+(`packages/ui`, consumed by `apps/console`); **the patient system below is still the plan**,
+unbuilt pending `apps/intake`. Do not read the patient section as done — it is dated from Day 0
+and kept here because it is still the right target when that app gets scaffolded.
 
 ---
 
-## Tokens
+## Staff console — shipped (`packages/ui`)
+
+`apps/console` began life as an import of a generic hospital-EHR boilerplate
+(Hospital-Side-Panel). Its Material-Stitch-derived visual language — the colour palette, Inter
++ JetBrains Mono type, Material Symbols iconography, card/container density — is what we kept.
+`packages/ui` exists to make that language a single source of truth instead of something
+duplicated per-app, and to bolt on the three colour rules below, which the boilerplate did not
+have and which are not negotiable here.
+
+**Where things live:**
+
+| File | What it is |
+|---|---|
+| `packages/ui/src/tokens.ts` | Colour, spacing, radius, `fontFamily`, `fontSize` — lifted verbatim from the import's `tailwind.config.ts`, plus `uncertain` (see below), which the import did not have. |
+| `packages/ui/src/tailwind-preset.ts` | A Tailwind v3 preset wrapping those tokens. Consuming apps do `presets: [careflowPreset]` instead of redeclaring the palette. |
+| `packages/ui/src/components/Icons.tsx` | The import's inline-SVG icon set (most icons in practice are the Material Symbols variable font, loaded in `layout.tsx`; this file covers the handful of bespoke ones). |
+| `packages/ui/src/components/StatusBadge.tsx` | Enforces "status colour never travels alone" — every tone renders with both an icon and a label. |
+| `packages/ui/src/components/ProvenanceBadge.tsx` | Renders CLAUDE.md rule 4 (`answer.source` + `answer.confidence`) directly from `SummaryField`. Demotes low-confidence values via the `uncertain` tone; never hides them. |
+| `packages/ui/src/components/DemoDataBadge.tsx` | The "Demo data — not connected to live backend" badge every unwired screen must show (docs/19-frontend-status.md). |
+
+**Deliberately not extracted:** `Header` and `Sidebar` stay in `apps/console/src/components`.
+There is exactly one staff app; turning them into a shared, parameterised component now would be
+abstraction with no second caller. If a second staff-density app shows up, lift them then.
+
+### Colour rules that override the boilerplate's own conventions
+
+The import used its palette purely decoratively (no tone carried clinical meaning). Three rules
+now sit on top of it and win in any conflict:
+
+1. **`error` (`#ba1a1a` / `error-container` `#ffdad6`) means clinical urgency only.** Never a
+   delete button, an inactive tab, a chart series, or a generic error toast. If a screen needs a
+   "something went wrong, try again" colour that isn't clinical, it does not get red.
+2. **`uncertain` (`#8a5a00` / `uncertain-container` `#ffddb0`) is new** — the import had no token
+   for "the system is not sure." Used for low-confidence slot values, OCR spans awaiting
+   confirmation, approximate timeline dates. Chosen to read clearly distinct from `error` at a
+   glance (amber vs. red) rather than reusing the flat patient-app `--cf-uncertain` hex below —
+   the two systems are visually unrelated and unifying them is only worth doing if one app ever
+   has to embed the other's components.
+3. **Status colour never travels alone.** `StatusBadge` and `ProvenanceBadge` are the only
+   places colour carries meaning, and both hard-code an icon + text label alongside the fill.
+   Don't reach for a bare `bg-error` / `bg-uncertain-container` span outside these components.
+
+### Fonts
+
+Inter (UI text) and JetBrains Mono (clinical data, IDs, timestamps) — both loaded as
+`next/font/google` in `apps/console/src/app/layout.tsx`, exposed as `--font-inter` /
+`--font-mono`. One addition: `clinical-note` (Source Serif 4) for `/visit/[id]/summary` — the
+clinician summary is a serif on purpose, so it reads as a clinical note and not an app screen.
+Not yet loaded in `layout.tsx`; add it alongside Inter when that screen ships.
+
+---
+
+## Patient signage — planned, not yet built (`apps/intake`)
+
+Everything below is the original Day 0 spec, unchanged. It describes a flat, high-contrast,
+CSS-custom-property system that is intentionally unrelated to the Material aesthetic above —
+patient and staff screens do not need to look like the same product, they need to each be
+legible to their own audience.
 
 ```css
 :root {
@@ -114,7 +175,9 @@ Before any screen. Deciding colours on Day 4 is how hackathon UIs end up looking
 | `ProvenanceChip` | Mono, 11px. `voice 04:12` · `scan p.2` · `tapped` · `low confidence` (uncertain colour). |
 | `RedFlagBanner` | Critical fill, full-bleed, **quotes the patient's own words verbatim** — never a paraphrase. |
 
-Two density modes on the same primitives: `patient` (the sizes above) and `staff` (roughly 60%).
+Two density modes on the same primitives: `patient` (the sizes above) and `staff` (roughly 60%
+— now superseded by the shipped staff system above; keep this ratio in mind only if patient and
+staff ever need to share a primitive).
 
 ## Non-negotiable rules
 
@@ -143,4 +206,6 @@ Two density modes on the same primitives: `patient` (the sizes above) and `staff
 
 The visual source of truth is the **CareFlow Interface** design canvas — twelve artboards across
 three pages: the eight-screen patient flow, the three staff screens, and this token sheet. Export
-PNGs from it for the deck rather than screenshotting the running app.
+PNGs from it for the deck rather than screenshotting the running app. Note this predates the
+staff-console import above and its "three staff screens" no longer reflects what's built —
+`apps/console`'s running app is the current source of truth for staff screens.

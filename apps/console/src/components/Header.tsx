@@ -13,7 +13,7 @@ import {
   NotificationsIcon,
   CloseIcon,
   CheckIcon,
-} from "./Icons";
+} from "@careflow/ui";
 
 interface HeaderProps {
   searchQuery?: string;

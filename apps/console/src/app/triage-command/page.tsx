@@ -3,7 +3,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { CheckCircleIcon } from "@/components/Icons";
+import { CheckCircleIcon } from "@careflow/ui";
 
 export default function TriageCommandPage() {
   const [isPlayingAudio, setIsPlayingAudio] = useState(true);
