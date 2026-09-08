@@ -11,10 +11,13 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@careflow/api-client": "workspace:*",
+    "@careflow/contracts": "workspace:*",
     "@careflow/ui": "workspace:*",
     "next": "16.3.4",
     "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "react-dom": "19.2.8",
+    "yaml": "^2.6.1"
   },
   "devDependencies": {
     "@types/node": "^20",

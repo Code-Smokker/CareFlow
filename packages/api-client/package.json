@@ -1,0 +1,19 @@
+{
+  "name": "@careflow/api-client",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Typed gateway client, generated from packages/contracts/openapi/gateway.yaml via openapi-fetch — no hand-written fetch calls, no re-declared types. Server-side only (Node fetch, not exposed to the browser bundle) — apps/console proxies through its own Route Handlers.",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "dependencies": {
+    "@careflow/contracts": "workspace:*",
+    "openapi-fetch": "^0.13.4"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "typescript": "^5.7.2"
+  }
+}

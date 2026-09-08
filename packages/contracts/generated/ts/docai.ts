@@ -109,6 +109,8 @@ export interface components {
             needs_confirmation: boolean;
             /** @description Dictionary-matched shortlist for the human to confirm against. */
             dictionary_matches: string[];
+            /** @description Which dictionary produced `dictionary_matches`, for a medication-like field — "ayush_formulation", "ayush_plant" or "allopathic". Null for non-medication fields and for a medication span that matched no dictionary at all (CLAUDE.md rule 4: provenance on every stored fact; never silently guess which system a span belongs to — the AYUSH labelling fix, docs/15-ai-stack.md, made this the thing the pipeline decides system from, not GLiNER's own zero-shot label). */
+            matched_dictionary: string | null;
         };
         TimelineEvent: {
             event_id: string;
