@@ -44,6 +44,18 @@ dev: ## Start infra + all four services, wait for health, print every URL
 dev-down: ## Stop the services `make dev` started (infra stays up)
 	@bash scripts/dev-down.sh
 
+demo-reset: ## Wipe the DB, restart infra + services, seed one clean demo patient — run before every demo
+	docker compose down -v
+	docker compose up -d
+	@echo "→ waiting for postgres..."
+	@until docker exec careflow-postgres pg_isready -U careflow >/dev/null 2>&1; do sleep 1; done
+	cd services/gateway && node --env-file=../../.env $$(which pnpm) exec prisma migrate deploy
+	@$(MAKE) dev
+	@$(MAKE) demo
+	@echo "→ demo-reset done: fresh database (zero audit_log rows — including the test-pollution"
+	@echo "  ones from gateway test runs, which the append-only trigger would otherwise never let"
+	@echo "  you delete any other way), every service running, one signed demo patient in the queue."
+
 demo: ## Seed a patient and walk the entire path (needs `make dev` running)
 	@test -d scripts/demo/.venv || python3 -m venv scripts/demo/.venv
 	@scripts/demo/.venv/bin/pip install -q -U pip
@@ -71,4 +83,4 @@ eval: ## Run the clinical eval harness and print the metrics table
 	@eval/.venv/bin/pip install -q -r eval/requirements.txt
 	@eval/.venv/bin/python3 eval/run.py
 
-.PHONY: help setup py-setup up down reset dev dev-down demo seed-session lint typecheck test eval
+.PHONY: help setup py-setup up down reset dev dev-down demo demo-reset seed-session lint typecheck test eval

@@ -7,6 +7,14 @@ with the triage board and clinician console side by side on a second screen.
 
 ## Setup
 
+- **Run `make demo-reset` first. Every time. No exceptions.** It wipes the database, restarts
+  every service, and seeds one clean signed demo patient. Skipping this is not a shortcut — the
+  audit_log table is append-only (a Postgres trigger, not convention), so every gateway test run
+  anyone has done against this database leaves permanent rows in it that nothing can delete.
+  `/quality-audit-logs` on the triage/clinician console reads real data: an unreset database
+  means a judge who clicks it sees a wall of `test.action` / `unit_test.*` noise instead of the
+  one clean, real, signed patient this script walks. `make demo-reset` is the only way to get a
+  presentable `/audit` screen — there is no delete button, on purpose.
 - Laptop running the full stack offline: local ASR, local LLM, HAPI FHIR, mock ABDM
 - Phone A — patient one (chest pain, Hindi)
 - Phone B — patient two (Ayurvedic case with documents)
@@ -31,6 +39,8 @@ with the triage board and clinician console side by side on a second screen.
 ## Rehearsal rules
 
 - Run it **five times** on Day 5. If it fails once, fix and reset the count.
+- `make demo-reset` before the **final** rehearsal too, not just the real thing — a database full
+  of every earlier rehearsal's patients is its own kind of unconvincing.
 - Run it **once with the network physically off** — that rehearsal is what makes the
   degradation table in doc 01 true rather than aspirational.
 - One person drives, one narrates. Never both on the same laptop.
