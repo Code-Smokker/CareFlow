@@ -18,6 +18,9 @@ class Settings(BaseSettings):
 
     log_level: str = Field(default="info", alias="LOG_LEVEL")
     ai_service_url: str = Field(default="http://localhost:8001", alias="AI_SERVICE_URL")
+    # Prisma (services/gateway) owns the migration; this service reads/writes provider_cascade_event
+    # directly, same convention as services/docai's dictionary_entry (app/dictionary/db.py).
+    database_url: str = Field(alias="DATABASE_URL")
 
     # ---- speech ----
     asr_provider: str = Field(default="sarvam", alias="ASR_PROVIDER")

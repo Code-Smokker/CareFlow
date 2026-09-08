@@ -588,6 +588,118 @@ paths:
               schema: { $ref: "#/components/schemas/RedFlag" }
         default: { $ref: "#/components/responses/Error" }
 
+  /v1/audit-log:
+    get:
+      operationId: getAuditLog
+      summary: Append-only audit log — DPDP compliance evidence
+      tags: [audit]
+      description: >
+        Every row here was written by application code that never updates or deletes one
+        (services/gateway/prisma/schema.prisma's AuditLog model) — enforced by a Postgres
+        trigger, not just convention (audit_log_no_update / audit_log_no_delete,
+        prisma/migrations/20260906055251_init). `integrity` reports what this endpoint itself
+        just verified by querying pg_trigger, live, on this call — not a stored or asserted
+        claim.
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          schema: { type: integer, minimum: 1, maximum: 200, default: 50 }
+        - name: cursor
+          in: query
+          required: false
+          description: Opaque, from a previous response's `next_cursor`. Omit for the first page.
+          schema: { type: string }
+        - name: resource
+          in: query
+          required: false
+          description: Filter to one resource type, e.g. "red_flag", "intake_session".
+          schema: { type: string }
+        - name: action
+          in: query
+          required: false
+          description: Filter to one action, e.g. "redflag.acknowledge".
+          schema: { type: string }
+      responses:
+        "200":
+          description: A page of audit log entries, newest first
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [entries, next_cursor, integrity]
+                properties:
+                  entries:
+                    type: array
+                    items: { $ref: "#/components/schemas/AuditLogEntry" }
+                  next_cursor: { type: [string, "null"] }
+                  integrity: { $ref: "#/components/schemas/AuditIntegrity" }
+        default: { $ref: "#/components/responses/Error" }
+
+  /v1/integration-events:
+    get:
+      operationId: getIntegrationEvents
+      summary: Provider cascade events — hosted tier tried, failed, local tier served the request
+      tags: [integrations]
+      description: >
+        One row per tier attempted by services/ai's or services/docai's cascade() helper
+        (docs/15-ai-stack.md), success or failure — this is CLAUDE.md rule 9 ("every external
+        dependency has a local fallback") as something that happened, not an eval-report claim.
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          schema: { type: integer, minimum: 1, maximum: 200, default: 50 }
+        - name: cursor
+          in: query
+          required: false
+          schema: { type: string }
+        - name: outcome
+          in: query
+          required: false
+          schema: { type: string, enum: [success, failure] }
+        - name: capability
+          in: query
+          required: false
+          description: e.g. "llm.fill_slot", "asr.transcribe", "tts.synthesise", "docai.ocr".
+          schema: { type: string }
+      responses:
+        "200":
+          description: A page of provider cascade events, newest first
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [entries, next_cursor]
+                properties:
+                  entries:
+                    type: array
+                    items: { $ref: "#/components/schemas/IntegrationEvent" }
+                  next_cursor: { type: [string, "null"] }
+        default: { $ref: "#/components/responses/Error" }
+
+  /v1/analytics/summary:
+    get:
+      operationId: getAnalyticsSummary
+      summary: OPD throughput, top complaints, red-flag rate, average intake time
+      tags: [analytics]
+      description: >
+        Aggregate queries over Visit/RedFlag/IntakeSession/Summary — no new data, no separate
+        analytics store. `window_start`/`window_end` default to the current day.
+      parameters:
+        - name: since
+          in: query
+          required: false
+          description: ISO 8601 datetime. Defaults to the start of today (server timezone).
+          schema: { type: string, format: date-time }
+      responses:
+        "200":
+          description: Aggregate stats for the window
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AnalyticsSummary" }
+        default: { $ref: "#/components/responses/Error" }
+
 components:
   parameters:
     SessionIdParam:
@@ -892,3 +1004,84 @@ components:
               field_path: { type: string }
               previous_value: {}
               current_value: {}
+
+    AuditLogEntry:
+      type: object
+      required: [id, action, resource, at]
+      properties:
+        id: { type: string }
+        actor_id: { type: [string, "null"] }
+        actor_role: { type: [string, "null"] }
+        action: { type: string, description: "e.g. \"redflag.acknowledge\", \"session.withdraw\"" }
+        resource: { type: string, description: "e.g. \"red_flag\", \"intake_session\"" }
+        resource_id: { type: [string, "null"] }
+        reason: { type: [string, "null"] }
+        at: { type: string, format: date-time }
+
+    AuditIntegrity:
+      type: object
+      required: [enforced, triggers]
+      description: >
+        Live pg_trigger lookup against audit_log at request time — not a stored flag, so it
+        cannot silently go stale if a migration ever removed the trigger.
+      properties:
+        enforced:
+          type: boolean
+          description: True only if both audit_log_no_update and audit_log_no_delete exist and are enabled.
+        triggers:
+          type: array
+          items:
+            type: object
+            required: [name, enabled]
+            properties:
+              name: { type: string }
+              enabled: { type: boolean }
+
+    IntegrationEvent:
+      type: object
+      required: [id, service, capability, provider, outcome, latency_ms, at]
+      properties:
+        id: { type: string }
+        service: { type: string, enum: [ai, docai] }
+        capability: { type: string, description: "e.g. \"llm.fill_slot\", \"asr.transcribe\", \"docai.ocr\"" }
+        provider: { type: string, description: "e.g. \"sarvam\", \"local\", \"hosted\"" }
+        outcome: { type: string, enum: [success, failure] }
+        latency_ms: { type: integer }
+        error: { type: [string, "null"] }
+        at: { type: string, format: date-time }
+
+    AnalyticsSummary:
+      type: object
+      required:
+        [
+          window_start,
+          window_end,
+          opd_throughput,
+          top_complaints,
+          red_flag_rate,
+          average_intake_seconds,
+        ]
+      properties:
+        window_start: { type: string, format: date-time }
+        window_end: { type: string, format: date-time }
+        opd_throughput:
+          type: integer
+          description: Visits started within the window.
+        top_complaints:
+          type: array
+          items:
+            type: object
+            required: [complaint, count]
+            properties:
+              complaint: { type: string }
+              count: { type: integer }
+        red_flag_rate:
+          type: number
+          minimum: 0
+          maximum: 1
+          description: Visits with at least one red flag, divided by opd_throughput. 0 if opd_throughput is 0.
+        average_intake_seconds:
+          type: [number, "null"]
+          description: >
+            Mean time from session creation to completion, for sessions completed within the
+            window. Null if none completed yet — never a fabricated 0.

@@ -17,6 +17,7 @@ configure_logging()
 log = get_logger()
 
 from app.config import settings  # noqa: E402
+from app.db import close_pool  # noqa: E402
 from app.errors import AppError, app_error_handler, unhandled_error_handler  # noqa: E402
 from app.logging import bind_session  # noqa: E402
 from app.routers import evaluate_flags, fill_slot, health, summarise, synthesise, transcribe  # noqa: E402
@@ -37,6 +38,7 @@ async def lifespan(_app: FastAPI):
         cwd=os.getcwd(),
     )
     yield
+    await close_pool()
 
 
 app = FastAPI(title="CareFlow AI Service", lifespan=lifespan)

@@ -36,7 +36,7 @@ def _tiers_from(provider: str) -> list[str]:
 
 async def transcribe(audio_bytes: bytes, language: str) -> TranscriptResult:
     tiers = [(name, lambda name=name: _ASR_ADAPTERS[name](audio_bytes, language)) for name in _tiers_from(settings.asr_provider)]
-    return await cascade(tiers)
+    return await cascade(tiers, capability="asr.transcribe")
 
 
 async def synthesise(text: str, language: str, voice: str | None = None) -> SynthesisResult:
@@ -45,6 +45,6 @@ async def synthesise(text: str, language: str, voice: str | None = None) -> Synt
         return cached
 
     tiers = [(name, lambda name=name: _TTS_ADAPTERS[name](text, language, voice)) for name in _tiers_from(settings.tts_provider)]
-    result = await cascade(tiers)
+    result = await cascade(tiers, capability="tts.synthesise")
     cache_put(text, language, voice, result)
     return result

@@ -131,7 +131,7 @@ async def fill_slot(slot_schema: dict[str, Any], utterance: str, context: dict[s
 
     tiers = [(name, lambda name=name: _call(name)) for name in _tiers_from(settings.llm_provider)]
     try:
-        args = await cascade(tiers)
+        args = await cascade(tiers, capability="llm.fill_slot")
     except AllProvidersUnavailable as exc:
         # Never guess (docs/05-interview-engine.md "Always honest") — every tier unreachable
         # means an honest "unclear", not a fabricated value.

@@ -449,6 +449,66 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/audit-log": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Append-only audit log — DPDP compliance evidence
+         * @description Every row here was written by application code that never updates or deletes one (services/gateway/prisma/schema.prisma's AuditLog model) — enforced by a Postgres trigger, not just convention (audit_log_no_update / audit_log_no_delete, prisma/migrations/20260906055251_init). `integrity` reports what this endpoint itself just verified by querying pg_trigger, live, on this call — not a stored or asserted claim.
+         */
+        get: operations["getAuditLog"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/integration-events": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Provider cascade events — hosted tier tried, failed, local tier served the request
+         * @description One row per tier attempted by services/ai's or services/docai's cascade() helper (docs/15-ai-stack.md), success or failure — this is CLAUDE.md rule 9 ("every external dependency has a local fallback") as something that happened, not an eval-report claim.
+         */
+        get: operations["getIntegrationEvents"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/analytics/summary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * OPD throughput, top complaints, red-flag rate, average intake time
+         * @description Aggregate queries over Visit/RedFlag/IntakeSession/Summary — no new data, no separate analytics store. `window_start`/`window_end` default to the current day.
+         */
+        get: operations["getAnalyticsSummary"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -609,6 +669,59 @@ export interface components {
                 previous_value: unknown;
                 current_value: unknown;
             }[];
+        };
+        AuditLogEntry: {
+            id: string;
+            actor_id?: string | null;
+            actor_role?: string | null;
+            /** @description e.g. "redflag.acknowledge", "session.withdraw" */
+            action: string;
+            /** @description e.g. "red_flag", "intake_session" */
+            resource: string;
+            resource_id?: string | null;
+            reason?: string | null;
+            /** Format: date-time */
+            at: string;
+        };
+        /** @description Live pg_trigger lookup against audit_log at request time — not a stored flag, so it cannot silently go stale if a migration ever removed the trigger. */
+        AuditIntegrity: {
+            /** @description True only if both audit_log_no_update and audit_log_no_delete exist and are enabled. */
+            enforced: boolean;
+            triggers: {
+                name: string;
+                enabled: boolean;
+            }[];
+        };
+        IntegrationEvent: {
+            id: string;
+            /** @enum {string} */
+            service: "ai" | "docai";
+            /** @description e.g. "llm.fill_slot", "asr.transcribe", "docai.ocr" */
+            capability: string;
+            /** @description e.g. "sarvam", "local", "hosted" */
+            provider: string;
+            /** @enum {string} */
+            outcome: "success" | "failure";
+            latency_ms: number;
+            error?: string | null;
+            /** Format: date-time */
+            at: string;
+        };
+        AnalyticsSummary: {
+            /** Format: date-time */
+            window_start: string;
+            /** Format: date-time */
+            window_end: string;
+            /** @description Visits started within the window. */
+            opd_throughput: number;
+            top_complaints: {
+                complaint: string;
+                count: number;
+            }[];
+            /** @description Visits with at least one red flag, divided by opd_throughput. 0 if opd_throughput is 0. */
+            red_flag_rate: number;
+            /** @description Mean time from session creation to completion, for sessions completed within the window. Null if none completed yet — never a fabricated 0. */
+            average_intake_seconds: number | null;
         };
     };
     responses: {
@@ -1320,6 +1433,93 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["RedFlag"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    getAuditLog: {
+        parameters: {
+            query?: {
+                limit?: number;
+                /** @description Opaque, from a previous response's `next_cursor`. Omit for the first page. */
+                cursor?: string;
+                /** @description Filter to one resource type, e.g. "red_flag", "intake_session". */
+                resource?: string;
+                /** @description Filter to one action, e.g. "redflag.acknowledge". */
+                action?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description A page of audit log entries, newest first */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        entries: components["schemas"]["AuditLogEntry"][];
+                        next_cursor: string | null;
+                        integrity: components["schemas"]["AuditIntegrity"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    getIntegrationEvents: {
+        parameters: {
+            query?: {
+                limit?: number;
+                cursor?: string;
+                outcome?: "success" | "failure";
+                /** @description e.g. "llm.fill_slot", "asr.transcribe", "tts.synthesise", "docai.ocr". */
+                capability?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description A page of provider cascade events, newest first */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        entries: components["schemas"]["IntegrationEvent"][];
+                        next_cursor: string | null;
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    getAnalyticsSummary: {
+        parameters: {
+            query?: {
+                /** @description ISO 8601 datetime. Defaults to the start of today (server timezone). */
+                since?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Aggregate stats for the window */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AnalyticsSummary"];
                 };
             };
             default: components["responses"]["Error"];

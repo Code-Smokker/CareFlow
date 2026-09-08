@@ -21,6 +21,9 @@ HAPI FHIR (`:8090`), and Postgres/Redis/MinIO (`docker-compose.yml`) with real s
 | `/documents` | Composed: `GET /v1/sessions/{id}/timeline` → `GET /v1/documents/{id}` per `source_document_id` | No "list documents for a visit" endpoint exists — `/v1/sessions/{id}/documents` is upload-only (POST). Takes `?visitId=`; the bare route shows a real visit picker from the queue. |
 | `/terminology` | `GET /search`, `POST /translate` on the terminology service directly (`:8003`) | Not gateway-proxied — no `/v1/terminology/*` path exists in `gateway.yaml`. Called server-side (Route Handlers under `/api/terminology/*`), Node-to-Node, same non-gateway-proxied pattern as HAPI. Unreviewed mappings (`reviewed_by: null`) are shown demoted, never as authoritative. |
 | `/rules` | Direct filesystem read of `packages/ontology/modules/**/*.yaml` | No API involved — reads the version-controlled source directly, server-side only. Genuinely read-only by construction (no write path exists in the code, not just in the UI). |
+| `/audit` | `GET /v1/audit-log` (new — contracts-first: `packages/contracts/openapi/gateway.yaml`, then `services/gateway/src/audit/`) | Reads the real, pre-existing `audit_log` table. `integrity` in the response is a **live** `pg_trigger` query on every request (`audit_log_no_update`/`audit_log_no_delete`), not a stored flag — see `AuditService.checkIntegrity()`. Tested against real Postgres, including a test that the trigger genuinely rejects an `UPDATE`. |
+| `/integrations` | `GET /v1/integration-events` (new), backed by a new `provider_cascade_event` table written directly from `services/ai`'s and `services/docai`'s `cascade()` helper — the one call site every hosted→local fallback goes through (docs/15-ai-stack.md) | Every tier attempt, success or failure, is now persisted, not just logged. Verified live: a real `/fill-slot` call against Sarvam recorded a `sarvam · success · 7055ms` row, and existing `fill_slot` fixture tests recorded real `sarvam · failure → local · success` sequences — the actual fallback story, not a mockup of it. |
+| `/analytics` | `GET /v1/analytics/summary` (new), aggregate SQL over `Visit`/`RedFlag`/`IntakeSession`/`Summary` | No new data, no separate store. Verified against the real seeded dataset (`?since=2026-01-01`): 36 visits, Chest pain top complaint (12), 11% red-flag rate, ~12s average intake. Defaults to "since start of today" — mostly empty in this dev DB since seed data predates today; the query logic itself is what's verified, not today's count. |
 
 ## LIVE, partially
 
@@ -33,11 +36,37 @@ HAPI FHIR (`:8090`), and Postgres/Redis/MinIO (`docker-compose.yml`) with real s
 
 ## MOCK — badged, no backend path exists
 
-| Route | Why |
-|---|---|
-| `/audit` | An `audit_log` table exists (DB-trigger-enforced, append-only — `services/gateway`'s sign/acknowledge handlers write to it) but no endpoint reads it back. Needs a new `GET /v1/audit-log` (or similar) — not invented here. A fabricated "ISO 27799 / ABDM M3 Certified" badge was removed from this page regardless of its mock status, since that's a specific false compliance claim, not generic placeholder content. |
-| `/integrations` | The real hosted→local fallback cascade (Sarvam/Gemini/Bhashini → Ollama/PaddleOCR/IndicConformer, docs/15-ai-stack.md) exists only in structured logs (structlog) today, with no endpoint exposing it. The page's own content (generic HIS subsystem bridges — PACS, LIS, pharmacy vault) was also never rewritten to reflect that story; it's the unmodified boilerplate mock. |
-| `/analytics` | No aggregation endpoint exists in any service's OpenAPI contract (gateway, ai, docai, terminology). Newly built as a badged placeholder rather than left unbuilt, since the PS list calls for it. |
+None currently. `/audit`, `/integrations` and `/analytics` were the three routes here; all three
+now have real endpoints (see the LIVE table above). A fabricated "ISO 27799 / ABDM M3 Certified"
+badge that was on the old mock `/audit` page was removed when it was rebuilt — a specific false
+compliance claim, not generic placeholder content, and worth remembering as an example of what
+this pass was watching for.
+
+### New backend surface added for this pass
+
+- **`packages/contracts/openapi/gateway.yaml`**: `GET /v1/audit-log`, `GET /v1/integration-events`,
+  `GET /v1/analytics/summary` — contracts-first, implemented after.
+- **`services/gateway/prisma/schema.prisma`**: new `ProviderCascadeEvent` model /
+  `provider_cascade_event` table (migration `20260908073818_provider_cascade_event`). Prisma
+  migrates it; `services/ai` and `services/docai` read/write it directly via `asyncpg`, same
+  convention as `dictionary_entry`.
+- **`services/ai/app/cascade.py`, `services/docai/app/cascade.py`**: `cascade()` now takes a
+  required `capability` label and persists every tier attempt (success and failure) — best
+  effort, wrapped so a telemetry write can never break the actual request. Both services'
+  existing cascade unit tests keep passing unchanged in behavior (this only adds a side effect);
+  new `test_cascade_persistence.py` in each service proves rows actually land.
+- **Gateway**: new `audit`, `integrations`, `analytics` NestJS modules (11 new tests, all
+  against real Postgres — this repo's existing convention, no mocked Prisma).
+
+### One real side effect worth knowing about
+
+The `audit.service.spec.ts` test suite writes real rows to `audit_log` — and, proven by one of
+its own tests, **cannot delete them afterward**: the append-only trigger rejects that exactly
+like it would in production. Every gateway test run against this local dev database leaves a
+handful of `test.action` / `unit_test.*` rows in `/audit` permanently. Harmless (clearly tagged,
+easy to filter out or ignore) but real — expect `/audit` in this dev environment to accumulate
+test noise over time. A demo run should either filter by resource/action, or reset the DB
+(`docker compose down -v && up`, then re-migrate) beforehand for a clean log.
 
 ## Safety fix applied during wiring
 

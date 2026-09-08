@@ -23,4 +23,4 @@ def _tiers_from(provider: str) -> list[str]:
 
 async def read(image_ref: str) -> OcrResult:
     tiers = [(name, lambda name=name: _ADAPTERS[name](image_ref)) for name in _tiers_from(settings.ocr_provider)]
-    return await cascade(tiers)
+    return await cascade(tiers, capability="docai.ocr")

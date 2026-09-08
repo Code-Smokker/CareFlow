@@ -120,6 +120,11 @@ enum SummaryStatus {
   signed
 }
 
+enum CascadeOutcome {
+  success
+  failure
+}
+
 enum ConceptEquivalence {
   equivalent
   wider
@@ -335,6 +340,31 @@ model AuditLog {
   at        DateTime @default(now())
 
   @@map("audit_log")
+}
+
+/// One row per provider tier attempted by services/ai's or services/docai's `cascade()` helper
+/// (docs/15-ai-stack.md's three-tier pattern) — success or failure, every time. This is what
+/// makes CLAUDE.md rule 9 ("every external dependency has a local fallback") a fact someone can
+/// see happen, not just a claim in the eval report. Written by the Python services directly
+/// (same convention as Concept/DictionaryEntry below — Prisma migrates it, Python reads/writes
+/// it), best-effort: a failed write here must never break the actual request.
+model ProviderCascadeEvent {
+  id         String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  /// "ai" | "docai" — which service attempted this tier.
+  service    String
+  /// "llm.fill_slot" | "asr.transcribe" | "tts.synthesise" | "docai.ocr" — which cascade() call site.
+  capability String
+  /// The tier's own name — "sarvam" | "bhashini" | "local" | "hosted" | "stub", not a fixed enum:
+  /// each capability has its own tier vocabulary (docs/15-ai-stack.md), and a new provider
+  /// should never need a migration just to be logged.
+  provider   String
+  outcome    CascadeOutcome
+  latencyMs  Int            @map("latency_ms")
+  error      String?
+  at         DateTime       @default(now())
+
+  @@map("provider_cascade_event")
+  @@index([at])
 }
 
 // ---------------------------------------------------------------------------
