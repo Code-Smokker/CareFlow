@@ -146,9 +146,11 @@ export class SessionsService {
     return {
       session_id: session.id,
       resume_token: rawToken,
-      // Provisional deep link — apps/intake isn't scaffolded yet; the shape (session id +
-      // resume token as query params) is what it needs to rebind on load.
-      qr_url: `${publicWebUrl}/intake/${session.id}?rt=${rawToken}`,
+      // Matches apps/intake's actual route (src/app/s/[id]/page.tsx) — this used to point at
+      // /intake/{id}?rt=, a placeholder written before that app was scaffolded and never
+      // updated afterward. A QR built from the old shape 404'd on scan; nothing caught it
+      // because nothing renders qr_url as an actual QR code yet (see docs/19).
+      qr_url: `${publicWebUrl}/s/${session.id}?token=${rawToken}`,
     };
   }
 
