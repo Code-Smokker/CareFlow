@@ -1,0 +1,64 @@
+id: ahara
+label: Ahara (diet)
+framework: custom
+description: >
+  Diet as the patient reports it: vegetarian or not, meal timing, spicy or oily food, tea and
+  coffee. Reported facts only — no assessment.
+source: >
+  Engineer-authored patient-reportable items (Ahara–Vihara block, docs/07-ayush-terminology.md).
+  PENDING_EXPERT_REVIEW.
+triggers:
+  - ahara
+  - diet
+  - आहार
+  - खान-पान
+
+slots:
+  - id: ahara_diet
+    type: enum
+    required: true
+    input: [voice, chips]
+    prompt:
+      en: What kind of diet do you follow?
+      hi: आप किस तरह का भोजन करते हैं?
+    options:
+      - { value: vegetarian, icon: eco, label: { en: "Vegetarian", hi: "शाकाहारी" } }
+      - { value: eggetarian, icon: egg_alt, label: { en: "Vegetarian with eggs", hi: "शाकाहारी और अंडा" } }
+      - { value: non_vegetarian, icon: set_meal, label: { en: "Non-vegetarian", hi: "मांसाहारी" } }
+
+  - id: ahara_meal_timing
+    type: enum
+    required: true
+    input: [voice, chips]
+    prompt:
+      en: How regular are your meal times?
+      hi: आपके खाने का समय कितना नियमित है?
+    options:
+      - { value: regular, icon: schedule, label: { en: "Same times every day", hi: "रोज़ एक ही समय पर" } }
+      - { value: irregular, icon: shuffle, label: { en: "Varies from day to day", hi: "रोज़ बदलता रहता है" } }
+      - { value: skips, icon: no_meals, label: { en: "I often skip meals", hi: "अक्सर खाना छोड़ देता/देती हूँ" } }
+      - { value: late_night, icon: dark_mode, label: { en: "Often eat late at night", hi: "अक्सर देर रात खाता/खाती हूँ" } }
+
+  - id: ahara_spicy_oily
+    type: enum
+    required: true
+    input: [voice, chips]
+    prompt:
+      en: How much spicy or oily food do you eat?
+      hi: आप कितना तीखा या तला-भुना खाना खाते हैं?
+    options:
+      - { value: rarely, icon: spa, label: { en: "Rarely", hi: "बहुत कम" } }
+      - { value: sometimes, icon: sentiment_neutral, label: { en: "A few times a week", hi: "हफ़्ते में कुछ बार" } }
+      - { value: daily, icon: local_fire_department, label: { en: "Every day", hi: "रोज़" } }
+
+  - id: ahara_tea_coffee
+    type: enum
+    required: true
+    input: [voice, chips]
+    prompt:
+      en: How many cups of tea or coffee do you have in a day?
+      hi: आप दिन में कितने कप चाय या कॉफ़ी पीते हैं?
+    options:
+      - { value: none, icon: block, label: { en: "None", hi: "नहीं पीता/पीती" } }
+      - { value: one_two, icon: coffee, label: { en: "1 to 2 cups", hi: "1 से 2 कप" } }
+      - { value: three_or_more, icon: local_cafe, label: { en: "3 or more cups", hi: "3 या अधिक कप" } }

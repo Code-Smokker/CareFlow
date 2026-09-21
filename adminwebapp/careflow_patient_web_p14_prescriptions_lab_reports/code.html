@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Prescriptions &amp; Lab Reports — CareFlow Patient Portal</title>
+<!-- Tailwind CSS v3 with Forms & Container Plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Config -->
+<script data-purpose="tailwind-config">
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            teal: {
+              700: '#0d6e6e',
+              800: '#0a5858',
+              900: '#083e3e',
+            },
+            mint: {
+              50: '#f2fbf8',
+              100: '#e6f7f2',
+              200: '#c5eedf',
+              500: '#2bb68d',
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'Plus Jakarta Sans', 'system-ui', '-apple-system', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+<!-- Shared CareFlow Universal Navigation & Utilities -->
+<script src="../shared_nav.js"></script>
+<!-- Typography & Layout Overrides -->
+<style data-purpose="typography">
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap');
+    body {
+      font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+  </style>
+<style data-purpose="custom-badges">
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.375rem;
+      padding: 0.2rem 0.65rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .status-pill-active {
+      background-color: #e6f7f2;
+      color: #0d6e6e;
+      border: 1px solid #c5eedf;
+    }
+    .status-pill-neutral {
+      background-color: #f1f5f9;
+      color: #475569;
+      border: 1px solid #e2e8f0;
+    }
+  </style>
+</head>
+<body class="bg-[#f8fafc] text-slate-800 min-h-screen flex flex-col antialiased">
+<!-- BEGIN: CareFlowPatientShellHeader -->
+<header class="sticky top-0 z-50 bg-white border-b border-slate-200 shadow-sm" data-purpose="patient-portal-header">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex items-center justify-between h-16">
+<!-- Left: Brand Emblem & Portal Label -->
+<div class="flex items-center space-x-3">
+<!-- Squircle Teal Emblem with Heart -->
+<div class="w-10 h-10 rounded-xl bg-teal-700 flex items-center justify-center text-white shadow-sm flex-shrink-0">
+<svg class="w-5 h-5 fill-current" viewbox="0 0 24 24">
+<path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path>
+</svg>
+</div>
+<div>
+<div class="flex items-center space-x-2">
+<span class="text-xl font-bold tracking-tight text-slate-900 leading-none">CareFlow</span>
+<span class="bg-mint-100 text-teal-700 text-[11px] font-semibold px-2 py-0.5 rounded-full">Patient Portal</span>
+</div>
+<p class="text-[10px] uppercase font-bold tracking-wider text-slate-400 mt-0.5">PATIENT CARE • मरीज पोर्टल</p>
+</div>
+</div>
+<!-- Center: Primary Navigation Links -->
+<nav aria-label="Main Navigation" class="hidden md:flex items-center space-x-1">
+<a class="px-3.5 py-2 text-sm font-medium text-slate-600 hover:text-slate-900 rounded-lg hover:bg-slate-50 transition-colors" href="#">
+            Home <span class="text-xs text-slate-400 font-normal">(गृह)</span>
+</a>
+<!-- Active State: My Health -->
+<a class="px-3.5 py-2 text-sm font-semibold text-teal-700 bg-mint-100 rounded-lg flex items-center space-x-1.5 transition-colors" href="#">
+<span class="w-1.5 h-1.5 rounded-full bg-teal-700"></span>
+<span>My Health <span class="text-xs font-normal text-teal-800">(स्वास्थ्य)</span></span>
+</a>
+<a class="px-3.5 py-2 text-sm font-medium text-slate-600 hover:text-slate-900 rounded-lg hover:bg-slate-50 transition-colors" href="#">
+            Appointments <span class="text-xs text-slate-400 font-normal">(अपॉइंटमेंट)</span>
+</a>
+<a class="px-3.5 py-2 text-sm font-medium text-slate-600 hover:text-slate-900 rounded-lg hover:bg-slate-50 transition-colors" href="#">
+            Documents <span class="text-xs text-slate-400 font-normal">(दस्तावेज़)</span>
+</a>
+<a class="px-3.5 py-2 text-sm font-medium text-slate-600 hover:text-slate-900 rounded-lg hover:bg-slate-50 transition-colors" href="#">
+            Care Summary <span class="text-xs text-slate-400 font-normal">(सारांश)</span>
+</a>
+</nav>
+<!-- Right: Utility Cluster -->
+<div class="flex items-center space-x-3 sm:space-x-4">
+<!-- Language Toggle Pill -->
+<button class="hidden sm:inline-flex items-center px-2.5 py-1 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-full border border-slate-200 transition-colors" type="button">
+            English <span class="mx-1 text-slate-400">|</span> हिन्दी
+          </button>
+<!-- Notification Bell with Dot Indicator -->
+<button aria-label="Notifications" class="relative p-2 text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-full transition-colors" type="button">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 bg-emerald-500 rounded-full border-2 border-white"></span>
+</button>
+<!-- Profile Pill with Avatar & ABHA Identifier -->
+<div class="flex items-center space-x-2.5 pl-2 border-l border-slate-200 cursor-pointer">
+<div class="relative">
+<div class="w-9 h-9 rounded-full bg-mint-100 border border-teal-700/20 text-teal-800 flex items-center justify-center font-bold text-xs tracking-wider">
+                AS
+              </div>
+<span class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 rounded-full border-2 border-white"></span>
+</div>
+<div class="hidden lg:block text-left">
+<div class="text-xs font-bold text-slate-900 leading-tight">Aarav Sharma</div>
+<div class="text-[10px] text-slate-500 font-mono">ABHA: 91-8472-3021-9920</div>
+</div>
+<svg class="hidden sm:block w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+</div>
+</div>
+</div>
+</header>
+<!-- END: CareFlowPatientShellHeader -->
+<!-- BEGIN: MainContentWrapper -->
+<main class="flex-grow max-w-[1240px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+<!-- BEGIN: ContextHeaderSection -->
+<section class="space-y-3" data-purpose="context-header">
+<!-- Back Navigation -->
+<div>
+<a class="inline-flex items-center text-xs sm:text-sm font-semibold text-teal-700 hover:text-teal-800 transition-colors" href="../careflow_patient_web_p05_my_health_overview/code.html">
+<svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M10 19l-7-7m0 0l7-7m-7 7h18" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+          Back to my health • मेरी स्वास्थ्य जानकारी पर वापस जाएँ
+        </a>
+</div>
+<!-- Eyebrow & Title Area with Action -->
+<div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 pt-1">
+<div>
+<div class="flex items-center flex-wrap gap-2 mb-1.5">
+<span class="text-xs font-bold tracking-wider text-slate-500 uppercase">MY HEALTH • मेरा स्वास्थ्य</span>
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-mint-100 text-teal-800 border border-mint-200">
+<svg class="w-3.5 h-3.5 mr-1 text-teal-700" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+              ABDM Verified Health Records • 256-bit AES Vault
+            </span>
+</div>
+<h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+            Prescriptions &amp; Lab Reports <span class="text-slate-600 font-semibold text-xl sm:text-2xl">• प्रिस्क्रिप्शन और लैब रिपोर्ट</span>
+</h1>
+<p class="text-sm text-slate-500 mt-1">
+            View your prescriptions and laboratory reports in one place. • अपने प्रिस्क्रिप्शन और लैब रिपोर्ट एक ही जगह देखें।
+          </p>
+</div>
+<!-- Sync Action Button -->
+<div class="flex-shrink-0">
+<button onclick="handleRequestABDMRecords()" class="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2.5 bg-teal-700 hover:bg-teal-800 text-white text-xs sm:text-sm font-semibold rounded-xl shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-teal-700/50" type="button">
+<svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+            + Request records from ABDM / डॉक्टर से रिकॉर्ड मंगाएं
+          </button>
+</div>
+</div>
+</section>
+<!-- END: ContextHeaderSection -->
+<!-- BEGIN: MetricOverviewChips -->
+<section class="grid grid-cols-2 sm:grid-cols-4 gap-3" data-purpose="metrics-bar">
+<!-- Total Records -->
+<div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs flex items-center space-x-3.5">
+<div class="w-10 h-10 rounded-xl bg-mint-50 border border-mint-200 text-teal-700 flex items-center justify-center flex-shrink-0">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div>
+<div class="text-2xl font-bold text-slate-900 leading-tight">6</div>
+<div class="text-xs text-slate-500 font-medium">Total Records (कुल रिकॉर्ड)</div>
+</div>
+</div>
+<!-- Active Prescriptions -->
+<div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs flex items-center space-x-3.5">
+<div class="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-600 flex items-center justify-center flex-shrink-0">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div>
+<div class="text-2xl font-bold text-slate-900 leading-tight">3</div>
+<div class="text-xs text-slate-500 font-medium">Active Prescriptions (सक्रिय प्रिस्क्रिप्शन)</div>
+</div>
+</div>
+<!-- Lab Reports -->
+<div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs flex items-center space-x-3.5">
+<div class="w-10 h-10 rounded-xl bg-sky-50 border border-sky-200 text-sky-600 flex items-center justify-center flex-shrink-0">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div>
+<div class="text-2xl font-bold text-slate-900 leading-tight">3</div>
+<div class="text-xs text-slate-500 font-medium">Lab Reports (लैब रिपोर्ट)</div>
+</div>
+</div>
+<!-- Recent this month -->
+<div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs flex items-center space-x-3.5">
+<div class="w-10 h-10 rounded-xl bg-purple-50 border border-purple-200 text-purple-600 flex items-center justify-center flex-shrink-0">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div>
+<div class="text-2xl font-bold text-slate-900 leading-tight">2</div>
+<div class="text-xs text-slate-500 font-medium">Recent This Month (हाल ही में)</div>
+</div>
+</div>
+</section>
+<!-- END: MetricOverviewChips -->
+<!-- BEGIN: SearchAndFilterBar -->
+<section class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-xs space-y-3" data-purpose="search-and-filters">
+<!-- Search Input & Sort Row -->
+<div class="flex flex-col sm:flex-row items-center gap-2.5">
+<!-- Search Field -->
+<div class="relative w-full flex-grow">
+<div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<input id="p14-search-input" oninput="filterP14Records()" class="w-full pl-10 pr-4 py-2 text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-teal-700/30 focus:border-teal-700 text-slate-800 placeholder-slate-400 transition-colors" placeholder="Search prescriptions, lab reports, doctor name, medicine... (प्रिस्क्रिप्शन या रिपोर्ट खोजें)" type="text"/>
+</div>
+<!-- Sort Dropdown -->
+<div class="w-full sm:w-auto flex-shrink-0">
+<div class="relative">
+<select onchange="handleSortRecords(this.value)" aria-label="Sort records" class="w-full sm:w-auto text-xs sm:text-sm font-medium bg-slate-50 border border-slate-200 rounded-xl py-2 pl-3.5 pr-8 text-slate-700 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-teal-700/30 cursor-pointer appearance-none">
+<option value="newest">Sort: Newest first (नवीनतम पहले)</option>
+<option value="oldest">Sort: Oldest first (पुराने पहले)</option>
+<option value="type">Sort: Document type (प्रकार अनुसार)</option>
+</select>
+<div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none text-slate-400">
+<svg class="w-4 h-4 fill-none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+</div>
+</div>
+</div>
+<!-- Quick Filter Pills -->
+<div class="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0 scrollbar-none text-xs" id="p14-filter-bar">
+<button onclick="filterP14('all', this)" class="filter-pill px-3.5 py-1.5 rounded-full font-semibold bg-teal-700 text-white shadow-xs" type="button">
+          All (सभी)
+        </button>
+<button onclick="filterP14('prescriptions', this)" class="filter-pill px-3.5 py-1.5 rounded-full font-medium bg-slate-100 text-slate-600 hover:bg-slate-200 border border-slate-200 transition-colors" type="button">
+          Prescriptions (प्रिस्क्रिप्शन) <span class="ml-1 text-slate-400 font-semibold">3</span>
+</button>
+<button onclick="filterP14('lab', this)" class="filter-pill px-3.5 py-1.5 rounded-full font-medium bg-slate-100 text-slate-600 hover:bg-slate-200 border border-slate-200 transition-colors" type="button">
+          Lab Reports (लैब रिपोर्ट) <span class="ml-1 text-slate-400 font-semibold">3</span>
+</button>
+<button onclick="filterP14('active', this)" class="filter-pill px-3.5 py-1.5 rounded-full font-medium bg-slate-100 text-slate-600 hover:bg-slate-200 border border-slate-200 transition-colors" type="button">
+          Active Medications (सक्रिय दवाएं) <span class="ml-1 text-slate-400 font-semibold">2</span>
+</button>
+</div>
+</section>
+<!-- END: SearchAndFilterBar -->
+<!-- BEGIN: TwoColumnLayout -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+<!-- MAIN COLUMN: Prescriptions & Lab Reports (Left/Center ~68%) -->
+<div class="lg:col-span-8 space-y-8" data-purpose="records-primary-column">
+<!-- SECTION 1: Prescriptions -->
+<section class="space-y-4" data-purpose="prescriptions-section">
+<!-- Section Title Header -->
+<div class="flex items-center justify-between pb-1 border-b border-slate-200">
+<div>
+<h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-teal-700"></span>
+                Prescriptions (प्रिस्क्रिप्शन)
+              </h2>
+<p class="text-xs text-slate-500 mt-0.5">Prescribed medications from your consultations • आपकी मुलाकातों से निर्धारित दवाएं</p>
+</div>
+<span class="text-xs font-semibold text-teal-700 bg-mint-100 px-2.5 py-1 rounded-full">3 Prescriptions</span>
+</div>
+<!-- Prescription Card 1 -->
+<article class="p14-record bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-xs hover:border-teal-700/30 transition-all space-y-3.5" data-type="prescription" data-active="true" data-text="amoxicillin clavulanate augmentin 625 duo dr priya sharma internal medicine tablet">
+<div class="flex items-start justify-between gap-3">
+<div class="flex items-start space-x-3.5">
+<!-- Icon Capsule -->
+<div class="w-11 h-11 rounded-xl bg-mint-50 border border-mint-200 text-teal-700 flex items-center justify-center flex-shrink-0 mt-0.5">
+<svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div>
+<div class="flex items-center flex-wrap gap-2">
+<h3 class="text-base font-bold text-slate-900 leading-tight">Amoxicillin &amp; Clavulanate Potassium (Augmentin 625 Duo)</h3>
+<span class="status-pill status-pill-active">
+<span class="w-1.5 h-1.5 rounded-full bg-teal-700"></span>
+                      Active • सक्रिय
+                    </span>
+</div>
+<p class="text-xs font-medium text-slate-600 mt-1">Oral Tablet • 625 mg • 1 tablet twice daily after meals (10 days)</p>
+</div>
+</div>
+</div>
+<!-- Meta Row -->
+<div class="text-[11px] sm:text-xs text-slate-500 bg-slate-50 p-2.5 rounded-xl border border-slate-100 flex flex-wrap items-center gap-x-3 gap-y-1">
+<span><strong>Prescribed by:</strong> Dr. Priya Sharma (Internal Medicine)</span>
+<span class="text-slate-300">•</span>
+<span><strong>Date:</strong> September 5, 2026</span>
+<span class="text-slate-300">•</span>
+<span><strong>Visit:</strong> General Consultation (Desk 4)</span>
+</div>
+<!-- Dosage Schedule Preview Box -->
+<div class="bg-mint-50/60 border border-mint-200/80 rounded-xl p-2.5 text-xs text-slate-700 flex items-center justify-between">
+<div class="flex items-center space-x-2">
+<span class="font-semibold text-teal-800">Dosage Routine:</span>
+<span>Morning: 1 tablet | Night: 1 tablet • Take with food</span>
+</div>
+<span class="text-[11px] font-semibold text-teal-700 hidden sm:inline-block">Digitized Rx • QR Validated</span>
+</div>
+<!-- Action Buttons -->
+<div class="flex items-center justify-between pt-1">
+<span class="text-[11px] text-slate-400">Vault Copy • Encrypted ABDM Linked</span>
+<div class="flex items-center space-x-2">
+<button onclick="downloadRecordPDF('Augmentin 625 Duo Prescription')" class="px-3.5 py-1.5 text-xs font-semibold text-teal-700 hover:bg-mint-50 border border-slate-200 rounded-lg transition-colors flex items-center" type="button">
+<svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+                  Download PDF (डाउनलोड)
+                </button>
+<button onclick="viewPrescriptionModal('Augmentin 625 Duo', 'Dr. Priya Sharma', 'Oral Tablet • 625 mg (10 days)', 'Morning: 1 tablet | Night: 1 tablet • Take with food')" class="px-3.5 py-1.5 text-xs font-semibold text-white bg-teal-700 hover:bg-teal-800 rounded-lg transition-colors flex items-center shadow-xs" type="button">
+<svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+<path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+                  View Prescription (प्रिस्क्रिप्शन देखें)
+                </button>
+</div>
+</div>
+</article>
+<!-- Prescription Card 2 -->
+<article class="p14-record bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-xs hover:border-teal-700/30 transition-all space-y-3.5" data-type="prescription" data-active="true" data-text="paracetamol cetirizine symptomatic relief dr priya sharma fever headache">
+<div class="flex items-start justify-between gap-3">
+<div class="flex items-start space-x-3.5">
+<div class="w-11 h-11 rounded-xl bg-mint-50 border border-mint-200 text-teal-700 flex items-center justify-center flex-shrink-0 mt-0.5">
+<svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div>
+<div class="flex items-center flex-wrap gap-2">
+<h3 class="text-base font-bold text-slate-900 leading-tight">Paracetamol &amp; Cetirizine — Symptomatic Relief</h3>
+<span class="status-pill status-pill-active">
+<span class="w-1.5 h-1.5 rounded-full bg-teal-700"></span>
+                      Active Course (सक्रिय कोर्स)
+                    </span>
+</div>
+<p class="text-xs font-medium text-slate-600 mt-1">Paracetamol 650mg SOS (as needed for fever/headache) + Cetirizine 10mg OD at bedtime</p>
+</div>
+</div>
+</div>
+<!-- Meta Row -->
+<div class="text-[11px] sm:text-xs text-slate-500 bg-slate-50 p-2.5 rounded-xl border border-slate-100 flex flex-wrap items-center gap-x-3 gap-y-1">
+<span><strong>Prescribed by:</strong> Dr. Priya Sharma</span>
+<span class="text-slate-300">•</span>
+<span><strong>Date:</strong> September 3, 2026</span>
+<span class="text-slate-300">•</span>
+<span><strong>Visit:</strong> OPD Encounter #ENC-2026-0982</span>
+</div>
+<!-- Action Buttons -->
+<div class="flex items-center justify-between pt-1">
+<span class="text-[11px] text-slate-400">Pharmacy validation QR active</span>
+<div class="flex items-center space-x-2">
+<button onclick="downloadRecordPDF('Paracetamol & Cetirizine Prescription')" class="px-3.5 py-1.5 text-xs font-semibold text-teal-700 hover:bg-mint-50 border border-slate-200 rounded-lg transition-colors flex items-center" type="button">
+<svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+                  Download PDF (डाउनलोड)
+                </button>
+<button onclick="viewPrescriptionModal('Paracetamol & Cetirizine', 'Dr. Priya Sharma', 'Paracetamol 650mg SOS + Cetirizine 10mg OD', 'As needed for fever/headache')" class="px-3.5 py-1.5 text-xs font-semibold text-white bg-teal-700 hover:bg-teal-800 rounded-lg transition-colors flex items-center shadow-xs" type="button">
+<svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+<path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+                  View Prescription (प्रिस्क्रिप्शन देखें)
+                </button>
+</div>
+</div>
+</article>
+<!-- Prescription Card 3 (Completed Course) -->
+<article class="p14-record bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-xs hover:border-slate-300 transition-all space-y-3.5 opacity-90" data-type="prescription" data-active="false" data-text="azithromycin azy 500 verma completed">
+<div class="flex items-start justify-between gap-3">
+<div class="flex items-start space-x-3.5">
+<div class="w-11 h-11 rounded-xl bg-slate-100 border border-slate-200 text-slate-500 flex items-center justify-center flex-shrink-0 mt-0.5">
+<svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div>
+<div class="flex items-center flex-wrap gap-2">
+<h3 class="text-base font-bold text-slate-800 leading-tight">Azithromycin 500mg (Azy 500)</h3>
+<span class="status-pill status-pill-neutral">
+                      Course Completed (कोर्स पूरा हुआ)
+                    </span>
+</div>
+<p class="text-xs font-medium text-slate-500 mt-1">Oral Tablet • 500 mg • 1 tablet daily for 3 days</p>
+</div>
+</div>
+</div>
+<!-- Meta Row -->
+<div class="text-[11px] sm:text-xs text-slate-500 bg-slate-50 p-2.5 rounded-xl border border-slate-100 flex flex-wrap items-center gap-x-3 gap-y-1">
+<span><strong>Prescribed by:</strong> Dr. R. Verma</span>
+<span class="text-slate-300">•</span>
+<span><strong>Date:</strong> August 10, 2026</span>
+<span class="text-slate-300">•</span>
+<span><strong>Visit:</strong> Annual Health Check-up</span>
+</div>
+<!-- Action Buttons -->
+<div class="flex items-center justify-between pt-1">
+<span class="text-[11px] text-slate-400">Archived in Health Locker</span>
+<div class="flex items-center space-x-2">
+<button onclick="downloadRecordPDF('Azithromycin 500mg Prescription')" class="px-3.5 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-100 border border-slate-200 rounded-lg transition-colors" type="button">
+                  Download PDF
+                </button>
+<button onclick="viewPrescriptionModal('Azithromycin 500mg', 'Dr. R. Verma', 'Oral Tablet • 500 mg (3 days)', '1 tablet daily for 3 days')" class="px-3.5 py-1.5 text-xs font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors" type="button">
+                  View Rx
+                </button>
+</div>
+</div>
+</article>
+</section>
+<!-- SECTION 2: Lab Reports -->
+<section class="space-y-4 pt-2" data-purpose="lab-reports-section" id="p14-lab-section">
+<!-- Section Title Header -->
+<div class="flex items-center justify-between pb-1 border-b border-slate-200">
+<div>
+<h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-teal-700"></span>
+                Lab Reports (लैब रिपोर्ट)
+              </h2>
+<p class="text-xs text-slate-500 mt-0.5">Diagnostic and pathology investigations synced via ABDM • पैथोलॉजी और परीक्षण रिपोर्ट</p>
+</div>
+<span class="text-xs font-semibold text-teal-700 bg-mint-100 px-2.5 py-1 rounded-full">3 Reports</span>
+</div>
+<!-- Lab Card 1 -->
+<article class="p14-record bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-xs hover:border-teal-700/30 transition-all space-y-3.5" data-type="lab" data-active="true" data-text="complete blood count cbc crp quantitative metropolis healthcare pathology test report">
+<div class="flex items-start justify-between gap-3">
+<div class="flex items-start space-x-3.5">
+<div class="w-11 h-11 rounded-xl bg-mint-50 border border-mint-200 text-teal-700 flex items-center justify-center flex-shrink-0 mt-0.5">
+<svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div>
+<div class="flex items-center flex-wrap gap-2">
+<h3 class="text-base font-bold text-slate-900 leading-tight">Complete Blood Count (CBC) &amp; CRP Quantitative</h3>
+<span class="status-pill status-pill-active">
+<span class="w-1.5 h-1.5 rounded-full bg-teal-700"></span>
+                      Available &amp; Verified (उपलब्ध)
+                    </span>
+</div>
+<p class="text-xs font-medium text-slate-500 mt-1">Diagnostic Center: Metropolis Healthcare / CareFlow Labs • PDF • 2 pages • 1.8 MB</p>
+</div>
+</div>
+<span class="text-[11px] font-semibold text-teal-700 bg-mint-50 border border-mint-200 px-2 py-0.5 rounded-md hidden sm:inline-block">ABDM Linked</span>
+</div>
+<!-- Key Parameters Highlight Snippet -->
+<div class="bg-slate-50 border border-slate-200/80 rounded-xl p-3 space-y-1.5">
+<div class="text-[11px] uppercase font-bold tracking-wider text-slate-500">Key Parameters Summary</div>
+<div class="text-xs text-slate-800 font-medium grid grid-cols-2 sm:grid-cols-4 gap-2">
+<div class="bg-white p-2 rounded-lg border border-slate-200/60">
+<span class="text-slate-400 block text-[10px]">Hemoglobin</span>
+<span class="font-bold text-slate-900">14.2 g/dL</span>
+</div>
+<div class="bg-white p-2 rounded-lg border border-slate-200/60">
+<span class="text-slate-400 block text-[10px]">Platelet Count</span>
+<span class="font-bold text-slate-900">210,000 /mcL</span>
+</div>
+<div class="bg-white p-2 rounded-lg border border-slate-200/60">
+<span class="text-slate-400 block text-[10px]">WBC Total</span>
+<span class="font-bold text-slate-900">7,400 /mcL</span>
+</div>
+<div class="bg-white p-2 rounded-lg border border-slate-200/60">
+<span class="text-slate-400 block text-[10px]">CRP Quantitative</span>
+<span class="font-bold text-slate-900">2.1 mg/L</span>
+</div>
+</div>
+<p class="text-[11px] text-teal-800 font-medium mt-1">
+                ✓ All reported values reviewed by Dr. Priya Sharma during visit.
+              </p>
+</div>
+<!-- Action Buttons -->
+<div class="flex items-center justify-between pt-1">
+<span class="text-[11px] text-slate-400">Sample Collected: Sep 5, 2026 • 08:30 AM</span>
+<div class="flex items-center space-x-2">
+<button onclick="downloadRecordPDF('CBC & CRP Quantitative Lab Report')" class="px-3.5 py-1.5 text-xs font-semibold text-teal-700 hover:bg-mint-50 border border-slate-200 rounded-lg transition-colors flex items-center" type="button">
+<svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+                  Download PDF (डाउनलोड)
+                </button>
+<button onclick="viewLabReportModal('Complete Blood Count (CBC) & CRP Quantitative', 'Metropolis Healthcare', 'Sep 5, 2026', 'Hemoglobin: 14.2 g/dL, Platelets: 210,000/mcL, WBC: 7,400/mcL, CRP: 2.1 mg/L')" class="px-3.5 py-1.5 text-xs font-semibold text-white bg-teal-700 hover:bg-teal-800 rounded-lg transition-colors flex items-center shadow-xs" type="button">
+<svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+<path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+                  View Report (रिपोर्ट देखें)
+                </button>
+</div>
+</div>
+</article>
+<!-- Lab Card 2 -->
+<article class="p14-record bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-xs hover:border-teal-700/30 transition-all space-y-3.5" data-type="lab" data-active="true" data-text="lipid profile fasting blood sugar fbs cholesterol glucose hba1c diagnostics">
+<div class="flex items-start justify-between gap-3">
+<div class="flex items-start space-x-3.5">
+<div class="w-11 h-11 rounded-xl bg-mint-50 border border-mint-200 text-teal-700 flex items-center justify-center flex-shrink-0 mt-0.5">
+<svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div>
+<div class="flex items-center flex-wrap gap-2">
+<h3 class="text-base font-bold text-slate-900 leading-tight">Lipid Profile &amp; Fasting Blood Sugar (FBS)</h3>
+<span class="status-pill status-pill-active">
+                      Available (उपलब्ध)
+                    </span>
+</div>
+<p class="text-xs font-medium text-slate-500 mt-1">CareFlow Indiranagar Diagnostics • Aug 10, 2026 • PDF • 1 page • 840 KB</p>
+</div>
+</div>
+<span class="text-[11px] font-medium text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md hidden sm:inline-block">Synced</span>
+</div>
+<!-- Snippet -->
+<div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100 text-xs text-slate-700">
+<span class="font-semibold text-slate-900">Key Parameters:</span> Total Cholesterol: 184 mg/dL | Fasting Glucose: 92 mg/dL | HbA1c: 5.4%
+            </div>
+<!-- Action Buttons -->
+<div class="flex items-center justify-between pt-1">
+<span class="text-[11px] text-slate-400">Routine Preventive Screening</span>
+<div class="flex items-center space-x-2">
+<button onclick="downloadRecordPDF('Lipid Profile & FBS Lab Report')" class="px-3.5 py-1.5 text-xs font-medium text-teal-700 hover:bg-mint-50 border border-slate-200 rounded-lg transition-colors" type="button">
+                  Download PDF
+                </button>
+<button onclick="viewLabReportModal('Lipid Profile & Fasting Blood Sugar (FBS)', 'CareFlow Indiranagar Diagnostics', 'Aug 10, 2026', 'Total Cholesterol: 184 mg/dL, Fasting Glucose: 92 mg/dL, HbA1c: 5.4%')" class="px-3.5 py-1.5 text-xs font-semibold text-white bg-teal-700 hover:bg-teal-800 rounded-lg transition-colors" type="button">
+                  View Report
+                </button>
+</div>
+</div>
+</article>
+<!-- Lab Card 3 -->
+<article class="p14-record bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-xs hover:border-teal-700/30 transition-all space-y-3.5" data-type="lab" data-active="true" data-text="chest x-ray pa view digital radiology imaging normal lungs">
+<div class="flex items-start justify-between gap-3">
+<div class="flex items-start space-x-3.5">
+<div class="w-11 h-11 rounded-xl bg-mint-50 border border-mint-200 text-teal-700 flex items-center justify-center flex-shrink-0 mt-0.5">
+<svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div>
+<div class="flex items-center flex-wrap gap-2">
+<h3 class="text-base font-bold text-slate-900 leading-tight">Chest X-Ray (PA View) Digital Radiology</h3>
+<span class="status-pill status-pill-active">
+                      Available (उपलब्ध)
+                    </span>
+</div>
+<p class="text-xs font-medium text-slate-500 mt-1">CareFlow Imaging Center • Aug 10, 2026 • DICOM/PDF • 1.2 MB</p>
+</div>
+</div>
+</div>
+<!-- Action Buttons -->
+<div class="flex items-center justify-between pt-1">
+<span class="text-[11px] text-slate-400">Radiology interpretation cleared</span>
+<div class="flex items-center space-x-2">
+<button onclick="downloadRecordPDF('Chest X-Ray Imaging Report')" class="px-3.5 py-1.5 text-xs font-medium text-teal-700 hover:bg-mint-50 border border-slate-200 rounded-lg transition-colors" type="button">
+                  Download
+                </button>
+<button onclick="viewLabReportModal('Chest X-Ray (PA View) Digital Radiology', 'CareFlow Imaging Center', 'Aug 10, 2026', 'Normal bilateral lung fields. Cardiothoracic ratio within normal limits. Costophrenic angles clear.')" class="px-3.5 py-1.5 text-xs font-semibold text-white bg-teal-700 hover:bg-teal-800 rounded-lg transition-colors" type="button">
+                  View Imaging Report
+                </button>
+</div>
+</div>
+</article>
+</section>
+</div>
+<!-- SECONDARY COLUMN: Sidebar Utilities & ABDM Trust (Right ~32%) -->
+<div class="lg:col-span-4 space-y-5" data-purpose="records-sidebar-column">
+<!-- CARD 1: Recently Added -->
+<div class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-xs space-y-3.5" data-purpose="recently-added-widget">
+<div class="flex items-center justify-between">
+<h3 class="text-sm font-bold text-slate-900 flex items-center space-x-1.5">
+<svg class="w-4 h-4 text-teal-700" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span>Recently Added</span>
+</h3>
+<span class="text-[11px] text-slate-400 font-medium">हाल ही में जोड़ा गया</span>
+</div>
+<div class="divide-y divide-slate-100">
+<!-- Item 1 -->
+<div class="py-2.5 first:pt-0 flex items-center justify-between">
+<div class="flex items-center space-x-2.5">
+<div class="w-7 h-7 rounded-lg bg-mint-50 text-teal-700 flex items-center justify-center flex-shrink-0 text-xs">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div>
+<div class="text-xs font-semibold text-slate-800">CBC &amp; CRP Lab Report</div>
+<div class="text-[10px] text-slate-400">Today, 10:45 AM</div>
+</div>
+</div>
+<button aria-label="Quick View" class="text-slate-400 hover:text-teal-700 p-1" type="button">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+<path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</button>
+</div>
+<!-- Item 2 -->
+<div class="py-2.5 flex items-center justify-between">
+<div class="flex items-center space-x-2.5">
+<div class="w-7 h-7 rounded-lg bg-teal-50 text-teal-700 flex items-center justify-center flex-shrink-0 text-xs">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div>
+<div class="text-xs font-semibold text-slate-800">Augmentin 625 Duo Rx</div>
+<div class="text-[10px] text-slate-400">Sep 5, 2026 • 04:45 PM</div>
+</div>
+</div>
+<button aria-label="Quick View" class="text-slate-400 hover:text-teal-700 p-1" type="button">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+<path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</button>
+</div>
+<!-- Item 3 -->
+<div class="py-2.5 last:pb-0 flex items-center justify-between">
+<div class="flex items-center space-x-2.5">
+<div class="w-7 h-7 rounded-lg bg-sky-50 text-sky-700 flex items-center justify-center flex-shrink-0 text-xs">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div>
+<div class="text-xs font-semibold text-slate-800">General Consultation Summary</div>
+<div class="text-[10px] text-slate-400">Sep 5, 2026</div>
+</div>
+</div>
+<button aria-label="Quick View" class="text-slate-400 hover:text-teal-700 p-1" type="button">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+<path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</button>
+</div>
+</div>
+</div>
+<!-- CARD 2: Related Care Summary & Visit -->
+<div class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-xs space-y-3" data-purpose="care-summary-connection">
+<div class="flex items-center space-x-2">
+<span class="w-2 h-2 rounded-full bg-teal-700"></span>
+<h3 class="text-sm font-bold text-slate-900">Related Care Summary &amp; Visit</h3>
+</div>
+<p class="text-xs text-slate-600 leading-relaxed">
+            Connected to encounter <span class="font-mono font-semibold text-slate-800">#ENC-2026-0982</span> with <strong>Dr. Priya Sharma</strong>. Need to review clinical advice or discuss your results?
+          </p>
+<div class="space-y-2 pt-1">
+<button onclick="window.location.href='../careflow_patient_web_p09_my_care_summary/code.html'" class="w-full py-2 px-3 text-xs font-semibold text-teal-700 bg-mint-50 hover:bg-mint-100 border border-mint-200 rounded-xl transition-colors flex items-center justify-center" type="button">
+              View Care Summary (देखभाल सारांश देखें) →
+            </button>
+<button onclick="window.location.href='../careflow_patient_web_p13_book_an_appointment/code.html'" class="w-full py-2 px-3 text-xs font-semibold text-slate-700 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl transition-colors flex items-center justify-center" type="button">
+              Book Follow-up Appointment (अपॉइंटमेंट बुक करें)
+            </button>
+</div>
+</div>
+<!-- CARD 3: Privacy & ABDM Security -->
+<div class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-xs space-y-3" data-purpose="abdm-security-widget">
+<div class="flex items-center justify-between">
+<div class="flex items-center space-x-2">
+<svg class="w-4 h-4 text-teal-700" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<h3 class="text-sm font-bold text-slate-900">Privacy &amp; ABDM Security</h3>
+</div>
+<span class="text-[10px] text-slate-400 uppercase font-bold tracking-wider">गोपनीयता</span>
+</div>
+<ul class="text-xs text-slate-600 space-y-2">
+<li class="flex items-center space-x-2">
+<svg class="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span>256-bit AES Patient Vault Encryption</span>
+</li>
+<li class="flex items-center space-x-2">
+<svg class="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span>ABDM M1/M2/M3 Compliant Architecture</span>
+</li>
+<li class="flex items-center space-x-2">
+<svg class="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span>DISHA &amp; HIPAA Healthcare Standards</span>
+</li>
+</ul>
+<div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100 text-[11px] text-slate-500 leading-relaxed">
+            These health records are part of your personal CareFlow account. Encrypted and accessible only with your explicit consent.
+          </div>
+</div>
+<!-- CARD 4: Assistance Card -->
+<div class="bg-gradient-to-br from-slate-50 to-mint-50/50 rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-xs space-y-2.5" data-purpose="support-card">
+<div class="text-xs font-bold text-slate-900">Need assistance with reports? (सहायता चाहिए?)</div>
+<p class="text-xs text-slate-600">
+            For specimen queries, re-testing, or lab delivery status, call the CareFlow desk:
+          </p>
+<div class="text-xs font-mono font-bold text-teal-800 bg-white py-1.5 px-2.5 rounded-lg border border-slate-200 inline-block">
+            +91 80 4920 1100
+          </div>
+<div class="pt-1">
+<a class="text-xs font-semibold text-teal-700 hover:text-teal-800 inline-flex items-center" href="../careflow_patient_web_p20_help_support/code.html">
+              Help &amp; Support • सहायता केंद्र →
+            </a>
+</div>
+</div>
+</div>
+</div>
+<!-- END: TwoColumnLayout -->
+</main>
+<!-- END: MainContentWrapper -->
+<!-- BEGIN: RegulatoryReassuranceFooter -->
+<footer class="mt-12 bg-white border-t border-slate-200 text-xs text-slate-500" data-purpose="patient-portal-footer">
+<!-- Reassurance Banner -->
+<div class="bg-mint-50/70 border-b border-mint-100 py-2.5 px-4 text-center">
+<div class="max-w-7xl mx-auto flex items-center justify-center space-x-2 text-teal-800 text-xs font-medium">
+<svg class="w-4 h-4 text-teal-700" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span>Your health records and prescriptions are securely stored under ABDM guidelines • आपके रिकॉर्ड पूरी तरह सुरक्षित हैं।</span>
+</div>
+</div>
+<!-- Main Footer Links & Compliance Meta -->
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+<div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+<!-- Left: Compliance Badges -->
+<div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-slate-500 text-[11px]">
+<span class="font-semibold text-slate-700">ABDM M1/M2/M3 Compliant</span>
+<span>•</span>
+<span>256-bit AES Patient Vault</span>
+<span>•</span>
+<span>HIPAA &amp; DISHA Healthcare Standard</span>
+</div>
+<!-- Right: Copyright & Policies -->
+<div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-slate-400">
+<span>© 2026 CareFlow Inc. All rights reserved.</span>
+<a class="hover:text-slate-600 transition-colors" href="#">Privacy Policy (गोपनीयता नीति)</a>
+<a class="hover:text-slate-600 transition-colors" href="#">Terms of Use (नियम एवं शर्तें)</a>
+</div>
+</div>
+</div>
+</footer>
+<!-- END: RegulatoryReassuranceFooter -->
+<script>
+let activeFilter = 'all';
+
+function filterP14(category, btn) {
+  activeFilter = category;
+  document.querySelectorAll('#p14-filter-bar .filter-pill').forEach(b => {
+    b.className = 'filter-pill px-3.5 py-1.5 rounded-full font-medium bg-slate-100 text-slate-600 hover:bg-slate-200 border border-slate-200 transition-colors';
+  });
+  if (btn) {
+    btn.className = 'filter-pill px-3.5 py-1.5 rounded-full font-semibold bg-teal-700 text-white shadow-xs';
+  }
+  applyFilters();
+}
+
+function filterP14Records() {
+  applyFilters();
+}
+
+function applyFilters() {
+  const query = (document.getElementById('p14-search-input')?.value || '').toLowerCase().trim();
+  const records = document.querySelectorAll('.p14-record');
+
+  records.forEach(r => {
+    const type = r.getAttribute('data-type');
+    const isActive = r.getAttribute('data-active') === 'true';
+    const text = (r.getAttribute('data-text') || '') + ' ' + r.textContent.toLowerCase();
+
+    let matchesFilter = true;
+    if (activeFilter === 'prescriptions') matchesFilter = (type === 'prescription');
+    else if (activeFilter === 'lab') matchesFilter = (type === 'lab');
+    else if (activeFilter === 'active') matchesFilter = isActive;
+
+    const matchesQuery = !query || text.includes(query);
+
+    if (matchesFilter && matchesQuery) {
+      r.style.display = 'block';
+    } else {
+      r.style.display = 'none';
+    }
+  });
+}
+
+function handleSortRecords(val) {
+  CareFlow.showToast(`Records sorted by: ${val}`, 'info');
+}
+
+function downloadRecordPDF(title) {
+  CareFlow.showToast(`Downloading "${title}.pdf"...`, 'success');
+}
+
+function viewPrescriptionModal(title, doctor, dosage, instructions) {
+  CareFlow.openModal(`
+    <div class="space-y-4">
+      <div class="p-3 bg-mint-50 border border-mint-200 rounded-xl flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-teal-700 text-white flex items-center justify-center font-bold">Rx</div>
+          <div>
+            <h4 class="font-bold text-slate-900 text-sm">${title}</h4>
+            <div class="text-xs text-teal-800">Prescribed by ${doctor}</div>
+          </div>
+        </div>
+        <span class="status-pill status-pill-active text-xs">ABDM Signed ✓</span>
+      </div>
+      <div class="space-y-2 text-xs text-slate-700 bg-slate-50 p-3 rounded-xl border border-slate-200">
+        <div><strong>Dosage & Form:</strong> ${dosage}</div>
+        <div><strong>Instructions:</strong> ${instructions}</div>
+        <div><strong>Validity:</strong> 30 days from issuance</div>
+        <div><strong>Dispensing Pharmacy:</strong> Any ABDM Empanelled Pharmacy</div>
+      </div>
+      <div class="flex justify-end gap-2 pt-2 border-t border-slate-200">
+        <button onclick="requestRefill('${title}')" class="px-3.5 py-1.5 text-xs font-semibold text-teal-700 hover:bg-mint-50 border border-slate-200 rounded-lg">Request Pharmacy Refill</button>
+        <button onclick="downloadRecordPDF('${title}'); CareFlow.closeModal();" class="px-4 py-1.5 text-xs font-semibold bg-teal-700 text-white rounded-lg hover:bg-teal-800 shadow-sm">Download Rx PDF</button>
+      </div>
+    </div>
+  `, 'Prescription Details • प्रिस्क्रिप्शन विवरण');
+}
+
+function requestRefill(med) {
+  CareFlow.closeModal();
+  CareFlow.showToast(`Refill request for ${med} submitted to CareFlow Indiranagar Pharmacy.`, 'success');
+}
+
+function viewLabReportModal(title, lab, date, summary) {
+  CareFlow.openModal(`
+    <div class="space-y-4">
+      <div class="p-3 bg-sky-50 border border-sky-200 rounded-xl flex items-center justify-between">
+        <div>
+          <h4 class="font-bold text-slate-900 text-sm">${title}</h4>
+          <div class="text-xs text-sky-800">${lab} • ${date}</div>
+        </div>
+        <span class="px-2 py-0.5 rounded-full text-xs font-bold bg-white text-sky-700 border border-sky-200">Verified</span>
+      </div>
+      <div class="space-y-2 text-xs text-slate-700 bg-slate-50 p-3 rounded-xl border border-slate-200">
+        <div class="font-semibold text-slate-900 uppercase text-[10px]">Findings / Results:</div>
+        <p class="leading-relaxed">${summary}</p>
+        <div class="pt-2 border-t border-slate-200 text-slate-500">
+          <strong>Pathologist:</strong> Dr. K. Nambiar, MD Pathology • Reg #MCI-29481
+        </div>
+      </div>
+      <div class="flex justify-end gap-2 pt-2 border-t border-slate-200">
+        <button onclick="CareFlow.closeModal()" class="px-3.5 py-1.5 text-xs text-slate-500 hover:text-slate-800 font-medium">Close</button>
+        <button onclick="downloadRecordPDF('${title}'); CareFlow.closeModal();" class="px-4 py-1.5 text-xs font-semibold bg-teal-700 text-white rounded-lg hover:bg-teal-800 shadow-sm">Download Full PDF</button>
+      </div>
+    </div>
+  `, 'Diagnostic Report Preview • लैब रिपोर्ट');
+}
+
+function handleRequestABDMRecords() {
+  CareFlow.openModal(`
+    <div class="space-y-4">
+      <p class="text-xs text-slate-600">Connect to Ayushman Bharat Digital Mission (ABDM) Health Locker to pull diagnostic reports, electronic prescriptions, and discharge summaries from other empaneled hospitals.</p>
+      <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs space-y-1">
+        <div><strong>Linked ABHA ID:</strong> 91-8472-3021-9920</div>
+        <div><strong>Gateway:</strong> National Health Authority (NHA)</div>
+      </div>
+      <div class="flex justify-end gap-2 pt-2 border-t border-slate-200">
+        <button onclick="CareFlow.closeModal()" class="px-3.5 py-1.5 text-xs text-slate-500">Cancel</button>
+        <button onclick="simulateABDMSync()" class="px-4 py-1.5 text-xs font-semibold bg-teal-700 text-white rounded-lg hover:bg-teal-800 shadow-sm">Fetch & Sync Records →</button>
+      </div>
+    </div>
+  `, 'Request ABDM Health Records • रिकॉर्ड मंगाएं');
+}
+
+function simulateABDMSync() {
+  CareFlow.closeModal();
+  CareFlow.showToast('Connecting to ABDM Gateway...', 'info');
+  setTimeout(() => {
+    CareFlow.showToast('ABDM Health Locker synced! 2 new verified documents received.', 'success');
+  }, 1200);
+}
+</script>
+</body></html>

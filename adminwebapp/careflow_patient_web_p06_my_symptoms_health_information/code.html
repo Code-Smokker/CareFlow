@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+
+<html class="h-full bg-slate-50" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CareFlow Patient Web — P06 My Symptoms &amp; Health Information</title>
+<!-- Tailwind CSS v3 with Plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Google Fonts: Plus Jakarta Sans -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&amp;display=swap" rel="stylesheet"/>
+<!-- Shared CareFlow Universal Navigation & Utilities -->
+<script src="../shared_nav.js"></script>
+<!-- Tailwind Configuration -->
+<script data-purpose="tailwind-config">
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              DEFAULT: '#0d6e6e',
+              50: '#f0f9f9',
+              100: '#d7f0f0',
+              200: '#b2e2e2',
+              600: '#0d6e6e',
+              700: '#095555',
+              800: '#084343',
+              900: '#063333',
+            },
+            mint: {
+              soft: '#e6f7f2',
+              badge: '#0b8265',
+              tint: '#f4fbf8'
+            }
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+<style data-purpose="custom-scroll-and-effects">
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    .badge-ring {
+      box-shadow: 0 0 0 1px rgba(13, 110, 110, 0.15);
+    }
+  </style>
+</head>
+<body class="min-h-full flex flex-col bg-[#f8fafc] text-slate-800 antialiased">
+<!-- BEGIN: MainHeader -->
+<!-- Clean top patient portal bar: mirrors reference with brand emblem, bilingual navigation, and patient badge -->
+<header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex items-center justify-between h-20">
+<!-- Left: Brand & Portal Indicator -->
+<div class="flex items-center gap-3">
+<div aria-label="CareFlow Emblem" class="w-10 h-10 rounded-xl bg-[#0d6e6e] flex items-center justify-center text-white shadow-sm shadow-teal-900/10">
+<!-- Heart-Cross Icon -->
+<svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.2" viewbox="0 0 24 24">
+<path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<span class="text-xl font-bold tracking-tight text-slate-900 leading-none">CareFlow</span>
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#e6f7f2] text-[#0d6e6e]">
+                Patient Portal
+              </span>
+</div>
+<p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase mt-0.5">PATIENT CARE</p>
+</div>
+</div>
+<!-- Center: Horizontal Bilingual Nav Links -->
+<nav aria-label="Primary Navigation" class="hidden lg:flex items-center space-x-1">
+<!-- Home -->
+<a class="px-3.5 py-2 text-xs font-semibold text-slate-600 hover:text-[#0d6e6e] rounded-lg transition-colors flex items-center gap-1.5" href="#">
+<span>Home</span>
+<span class="text-[11px] font-normal text-slate-400">गृह</span>
+</a>
+<!-- My Health (Active) -->
+<a aria-current="page" class="px-3.5 py-2 text-xs font-semibold text-[#0d6e6e] bg-[#e6f7f2]/80 rounded-full transition-colors flex items-center gap-1.5 ring-1 ring-[#0d6e6e]/20" href="#">
+<span class="w-1.5 h-1.5 rounded-full bg-[#0d6e6e]"></span>
+<span>My Health</span>
+<span class="text-[11px] font-medium text-[#0d6e6e]/80">स्वास्थ्य</span>
+</a>
+<!-- Appointments -->
+<a class="px-3.5 py-2 text-xs font-semibold text-slate-600 hover:text-[#0d6e6e] rounded-lg transition-colors flex items-center gap-1.5" href="#">
+<span>Appointments</span>
+<span class="text-[11px] font-normal text-slate-400">अपॉइंटमेंट</span>
+</a>
+<!-- Documents -->
+<a class="px-3.5 py-2 text-xs font-semibold text-slate-600 hover:text-[#0d6e6e] rounded-lg transition-colors flex items-center gap-1.5" href="#">
+<span>Documents</span>
+<span class="text-[11px] font-normal text-slate-400">दस्तावेज़</span>
+</a>
+<!-- Care Summary -->
+<a class="px-3.5 py-2 text-xs font-semibold text-slate-600 hover:text-[#0d6e6e] rounded-lg transition-colors flex items-center gap-1.5" href="#">
+<span>Care Summary</span>
+<span class="text-[11px] font-normal text-slate-400">सारांश</span>
+</a>
+</nav>
+<!-- Right Utilities: Language Switcher, Bell, and Patient Identity Chip -->
+<div class="flex items-center gap-3">
+<!-- Language Toggle Pill -->
+<div class="hidden sm:inline-flex items-center rounded-full bg-slate-100 p-0.5 border border-slate-200 text-xs font-medium">
+<span class="px-2.5 py-1 rounded-full bg-white text-slate-800 shadow-sm font-semibold">English</span>
+<span class="px-2.5 py-1 rounded-full text-slate-500 hover:text-slate-800 transition-colors cursor-pointer">हिन्दी</span>
+</div>
+<!-- Notification Bell with Ping Dot -->
+<button aria-label="Notifications" class="relative p-2 text-slate-500 hover:text-slate-700 rounded-full hover:bg-slate-100 transition-colors" type="button">
+<span class="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 rounded-full ring-2 ring-white"></span>
+<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewbox="0 0 24 24">
+<path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</button>
+<!-- Patient Identity Chip (As in Reference) -->
+<div class="flex items-center gap-3 pl-2 py-1 pr-3 rounded-full border border-slate-200 bg-white hover:border-[#0d6e6e]/40 transition-all shadow-sm">
+<div class="relative">
+<div class="w-9 h-9 rounded-full bg-[#d7f0f0] border border-[#0d6e6e]/30 flex items-center justify-center text-[#0d6e6e] font-bold text-xs">
+                AS
+              </div>
+<span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-1.5 ring-white"></span>
+</div>
+<div class="hidden sm:block text-left">
+<div class="text-xs font-bold text-slate-900 leading-tight">Aarav Sharma</div>
+<div class="text-[10px] text-slate-500 font-mono tracking-tighter">ABHA: 91-8472-3021-9920</div>
+</div>
+<button aria-label="Patient Settings" class="text-slate-400 hover:text-slate-600 transition-colors ml-1">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" stroke-linecap="round" stroke-linejoin="round"></path>
+<path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</button>
+</div>
+</div>
+</div>
+</div>
+</header>
+<!-- END: MainHeader -->
+<!-- BEGIN: PageHeader -->
+<!-- Page Header & Action Section -->
+<section class="bg-gradient-to-b from-white to-[#f8fafc] border-b border-slate-200/80 pt-7 pb-8">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<!-- Eyebrow Navigation / Breadcrumb -->
+<div class="flex items-center gap-2 mb-2">
+<span class="text-xs font-bold tracking-wider uppercase text-[#0d6e6e]">MY HEALTH</span>
+<span class="text-slate-300">•</span>
+<span class="text-xs font-semibold text-slate-500">मेरा स्वास्थ्य</span>
+</div>
+<div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+<!-- Title & Subtitle Group -->
+<div>
+<div class="flex flex-wrap items-center gap-3">
+<h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
+<span>My Symptoms</span>
+<span class="text-xl sm:text-2xl font-semibold text-slate-600">मेरे लक्षण</span>
+</h1>
+<!-- Verified Badge -->
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[#e6f7f2] text-[#0d6e6e] border border-[#0d6e6e]/20 shadow-2xs">
+<svg class="w-3.5 h-3.5 text-[#0d6e6e]" fill="currentColor" viewbox="0 0 20 20">
+<path clip-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" fill-rule="evenodd"></path>
+</svg>
+<span>Patient Recorded • रोगी द्वारा दर्ज</span>
+</span>
+</div>
+<p class="mt-2 text-sm text-slate-600 max-w-3xl leading-relaxed">
+            Review the symptoms you've recorded and share new information with your care team. 
+            <span class="text-slate-400">•</span>
+<span class="text-slate-500">अपने दर्ज किए गए लक्षण देखें और अपनी देखभाल टीम के साथ नई जानकारी साझा करें।</span>
+</p>
+</div>
+<!-- Primary Top-Right Action -->
+<div class="flex-shrink-0 pt-1 md:pt-0">
+<a class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#0d6e6e] hover:bg-[#095555] text-white font-semibold text-sm shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-[#0d6e6e] focus:ring-offset-2" href="#record-symptom-section">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewbox="0 0 24 24">
+<path d="M12 4v16m8-8H4" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<span>+ Add symptom (लक्षण जोड़ें)</span>
+</a>
+</div>
+</div>
+</div>
+</section>
+<!-- END: PageHeader -->
+<!-- BEGIN: MainContentGrid -->
+<main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+<!-- BEGIN: LeftPrimaryColumn (approx 65% width) -->
+<section aria-label="Symptoms and Medical Records" class="lg:col-span-8 space-y-8">
+<!-- SECTION: Current Symptoms -->
+<div data-purpose="active-symptoms-section">
+<div class="flex items-center justify-between mb-4">
+<div class="flex items-center gap-2">
+<h2 class="text-lg font-bold text-slate-900 tracking-tight">Current symptoms</h2>
+<span class="text-sm font-medium text-slate-500">• वर्तमान लक्षण</span>
+<span class="inline-flex items-center justify-center px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 ml-1">2 active</span>
+</div>
+<span class="text-xs text-slate-400">Autosynced to EHR</span>
+</div>
+<div class="space-y-4">
+<!-- Symptom Card 1: Headache -->
+<div class="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 shadow-sm hover:border-[#0d6e6e]/40 transition-all">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100">
+<div>
+<div class="flex flex-wrap items-center gap-2.5">
+<h3 class="text-lg font-bold text-slate-900">Headache <span class="font-semibold text-slate-500">(सिरदर्द)</span></h3>
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-50 text-amber-800 border border-amber-200/60">
+                      Ongoing • जारी
+                    </span>
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-600">
+                      Patient reported • रोगी द्वारा दर्ज
+                    </span>
+</div>
+<p class="text-xs text-slate-500 mt-1 font-medium">Started Sep 5, 2026 • <span class="text-slate-700 font-semibold">2 days ongoing</span></p>
+</div>
+<div class="flex items-center gap-2 self-start sm:self-auto">
+<button class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-[#0d6e6e] hover:bg-[#e6f7f2] transition-colors" type="button">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<path d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<span>Edit (संपादित करें)</span>
+</button>
+<button class="text-xs font-semibold text-slate-600 hover:text-[#0d6e6e] px-2 py-1.5 rounded-lg hover:bg-slate-50 transition-colors" type="button">
+                    View details (विवरण देखें)
+                  </button>
+</div>
+</div>
+<!-- Details Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 text-xs">
+<div class="bg-slate-50 rounded-xl p-3 border border-slate-100">
+<span class="text-slate-500 uppercase tracking-wider font-semibold block text-[10px]">Frequency • आवृत्ति</span>
+<span class="font-bold text-slate-800 text-sm mt-0.5 block">Occasional (कभी-कभी)</span>
+<span class="text-slate-500 text-[11px] mt-1 block">Episodes come in 20-30 min intervals</span>
+</div>
+<div class="bg-slate-50 rounded-xl p-3 border border-slate-100">
+<span class="text-slate-500 uppercase tracking-wider font-semibold block text-[10px]">Severity • तीव्रता</span>
+<div class="flex items-center gap-2 mt-1">
+<span class="font-bold text-slate-800 text-sm">Mild-to-Moderate (हल्का से मध्यम)</span>
+<span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
+</div>
+<span class="text-slate-500 text-[11px] mt-1 block">Rated 4/10 on pain visual scale</span>
+</div>
+<div class="sm:col-span-2 bg-slate-50/70 rounded-xl p-3.5 border border-slate-100">
+<span class="text-slate-500 uppercase tracking-wider font-semibold block text-[10px] mb-1">Notes &amp; Triggers • अतिरिक्त विवरण</span>
+<p class="text-xs text-slate-700 leading-relaxed">
+                    Mostly in the evening after continuous laptop screen work. Relieved partially by resting in a dark room and hydrating with electrolytes. No nausea or photophobia reported.
+                  </p>
+</div>
+</div>
+</div>
+<!-- Symptom Card 2: Fatigue -->
+<div class="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 shadow-sm hover:border-[#0d6e6e]/40 transition-all">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100">
+<div>
+<div class="flex flex-wrap items-center gap-2.5">
+<h3 class="text-lg font-bold text-slate-900">Fatigue <span class="font-semibold text-slate-500">(थकान)</span></h3>
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-50 text-amber-800 border border-amber-200/60">
+                      Ongoing • जारी
+                    </span>
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-600">
+                      Patient reported
+                    </span>
+</div>
+<p class="text-xs text-slate-500 mt-1 font-medium">Started Sep 4, 2026 • <span class="text-slate-700 font-semibold">3 days ongoing</span></p>
+</div>
+<div class="flex items-center gap-2 self-start sm:self-auto">
+<button class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-[#0d6e6e] hover:bg-[#e6f7f2] transition-colors" type="button">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<path d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<span>Edit</span>
+</button>
+<button class="text-xs font-semibold text-slate-600 hover:text-[#0d6e6e] px-2 py-1.5 rounded-lg hover:bg-slate-50 transition-colors" type="button">
+                    View details
+                  </button>
+</div>
+</div>
+<!-- Details Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 text-xs">
+<div class="bg-slate-50 rounded-xl p-3 border border-slate-100">
+<span class="text-slate-500 uppercase tracking-wider font-semibold block text-[10px]">Frequency • आवृत्ति</span>
+<span class="font-bold text-slate-800 text-sm mt-0.5 block">Persistent (लगातार)</span>
+<span class="text-slate-500 text-[11px] mt-1 block">Present throughout daytime activities</span>
+</div>
+<div class="bg-slate-50 rounded-xl p-3 border border-slate-100">
+<span class="text-slate-500 uppercase tracking-wider font-semibold block text-[10px]">Severity • तीव्रता</span>
+<div class="flex items-center gap-2 mt-1">
+<span class="font-bold text-slate-800 text-sm">Moderate (मध्यम)</span>
+<span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+</div>
+<span class="text-slate-500 text-[11px] mt-1 block">Affecting standard daily workout routine</span>
+</div>
+<div class="sm:col-span-2 bg-slate-50/70 rounded-xl p-3.5 border border-slate-100">
+<span class="text-slate-500 uppercase tracking-wider font-semibold block text-[10px] mb-1">Notes &amp; Triggers • अतिरिक्त विवरण</span>
+<p class="text-xs text-slate-700 leading-relaxed">
+                    Accompanied by slight lower back and shoulder ache. Hydration increased to 3 liters/day. Sleep patterns have been normal (7.5 hours).
+                  </p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- SECTION: Inline Add Symptom Form Preview -->
+<div class="bg-white rounded-2xl border-2 border-[#0d6e6e]/20 p-5 sm:p-7 shadow-sm relative overflow-hidden" data-purpose="symptom-entry-card" id="record-symptom-section">
+<!-- Subtle top accent bar -->
+<div class="absolute top-0 left-0 right-0 h-1.5 bg-[#0d6e6e]"></div>
+<div class="flex items-center justify-between pb-4 border-b border-slate-100 mb-6">
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-lg bg-[#e6f7f2] flex items-center justify-center text-[#0d6e6e]">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<path d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+<div>
+<h2 class="text-base font-bold text-slate-900">Record a new symptom <span class="font-normal text-slate-500">• नया लक्षण दर्ज करें</span></h2>
+<p class="text-xs text-slate-500">Your doctor will review this update during clinical triage.</p>
+</div>
+</div>
+<span class="text-[11px] font-medium text-[#0d6e6e] bg-[#e6f7f2] px-2.5 py-1 rounded-full">ABDM Synced</span>
+</div>
+<form action="#" class="space-y-5" method="POST" onsubmit="event.preventDefault();">
+<!-- Row 1: Symptom Name & Date Started -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<div>
+<label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5" for="symptom-name">
+                  Symptom Name <span class="text-slate-400 font-normal">• लक्षण का नाम</span> <span class="text-rose-500">*</span>
+</label>
+<input class="w-full text-xs rounded-xl border-slate-200 focus:border-[#0d6e6e] focus:ring focus:ring-[#0d6e6e]/20 transition-all py-2.5 px-3.5 placeholder-slate-400" id="symptom-name" name="symptom-name" placeholder="e.g. Dizziness, Sore throat, Rash" type="text"/>
+</div>
+<div>
+<label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5" for="date-started">
+                  Date Started <span class="text-slate-400 font-normal">• शुरू होने की तिथि</span> <span class="text-rose-500">*</span>
+</label>
+<input class="w-full text-xs rounded-xl border-slate-200 focus:border-[#0d6e6e] focus:ring focus:ring-[#0d6e6e]/20 transition-all py-2.5 px-3.5 text-slate-700" id="date-started" name="date-started" type="date" value="2026-09-07"/>
+</div>
+</div>
+<!-- Row 2: Frequency Segmented Pills -->
+<div>
+<label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
+                Frequency <span class="text-slate-400 font-normal">• कितनी बार होता है</span>
+</label>
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+<label class="relative flex items-center justify-center p-2.5 text-xs font-medium rounded-xl border border-slate-200 hover:border-[#0d6e6e] cursor-pointer bg-white has-[:checked]:bg-[#e6f7f2] has-[:checked]:border-[#0d6e6e] has-[:checked]:text-[#0d6e6e] transition-all">
+<input checked="" class="sr-only" name="frequency" type="radio" value="occasional"/>
+<span>Occasional (कभी-कभी)</span>
+</label>
+<label class="relative flex items-center justify-center p-2.5 text-xs font-medium rounded-xl border border-slate-200 hover:border-[#0d6e6e] cursor-pointer bg-white has-[:checked]:bg-[#e6f7f2] has-[:checked]:border-[#0d6e6e] has-[:checked]:text-[#0d6e6e] transition-all">
+<input class="sr-only" name="frequency" type="radio" value="sometimes"/>
+<span>Sometimes (कभी-कभार)</span>
+</label>
+<label class="relative flex items-center justify-center p-2.5 text-xs font-medium rounded-xl border border-slate-200 hover:border-[#0d6e6e] cursor-pointer bg-white has-[:checked]:bg-[#e6f7f2] has-[:checked]:border-[#0d6e6e] has-[:checked]:text-[#0d6e6e] transition-all">
+<input class="sr-only" name="frequency" type="radio" value="frequent"/>
+<span>Frequent (बार-बार)</span>
+</label>
+<label class="relative flex items-center justify-center p-2.5 text-xs font-medium rounded-xl border border-slate-200 hover:border-[#0d6e6e] cursor-pointer bg-white has-[:checked]:bg-[#e6f7f2] has-[:checked]:border-[#0d6e6e] has-[:checked]:text-[#0d6e6e] transition-all">
+<input class="sr-only" name="frequency" type="radio" value="constant"/>
+<span>Constant (लगातार)</span>
+</label>
+</div>
+</div>
+<!-- Row 3: Notes -->
+<div>
+<label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5" for="symptom-notes">
+                Optional Notes &amp; Triggers <span class="text-slate-400 font-normal">• अतिरिक्त टिप्पणियां</span>
+</label>
+<textarea class="w-full text-xs rounded-xl border-slate-200 focus:border-[#0d6e6e] focus:ring focus:ring-[#0d6e6e]/20 transition-all p-3 placeholder-slate-400" id="symptom-notes" name="symptom-notes" placeholder="Describe when it happens, what makes it better or worse..." rows="2"></textarea>
+</div>
+<!-- Actions Bar -->
+<div class="flex items-center justify-end gap-3 pt-2">
+<button class="px-4 py-2 rounded-full text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors" type="button">
+                Cancel (रद्द करें)
+              </button>
+<button class="inline-flex items-center gap-1.5 px-6 py-2.5 rounded-full bg-[#0d6e6e] hover:bg-[#095555] text-white text-xs font-bold shadow-sm transition-colors" type="submit">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<span>Save symptom (लक्षण सहेजें)</span>
+</button>
+</div>
+</form>
+</div>
+<!-- SECTION: Symptom History (Resolved Timeline List) -->
+<div class="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 shadow-sm" data-purpose="symptom-history-card">
+<div class="flex items-center justify-between pb-4 border-b border-slate-100 mb-4">
+<div>
+<h2 class="text-lg font-bold text-slate-900 tracking-tight">Symptom history</h2>
+<p class="text-xs text-slate-500">Past resolved symptoms recorded in your CareFlow profile • लक्षण इतिहास</p>
+</div>
+<span class="text-xs font-semibold text-slate-500">3 Resolved</span>
+</div>
+<div class="divide-y divide-slate-100">
+<!-- Timeline Item 1 -->
+<div class="py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+<div class="flex items-start gap-3">
+<div class="w-2.5 h-2.5 rounded-full bg-emerald-500 mt-1.5 ring-4 ring-emerald-50 flex-shrink-0"></div>
+<div>
+<div class="flex items-center gap-2">
+<span class="text-sm font-bold text-slate-900">Fever (बुखार)</span>
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-[#e6f7f2] text-[#0d6e6e]">
+                      Resolved (सुलझा हुआ)
+                    </span>
+</div>
+<p class="text-xs text-slate-500 mt-0.5">Aug 22, 2026 • Duration: 3 days • Treated with prescribed antipyretics</p>
+</div>
+</div>
+<span class="text-[11px] font-medium text-slate-400 sm:text-right">Aug 25, 2026</span>
+</div>
+<!-- Timeline Item 2 -->
+<div class="py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+<div class="flex items-start gap-3">
+<div class="w-2.5 h-2.5 rounded-full bg-emerald-500 mt-1.5 ring-4 ring-emerald-50 flex-shrink-0"></div>
+<div>
+<div class="flex items-center gap-2">
+<span class="text-sm font-bold text-slate-900">Cough (खांसी)</span>
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-[#e6f7f2] text-[#0d6e6e]">
+                      Resolved (सुलझा हुआ)
+                    </span>
+</div>
+<p class="text-xs text-slate-500 mt-0.5">Aug 18, 2026 • Duration: 5 days • Dry hacking cough subsided with warm fluids</p>
+</div>
+</div>
+<span class="text-[11px] font-medium text-slate-400 sm:text-right">Aug 23, 2026</span>
+</div>
+<!-- Timeline Item 3 -->
+<div class="py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+<div class="flex items-start gap-3">
+<div class="w-2.5 h-2.5 rounded-full bg-emerald-500 mt-1.5 ring-4 ring-emerald-50 flex-shrink-0"></div>
+<div>
+<div class="flex items-center gap-2">
+<span class="text-sm font-bold text-slate-900">Headache (सिरदर्द)</span>
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-[#e6f7f2] text-[#0d6e6e]">
+                      Resolved
+                    </span>
+</div>
+<p class="text-xs text-slate-500 mt-0.5">Aug 10, 2026 • Duration: 1 day • Stress-induced tension headache</p>
+</div>
+</div>
+<span class="text-[11px] font-medium text-slate-400 sm:text-right">Aug 11, 2026</span>
+</div>
+</div>
+</div>
+<!-- SECTION: Related Health Information Navigation Cards -->
+<div class="space-y-3" data-purpose="related-records-navigation">
+<h2 class="text-xs font-bold text-slate-500 uppercase tracking-wider">Related health information • संबंधित स्वास्थ्य जानकारी</h2>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+<!-- Link to P05 Health Overview -->
+<a class="group p-4 bg-white rounded-xl border border-slate-200 hover:border-[#0d6e6e] shadow-2xs hover:shadow-sm transition-all flex flex-col justify-between" href="../careflow_patient_web_p05_my_health_overview/code.html">
+<div>
+<div class="flex items-center justify-between">
+<span class="text-xs font-bold text-slate-800 group-hover:text-[#0d6e6e]">Health Overview</span>
+<svg class="w-4 h-4 text-slate-400 group-hover:translate-x-1 group-hover:text-[#0d6e6e] transition-all" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+<span class="text-[11px] text-slate-400 block mt-0.5">स्वास्थ्य अवलोकन (P05)</span>
+<p class="text-xs text-slate-500 mt-2">Vitals, allergies, and ongoing medications.</p>
+</div>
+</a>
+<!-- Link to P07 Health Questionnaire -->
+<a class="group p-4 bg-white rounded-xl border border-slate-200 hover:border-[#0d6e6e] shadow-2xs hover:shadow-sm transition-all flex flex-col justify-between" href="../careflow_patient_web_p07_my_health_questionnaire/code.html">
+<div>
+<div class="flex items-center justify-between">
+<span class="text-xs font-bold text-slate-800 group-hover:text-[#0d6e6e]">Health Questionnaire</span>
+<svg class="w-4 h-4 text-slate-400 group-hover:translate-x-1 group-hover:text-[#0d6e6e] transition-all" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+<span class="text-[11px] text-slate-400 block mt-0.5">स्वास्थ्य प्रश्नावली (P07)</span>
+<p class="text-xs text-slate-500 mt-2">Pre-consultation clinical intake answers.</p>
+</div>
+</a>
+<!-- Link to P09 Care Summary -->
+<a class="group p-4 bg-white rounded-xl border border-slate-200 hover:border-[#0d6e6e] shadow-2xs hover:shadow-sm transition-all flex flex-col justify-between" href="../careflow_patient_web_p09_my_care_summary/code.html">
+<div>
+<div class="flex items-center justify-between">
+<span class="text-xs font-bold text-slate-800 group-hover:text-[#0d6e6e]">Care Summary</span>
+<svg class="w-4 h-4 text-slate-400 group-hover:translate-x-1 group-hover:text-[#0d6e6e] transition-all" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+<span class="text-[11px] text-slate-400 block mt-0.5">देखभाल सारांश (P09)</span>
+<p class="text-xs text-slate-500 mt-2">Discharge notes &amp; doctor action plans.</p>
+</div>
+</a>
+</div>
+</div>
+</section>
+<!-- END: LeftPrimaryColumn -->
+<!-- BEGIN: RightSecondaryColumn (approx 35% width) -->
+<aside aria-label="Symptom Metrics and Security Notices" class="lg:col-span-4 space-y-6">
+<!-- CARD 1: Symptom Summary Metrics -->
+<div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm" data-purpose="metrics-summary">
+<div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
+<h2 class="text-sm font-bold text-slate-900 uppercase tracking-wide">Symptom Summary</h2>
+<span class="text-xs font-medium text-slate-400">लक्षण सारांश</span>
+</div>
+<div class="grid grid-cols-3 gap-2 text-center">
+<div class="p-3 bg-slate-50 rounded-xl border border-slate-100">
+<span id="active-symptoms-count" class="text-xl font-extrabold text-[#0d6e6e] block">2</span>
+<span class="text-[11px] font-semibold text-slate-600 block mt-0.5">Active</span>
+<span class="text-[10px] text-slate-400 block">सक्रिय</span>
+</div>
+<div class="p-3 bg-slate-50 rounded-xl border border-slate-100">
+<span id="resolved-symptoms-count" class="text-xl font-extrabold text-emerald-600 block">3</span>
+<span class="text-[11px] font-semibold text-slate-600 block mt-0.5">Resolved</span>
+<span class="text-[10px] text-slate-400 block">सुलझा हुआ</span>
+</div>
+<div class="p-3 bg-slate-50 rounded-xl border border-slate-100">
+<span class="text-xs font-extrabold text-slate-700 block mt-1">Today</span>
+<span class="text-[11px] font-semibold text-slate-500 block mt-1">Just now</span>
+<span class="text-[10px] text-slate-400 block">अपडेट</span>
+</div>
+</div>
+</div>
+<!-- CARD 2: Care Team Sync Assurance -->
+<div class="bg-[#f0f9f9] rounded-2xl border border-[#0d6e6e]/20 p-5 shadow-2xs" data-purpose="care-team-sync-card">
+<div class="flex items-start gap-3.5">
+<div class="w-9 h-9 rounded-xl bg-[#0d6e6e] text-white flex items-center justify-center flex-shrink-0 mt-0.5">
+<!-- Stethoscope / Medical Cross icon -->
+<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+<div>
+<h3 class="text-sm font-bold text-slate-900 leading-snug">Shared with your care team</h3>
+<span class="text-xs font-medium text-[#0d6e6e] block mb-1">आपकी देखभाल टीम के साथ साझा</span>
+<p class="text-xs text-slate-600 leading-relaxed">
+                Your recorded symptoms are securely synced and visible to <strong class="text-slate-800 font-semibold">Dr. Priya Sharma</strong> and your primary care team prior to your next consultation.
+              </p>
+<div class="mt-3 flex items-center justify-between">
+<div class="flex items-center gap-2 text-[11px] text-[#0d6e6e] font-semibold">
+<span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+<span>Ready for next triage review</span>
+</div>
+<a href="../careflow_patient_web_p17_messages_care_team/code.html" class="inline-flex items-center gap-1 text-xs font-bold text-[#0d6e6e] hover:underline">
+<span>Chat</span>
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>
+</a>
+</div>
+</div>
+</div>
+</div>
+<!-- CARD 3: Clinical Disclaimer Notice -->
+<div class="bg-amber-50/70 rounded-2xl border border-amber-200/80 p-5 shadow-2xs" data-purpose="emergency-disclaimer">
+<div class="flex items-start gap-3">
+<div class="w-8 h-8 rounded-lg bg-amber-100 text-amber-800 flex items-center justify-center flex-shrink-0 mt-0.5">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+<div>
+<h3 class="text-xs font-bold uppercase tracking-wider text-amber-900">Patient-Reported Notice • महत्वपूर्ण सूचना</h3>
+<p class="mt-1.5 text-xs text-amber-800/90 leading-relaxed">
+                This information is self-reported by you and does not constitute a clinical diagnosis. If you experience severe chest pain, shortness of breath, or sudden weakness, please seek emergency medical care immediately.
+              </p>
+<div class="mt-2.5 pt-2 border-t border-amber-200/60 text-[11px] font-bold text-amber-900 flex items-center gap-1.5">
+<span>Emergency Hotline:</span>
+<span class="underline">108 / 112 (National Emergency)</span>
+</div>
+</div>
+</div>
+</div>
+<!-- CARD 4: ABDM & Privacy Assurance -->
+<div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm text-xs text-slate-600" data-purpose="security-compliance-box">
+<div class="flex items-center gap-2 mb-3">
+<div class="w-7 h-7 rounded-lg bg-slate-100 flex items-center justify-center text-slate-700">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+<div>
+<h3 class="font-bold text-slate-900">Privacy &amp; Data Protection</h3>
+<span class="text-[11px] text-slate-400">गोपनीयता और सुरक्षा</span>
+</div>
+</div>
+<p class="text-slate-500 leading-relaxed mb-3">
+            Your health telemetry is encrypted with 256-bit AES at rest and during transit. CareFlow conforms to Ayushman Bharat Digital Mission (ABDM) standards.
+          </p>
+<div class="flex flex-wrap gap-2 pt-2 border-t border-slate-100">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-100 text-slate-700">
+              ABDM M1/M2/M3
+            </span>
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-100 text-slate-700">
+              DISHA Compliant
+            </span>
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-[#e6f7f2] text-[#0d6e6e]">
+              Encrypted Vault
+            </span>
+</div>
+</div>
+</aside>
+<!-- END: RightSecondaryColumn -->
+</div>
+</main>
+<!-- END: MainContentGrid -->
+<!-- BEGIN: MainFooter -->
+<!-- Responsive Footer adhering strictly to CareFlow clinical security specifications -->
+<footer class="mt-auto bg-white border-t border-slate-200 py-6 text-xs text-slate-500">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-4">
+<!-- Security Badges Summary -->
+<div class="flex flex-wrap items-center justify-center md:justify-start gap-x-3 gap-y-1 text-slate-600">
+<span class="font-bold text-slate-800">CareFlow Clinical Security</span>
+<span class="text-slate-300">•</span>
+<span>Patient information is protected</span>
+<span class="text-slate-300">•</span>
+<span>ABDM M1/M2/M3 Compliant</span>
+<span class="text-slate-300">•</span>
+<span>256-bit AES Patient Vault</span>
+<span class="text-slate-300">•</span>
+<span>HIPAA &amp; DISHA Standard</span>
+</div>
+<!-- Copyright & Bilingual Legal Links -->
+<div class="flex items-center gap-4 text-slate-400">
+<span>© 2026 CareFlow Inc. All rights reserved.</span>
+<a class="hover:text-[#0d6e6e] transition-colors" href="#">Privacy Policy (गोपनीयता नीति)</a>
+<a class="hover:text-[#0d6e6e] transition-colors" href="#">Terms of Care</a>
+</div>
+</div>
+</footer>
+<!-- END: MainFooter -->
+
+<!-- Page Interactivity Script -->
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const form = document.querySelector('form[action="#"]');
+    const symptomNameInput = document.getElementById('symptom-name');
+    const symptomNotesInput = document.getElementById('symptom-notes');
+    const dateStartedInput = document.getElementById('date-started');
+    const activeCountEl = document.getElementById('active-symptoms-count');
+    const currentSymptomsContainer = document.querySelector('[data-purpose="active-symptoms-section"] .space-y-4');
+
+    if (form) {
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const name = symptomNameInput.value.trim();
+        if (!name) {
+          if (window.CareFlow) {
+            CareFlow.showToast('Please enter a symptom name (कृपया लक्षण का नाम दर्ज करें)', 'warning');
+          } else {
+            alert('Please enter a symptom name');
+          }
+          symptomNameInput.focus();
+          return;
+        }
+
+        const dateVal = dateStartedInput.value || 'Today';
+        const selectedFreq = document.querySelector('input[name="frequency"]:checked')?.value || 'occasional';
+        const freqMap = {
+          occasional: 'Occasional (कभी-कभी)',
+          sometimes: 'Sometimes (कभी-कभार)',
+          frequent: 'Frequent (बार-बार)',
+          constant: 'Constant (लगातार)'
+        };
+        const notes = symptomNotesInput.value.trim() || 'Self-reported by patient via CareFlow portal.';
+
+        // Create new card
+        const card = document.createElement('div');
+        card.className = 'bg-white rounded-2xl border-2 border-emerald-200 p-5 sm:p-6 shadow-sm hover:border-[#0d6e6e]/40 transition-all animate-fade-in';
+        card.innerHTML = `
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100">
+            <div>
+              <div class="flex flex-wrap items-center gap-2.5">
+                <h3 class="text-lg font-bold text-slate-900">${name}</h3>
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-50 text-amber-800 border border-amber-200/60">
+                  Active • सक्रिय
+                </span>
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700">
+                  Just recorded
+                </span>
+              </div>
+              <p class="text-xs text-slate-500 mt-1 font-medium">Started ${dateVal} • <span class="text-slate-700 font-semibold">Self reported</span></p>
+            </div>
+            <div class="flex items-center gap-2 self-start sm:self-auto">
+              <button class="symptom-resolve-btn inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-emerald-700 hover:bg-emerald-50 transition-colors" type="button">
+                ✓ Mark Resolved
+              </button>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 text-xs">
+            <div class="bg-slate-50 rounded-xl p-3 border border-slate-100">
+              <span class="text-slate-500 uppercase tracking-wider font-semibold block text-[10px]">Frequency • आवृत्ति</span>
+              <span class="font-bold text-slate-800 text-sm mt-0.5 block">${freqMap[selectedFreq]}</span>
+            </div>
+            <div class="bg-slate-50 rounded-xl p-3 border border-slate-100">
+              <span class="text-slate-500 uppercase tracking-wider font-semibold block text-[10px]">Severity • तीव्रता</span>
+              <div class="flex items-center gap-2 mt-1">
+                <span class="font-bold text-slate-800 text-sm">Under Clinical Review</span>
+                <span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
+              </div>
+            </div>
+            <div class="sm:col-span-2 bg-slate-50/70 rounded-xl p-3.5 border border-slate-100">
+              <span class="text-slate-500 uppercase tracking-wider font-semibold block text-[10px] mb-1">Notes &amp; Triggers • अतिरिक्त विवरण</span>
+              <p class="text-xs text-slate-700 leading-relaxed">${notes}</p>
+            </div>
+          </div>
+        `;
+
+        // Wire resolve button
+        card.querySelector('.symptom-resolve-btn').addEventListener('click', () => {
+          card.style.opacity = '0.5';
+          if (window.CareFlow) CareFlow.showToast(`"${name}" marked as resolved and moved to history.`, 'success');
+        });
+
+        if (currentSymptomsContainer) {
+          currentSymptomsContainer.prepend(card);
+        }
+
+        // Update counter
+        if (activeCountEl) {
+          const current = parseInt(activeCountEl.textContent, 10) || 2;
+          activeCountEl.textContent = current + 1;
+        }
+
+        form.reset();
+        if (window.CareFlow) {
+          CareFlow.showToast(`New symptom "${name}" saved & shared with Dr. Priya Sharma!`, 'success');
+        }
+
+        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      });
+    }
+
+    // Wire existing Edit and View details buttons
+    document.querySelectorAll('[data-purpose="active-symptoms-section"] button').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        const text = btn.textContent.trim();
+        const cardTitle = btn.closest('.bg-white')?.querySelector('h3')?.textContent?.trim() || 'Symptom';
+        if (text.includes('Edit')) {
+          if (window.CareFlow) {
+            CareFlow.openModal(`
+              <div class="p-5">
+                <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
+                  <h3 class="font-bold text-slate-900 text-lg">Update ${cardTitle}</h3>
+                  <button onclick="CareFlow.closeModal()" class="text-slate-400 hover:text-slate-600 text-xl font-bold">&times;</button>
+                </div>
+                <div class="space-y-4 text-xs">
+                  <div>
+                    <label class="block font-bold text-slate-700 uppercase mb-1">Current Severity</label>
+                    <select class="w-full rounded-xl border-slate-200 text-xs p-2.5">
+                      <option>Mild (1-3) - हल्का</option>
+                      <option selected>Moderate (4-6) - मध्यम</option>
+                      <option>Severe (7-10) - गंभीर</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="block font-bold text-slate-700 uppercase mb-1">Status</label>
+                    <select class="w-full rounded-xl border-slate-200 text-xs p-2.5">
+                      <option selected>Ongoing (जारी)</option>
+                      <option>Improving (सुधार हो रहा है)</option>
+                      <option>Resolved (सुलझ गया)</option>
+                    </select>
+                  </div>
+                  <div class="flex justify-end gap-2 pt-3">
+                    <button onclick="CareFlow.closeModal()" class="px-4 py-2 rounded-lg border border-slate-200 font-semibold text-slate-600">Cancel</button>
+                    <button onclick="CareFlow.closeModal(); CareFlow.showToast('Symptom updated successfully', 'success')" class="px-5 py-2 rounded-lg bg-[#0d6e6e] font-bold text-white">Save Changes</button>
+                  </div>
+                </div>
+              </div>
+            `);
+          }
+        } else if (text.includes('View details')) {
+          if (window.CareFlow) {
+            CareFlow.openModal(`
+              <div class="p-5">
+                <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
+                  <h3 class="font-bold text-slate-900 text-lg">${cardTitle} — Clinical Details</h3>
+                  <button onclick="CareFlow.closeModal()" class="text-slate-400 hover:text-slate-600 text-xl font-bold">&times;</button>
+                </div>
+                <div class="space-y-3 text-xs text-slate-600">
+                  <p><strong>EHR Sync ID:</strong> SYM-2026-0982-A</p>
+                  <p><strong>Primary Doctor:</strong> Dr. Priya Sharma (Internal Medicine)</p>
+                  <p><strong>Triage Flag:</strong> Non-emergency observation</p>
+                  <p class="p-3 bg-amber-50 rounded-lg text-amber-800 border border-amber-200">Recommended action: Hydrate well, avoid prolonged screen time, and report worsening symptoms during upcoming video consultation.</p>
+                  <div class="pt-3 flex justify-between items-center">
+                    <a href="../careflow_patient_web_p17_messages_care_team/code.html" class="px-4 py-2 rounded-lg bg-[#0d6e6e] text-white font-bold text-xs inline-flex items-center gap-1.5">
+                      Message Care Team (P17)
+                    </a>
+                    <button onclick="CareFlow.closeModal()" class="px-4 py-2 rounded-lg border border-slate-200 font-semibold text-slate-600">Close</button>
+                  </div>
+                </div>
+              </div>
+            `);
+          }
+        }
+      });
+    });
+  });
+</script>
+</body></html>

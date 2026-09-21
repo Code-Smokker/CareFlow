@@ -1,0 +1,51 @@
+id: mala
+label: Mala (stool)
+framework: custom
+description: >
+  What the patient can report about stool: frequency, consistency and colour. Consistency is
+  offered to the Vaidya as a pre-fill in Ashtavidha Pariksha ("Patient reported"), to be confirmed
+  or overridden. Sama / Nirama is examined by the Vaidya and is never asked of the patient.
+source: >
+  Engineer-authored patient-reportable items. PENDING_EXPERT_REVIEW.
+triggers:
+  - mala
+  - stool
+  - मल
+
+slots:
+  - id: mala_frequency
+    type: enum
+    required: true
+    input: [voice, chips]
+    prompt:
+      en: How often do you pass stool?
+      hi: आप कितनी बार शौच जाते हैं?
+    options:
+      - { value: less, icon: hourglass_bottom, label: { en: "Once in two days or less", hi: "दो दिन में एक बार या कम" } }
+      - { value: once, icon: looks_one, label: { en: "Once a day", hi: "दिन में एक बार" } }
+      - { value: twice_or_more, icon: looks_two, label: { en: "Two or more times a day", hi: "दिन में दो या अधिक बार" } }
+
+  - id: mala_consistency
+    type: enum
+    required: true
+    input: [voice, chips]
+    prompt:
+      en: What is your stool usually like?
+      hi: आपका मल आमतौर पर कैसा होता है?
+    options:
+      - { value: hard, icon: deblur, label: { en: "Hard, dry, difficult to pass", hi: "सख़्त, सूखा, मुश्किल से" } }
+      - { value: normal, icon: check_circle, label: { en: "Formed, passes easily", hi: "सामान्य, आसानी से" } }
+      - { value: loose, icon: water_drop, label: { en: "Loose or watery", hi: "ढीला या पतला" } }
+
+  - id: mala_colour
+    type: enum
+    required: true
+    input: [voice, chips]
+    prompt:
+      en: What colour is your stool usually?
+      hi: आपके मल का रंग आमतौर पर कैसा होता है?
+    options:
+      - { value: brown, icon: circle, label: { en: "Brown", hi: "भूरा" } }
+      - { value: yellowish, icon: light_mode, label: { en: "Yellowish", hi: "पीलापन लिए" } }
+      - { value: pale, icon: radio_button_unchecked, label: { en: "Pale or clay-coloured", hi: "हल्का या सफ़ेद-सा" } }
+      - { value: dark, icon: contrast, label: { en: "Very dark or black", hi: "बहुत गहरा या काला" } }

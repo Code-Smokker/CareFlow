@@ -1,0 +1,569 @@
+<!DOCTYPE html><html lang="en" class="h-full scroll-smooth"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>CareFlow - Patient Documents (Aarav Sharma)</title>
+<script src="../careflow-nav.js" defer></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#0D6E6E",
+            "primary-container": "#005454",
+            "on-primary": "#ffffff",
+            "secondary": "#006b5f",
+            "secondary-container": "#E6F7F2",
+            "surface-mint": "#D1F2E8",
+            "surface-mint-subtle": "#E6F7F2",
+            "background": "#F8FAFC",
+            "surface": "#FAF8FF",
+            "surface-card": "#FFFFFF",
+            "surface-container-lowest": "#FFFFFF",
+            "surface-container-low": "#F1F3FF",
+            "surface-container": "#E8EEFF",
+            "surface-container-high": "#DFE8FF",
+            "surface-dim": "#D2D9F4",
+            "on-surface": "#0F1E36",
+            "on-surface-variant": "#3E4948",
+            "outline": "#6E7979",
+            "outline-variant": "#BEC9C8",
+            "border-subtle": "#E2E8F0",
+            "error": "#BA1A1A",
+            "error-container": "#FFDAD6",
+            "text-muted": "#64748B"
+          },
+          fontFamily: {
+            sans: ["Plus Jakarta Sans", "Inter", "sans-serif"],
+            mono: ["ui-monospace", "SFMono-Regular", "Menlo", "monospace"]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    body {
+      background-color: #F8FAFC;
+      color: #0F1E36;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+    }
+    .material-symbols-outlined.fill {
+      font-variation-settings: 'FILL' 1;
+    }
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #D2D9F4;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #BEC9C8;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex bg-[#F8FAFC] text-[#0F1E36] antialiased">
+<!-- 1. PERSISTENT LEFT SIDEBAR NAVIGATION -->
+<aside class="w-64 bg-white border-r border-slate-200 fixed top-0 bottom-0 left-0 z-40 flex flex-col justify-between select-none">
+<!-- Top Brand & Navigation -->
+<div class="flex flex-col">
+<!-- Logo Header -->
+<div class="h-16 px-5 flex items-center justify-between border-b border-slate-100">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-[#0D6E6E] flex items-center justify-center text-white shadow-sm">
+<span class="material-symbols-outlined fill text-[22px]">volunteer_activism</span>
+</div>
+<div class="flex flex-col">
+<span class="font-bold text-[18px] tracking-tight text-[#0F1E36] leading-none">CareFlow</span>
+<span class="text-[11px] font-medium text-slate-500 mt-0.5">Clinical Care Team</span>
+</div>
+</div>
+<span class="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded-md bg-[#E6F7F2] text-[#0D6E6E] border border-[#0D6E6E]/20">OPD</span>
+</div>
+<!-- Navigation Menu Items -->
+<nav class="p-3 space-y-1">
+<!-- Dashboard -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 text-sm font-medium transition-colors" href="javascript:void(0)">
+<span class="material-symbols-outlined text-[20px] text-slate-400">grid_view</span>
+<span>Dashboard</span>
+</a>
+<!-- Patients -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 text-sm font-medium transition-colors" href="javascript:void(0)">
+<span class="material-symbols-outlined text-[20px] text-slate-400">group</span>
+<span>Patients</span>
+</a>
+<!-- Appointments -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 text-sm font-medium transition-colors" href="javascript:void(0)">
+<span class="material-symbols-outlined text-[20px] text-slate-400">calendar_month</span>
+<span>Appointments</span>
+</a>
+<!-- Documents (Active State!) -->
+<a class="flex items-center justify-between px-3 py-2.5 rounded-xl bg-[#E6F7F2] text-[#0D6E6E] text-sm font-semibold transition-colors shadow-xs" href="javascript:void(0)">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[20px] text-[#0D6E6E] fill">folder</span>
+<span>Documents</span>
+</div>
+<span class="w-2 h-2 rounded-full bg-[#0D6E6E]"></span>
+</a>
+<!-- Care Summaries -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 text-sm font-medium transition-colors" href="javascript:void(0)">
+<span class="material-symbols-outlined text-[20px] text-slate-400">description</span>
+<span>Care Summaries</span>
+</a>
+<!-- Alerts -->
+<a class="flex items-center justify-between px-3 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 text-sm font-medium transition-colors" href="javascript:void(0)">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[20px] text-slate-400">notifications</span>
+<span>Alerts</span>
+</div>
+<span class="w-2 h-2 rounded-full bg-red-500"></span>
+</a>
+<!-- Analytics -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 text-sm font-medium transition-colors" href="javascript:void(0)">
+<span class="material-symbols-outlined text-[20px] text-slate-400">trending_up</span>
+<span>Analytics</span>
+</a>
+</nav>
+</div>
+<!-- Bottom Sidebar (Settings, Support & Clinician Profile) -->
+<div class="p-3 border-t border-slate-100 flex flex-col gap-1">
+<a class="flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 text-sm font-medium transition-colors" href="javascript:void(0)">
+<span class="material-symbols-outlined text-[20px] text-slate-400">settings</span>
+<span>Settings</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 text-sm font-medium transition-colors" href="javascript:void(0)">
+<span class="material-symbols-outlined text-[20px] text-slate-400">help</span>
+<span>Help &amp; Support</span>
+</a>
+<!-- Clinician Profile Card -->
+<div class="mt-2 p-2.5 rounded-xl bg-slate-50 border border-slate-200/70 flex items-center justify-between">
+<div class="flex items-center gap-2.5 min-w-0">
+<div class="relative w-9 h-9 rounded-full bg-[#0D6E6E] text-white flex items-center justify-center font-bold text-xs shrink-0">
+            AI
+            <span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-white"></span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="text-xs font-bold text-[#0F1E36] truncate">Dr. Ananya Iyer</span>
+<span class="text-[11px] text-slate-500 truncate">Desk 4 • OPD Session</span>
+</div>
+</div>
+<button aria-label="More options" class="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-200/50 transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</div>
+</aside>
+<!-- MAIN APP WRAPPER (Offset by sidebar w-64) -->
+<div class="flex-1 ml-64 flex flex-col min-h-screen min-w-0">
+<!-- 2. PERSISTENT TOP APP BAR -->
+<header class="sticky top-0 z-30 h-16 bg-white/95 backdrop-blur border-b border-slate-200 px-8 flex items-center justify-between">
+<!-- Search Input with Keyboard Shortcut -->
+<div class="w-96 max-w-md relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[18px]">search</span>
+<input class="w-full h-10 pl-9 pr-12 rounded-xl bg-slate-50 border border-slate-200 text-sm text-[#0F1E36] placeholder-slate-400 focus:outline-none focus:border-[#0D6E6E] focus:ring-1 focus:ring-[#0D6E6E] transition-all" placeholder="Search patients, UHID, ABHA... ⌘K" type="text">
+<kbd class="absolute right-2.5 top-1/2 -translate-y-1/2 px-1.5 py-0.5 text-[10px] font-semibold text-slate-400 bg-white border border-slate-200 rounded shadow-2xs">⌘K</kbd>
+</div>
+<!-- Right Side Controls -->
+<div class="flex items-center gap-3">
+<!-- Language Selector Pill -->
+<button class="h-9 px-3 rounded-full bg-slate-50 border border-slate-200 text-slate-700 hover:bg-slate-100 text-xs font-semibold flex items-center gap-1.5 transition-colors" type="button">
+<span class="material-symbols-outlined text-[#0D6E6E] text-[16px]">language</span>
+<span>English (हिन्दी) ▼</span>
+</button>
+<!-- Notification Bell with Red Badge -->
+<button class="relative w-9 h-9 rounded-full bg-slate-50 border border-slate-200 text-slate-600 hover:bg-slate-100 flex items-center justify-center transition-colors" type="button">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+<span class="absolute top-1 right-1 w-2 h-2 rounded-full bg-red-500 ring-2 ring-white"></span>
+</button>
+<!-- Clinician Profile Avatar -->
+<button class="w-9 h-9 rounded-full bg-[#0D6E6E] text-white flex items-center justify-center font-bold text-xs ring-2 ring-[#E6F7F2] transition-transform hover:scale-105" type="button">
+          AI
+        </button>
+</div>
+</header>
+<!-- CONTENT AREA -->
+<main class="flex-1 p-8 max-w-6xl w-full mx-auto space-y-6">
+<!-- 3. BREADCRUMB & CLINICAL CONTEXT BAR -->
+<section class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+<div class="flex flex-wrap items-center gap-2 text-xs font-medium text-slate-500">
+<a class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer" href="../careflow_website_w08_health_questionnaire/code.html">
+<span class="material-symbols-outlined text-[15px] text-[#0D6E6E]">arrow_back</span>
+<span>Questionnaire <span class="text-slate-400 font-normal">(प्रश्नावली)</span></span>
+</a>
+<span class="text-slate-300">/</span>
+<span>Patients</span>
+<span class="text-slate-300">/</span>
+<span class="text-slate-700 font-semibold">Aarav Sharma</span>
+<span class="text-slate-300">/</span>
+<span class="text-[#0D6E6E] font-bold">Documents <span class="font-normal opacity-80">(दस्तावेज़)</span></span>
+</div>
+<div class="inline-flex items-center gap-2 self-start sm:self-auto px-3.5 py-1.5 rounded-full bg-[#E6F7F2] border border-[#0D6E6E]/20 text-[#006b5f] text-xs font-medium">
+<span class="relative flex h-2 w-2">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#0D6E6E] opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-[#0D6E6E]"></span>
+</span>
+<span class="font-bold text-[#0D6E6E]">ABHA Sync: Active</span>
+<span class="text-slate-300">•</span>
+<span class="font-mono text-slate-600">ABHA ID: 91-8472-3021-9920</span>
+</div>
+</section>
+<!-- 4. PAGE HEADER & PRIMARY ACTIONS -->
+<section class="w-full bg-white rounded-2xl p-6 border border-slate-200/80 shadow-xs flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+<div class="flex flex-col gap-2">
+<div class="flex items-center gap-2 flex-wrap">
+<span class="px-2.5 py-0.5 rounded-full bg-[#E6F7F2] text-[#0D6E6E] text-[11px] font-bold uppercase tracking-wider border border-[#0D6E6E]/20">
+              PATIENT DOCUMENTS • मरीज के दस्तावेज़
+            </span>
+<span class="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 text-xs font-medium">
+              ABDM Verified Vault
+            </span>
+</div>
+<div class="flex items-baseline gap-3 flex-wrap">
+<h1 class="text-2xl lg:text-3xl font-bold tracking-tight text-[#0F1E36]">Documents <span class="text-slate-500 font-normal text-xl lg:text-2xl">• दस्तावेज़</span></h1>
+<span class="text-xs font-mono font-semibold text-slate-500 bg-slate-50 px-2.5 py-1 rounded-md border border-slate-200">Ref: CF-1024 (28 Y / M)</span>
+</div>
+<p class="text-sm text-slate-600 max-w-2xl">
+            Review clinical diagnostics, automated OCR extractions, and prescriptions digitized during Aarav Sharma's self-intake session.
+          </p>
+</div>
+<div class="flex items-center gap-3 flex-wrap sm:flex-nowrap shrink-0">
+<button class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-full bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 transition-all text-xs font-semibold shadow-2xs" type="button">
+<span class="material-symbols-outlined text-[18px] text-slate-500">history</span>
+<span>Audit Log</span>
+</button>
+<button class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-[#0D6E6E] hover:bg-[#005454] text-white transition-all shadow-sm text-xs font-bold" type="button">
+<span class="material-symbols-outlined text-[18px]">add</span>
+<span>+ Upload document <span class="font-normal opacity-90">(दस्तावेज़ जोड़ें)</span></span>
+</button>
+</div>
+</section>
+<!-- 5. METRIC / OVERVIEW GRID (4 CARDS) -->
+<section class="grid grid-cols-2 md:grid-cols-4 gap-4">
+<!-- Total Documents -->
+<div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs flex flex-col justify-between hover:shadow-sm transition-shadow">
+<div class="flex items-center justify-between mb-3">
+<span class="text-slate-500 text-xs font-medium">Total documents</span>
+<div class="w-9 h-9 rounded-xl bg-slate-100 flex items-center justify-center text-[#0D6E6E]">
+<span class="material-symbols-outlined text-[20px]">folder_shared</span>
+</div>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="text-2xl font-bold text-[#0F1E36]">02</span>
+<span class="text-xs text-[#006b5f] font-semibold bg-[#E6F7F2] px-2 py-0.5 rounded-md">Synced</span>
+</div>
+<span class="text-xs text-slate-400 mt-1 font-medium">कुल दस्तावेज</span>
+</div>
+<!-- Processed -->
+<div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs flex flex-col justify-between hover:shadow-sm transition-shadow">
+<div class="flex items-center justify-between mb-3">
+<span class="text-slate-500 text-xs font-medium">Processed</span>
+<div class="w-9 h-9 rounded-xl bg-[#E6F7F2] flex items-center justify-center text-[#0D6E6E]">
+<span class="material-symbols-outlined text-[20px]">check_circle</span>
+</div>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="text-2xl font-bold text-[#0F1E36]">01</span>
+<span class="text-xs text-[#006b5f] font-semibold bg-[#E6F7F2] px-2 py-0.5 rounded-md">100% OCR</span>
+</div>
+<span class="text-xs text-slate-400 mt-1 font-medium">सफलतापूर्वक संसाधित</span>
+</div>
+<!-- Needs Review -->
+<div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs flex flex-col justify-between hover:shadow-sm transition-shadow">
+<div class="flex items-center justify-between mb-3">
+<span class="text-slate-500 text-xs font-medium">Needs review</span>
+<div class="w-9 h-9 rounded-xl bg-amber-50 flex items-center justify-center text-amber-700">
+<span class="material-symbols-outlined text-[20px]">pending_actions</span>
+</div>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="text-2xl font-bold text-[#0F1E36]">01</span>
+<span class="text-xs text-amber-800 font-semibold bg-amber-100 px-2 py-0.5 rounded-md">Pending Doctor</span>
+</div>
+<span class="text-xs text-slate-400 mt-1 font-medium">समीक्षा आवश्यक</span>
+</div>
+<!-- Total Pages -->
+<div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs flex flex-col justify-between hover:shadow-sm transition-shadow">
+<div class="flex items-center justify-between mb-3">
+<span class="text-slate-500 text-xs font-medium">Total Pages</span>
+<div class="w-9 h-9 rounded-xl bg-slate-100 flex items-center justify-center text-slate-600">
+<span class="material-symbols-outlined text-[20px]">description</span>
+</div>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="text-2xl font-bold text-[#0F1E36]">03</span>
+<span class="text-xs text-slate-500 font-medium">High res</span>
+</div>
+<span class="text-xs text-slate-400 mt-1 font-medium">कुल पृष्ठ संख्या</span>
+</div>
+</section>
+<!-- 6. FILTERS, SEARCH & FAST ACTIONS BAR -->
+<section class="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-xs flex flex-col md:flex-row items-center justify-between gap-4">
+<div class="flex items-center gap-3 w-full md:w-auto flex-1">
+<!-- Search Input -->
+<div class="relative flex-1 max-w-md">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[18px]">search</span>
+<input class="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 text-[#0F1E36] rounded-xl text-xs focus:outline-none focus:border-[#0D6E6E] focus:ring-1 focus:ring-[#0D6E6E] transition-all placeholder:text-slate-400" placeholder="Search by document name, test or tag... (दस्तावेज़ खोजें)" type="text">
+</div>
+<!-- Type Filter Pills -->
+<div class="hidden sm:flex items-center gap-1.5">
+<button class="px-3.5 py-1.5 rounded-full bg-[#0D6E6E] text-white text-xs font-semibold shadow-2xs" type="button">
+              All Types
+            </button>
+<button class="px-3.5 py-1.5 rounded-full bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-600 text-xs font-medium transition-colors" type="button">
+              Lab Reports (1)
+            </button>
+<button class="px-3.5 py-1.5 rounded-full bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-600 text-xs font-medium transition-colors" type="button">
+              Prescriptions (1)
+            </button>
+</div>
+</div>
+<!-- Right Sort & Clear -->
+<div class="flex items-center justify-between w-full md:w-auto gap-3 text-xs">
+<div class="flex items-center gap-2 text-slate-500">
+<span>Sort by:</span>
+<button class="flex items-center gap-1 text-[#0F1E36] font-semibold hover:text-[#0D6E6E]" type="button">
+<span>Recent Upload</span>
+<span class="material-symbols-outlined text-[16px]">expand_more</span>
+</button>
+</div>
+<button class="text-[#0D6E6E] hover:underline font-semibold ml-2" type="button">
+            Clear filters
+          </button>
+</div>
+</section>
+<!-- 7. ADD A DOCUMENT LIGHTWEIGHT CALLOUT CARD -->
+<section class="bg-gradient-to-r from-[#E6F7F2]/80 via-white to-white rounded-2xl p-5 border border-[#0D6E6E]/20 shadow-xs flex flex-col md:flex-row items-center justify-between gap-4">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-2xl bg-[#0D6E6E]/10 text-[#0D6E6E] flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[26px]">cloud_upload</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<h2 class="text-base font-bold text-[#0F1E36]">Add a document</h2>
+<span class="text-xs text-slate-500">दस्तावेज़ जोड़ें</span>
+</div>
+<p class="text-xs text-slate-600">
+              Upload a physical prescription, blood panel, or ultrasound report for automatic ABHA digitizing.
+            </p>
+</div>
+</div>
+<div class="flex items-center gap-2 w-full md:w-auto justify-end">
+<button class="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white border border-slate-300 text-[#0D6E6E] text-xs font-semibold hover:bg-[#E6F7F2]/50 transition-colors shadow-2xs" type="button">
+<span class="material-symbols-outlined text-[16px]">photo_camera</span>
+<span>Take Photo</span>
+</button>
+<button class="inline-flex items-center gap-1.5 px-5 py-2 rounded-full bg-[#0D6E6E] text-white text-xs font-bold hover:bg-[#005454] transition-all shadow-sm" type="button">
+<span class="material-symbols-outlined text-[16px]">upload_file</span>
+<span>Browse Files</span>
+</button>
+</div>
+</section>
+<!-- 8. PATIENT DOCUMENTS MAIN LIST -->
+<section class="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
+<!-- Header of Container -->
+<div class="px-6 py-4 bg-slate-50/70 border-b border-slate-100 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[#0D6E6E] text-[20px]">inventory_2</span>
+<h2 class="text-sm font-bold text-[#0F1E36]">Patient documents <span class="font-normal text-slate-500 text-xs">(मरीज के दस्तावेज़)</span></h2>
+</div>
+<span class="px-3 py-1 rounded-full bg-white border border-slate-200 text-slate-700 text-xs font-semibold shadow-2xs">
+            2 documents verified
+          </span>
+</div>
+<!-- Document Rows List -->
+<div class="p-6 flex flex-col gap-6">
+<!-- ITEM 1: Lab Report (Processed) -->
+<div class="p-5 rounded-2xl bg-slate-50/70 border border-slate-200/80 hover:bg-slate-50 transition-all duration-200 flex flex-col gap-4">
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+<!-- Thumbnail & Info -->
+<div class="flex items-start sm:items-center gap-4">
+<!-- Simulated paper thumbnail preview -->
+<div class="relative w-16 h-20 rounded-xl bg-white border border-slate-200 shadow-2xs p-1.5 flex flex-col justify-between shrink-0 overflow-hidden">
+<div class="flex items-center justify-between">
+<span class="text-[8px] font-bold text-[#0D6E6E] tracking-wider bg-[#E6F7F2] px-1 rounded">LAB</span>
+<span class="material-symbols-outlined text-[11px] text-slate-400">biotech</span>
+</div>
+<div class="space-y-1 my-auto">
+<div class="w-full h-1 bg-slate-200 rounded-full"></div>
+<div class="w-4/5 h-1 bg-slate-200 rounded-full"></div>
+<div class="w-2/3 h-1 bg-[#0D6E6E]/40 rounded-full"></div>
+<div class="w-3/4 h-1 bg-slate-200 rounded-full"></div>
+</div>
+<div class="flex items-center justify-between text-[7px] text-slate-500">
+<span>2p</span>
+<span class="text-[#006b5f] font-bold">✓</span>
+</div>
+<!-- Simulated corner fold -->
+<div class="absolute top-0 right-0 w-3 h-3 bg-slate-200 rounded-bl"></div>
+</div>
+<!-- Meta Title -->
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-2.5 flex-wrap">
+<h3 class="text-base font-bold text-[#0F1E36]">Lab Report — Aarav Sharma</h3>
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#E6F7F2] text-[#006b5f] text-xs font-semibold border border-[#0D6E6E]/20">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+<span>Processed</span>
+</span>
+<span class="px-2 py-0.5 rounded-md bg-slate-200/80 text-slate-700 text-[11px] font-medium">
+                      Digitized OCR
+                    </span>
+</div>
+<p class="text-xs text-slate-500">
+                    2 pages • Uploaded today • 09:24 AM IST • Captured via CareFlow Patient Mobile Assistant
+                  </p>
+</div>
+</div>
+<!-- Actions -->
+<div class="flex items-center gap-2.5 self-end lg:self-center">
+<button class="px-4 py-2 rounded-full bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 text-xs font-semibold transition-colors shadow-2xs cursor-pointer" type="button" onclick="CareFlow.showToast('Downloading Aarav_Sharma_Lab_Report.pdf...', 'success')">
+                  Download PDF
+                </button>
+<button class="px-5 py-2 rounded-full bg-[#0D6E6E] hover:bg-[#005454] text-white text-xs font-bold transition-colors shadow-xs inline-flex items-center gap-1.5 cursor-pointer" type="button" onclick="CareFlow.navigate(10)">
+<span>View</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- AI Extraction Summary Preview Box -->
+<div class="bg-white rounded-xl p-4 border border-slate-200/80 shadow-2xs">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[#006b5f] text-[18px]">auto_awesome</span>
+<span class="text-xs font-bold text-[#0F1E36]">Information Extracted (AI Auto-Digitized)</span>
+<span class="text-xs text-slate-500">• Complete Blood Count &amp; CRP</span>
+</div>
+<button class="inline-flex items-center gap-1 text-[#0D6E6E] hover:underline text-xs font-bold cursor-pointer" type="button" onclick="CareFlow.navigate(10)">
+<span>Review extraction</span>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+</button>
+</div>
+<div class="flex flex-wrap items-center gap-2">
+<div class="px-3 py-1.5 rounded-lg bg-slate-50 border border-slate-100 text-[#0F1E36] text-xs flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[#006b5f] text-[15px]">check</span>
+<span class="font-medium text-slate-500">Patient:</span>
+<span class="font-bold">Aarav Sharma</span>
+</div>
+<div class="px-3 py-1.5 rounded-lg bg-slate-50 border border-slate-100 text-[#0F1E36] text-xs flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[#006b5f] text-[15px]">calendar_today</span>
+<span class="font-medium text-slate-500">Specimen Date:</span>
+<span class="font-bold">07 Sep 2024</span>
+</div>
+<div class="px-3 py-1.5 rounded-lg bg-slate-50 border border-slate-100 text-[#0F1E36] text-xs flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[#006b5f] text-[15px]">vital_signs</span>
+<span class="font-medium text-slate-500">Hemoglobin:</span>
+<span class="font-bold">14.2 g/dL</span>
+</div>
+<div class="px-3 py-1.5 rounded-lg bg-slate-50 border border-slate-100 text-[#0F1E36] text-xs flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[#006b5f] text-[15px]">science</span>
+<span class="font-medium text-slate-500">WBC Count:</span>
+<span class="font-bold">9,400 /mcL</span>
+</div>
+<div class="px-3 py-1.5 rounded-lg bg-slate-50 border border-slate-100 text-[#0F1E36] text-xs flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[#006b5f] text-[15px]">bloodtype</span>
+<span class="font-medium text-slate-500">Platelets:</span>
+<span class="font-bold">210,000 /mcL</span>
+</div>
+</div>
+</div>
+</div>
+<!-- ITEM 2: Prescription (Needs Review) -->
+<div class="p-5 rounded-2xl bg-slate-50/70 border border-slate-200/80 hover:bg-slate-50 transition-all duration-200 flex flex-col gap-4">
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+<!-- Thumbnail & Info -->
+<div class="flex items-start sm:items-center gap-4">
+<!-- Simulated prescription thumbnail preview -->
+<div class="relative w-16 h-20 rounded-xl bg-white border border-slate-200 shadow-2xs p-1.5 flex flex-col justify-between shrink-0 overflow-hidden">
+<div class="flex items-center justify-between">
+<span class="text-[9px] font-bold text-slate-700">℞</span>
+<span class="material-symbols-outlined text-[12px] text-amber-600">priority_high</span>
+</div>
+<div class="space-y-1.5 my-auto">
+<div class="w-3/4 h-1 bg-slate-200 rounded-full"></div>
+<div class="w-full h-1 bg-amber-100 rounded-full"></div>
+<div class="w-1/2 h-1 bg-slate-200 rounded-full"></div>
+</div>
+<div class="flex items-center justify-between text-[7px] text-slate-500">
+<span>1p</span>
+<span class="text-amber-700 font-bold">!</span>
+</div>
+<div class="absolute top-0 right-0 w-3 h-3 bg-slate-200 rounded-bl"></div>
+</div>
+<!-- Meta Title -->
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-2.5 flex-wrap">
+<h3 class="text-base font-bold text-[#0F1E36]">Prescription — Aarav Sharma</h3>
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-300 text-xs font-semibold">
+<span class="material-symbols-outlined text-[14px] text-amber-700">warning</span>
+<span>Needs review</span>
+</span>
+<span class="px-2 py-0.5 rounded-md bg-slate-200/80 text-slate-700 text-[11px] font-medium">
+                      Camera Capture
+                    </span>
+</div>
+<p class="text-xs text-slate-500">
+                    1 page • Uploaded today • 09:26 AM IST • Physical paper slip capture
+                  </p>
+</div>
+</div>
+<!-- Actions -->
+<div class="flex items-center gap-2.5 self-end lg:self-center">
+<button class="px-4 py-2 rounded-full bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 text-xs font-semibold transition-colors shadow-2xs cursor-pointer" type="button" onclick="CareFlow.navigate(10)">
+                  Inspect Image
+                </button>
+<button class="px-5 py-2 rounded-full bg-[#E6F7F2] hover:bg-[#D1F2E8] text-[#006b5f] border border-[#0D6E6E]/20 text-xs font-bold transition-colors shadow-2xs inline-flex items-center gap-1.5 cursor-pointer" type="button" onclick="CareFlow.navigate(10)">
+<span>Review document</span>
+<span class="material-symbols-outlined text-[16px]">draw</span>
+</button>
+</div>
+</div>
+<!-- Warning Callout Box for Clinician Attention -->
+<div class="bg-[#FEF3C7]/60 border border-[#F59E0B]/40 rounded-xl p-4 shadow-2xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+<div class="flex items-start gap-3">
+<div class="w-8 h-8 rounded-lg bg-amber-200/80 text-amber-900 flex items-center justify-center shrink-0 mt-0.5 sm:mt-0">
+<span class="material-symbols-outlined text-[18px]">info</span>
+</div>
+<div>
+<p class="text-xs font-bold text-[#0F1E36]">
+                    Clinical confirmation required for handwriting ambiguity
+                  </p>
+<p class="text-xs text-slate-600 mt-0.5">
+                    Dosage schedule for Paracetamol 650mg &amp; Cetirizine shows cursive compression. Please confirm tablet frequency (TDS vs BD).
+                  </p>
+</div>
+</div>
+<button class="inline-flex items-center gap-1 px-3.5 py-1.5 rounded-lg bg-white border border-amber-300 text-amber-900 text-xs font-bold shadow-2xs hover:bg-amber-50 transition-colors shrink-0 cursor-pointer" type="button" onclick="CareFlow.navigate(10)">
+<span>Verify Rx</span>
+<span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- 9. BOTTOM REGULATORY & ENCRYPTION STRIP -->
+<footer class="w-full py-3.5 px-5 rounded-2xl bg-white border border-slate-200/80 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-[#0D6E6E]">verified_user</span>
+<span class="font-bold text-[#0F1E36]">Patient documents are protected</span>
+<span>• मरीज के दस्तावेज़ सुरक्षित हैं</span>
+</div>
+<div class="flex items-center gap-3 text-slate-500 flex-wrap justify-center">
+<span>ABDM M1/M2/M3 Compliant</span>
+<span class="text-slate-300">•</span>
+<span>256-bit AES Vault</span>
+<span class="text-slate-300">•</span>
+<span class="text-[#006b5f] font-semibold">HIPAA &amp; DISHA Standard</span>
+</div>
+</footer>
+</main>
+</div>
+</body></html>

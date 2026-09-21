@@ -1,6 +1,15 @@
 import { randomUUID } from "node:crypto";
 import { z } from "zod";
 import { buildAllergyIntolerance } from "./allergy-intolerance";
+import {
+  AYURVEDA_SECTION_ORDER,
+  AYURVEDA_SECTION_TITLES,
+  type AyurvedaBundleInput,
+  ICD11_MAPPING_UNREVIEWED_TAG,
+  ICD11_MMS_SYSTEM,
+  NAMASTE_SYSTEM,
+  buildAyurvedaObservation,
+} from "./ayurveda";
 import { buildComposition, type CompositionSection } from "./composition";
 import { CodingSchema, urnReference } from "./common";
 import type { Coding } from "./common";
@@ -52,6 +61,10 @@ export interface OPConsultRecordInput {
   allergies?: { displayText: string }[];
   medications?: { displayText: string }[];
   documents?: { url: string; contentType?: string; docTypeText?: string }[];
+  /** The Ayurvedic case record — Prashna answers, the Vaidya's examination findings and the
+   * diagnoses the Vaidya picked. Omitted for a visit with none, so a non-AYUSH bundle is
+   * byte-for-byte what it was before. */
+  ayurveda?: AyurvedaBundleInput;
   signedAt: string;
 }
 
@@ -116,12 +129,48 @@ export function buildOPConsultRecordBundle(input: OPConsultRecordInput): Documen
     }),
   );
 
+  const ayurvedaObservations = (input.ayurveda?.observations ?? []).map((o) => ({
+    section: o.section,
+    resource: buildAyurvedaObservation({
+      ...o,
+      id: randomUUID(),
+      patientRef,
+      encounterRef,
+      effectiveDateTime: input.encounterPeriodStart,
+    }),
+  }));
+  const ayurvedaDiagnoses = (input.ayurveda?.diagnoses ?? []).map((d) =>
+    buildCondition({
+      id: randomUUID(),
+      displayText: d.displayText,
+      codings: [
+        { system: NAMASTE_SYSTEM, code: d.namaste.code, display: d.namaste.display },
+        ...(d.icd11 ? [{ system: ICD11_MMS_SYSTEM, code: d.icd11.code, display: d.icd11.display }] : []),
+      ],
+      tags: d.icd11 && !d.mappingReviewed ? [ICD11_MAPPING_UNREVIEWED_TAG] : undefined,
+      patientRef,
+      encounterRef,
+      recordedDate: input.encounterPeriodStart,
+    }),
+  );
+  const ayurvedaSections: CompositionSection[] =
+    ayurvedaObservations.length + ayurvedaDiagnoses.length === 0
+      ? []
+      : AYURVEDA_SECTION_ORDER.map((sectionId) => ({
+          title: AYURVEDA_SECTION_TITLES[sectionId],
+          entryRefs: [
+            ...ayurvedaObservations.filter((o) => o.section === sectionId).map((o) => urnReference(o.resource.id)),
+            ...(sectionId === "vyadhi_vinishchaya" ? ayurvedaDiagnoses.map((c) => urnReference(c.id)) : []),
+          ],
+        })).filter((s) => s.entryRefs.length > 0);
+
   const sections: CompositionSection[] = [
     { title: "Chief Complaint", entryRefs: condition ? [urnReference(condition.id)] : [] },
     { title: "History of Present Illness", entryRefs: observations.map((o) => urnReference(o.id)) },
     { title: "Allergies", entryRefs: allergies.map((a) => urnReference(a.id)) },
     { title: "Medications", entryRefs: medications.map((m) => urnReference(m.id)) },
     { title: "Documents", entryRefs: documents.map((d) => urnReference(d.id)) },
+    ...ayurvedaSections,
   ];
 
   const composition = buildComposition({
@@ -147,6 +196,8 @@ export function buildOPConsultRecordBundle(input: OPConsultRecordInput): Documen
       entry(encounter),
       ...(condition ? [entry(condition)] : []),
       ...observations.map(entry),
+      ...ayurvedaObservations.map((o) => entry(o.resource)),
+      ...ayurvedaDiagnoses.map(entry),
       ...allergies.map(entry),
       ...medications.map(entry),
       ...documents.map(entry),

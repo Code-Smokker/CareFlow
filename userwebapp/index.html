@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full w-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>CareFlow — Clinical Intake & ABDM Triage</title>
+  
+  <!-- Fonts Preload & Fallbacks -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Local WOFF2 Font Preload -->
+  <link rel="preload" href="./material-symbols-outlined.woff2" as="font" type="font/woff2" crossorigin>
+  
+  <style>
+    @font-face {
+      font-family: 'Material Symbols Outlined';
+      font-style: normal;
+      font-weight: 100 700;
+      font-display: block;
+      src: url('./material-symbols-outlined.woff2') format('woff2'),
+           url('/material-symbols-outlined.woff2') format('woff2'),
+           url('https://fonts.gstatic.com/s/materialsymbolsoutlined/v373/kJEhBvYX7BgnkSrUwT8OhrdQw4oELdPIeeII9v6oFsLjBuVY.woff2') format('woff2');
+    }
+    .material-symbols-outlined {
+      font-family: 'Material Symbols Outlined' !important;
+      font-weight: normal;
+      font-style: normal;
+      font-size: 24px;
+      line-height: 1;
+      letter-spacing: normal;
+      text-transform: none;
+      display: inline-block;
+      white-space: nowrap;
+      word-wrap: normal;
+      direction: ltr;
+      -webkit-font-feature-settings: 'liga';
+      -moz-font-feature-settings: 'liga';
+      font-feature-settings: 'liga';
+      -webkit-font-smoothing: antialiased;
+      vertical-align: middle;
+    }
+
+    html, body {
+      width: 100% !important;
+      height: 100% !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      background-color: #FAF8FF !important;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      overflow: hidden;
+    }
+
+    #app-frame {
+      width: 100% !important;
+      height: 100% !important;
+      min-height: 100vh !important;
+      border: 0 !important;
+      display: block;
+      margin: 0 !important;
+      padding: 0 !important;
+      background-color: #FAF8FF;
+    }
+
+    /* Transient notification badge */
+    #screenToast {
+      transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+  </style>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="shared_careflow.js"></script>
+</head>
+<body class="w-full h-full min-h-screen bg-[#FAF8FF] overflow-hidden select-none text-slate-800 m-0 p-0">
+
+  <!-- FULLSCREEN RESPONSIVE APPLICATION (Edge-to-Edge Website on Desktop, Native Mobile on Phones) -->
+  <iframe 
+    id="app-frame" 
+    src="careflow_mobile_splash_screen/code.html" 
+    class="w-full h-full min-h-screen border-0 bg-[#FAF8FF]" 
+    title="CareFlow Healthcare Platform"
+    allow="camera; microphone; geolocation"
+  ></iframe>
+
+  <!-- Sleek Minimal Toast Indicator (Briefly appears when using keyboard shortcuts [ and ]) -->
+  <div id="screenToast" class="fixed top-5 inset-x-0 mx-auto w-max max-w-sm px-4 py-2 rounded-full bg-slate-900/90 text-white text-xs font-semibold backdrop-blur-md shadow-xl pointer-events-none opacity-0 translate-y-[-12px] z-50 flex items-center gap-2">
+    <span class="w-2 h-2 rounded-full bg-teal-400 animate-pulse"></span>
+    <span id="screenToastText">Screen 01: Welcome</span>
+  </div>
+
+  <script>
+    (function() {
+      // 25 Screen Flow Manifest
+      const SCREENS = [
+        { num: 1, id: 'splash', title: 'Mobile Splash Screen', titleHi: 'प्रारंभिक स्क्रीन', path: 'careflow_mobile_splash_screen/code.html' },
+        { num: 2, id: 'language', title: 'Language Selection', titleHi: 'भाषा चयन', path: 'careflow_language_selection/code.html' },
+        { num: 3, id: 'attendant', title: 'Attendant Mode Standardized', titleHi: 'सहायक मोड', path: 'careflow_attendant_mode_standardized/code.html' },
+        { num: 4, id: 'qr_welcome', title: 'QR Welcome Landing', titleHi: 'क्यूआर स्वागत पृष्ठ', path: 'careflow_qr_welcome_landing/code.html' },
+        { num: 5, id: 'consent', title: 'Patient Consent', titleHi: 'रोगी सहमति', path: 'careflow_patient_consent/code.html' },
+        { num: 6, id: 'new_patient', title: 'New Patient Identity', titleHi: 'नया रोगी पंजीकरण', path: 'careflow_new_patient_identity/code.html' },
+        { num: 7, id: 'abha_qr', title: 'ABHA QR Identity', titleHi: 'आभा क्यूआर सत्यापन', path: 'careflow_abha_qr_identity/code.html' },
+        { num: 8, id: 'abha_otp', title: 'ABHA OTP Verification', titleHi: 'आभा ओटीपी सत्यापन', path: 'careflow_abha_otp_identity/code.html' },
+        { num: 9, id: 'chief_complaint', title: 'Chief Complaint Standardized', titleHi: 'मुख्य समस्या (आवाज़)', path: 'careflow_chief_complaint_standardized/code.html' },
+        { num: 10, id: 'voice_fallback', title: 'Voice Fallback & Manual', titleHi: 'वॉयस बैकअप / टाइपिंग', path: 'careflow_voice_fallback/code.html' },
+        { num: 11, id: 'q09_onset', title: 'Question 09: Symptom Onset', titleHi: 'प्रश्न 09: शुरुआत कब हुई', path: 'careflow_question_09_single_choice/code.html' },
+        { num: 12, id: 'q10_multiselect', title: 'Question 10: Multi-Select Symptoms', titleHi: 'प्रश्न 10: अन्य लक्षण', path: 'careflow_question_10_multi_select_standardized/code.html' },
+        { num: 13, id: 'q11_bodymap', title: 'Question 11: Interactive Body Map', titleHi: 'प्रश्न 11: दर्द का स्थान', path: 'careflow_question_11_body_map/code.html' },
+        { num: 14, id: 'q12_painscale', title: 'Question 12: Wong-Baker Pain Scale', titleHi: 'प्रश्न 12: दर्द की तीव्रता', path: 'careflow_question_12_face_scale_pain_severity/code.html' },
+        { num: 15, id: 'q13_duration', title: 'Question 13: Duration & Progression', titleHi: 'प्रश्न 13: अवधि और तीव्रता', path: 'careflow_question_13_duration/code.html' },
+        { num: 16, id: 'read_back', title: 'Read-Back Summary', titleHi: 'पठन सारांश', path: 'careflow_read_back_summary/code.html' },
+        { num: 17, id: 'doc_capture', title: 'Document Camera Capture', titleHi: 'दस्तावेज़ कैप्चर', path: 'careflow_document_capture/code.html' },
+        { num: 18, id: 'doc_tray', title: 'Document Tray Processing', titleHi: 'दस्तावेज़ विश्लेषण ट्रे', path: 'careflow_document_tray_processing/code.html' },
+        { num: 19, id: 'doc_review', title: 'Document Review & Extraction', titleHi: 'दस्तावेज़ समीक्षा', path: 'careflow_document_review_extraction/code.html' },
+        { num: 20, id: 'health_summary', title: 'Your Care Summary', titleHi: 'स्वास्थ्य सारांश', path: 'careflow_health_summary/code.html' },
+        { num: 21, id: 'ayush_dashavidha', title: 'AYUSH Dashavidha Pariksha', titleHi: 'दशविध परीक्षा', path: 'careflow_ayush_dashavidha_pariksha/code.html' },
+        { num: 22, id: 'handoff_1', title: 'Care Team Handoff Consent', titleHi: 'केयर टीम को साझा करना', path: 'careflow_care_team_handoff_1/code.html' },
+        { num: 23, id: 'handoff_2', title: 'Clinical Destination Handoff', titleHi: 'क्लिनिकल टीम हैंडऑफ', path: 'careflow_care_team_handoff_2/code.html' },
+        { num: 24, id: 'session_complete', title: 'Session Complete & Queue Token', titleHi: 'सत्र संपन्न • टोकन पर्ची', path: 'careflow_session_complete/code.html' },
+        { num: 25, id: 'red_flag', title: 'Clinical Red Flag Alert', titleHi: 'गंभीर चेतावनी (रेड फ्लैग)', path: 'careflow_red_flag_instruction/code.html' }
+      ];
+
+      const frame = document.getElementById('app-frame');
+      const toastEl = document.getElementById('screenToast');
+      const toastTextEl = document.getElementById('screenToastText');
+      let currentScreenIndex = 0;
+      let toastTimeout = null;
+
+      function showToast(msg) {
+        if (!toastEl) return;
+        toastTextEl.textContent = msg;
+        toastEl.classList.remove('opacity-0', 'translate-y-[-12px]');
+        toastEl.classList.add('opacity-100', 'translate-y-0');
+        clearTimeout(toastTimeout);
+        toastTimeout = setTimeout(() => {
+          toastEl.classList.remove('opacity-100', 'translate-y-0');
+          toastEl.classList.add('opacity-0', 'translate-y-[-12px]');
+        }, 1400);
+      }
+
+      function loadScreenByNum(num, showIndicator = false) {
+        const target = SCREENS.find(s => s.num === num);
+        if (!target) return;
+        currentScreenIndex = target.num - 1;
+        frame.src = target.path;
+
+        // Sync URL query param
+        try {
+          const u = new URL(window.location);
+          u.searchParams.set('screen', target.num);
+          window.history.replaceState({}, '', u);
+        } catch(e) {}
+
+        if (showIndicator) {
+          showToast(`Screen ${String(target.num).padStart(2, '0')}/25: ${target.title}`);
+        }
+      }
+
+      // Check URL search parameters on first load
+      const urlParams = new URLSearchParams(window.location.search);
+      const initialScreenParam = urlParams.get('screen');
+      if (initialScreenParam) {
+        const num = parseInt(initialScreenParam, 10);
+        if (num >= 1 && num <= SCREENS.length) {
+          loadScreenByNum(num);
+        } else {
+          // Check by id
+          const byId = SCREENS.find(s => s.id === initialScreenParam);
+          if (byId) loadScreenByNum(byId.num);
+        }
+      }
+
+      // Track iframe navigations to keep URL and index synced
+      frame.addEventListener('load', () => {
+        try {
+          const framePath = frame.contentWindow.location.pathname;
+          const matching = SCREENS.find(s => framePath.includes(s.path.split('/')[0]));
+          if (matching) {
+            currentScreenIndex = matching.num - 1;
+            const u = new URL(window.location);
+            u.searchParams.set('screen', matching.num);
+            window.history.replaceState({}, '', u);
+          }
+        } catch(e) {}
+      });
+
+      // Keyboard navigation shortcuts for developers & reviewers: [ and ] or Left/Right arrows
+      window.addEventListener('keydown', (e) => {
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+        if (e.key === '[' || e.key === 'ArrowLeft') {
+          if (currentScreenIndex > 0) {
+            loadScreenByNum(SCREENS[currentScreenIndex - 1].num, true);
+          }
+        } else if (e.key === ']' || e.key === 'ArrowRight') {
+          if (currentScreenIndex < SCREENS.length - 1) {
+            loadScreenByNum(SCREENS[currentScreenIndex + 1].num, true);
+          }
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

@@ -5,6 +5,7 @@ import { ConfigService } from "@nestjs/config";
 import type { RedFlag, Summary, VisitPriority } from "@prisma/client";
 import QRCode from "qrcode";
 import { ABDM_CLIENT } from "../abdm/abdm.tokens";
+import { AyurvedaService } from "../ayurveda/ayurveda.service";
 import type { AbdmClient } from "../abdm/abdm-client.interface";
 import type { SummaryLeaf, SummariseStructured } from "../ai/ai-service.client";
 import { AppException } from "../common/app-exception";
@@ -104,6 +105,7 @@ export class VisitsService {
     @Inject(ABDM_CLIENT) private readonly abdm: AbdmClient,
     private readonly terminology: TerminologyServiceClient,
     private readonly hisAdapter: HisAdapterService,
+    private readonly ayurveda: AyurvedaService,
   ) {}
 
   /** NAMASTE + ICD-11 TM2/MMS codings for the chief complaint, docs/07-ayush-terminology.md's
@@ -189,6 +191,11 @@ export class VisitsService {
     // (src/common/crypto.ts) — always null today (no identity flow exists yet, ADR 0007), so
     // there's nothing to decrypt in practice. Whoever wires real identity into /sign needs to
     // decrypt here first, not pass ciphertext into a FHIR Patient.name.
+    // The Ayurvedic case record — Prashna answers, the Vaidya's findings (NAMASTE codes where they
+    // exist, PLACEHOLDER-flagged where unverified) and the diagnoses the Vaidya picked. Undefined
+    // for a visit with none, which leaves a general-OPD bundle exactly as it was.
+    const ayurveda = await this.ayurveda.getBundleInput(visitId);
+
     const bundle = buildOPConsultRecordBundle({
       patient: { id: patient.id, name: patient.name, abhaNumber: patient.abhaNumber },
       practitionerName: signedBy,
@@ -200,6 +207,7 @@ export class VisitsService {
         label: leaf.label,
         value: toObservationValue(leaf.value),
       })),
+      ayurveda,
       signedAt: new Date().toISOString(),
     });
 
@@ -366,11 +374,18 @@ export class VisitsService {
     const rows = fields
       .map((f) => `<tr><td>${escapeHtml(f.field_path)}</td><td>${escapeHtml(String(f.value))}</td></tr>`)
       .join("\n");
+    const ayurvedaHtml = renderAyurvedicCaseSheet(
+      await this.ayurveda.getSummarySections(visitId),
+      this.ayurveda.getVocabulary().status,
+    );
 
     return `<!doctype html>
 <html><head><meta charset="utf-8"><title>CareFlow OP Consult Summary</title>
 <style>body{font-family:sans-serif;margin:2rem}table{border-collapse:collapse;width:100%}
-td{border:1px solid #ccc;padding:6px 10px}.qr{float:right}</style></head>
+td,th{border:1px solid #ccc;padding:6px 10px;text-align:left;vertical-align:top}th{background:#f3f3f3}.qr{float:right}
+h2{margin:1.6rem 0 .2rem}h3{margin:1rem 0 .3rem;font-size:1rem}.gloss{color:#555;font-size:.85em}.prov{white-space:nowrap;font-size:.85em}
+.note{font-size:.85em;color:#333}.review{border:1px solid #b45309;background:#fffbeb;padding:6px 10px;font-size:.85em}
+@media print{body{margin:1cm}h2{break-after:avoid}tr{break-inside:avoid}}</style></head>
 <body>
 <img class="qr" src="${qrDataUrl}" width="140" height="140" alt="QR code linking to the digital record">
 <h1>CareFlow OP Consult Summary</h1>
@@ -378,6 +393,7 @@ td{border:1px solid #ccc;padding:6px 10px}.qr{float:right}</style></head>
 <table><tbody>
 ${rows}
 </tbody></table>
+${ayurvedaHtml}
 <p><small>Scan the QR code for this patient's full digital record. CareFlow does not diagnose —
 this is a structured history draft the physician has signed.</small></p>
 </body></html>`;
@@ -398,6 +414,7 @@ this is a structured history draft the physician has signed.</small></p>
       session_id: session?.id ?? null,
       fields: flattenStructured(summary.structured as unknown as SummariseStructured),
       signed: summary.status === "signed",
+      ayurveda_sections: await this.ayurveda.getSummarySections(visitId),
       // Derived live from red_flag on every request — never a separate stamped flag that
       // could drift out of sync with it. A non-empty array is the clinician console's cue to
       // open on the red banner (docs/05-interview-engine.md).
@@ -445,4 +462,59 @@ function setLeafAtPath(root: unknown, fieldPath: string, mutate: (leaf: SummaryL
   if (leaf == null || typeof leaf !== "object") return false;
   mutate(leaf as SummaryLeaf);
   return true;
+}
+
+interface AyurvedicSectionView {
+  id: string;
+  label: string;
+  gloss: string;
+  rows: {
+    group: string | null;
+    label: string;
+    gloss: string;
+    value_label: string;
+    source: string;
+    confidence: number | null;
+    disposition: string | null;
+    original: { value_label: string; source: string; confidence: number } | null;
+    recorded_by: string | null;
+  }[];
+}
+
+/** The A4 print view of the Ayurvedic case sheet — the same rows the console summary shows, from
+ * the same AyurvedaService call, so what prints is what was reviewed. Provenance is printed on
+ * every row, and a Vaidya override prints the patient's original beside it (both stay visible). */
+function renderAyurvedicCaseSheet(sections: AyurvedicSectionView[], vocabularyStatus: string): string {
+  if (sections.length === 0) return "";
+  const provenance = (r: AyurvedicSectionView["rows"][number]) => {
+    if (r.source === "computed") return "Computed";
+    if (r.source === "clinician") return `Vaidya${r.recorded_by ? ` (${r.recorded_by})` : ""}`;
+    return `Patient · ${r.source}${r.confidence === null ? "" : ` · ${Math.round(r.confidence * 100)}%`}`;
+  };
+  const body = sections
+    .map((section) => {
+      let lastGroup: string | null | undefined;
+      const rows = section.rows
+        .map((r) => {
+          const heading =
+            r.group !== lastGroup && r.group
+              ? `<tr><th colspan="3">${escapeHtml(r.group)}</th></tr>`
+              : "";
+          lastGroup = r.group;
+          const note = r.original
+            ? `<div class="note">${r.disposition === "confirmed" ? "Confirms" : "Overrides"} patient-reported: ${escapeHtml(r.original.value_label)} (${escapeHtml(r.original.source)} · ${Math.round(r.original.confidence * 100)}%)</div>`
+            : "";
+          return `${heading}<tr><td>${escapeHtml(r.label)}${r.gloss ? `<div class="gloss">${escapeHtml(r.gloss)}</div>` : ""}</td><td>${escapeHtml(r.value_label)}${note}</td><td class="prov">${escapeHtml(provenance(r))}</td></tr>`;
+        })
+        .join("\n");
+      return `<h2>${escapeHtml(section.label)} <span class="gloss">${escapeHtml(section.gloss)}</span></h2>
+<table><tbody>${rows || `<tr><td colspan="3" class="gloss">Not recorded.</td></tr>`}</tbody></table>`;
+    })
+    .join("\n");
+  const review =
+    vocabularyStatus === "VERIFIED"
+      ? ""
+      : `<p class="review">Vocabulary status: <b>${escapeHtml(vocabularyStatus)}</b> — the Sanskrit terms, option lists and age cut-offs in this case sheet have not yet been verified by an Ayurveda practitioner.</p>`;
+  return `<h1 style="margin-top:2rem">Ayurvediya Rugna Pariksha <span class="gloss">Ayurvedic Case Record</span></h1>${review}
+${body}`;
 }

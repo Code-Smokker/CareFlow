@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CareFlow Patient Web — P17 Messages &amp; Care Team</title>
+<!-- Tailwind CSS v3 CDN with Forms and Container Plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              teal: '#0D6E6E',
+              'teal-hover': '#0A5858',
+              'teal-dark': '#064444',
+              mint: '#E6F7F2',
+              'mint-light': '#F2FAF7',
+              'mint-border': '#BCE7DB'
+            },
+            surface: {
+              canvas: '#F8FAFC',
+              card: '#FFFFFF',
+              border: '#E2E8F0',
+              muted: '#F1F5F9'
+            },
+            navy: {
+              900: '#0F172A',
+              800: '#1E293B',
+              700: '#334155',
+              600: '#475569',
+              500: '#64748B'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Shared CareFlow Universal Navigation & Utilities -->
+<script src="../shared_nav.js"></script>
+<style data-purpose="custom-layout">
+    body {
+      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      color: #0F172A;
+      background-color: #F8FAFC;
+    }
+    /* Custom scrollbar for message thread */
+    .chat-scroll::-webkit-scrollbar {
+      width: 6px;
+    }
+    .chat-scroll::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .chat-scroll::-webkit-scrollbar-thumb {
+      background: #CBD5E1;
+      border-radius: 9999px;
+    }
+    .chat-scroll::-webkit-scrollbar-thumb:hover {
+      background: #94A3B8;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col bg-[#F8FAFC] antialiased selection:bg-brand-mint selection:text-brand-teal">
+<!-- BEGIN: TopNavigation -->
+<header class="sticky top-0 z-40 bg-white border-b border-[#E2E8F0] shadow-sm">
+<div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex items-center justify-between h-20">
+<!-- Left: Brand identity -->
+<div class="flex items-center space-x-8">
+<a href="../careflow_patient_web_p03_patient_dashboard/code.html" class="flex items-center space-x-3 cursor-pointer">
+<!-- Brand Icon -->
+<div class="w-10 h-10 rounded-xl bg-brand-teal flex items-center justify-center text-white shadow-sm shadow-brand-teal/20">
+<svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.2" viewbox="0 0 24 24">
+<path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+<!-- Wordmark & Subtitle -->
+<div class="flex flex-col">
+<div class="flex items-center space-x-2">
+<span class="text-xl font-bold tracking-tight text-navy-900">CareFlow</span>
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-brand-mint text-brand-teal border border-brand-mint-border">
+                  Patient Portal
+                </span>
+</div>
+<span class="text-[11px] font-semibold tracking-wider text-navy-500 uppercase">
+                PATIENT CARE • मरीज पोर्टल
+              </span>
+</div>
+</a>
+<!-- Main Desktop Navigation -->
+<nav aria-label="Main Navigation" class="hidden lg:flex items-center space-x-1">
+<a class="px-3.5 py-2 rounded-lg text-sm font-medium text-navy-600 hover:text-navy-900 hover:bg-slate-50 transition-colors" href="../careflow_patient_web_p03_patient_dashboard/code.html">
+              Home <span class="text-xs text-navy-500 font-normal">(गृह)</span>
+</a>
+<a class="px-3.5 py-2 rounded-lg text-sm font-medium text-navy-600 hover:text-navy-900 hover:bg-slate-50 transition-colors" href="../careflow_patient_web_p05_my_health_overview/code.html">
+              My Health <span class="text-xs text-navy-500 font-normal">(स्वास्थ्य)</span>
+</a>
+<a class="px-3.5 py-2 rounded-lg text-sm font-medium text-navy-600 hover:text-navy-900 hover:bg-slate-50 transition-colors" href="../careflow_patient_web_p11_my_appointments/code.html">
+              Appointments <span class="text-xs text-navy-500 font-normal">(अपॉइंटमेंट)</span>
+</a>
+<a class="px-3.5 py-2 rounded-lg text-sm font-medium text-navy-600 hover:text-navy-900 hover:bg-slate-50 transition-colors" href="../careflow_patient_web_p08_my_documents/code.html">
+              Documents <span class="text-xs text-navy-500 font-normal">(दस्तावेज़)</span>
+</a>
+<a class="px-3.5 py-2 rounded-lg text-sm font-medium text-navy-600 hover:text-navy-900 hover:bg-slate-50 transition-colors" href="../careflow_patient_web_p09_my_care_summary/code.html">
+              Care Summary <span class="text-xs text-navy-500 font-normal">(सारांश)</span>
+</a>
+<!-- Active Messages Link -->
+<a aria-current="page" class="relative px-3.5 py-2 rounded-lg text-sm font-semibold bg-brand-mint text-brand-teal border border-brand-mint-border/80 flex items-center space-x-1.5 shadow-sm" href="../careflow_patient_web_p17_messages_care_team/code.html">
+<span class="w-2 h-2 rounded-full bg-brand-teal"></span>
+<span>Messages <span class="text-xs font-normal opacity-90">(संदेश)</span></span>
+</a>
+</nav>
+</div>
+<!-- Right: Language toggle, notifications, and user profile -->
+<div class="flex items-center space-x-3 sm:space-x-4">
+<!-- Language Toggle Pill -->
+<div class="hidden sm:inline-flex items-center px-3 py-1.5 rounded-full border border-slate-200 bg-slate-50 text-xs font-medium text-navy-700">
+<span class="font-semibold text-brand-teal">English</span>
+<span class="mx-1.5 text-slate-300">|</span>
+<span class="text-navy-500 hover:text-navy-800 cursor-pointer">हिन्दी</span>
+</div>
+<!-- Notification Bell -->
+<a href="../careflow_patient_web_p16_notifications/code.html" aria-label="Notifications" class="relative p-2 rounded-full text-navy-600 hover:text-navy-900 hover:bg-slate-100 transition-colors focus:outline-none focus:ring-2 focus:ring-brand-teal/20">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewbox="0 0 24 24">
+<path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-emerald-500 ring-2 ring-white"></span>
+</a>
+<!-- User Profile Dropdown Pill -->
+<a href="../careflow_patient_web_p04_my_profile/code.html" class="flex items-center space-x-3 pl-2 py-1 pr-3 rounded-full border border-slate-200 bg-white hover:border-slate-300 transition-colors cursor-pointer shadow-xs">
+<div class="relative">
+<div class="w-8 h-8 rounded-full bg-brand-teal text-white flex items-center justify-center text-xs font-bold ring-2 ring-brand-mint">
+                AS
+              </div>
+<span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-white"></span>
+</div>
+<div class="text-left hidden md:block leading-tight">
+<div class="text-xs font-bold text-navy-900">Aarav Sharma</div>
+<div class="text-[10px] text-navy-500 font-mono tracking-tight">ABHA: 91-8472-3021-9920</div>
+</div>
+<svg class="w-4 h-4 text-slate-400 ml-1" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</a>
+</div>
+</div>
+</div>
+</header>
+<!-- END: TopNavigation -->
+<!-- BEGIN: MainContent -->
+<main class="flex-1 max-w-[1440px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col space-y-5">
+<!-- BEGIN: ContextHeader -->
+<section aria-label="Page Header" class="space-y-2.5">
+<!-- Back Navigation & Security Pill -->
+<div class="flex flex-wrap items-center justify-between gap-2">
+<a class="inline-flex items-center text-xs font-semibold text-brand-teal hover:text-brand-teal-hover transition-colors" href="../careflow_patient_web_p03_patient_dashboard/code.html">
+<svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<path d="M10 19l-7-7m0 0l7-7m-7 7h18" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<span>Back • वापस</span>
+</a>
+<div class="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200/70 text-[11px] font-medium text-emerald-800">
+<svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<span>ABDM Encrypted Messaging • 256-bit AES Vault</span>
+</div>
+</div>
+<!-- Title & Subtitle -->
+<div>
+<span class="text-xs font-bold tracking-wider text-brand-teal uppercase">CARE TEAM • केयर टीम</span>
+<h1 class="text-2xl sm:text-3xl font-extrabold text-navy-900 tracking-tight mt-0.5">
+          Messages • <span class="font-normal text-navy-700">संदेश</span>
+</h1>
+<p class="text-xs sm:text-sm text-navy-500 mt-1">
+          Connect with your care team when you need help with your care. • अपनी देखभाल से जुड़ी सहायता के लिए अपनी केयर टीम से जुड़ें।
+        </p>
+</div>
+<!-- Safety & Triage Notice Banner -->
+<div class="rounded-xl border border-amber-200/80 bg-amber-50/70 p-3 sm:px-4 sm:py-3 flex items-start space-x-3 text-xs text-amber-900">
+<svg class="w-4 h-4 text-amber-700 mt-0.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<div class="leading-relaxed">
+<span class="font-semibold text-amber-950">Notice:</span> Messages are monitored during clinic hours (Mon–Sat 8:00 AM – 8:00 PM). For acute chest pain, breathlessness, or immediate emergencies, call <span class="font-bold underline text-amber-950">112</span> or visit the nearest emergency facility.
+          <span class="block text-[11px] text-amber-800/90 mt-0.5">सूचना: आपातकालीन स्थिति में तुरंत 112 पर संपर्क करें या नजदीकी आपातकालीन केंद्र जाएं।</span>
+</div>
+</div>
+</section>
+<!-- END: ContextHeader -->
+<!-- BEGIN: DualPaneMessagingContainer -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-5 flex-1 items-start min-h-[660px]">
+<!-- LEFT PANE: Conversations List (lg:col-span-5 xl:col-span-4) -->
+<section aria-label="Conversation Threads List" class="lg:col-span-5 xl:col-span-4 bg-white rounded-2xl border border-[#E2E8F0] shadow-xs flex flex-col h-full overflow-hidden">
+<!-- Top Search Bar -->
+<div class="p-3.5 border-b border-[#E2E8F0] bg-slate-50/50">
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+<input id="chat-contact-search" oninput="filterChatContacts()" class="w-full pl-9 pr-4 py-2 text-xs sm:text-sm bg-white border border-[#CBD5E1] rounded-xl text-navy-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-teal/20 focus:border-brand-teal transition-all" placeholder="Search messages • संदेश खोजें" type="text"/>
+</div>
+<!-- Category Filter Pills -->
+<div class="flex items-center space-x-1.5 mt-3 overflow-x-auto pb-0.5 text-xs" id="chat-filter-pills">
+<button onclick="filterContactCategory(this, 'all')" class="cat-pill px-2.5 py-1 rounded-full bg-brand-teal text-white font-medium shrink-0 shadow-xs">
+All (सभी) • 3
+</button>
+<button onclick="filterContactCategory(this, 'clinician')" class="cat-pill px-2.5 py-1 rounded-full bg-white border border-slate-200 text-navy-600 hover:bg-slate-100 font-medium shrink-0 transition-colors">
+Clinicians (चिकित्सक)
+</button>
+<button onclick="filterContactCategory(this, 'coordinator')" class="cat-pill px-2.5 py-1 rounded-full bg-white border border-slate-200 text-navy-600 hover:bg-slate-100 font-medium shrink-0 transition-colors">
+Care Team (केयर टीम)
+</button>
+</div>
+</div>
+<!-- Conversations Scroll List -->
+<div class="divide-y divide-slate-100 overflow-y-auto flex-1" id="chat-contacts-list">
+<!-- Conversation 1: ACTIVE (Dr. Priya Sharma) -->
+<article onclick="selectConversation('priya')" id="conv-item-priya" data-category="clinician" data-search="dr priya sharma internal medicine opd desk 4 prescription" class="conv-item p-3.5 bg-brand-mint/50 border-l-4 border-brand-teal hover:bg-brand-mint/70 transition-colors cursor-pointer relative">
+<div class="flex items-start space-x-3">
+<!-- Avatar with Verified Badge -->
+<div class="relative shrink-0">
+<div class="w-11 h-11 rounded-full bg-brand-teal text-white font-semibold flex items-center justify-center text-sm shadow-xs">
+PS
+</div>
+<div class="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full bg-emerald-500 border-2 border-white flex items-center justify-center text-white" title="Verified Clinician">
+<svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" stroke-width="3" viewbox="0 0 24 24">
+<path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+</div>
+<!-- Message Details -->
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between">
+<h2 class="text-sm font-bold text-navy-900 truncate">
+Dr. Priya Sharma • <span class="text-xs font-normal text-navy-600">जनरल मेडिसिन</span>
+</h2>
+<span class="text-[11px] font-semibold text-brand-teal shrink-0">10:32 AM</span>
+</div>
+<div class="flex items-center space-x-2 mt-0.5">
+<span class="inline-flex items-center px-1.5 py-0.2 rounded text-[10px] font-medium bg-emerald-100 text-emerald-800">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-600 mr-1 animate-pulse"></span>
+OPD Desk 4 • Available
+</span>
+</div>
+<p class="text-xs text-navy-700 mt-1 line-clamp-2 leading-snug last-preview-msg">
+Hello Aarav, your updated prescription and care summary from yesterday are now available in your records.
+</p>
+<div class="mt-1.5 flex items-center justify-between">
+<span class="text-[11px] font-medium text-brand-teal">Internal Medicine Consult</span>
+<span class="w-2 h-2 rounded-full bg-brand-teal unread-dot" title="Unread update"></span>
+</div>
+</div>
+</div>
+</article>
+<!-- Conversation 2: CareFlow Coordinator -->
+<article onclick="selectConversation('coordinator')" id="conv-item-coordinator" data-category="coordinator" data-search="care coordinator indiranagar clinic desk cbc report test results" class="conv-item p-3.5 bg-white hover:bg-slate-50 transition-colors cursor-pointer">
+<div class="flex items-start space-x-3">
+<!-- Avatar -->
+<div class="relative shrink-0">
+<div class="w-11 h-11 rounded-full bg-slate-100 text-slate-700 font-semibold flex items-center justify-center text-sm border border-slate-200">
+CC
+</div>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between">
+<h2 class="text-sm font-semibold text-navy-900 truncate">
+Care Coordinator • <span class="text-xs font-normal text-navy-500">केयर समन्वय</span>
+</h2>
+<span class="text-[11px] text-slate-400 shrink-0">Yesterday</span>
+</div>
+<div class="mt-0.5">
+<span class="text-[10px] font-medium text-slate-500">Indiranagar Clinic Desk</span>
+</div>
+<p class="text-xs text-navy-500 mt-1 line-clamp-2 leading-snug last-preview-msg">
+Your Complete Blood Count (CBC) report has been synced to your ABDM health locker.
+</p>
+<div class="mt-1.5 flex items-center text-[11px] text-slate-400">
+<svg class="w-3.5 h-3.5 mr-1 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<span>Read</span>
+</div>
+</div>
+</div>
+</article>
+<!-- Conversation 3: Dr. Ananya Iyer -->
+<article onclick="selectConversation('ananya')" id="conv-item-ananya" data-category="clinician" data-search="dr ananya iyer triage follow-up review blood pressure" class="conv-item p-3.5 bg-white hover:bg-slate-50 transition-colors cursor-pointer">
+<div class="flex items-start space-x-3">
+<div class="relative shrink-0">
+<div class="w-11 h-11 rounded-full bg-slate-100 text-slate-700 font-semibold flex items-center justify-center text-sm border border-slate-200">
+AI
+</div>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between">
+<h2 class="text-sm font-semibold text-navy-900 truncate">
+Dr. Ananya Iyer • <span class="text-xs font-normal text-navy-500">क्लिनिकल समीक्षा</span>
+</h2>
+<span class="text-[11px] text-slate-400 shrink-0">Sep 3</span>
+</div>
+<div class="mt-0.5">
+<span class="text-[10px] font-medium text-slate-500">Triage &amp; Follow-up Review</span>
+</div>
+<p class="text-xs text-navy-500 mt-1 line-clamp-2 leading-snug last-preview-msg">
+Please ensure to record your blood pressure reading before your appointment next week.
+</p>
+<div class="mt-1.5 flex items-center text-[11px] text-slate-400">
+<svg class="w-3.5 h-3.5 mr-1 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<span>Archived Review</span>
+</div>
+</div>
+</div>
+</article>
+</div>
+<!-- Left Pane Footer Status -->
+<div class="p-3 border-t border-[#E2E8F0] bg-slate-50/80 text-[11px] text-navy-500 flex items-center justify-between">
+<span class="flex items-center">
+<span class="w-2 h-2 rounded-full bg-emerald-500 mr-1.5"></span>
+Care Team Available
+</span>
+<a class="text-brand-teal font-medium hover:underline" href="../careflow_patient_web_p19_my_settings/code.html">Notification Settings →</a>
+</div>
+</section>
+<!-- RIGHT PANE: Active Conversation View (lg:col-span-7 xl:col-span-8) -->
+<section aria-label="Active Messaging Thread" class="lg:col-span-7 xl:col-span-8 bg-white rounded-2xl border border-[#E2E8F0] shadow-xs flex flex-col h-full min-h-[680px]">
+<!-- Active Clinician Header -->
+<header class="p-4 sm:px-5 border-b border-[#E2E8F0] bg-white rounded-t-2xl">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+<div class="flex items-center space-x-3">
+<div class="relative">
+<div id="active-avatar" class="w-12 h-12 rounded-full bg-brand-teal text-white font-bold flex items-center justify-center text-base shadow-xs">
+PS
+</div>
+<div id="active-status-dot" class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-emerald-500 ring-2 ring-white" title="Clinician Online"></div>
+</div>
+<div>
+<div class="flex items-center space-x-2">
+<h2 id="active-name" class="text-base font-bold text-navy-900">Dr. Priya Sharma, MD</h2>
+<span id="active-badge" class="px-2 py-0.5 rounded text-[10px] font-semibold bg-brand-mint text-brand-teal border border-brand-mint-border">
+Primary Clinician
+</span>
+</div>
+<p id="active-subtitle" class="text-xs text-navy-600">
+Internal Medicine • Indiranagar Clinic (OPD Desk 4)
+</p>
+<div id="active-status-text" class="flex items-center space-x-1.5 text-[11px] text-emerald-700 mt-0.5">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+<span>Available today • Usually responds in a few hours (आमतौर पर कुछ घंटों में जवाब मिलता है)</span>
+</div>
+</div>
+</div>
+<!-- Header Quick Context Actions -->
+<div class="flex items-center space-x-2 shrink-0">
+<button onclick="viewClinicianProfile()" class="px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-medium text-navy-700 hover:bg-slate-50 transition-colors" type="button">
+Doctor Profile
+</button>
+<a class="px-3 py-1.5 rounded-lg bg-brand-teal text-white text-xs font-semibold hover:bg-brand-teal-hover transition-colors flex items-center space-x-1 shadow-xs" href="../careflow_patient_web_p13_book_an_appointment/code.html">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<span>Book Follow-up</span>
+</a>
+</div>
+</div>
+<!-- Quick Context Linked Pills Bar -->
+<div class="mt-3.5 pt-3 border-t border-slate-100 flex flex-wrap items-center gap-2 text-xs">
+<span class="text-[11px] font-semibold text-slate-500 uppercase tracking-wide">Context:</span>
+<a class="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-navy-700 transition-colors" href="../careflow_patient_web_p12_appointment_details/code.html">
+<svg class="w-3.5 h-3.5 text-brand-teal" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<span>Appointment: <strong>Sat, Sep 20 • 10:30 AM</strong></span>
+<span class="text-brand-teal font-medium">→</span>
+</a>
+<a class="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-navy-700 transition-colors" href="../careflow_patient_web_p09_my_care_summary/code.html">
+<svg class="w-3.5 h-3.5 text-brand-teal" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<span>Encounter <strong>#ENC-2026-0982</strong></span>
+<span class="text-brand-teal font-medium">→</span>
+</a>
+</div>
+</header>
+<!-- Message History Feed -->
+<div id="chat-messages-container" class="flex-1 p-4 sm:p-5 space-y-4 overflow-y-auto chat-scroll bg-[#FAFBFD]" style="max-height: 440px;">
+<!-- Date Separator -->
+<div class="flex justify-center my-2">
+<span class="px-3 py-1 rounded-full bg-slate-200/70 text-navy-600 text-[11px] font-medium">
+Today, September 6, 2026
+</span>
+</div>
+<!-- Message 1: Clinician Message (Left aligned) -->
+<div class="flex items-start space-x-2.5 max-w-[85%] sm:max-w-[78%]">
+<div class="w-8 h-8 rounded-full bg-brand-teal text-white flex items-center justify-center text-xs font-bold shrink-0 mt-1 shadow-xs">
+PS
+</div>
+<div class="space-y-1">
+<div class="flex items-center space-x-2">
+<span class="text-xs font-bold text-navy-900">Dr. Priya Sharma</span>
+<span class="text-[10px] text-slate-400">9:45 AM</span>
+</div>
+<!-- Message Card Body -->
+<div class="bg-white border border-[#E2E8F0] p-3.5 rounded-2xl rounded-tl-none shadow-xs text-xs sm:text-sm text-navy-800 space-y-2.5 leading-relaxed">
+<p>
+Hello Aarav, I have reviewed your headache symptoms and vital parameters from yesterday's check-in. I have updated your active prescriptions with <strong>Augmentin 625 Duo</strong> and <strong>Dolo 650mg SOS</strong>.
+</p>
+<p>
+Please ensure you stay properly hydrated, record any temperature spikes, and take the medication strictly after meals as noted in the routine.
+</p>
+<!-- Embedded Contextual Prescription Card -->
+<div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between text-xs hover:bg-slate-100 transition-colors">
+<div class="flex items-center space-x-2">
+<div class="w-8 h-8 rounded-lg bg-brand-mint text-brand-teal flex items-center justify-center shrink-0">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<path d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+<div>
+<div class="font-semibold text-navy-900">Prescription #Rx-2026-982</div>
+<div class="text-[11px] text-slate-500">Augmentin 625 + Dolo 650 • Digitized Rx</div>
+</div>
+</div>
+<a class="text-xs font-semibold text-brand-teal hover:underline ml-2 shrink-0" href="../careflow_patient_web_p14_prescriptions_lab_reports/code.html">
+View in Prescriptions →
+</a>
+</div>
+</div>
+</div>
+</div>
+<!-- Message 2: Patient Message (Right aligned) -->
+<div class="flex flex-col items-end space-y-1 ml-auto max-w-[85%] sm:max-w-[78%]">
+<div class="flex items-center space-x-2">
+<span class="text-[10px] text-slate-400">10:15 AM</span>
+<span class="text-xs font-semibold text-navy-700">Aarav Sharma (You)</span>
+</div>
+<!-- Patient Message Bubble -->
+<div class="bg-brand-mint border border-brand-mint-border text-navy-900 p-3.5 rounded-2xl rounded-tr-none shadow-xs text-xs sm:text-sm space-y-2 leading-relaxed">
+<p>
+Thank you Dr. Sharma. I received the prescription and started the medication today after breakfast. The headache severity has decreased to mild (Face Scale 2).
+</p>
+<p>
+Should I still keep the follow-up consultation on September 20 at Indiranagar Desk 4?
+</p>
+</div>
+<!-- Read Receipt -->
+<div class="flex items-center space-x-1 text-[10px] text-brand-teal font-medium">
+<svg class="w-3.5 h-3.5 text-brand-teal" fill="currentColor" viewbox="0 0 20 20">
+<path clip-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" fill-rule="evenodd"></path>
+</svg>
+<span>Delivered &amp; Read • 10:20 AM</span>
+</div>
+</div>
+<!-- Message 3: Clinician Reply (Left aligned) -->
+<div class="flex items-start space-x-2.5 max-w-[85%] sm:max-w-[78%]">
+<div class="w-8 h-8 rounded-full bg-brand-teal text-white flex items-center justify-center text-xs font-bold shrink-0 mt-1 shadow-xs">
+PS
+</div>
+<div class="space-y-1">
+<div class="flex items-center space-x-2">
+<span class="text-xs font-bold text-navy-900">Dr. Priya Sharma</span>
+<span class="text-[10px] text-slate-400">10:32 AM</span>
+</div>
+<div class="bg-white border border-[#E2E8F0] p-3.5 rounded-2xl rounded-tl-none shadow-xs text-xs sm:text-sm text-navy-800 space-y-2 leading-relaxed">
+<p>
+Yes, please definitely keep the September 20 consultation at 10:30 AM. That will allow us to assess your Complete Blood Count (CBC) results, ensure the infection has resolved completely, and check your vitals.
+</p>
+<p>
+If any severe red flag symptoms develop before then (like stiff neck or fever &gt; 101°F), please message us here or walk into clinic triage immediately.
+</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Message Composer Form Area -->
+<div class="p-3 sm:p-4 border-t border-[#E2E8F0] bg-white rounded-b-2xl space-y-2.5">
+<!-- Quick Attachments Row -->
+<div class="flex items-center justify-between text-xs">
+<div class="flex items-center gap-2">
+<button onclick="attachMedicalRecord()" class="inline-flex items-center space-x-1.5 text-navy-600 hover:text-brand-teal transition-colors font-medium" type="button">
+<svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<path d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<span>Attach Lab Report or Document (संलग्न करें)</span>
+</button>
+<span id="attached-file-pill" class="hidden px-2.5 py-0.5 rounded-full bg-brand-mint text-brand-teal font-semibold text-[11px] items-center gap-1">
+<span id="attached-file-name">CBC_Report.pdf</span>
+<span onclick="removeAttachment()" class="cursor-pointer font-bold ml-1 hover:text-red-600">×</span>
+</span>
+</div>
+<span class="text-[11px] text-slate-400">Press Enter to send</span>
+</div>
+<!-- Textarea Composer -->
+<div class="relative">
+<textarea id="chat-msg-input" onkeydown="if(event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); sendChatMessage(); }" class="w-full p-3 text-xs sm:text-sm border border-[#CBD5E1] rounded-xl text-navy-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-teal/20 focus:border-brand-teal transition-all resize-none" placeholder="Write a message to Dr. Priya Sharma... • संदेश लिखें..." rows="3"></textarea>
+</div>
+<!-- Composer Bottom Bar -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-1">
+<div class="flex items-center space-x-1.5 text-[11px] text-slate-500">
+<svg class="w-3.5 h-3.5 text-emerald-600 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<span>End-to-end encrypted · Private &amp; ABDM Compliant</span>
+</div>
+<div class="flex items-center space-x-2 self-end sm:self-auto">
+<button onclick="clearChatInput()" class="px-3 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 transition-colors" type="button">
+Cancel
+</button>
+<button onclick="sendChatMessage()" class="px-5 py-2 rounded-xl bg-brand-teal hover:bg-brand-teal-hover text-white text-xs sm:text-sm font-semibold flex items-center space-x-2 transition-colors shadow-sm shadow-brand-teal/20" type="button">
+<span>Send • भेजें</span>
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<path d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</button>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- END: DualPaneMessagingContainer -->
+</main>
+<!-- END: MainContent -->
+<!-- BEGIN: RegulatoryPillsStrip -->
+<section aria-label="Security and Compliance Standards" class="mt-8 border-t border-[#E2E8F0] bg-white py-6">
+<div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+<!-- Pill 1 -->
+<div class="flex items-center space-x-3 p-3 rounded-xl bg-slate-50 border border-slate-200/70">
+<div class="w-8 h-8 rounded-lg bg-brand-mint text-brand-teal flex items-center justify-center shrink-0">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+<div class="text-xs">
+<div class="font-bold text-navy-900">ABDM M1, M2 &amp; M3</div>
+<div class="text-navy-500 text-[11px]">Certified Health Information Provider &amp; User</div>
+</div>
+</div>
+<!-- Pill 2 -->
+<div class="flex items-center space-x-3 p-3 rounded-xl bg-slate-50 border border-slate-200/70">
+<div class="w-8 h-8 rounded-lg bg-brand-mint text-brand-teal flex items-center justify-center shrink-0">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+<div class="text-xs">
+<div class="font-bold text-navy-900">256-bit AES Patient Vault</div>
+<div class="text-navy-500 text-[11px]">Zero-knowledge secure storage architecture</div>
+</div>
+</div>
+<!-- Pill 3 -->
+<div class="flex items-center space-x-3 p-3 rounded-xl bg-slate-50 border border-slate-200/70">
+<div class="w-8 h-8 rounded-lg bg-brand-mint text-brand-teal flex items-center justify-center shrink-0">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+<div class="text-xs">
+<div class="font-bold text-navy-900">DISHA &amp; HIPAA Compliant</div>
+<div class="text-navy-500 text-[11px]">Strict patient consent &amp; privacy controls</div>
+</div>
+</div>
+<!-- Pill 4 -->
+<div class="flex items-center space-x-3 p-3 rounded-xl bg-slate-50 border border-slate-200/70">
+<div class="w-8 h-8 rounded-lg bg-brand-mint text-brand-teal flex items-center justify-center shrink-0">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<path d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+<div class="text-xs">
+<div class="font-bold text-navy-900">Dual Language Ready</div>
+<div class="text-navy-500 text-[11px]">English and हिन्दी clinical support</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- END: RegulatoryPillsStrip -->
+<!-- BEGIN: SiteFooter -->
+<footer class="bg-white border-t border-[#E2E8F0] pt-8 pb-10">
+<div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+<!-- Four Column Directory -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+<!-- Brand Summary -->
+<div class="space-y-3">
+<div class="flex items-center space-x-2.5">
+<div class="w-8 h-8 rounded-lg bg-brand-teal text-white flex items-center justify-center">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+<span class="text-lg font-bold text-navy-900">CareFlow</span>
+</div>
+<p class="text-xs text-navy-500 leading-relaxed">
+            Reimagining healthcare delivery with clinical precision and restorative calm across India's connected digital health ecosystem.
+          </p>
+<div class="flex items-center space-x-1.5 text-xs text-brand-teal font-semibold">
+<svg class="w-4 h-4 text-brand-teal" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<span>Ayushman Bharat Digital Mission (ABDM) Integrated</span>
+</div>
+</div>
+<!-- Product Links -->
+<div class="space-y-2 text-xs">
+<div class="font-bold text-navy-900 text-sm mb-3">Product</div>
+<div><a class="text-navy-600 hover:text-brand-teal" href="../careflow_patient_web_p05_my_health_overview/code.html">Patient Health Record</a></div>
+<div><a class="text-navy-600 hover:text-brand-teal" href="../careflow_patient_web_p09_my_care_summary/code.html">Care Summaries</a></div>
+<div><a class="text-navy-600 hover:text-brand-teal" href="../careflow_patient_web_p15_health_timeline_visit_history/code.html">Clinical Workstation</a></div>
+<div><a class="text-navy-600 hover:text-brand-teal" href="../careflow_patient_web_p11_my_appointments/code.html">Appointments Engine</a></div>
+</div>
+<!-- Care Teams -->
+<div class="space-y-2 text-xs">
+<div class="font-bold text-navy-900 text-sm mb-3">Care Teams</div>
+<div><a class="text-navy-600 hover:text-brand-teal" href="../careflow_patient_web_p17_messages_care_team/code.html">For Doctors</a></div>
+<div><a class="text-navy-600 hover:text-brand-teal" href="../careflow_patient_web_p12_appointment_details/code.html">Hospitals &amp; Clinics</a></div>
+<div><a class="text-navy-600 hover:text-brand-teal" href="../careflow_patient_web_p17_messages_care_team/code.html">Triage Teams</a></div>
+<div><a class="text-navy-600 hover:text-brand-teal" href="../careflow_patient_web_p18_privacy_consent/code.html">Developers &amp; APIs</a></div>
+</div>
+<!-- Security & Trust -->
+<div class="space-y-2 text-xs">
+<div class="font-bold text-navy-900 text-sm mb-3">Security &amp; Trust</div>
+<div><a class="text-navy-600 hover:text-brand-teal" href="../careflow_patient_web_p18_privacy_consent/code.html">Data Privacy &amp; Consents</a></div>
+<div><a class="text-navy-600 hover:text-brand-teal" href="../careflow_patient_web_p18_privacy_consent/code.html">Security Architecture</a></div>
+<div><a class="text-navy-600 hover:text-brand-teal" href="../careflow_patient_web_p18_privacy_consent/code.html">Compliance Standards</a></div>
+<div><a class="text-navy-600 hover:text-brand-teal" href="../careflow_patient_web_p20_help_support/code.html">Support Desk</a></div>
+</div>
+</div>
+<!-- Bottom Legal Row -->
+<div class="pt-6 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between text-[11px] text-navy-500 gap-3">
+<div>
+          © 2026 CareFlow Health Technologies Pvt. Ltd. All rights reserved. • ABDM Compliance &amp; Privacy Protected
+        </div>
+<div class="flex flex-wrap items-center space-x-4">
+<a class="hover:text-brand-teal" href="../careflow_patient_web_p18_privacy_consent/code.html">Privacy Policy (गोपनीयता नीति)</a>
+<a class="hover:text-brand-teal" href="#">Terms of Use (उपयोग की शर्तें)</a>
+<a class="hover:text-brand-teal" href="../careflow_patient_web_p18_privacy_consent/code.html">ABDM Consent Matrix</a>
+<a class="hover:text-brand-teal" href="../careflow_patient_web_p20_help_support/code.html">Help &amp; Support</a>
+</div>
+</div>
+</div>
+</footer>
+<!-- END: SiteFooter -->
+
+<!-- Interactive Script for P17 Care Team Messaging -->
+<script>
+const conversationData = {
+  priya: {
+    name: 'Dr. Priya Sharma, MD',
+    initials: 'PS',
+    badge: 'Primary Clinician',
+    subtitle: 'Internal Medicine • Indiranagar Clinic (OPD Desk 4)',
+    status: 'Available today • Usually responds in a few hours (आमतौर पर कुछ घंटों में जवाब मिलता है)',
+    messages: [
+      { sender: 'clinician', name: 'Dr. Priya Sharma', time: '9:45 AM', text: "Hello Aarav, I have reviewed your headache symptoms and vital parameters from yesterday's check-in. I have updated your active prescriptions with <strong>Augmentin 625 Duo</strong> and <strong>Dolo 650mg SOS</strong>.<br><br>Please ensure you stay properly hydrated, record any temperature spikes, and take the medication strictly after meals as noted in the routine." },
+      { sender: 'patient', name: 'Aarav Sharma (You)', time: '10:15 AM', text: "Thank you Dr. Sharma. I received the prescription and started the medication today after breakfast. The headache severity has decreased to mild (Face Scale 2).<br><br>Should I still keep the follow-up consultation on September 20 at Indiranagar Desk 4?" },
+      { sender: 'clinician', name: 'Dr. Priya Sharma', time: '10:32 AM', text: "Yes, please definitely keep the September 20 consultation at 10:30 AM. That will allow us to assess your Complete Blood Count (CBC) results, ensure the infection has resolved completely, and check your vitals.<br><br>If any severe red flag symptoms develop before then (like stiff neck or fever > 101°F), please message us here or walk into clinic triage immediately." }
+    ]
+  },
+  coordinator: {
+    name: 'Care Coordinator',
+    initials: 'CC',
+    badge: 'Clinic Operations',
+    subtitle: 'Indiranagar Clinic Desk • Front Desk Care Triage',
+    status: 'Online • Live triage support active',
+    messages: [
+      { sender: 'clinician', name: 'Care Coordinator', time: 'Yesterday 3:30 PM', text: "Hello Aarav, your Complete Blood Count (CBC) report from Metropolis Healthcare has arrived and has been synced to your ABDM vault." },
+      { sender: 'patient', name: 'Aarav Sharma (You)', time: 'Yesterday 3:45 PM', text: "Thank you! Does Dr. Sharma need me to bring hard copies of previous hospital records?" },
+      { sender: 'clinician', name: 'Care Coordinator', time: 'Yesterday 4:00 PM', text: "No physical copies needed! All your uploaded records in CareFlow Vault are accessible directly on Dr. Sharma's clinic console." }
+    ]
+  },
+  ananya: {
+    name: 'Dr. Ananya Iyer, MBBS',
+    initials: 'AI',
+    badge: 'Clinical Reviewer',
+    subtitle: 'Preventative Health • Telehealth Triage',
+    status: 'Away • Next review shift tomorrow 9:00 AM',
+    messages: [
+      { sender: 'clinician', name: 'Dr. Ananya Iyer', time: 'Sep 3, 2026', text: "Namaste Aarav, please ensure to record your resting blood pressure reading before your appointment with Dr. Sharma next week." },
+      { sender: 'patient', name: 'Aarav Sharma (You)', time: 'Sep 3, 2026', text: "Recorded! It was 118/76 mmHg this morning." },
+      { sender: 'clinician', name: 'Dr. Ananya Iyer', time: 'Sep 3, 2026', text: "Excellent, that reading is well within normal limits. We have updated your vitals log." }
+    ]
+  }
+};
+
+let currentActiveKey = 'priya';
+
+function selectConversation(key) {
+  currentActiveKey = key;
+  const data = conversationData[key];
+  if (!data) return;
+
+  // Update active left card styling
+  document.querySelectorAll('.conv-item').forEach(item => {
+    item.className = 'conv-item p-3.5 bg-white hover:bg-slate-50 transition-colors cursor-pointer';
+  });
+  const activeItem = document.getElementById(`conv-item-${key}`);
+  if (activeItem) {
+    activeItem.className = 'conv-item p-3.5 bg-brand-mint/50 border-l-4 border-brand-teal hover:bg-brand-mint/70 transition-colors cursor-pointer relative';
+    const unread = activeItem.querySelector('.unread-dot');
+    if (unread) unread.remove();
+  }
+
+  // Update header in right pane
+  document.getElementById('active-avatar').textContent = data.initials;
+  document.getElementById('active-name').textContent = data.name;
+  document.getElementById('active-badge').textContent = data.badge;
+  document.getElementById('active-subtitle').textContent = data.subtitle;
+  document.getElementById('active-status-text').innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span><span>${data.status}</span>`;
+  document.getElementById('chat-msg-input').placeholder = `Write a message to ${data.name.split(',')[0]}... • संदेश लिखें...`;
+
+  renderMessages(data.messages);
+}
+
+function renderMessages(messages) {
+  const container = document.getElementById('chat-messages-container');
+  let html = `
+    <div class="flex justify-center my-2">
+      <span class="px-3 py-1 rounded-full bg-slate-200/70 text-navy-600 text-[11px] font-medium">
+        Today, September 6, 2026
+      </span>
+    </div>
+  `;
+
+  messages.forEach(msg => {
+    if (msg.sender === 'clinician') {
+      html += `
+        <div class="flex items-start space-x-2.5 max-w-[85%] sm:max-w-[78%]">
+          <div class="w-8 h-8 rounded-full bg-brand-teal text-white flex items-center justify-center text-xs font-bold shrink-0 mt-1 shadow-xs">
+            ${msg.name.split(' ').map(n=>n[0]).slice(0,2).join('')}
+          </div>
+          <div class="space-y-1">
+            <div class="flex items-center space-x-2">
+              <span class="text-xs font-bold text-navy-900">${msg.name}</span>
+              <span class="text-[10px] text-slate-400">${msg.time}</span>
+            </div>
+            <div class="bg-white border border-[#E2E8F0] p-3.5 rounded-2xl rounded-tl-none shadow-xs text-xs sm:text-sm text-navy-800 space-y-2 leading-relaxed">
+              <p>${msg.text}</p>
+            </div>
+          </div>
+        </div>
+      `;
+    } else {
+      html += `
+        <div class="flex flex-col items-end space-y-1 ml-auto max-w-[85%] sm:max-w-[78%]">
+          <div class="flex items-center space-x-2">
+            <span class="text-[10px] text-slate-400">${msg.time}</span>
+            <span class="text-xs font-semibold text-navy-700">${msg.name}</span>
+          </div>
+          <div class="bg-brand-mint border border-brand-mint-border text-navy-900 p-3.5 rounded-2xl rounded-tr-none shadow-xs text-xs sm:text-sm space-y-2 leading-relaxed">
+            <p>${msg.text}</p>
+          </div>
+          <div class="flex items-center space-x-1 text-[10px] text-brand-teal font-medium">
+            <svg class="w-3.5 h-3.5 text-brand-teal" fill="currentColor" viewBox="0 0 20 20">
+              <path clip-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" fill-rule="evenodd"></path>
+            </svg>
+            <span>Delivered & Read • ${msg.time}</span>
+          </div>
+        </div>
+      `;
+    }
+  });
+
+  container.innerHTML = html;
+  container.scrollTop = container.scrollHeight;
+}
+
+function sendChatMessage() {
+  const input = document.getElementById('chat-msg-input');
+  const text = (input?.value || '').trim();
+  if (!text) {
+    CareFlow.showToast('Please enter a message before sending', 'error');
+    return;
+  }
+
+  const now = new Date();
+  const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  
+  const attachedPill = document.getElementById('attached-file-pill');
+  let fullText = text;
+  if (!attachedPill.classList.contains('hidden')) {
+    const fileName = document.getElementById('attached-file-name').textContent;
+    fullText += `<br><span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-white border border-brand-teal/30 rounded-lg text-xs font-semibold text-brand-teal mt-2"><span class="material-symbols-outlined text-sm">attach_file</span>${fileName}</span>`;
+    removeAttachment();
+  }
+
+  conversationData[currentActiveKey].messages.push({
+    sender: 'patient',
+    name: 'Aarav Sharma (You)',
+    time: timeStr,
+    text: fullText
+  });
+
+  input.value = '';
+  renderMessages(conversationData[currentActiveKey].messages);
+  CareFlow.showToast('Message encrypted and sent', 'success');
+
+  // Simulated auto reply after 1.2 seconds
+  setTimeout(() => {
+    const replies = {
+      priya: "Thank you for the update, Aarav. I have noted this in your active encounter file. Please monitor how you feel after your next dose.",
+      coordinator: "Received, Aarav! Our Indiranagar desk team has updated your visit preference.",
+      ananya: "Thank you, Aarav. Your information has been logged into your telemetry file."
+    };
+    const replyText = replies[currentActiveKey] || "Message received by CareFlow.";
+    conversationData[currentActiveKey].messages.push({
+      sender: 'clinician',
+      name: conversationData[currentActiveKey].name,
+      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      text: replyText
+    });
+    renderMessages(conversationData[currentActiveKey].messages);
+  }, 1200);
+}
+
+function clearChatInput() {
+  document.getElementById('chat-msg-input').value = '';
+  removeAttachment();
+}
+
+function attachMedicalRecord() {
+  const pill = document.getElementById('attached-file-pill');
+  pill.classList.remove('hidden');
+  pill.classList.add('inline-flex');
+  CareFlow.showToast('Attached Complete_Blood_Count_CBC.pdf from patient vault', 'success');
+}
+
+function removeAttachment() {
+  const pill = document.getElementById('attached-file-pill');
+  pill.classList.add('hidden');
+  pill.classList.remove('inline-flex');
+}
+
+function filterChatContacts() {
+  const q = (document.getElementById('chat-contact-search')?.value || '').toLowerCase().trim();
+  document.querySelectorAll('.conv-item').forEach(item => {
+    const searchData = (item.getAttribute('data-search') || '').toLowerCase();
+    if (!q || searchData.includes(q)) {
+      item.classList.remove('hidden');
+    } else {
+      item.classList.add('hidden');
+    }
+  });
+}
+
+function filterContactCategory(btn, cat) {
+  document.querySelectorAll('.cat-pill').forEach(p => {
+    p.className = 'cat-pill px-2.5 py-1 rounded-full bg-white border border-slate-200 text-navy-600 hover:bg-slate-100 font-medium shrink-0 transition-colors';
+  });
+  btn.className = 'cat-pill px-2.5 py-1 rounded-full bg-brand-teal text-white font-medium shrink-0 shadow-xs';
+
+  document.querySelectorAll('.conv-item').forEach(item => {
+    const itemCat = item.getAttribute('data-category');
+    if (cat === 'all' || itemCat === cat) {
+      item.classList.remove('hidden');
+    } else {
+      item.classList.add('hidden');
+    }
+  });
+}
+
+function viewClinicianProfile() {
+  const clinician = conversationData[currentActiveKey];
+  const modalHtml = `
+    <div class="flex flex-col gap-4 text-left">
+      <div class="flex items-center gap-3 border-b pb-3">
+        <div class="w-12 h-12 rounded-full bg-brand-teal text-white font-bold flex items-center justify-center text-lg">
+          ${clinician.initials}
+        </div>
+        <div>
+          <h3 class="font-bold text-navy-900 text-lg">${clinician.name}</h3>
+          <p class="text-xs text-brand-teal font-semibold">${clinician.badge} • KMC Reg #58291</p>
+        </div>
+      </div>
+      <div class="space-y-2 text-xs text-navy-700">
+        <p><strong>Department:</strong> ${clinician.subtitle}</p>
+        <p><strong>Clinic Hours:</strong> Monday – Saturday (8:00 AM – 4:00 PM IST)</p>
+        <p><strong>Specialization:</strong> Adult Internal Medicine, Hypertension Management, Diagnostic Triage</p>
+        <p><strong>ABDM Facility:</strong> CareFlow Indiranagar Super-Speciality Clinic (HFR ID: IN-KA-BLR-00492)</p>
+      </div>
+      <div class="flex justify-end gap-2 pt-3 border-t">
+        <button onclick="CareFlow.closeModal()" class="px-4 py-2 rounded-full bg-brand-teal text-white text-xs font-semibold">Done</button>
+      </div>
+    </div>
+  `;
+  CareFlow.openModal(modalHtml, 'Care Team Profile');
+}
+</script>
+</body></html>

@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-50">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CareFlow Patient Experience — Interactive Portal Suite</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Plus Jakarta Sans & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              teal: '#0D6E6E',
+              'teal-dark': '#084343',
+              'teal-light': '#E6F7F2',
+              mint: '#E6F7F2',
+              navy: '#0F172A',
+            }
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .device-shadow {
+      box-shadow: 0 20px 45px -12px rgba(13, 110, 110, 0.12), 0 0 0 1px rgba(203, 213, 225, 0.8), 0 8px 16px -4px rgba(15, 23, 42, 0.06);
+    }
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+  </style>
+</head>
+<body class="bg-[#F4F7F6] text-slate-800 antialiased select-none">
+
+  <!-- Top Master Bar -->
+  <header class="h-16 bg-white/95 backdrop-blur-md border-b border-slate-200 px-4 sm:px-6 flex items-center justify-between gap-4 z-50 shrink-0 shadow-[0_1px_4px_rgba(13,110,110,0.04)]">
+    
+    <!-- Left: Brand + Active Badge -->
+    <div class="flex items-center gap-3 shrink-0">
+      <div class="w-9 h-9 rounded-xl bg-[#0D6E6E] flex items-center justify-center text-white shadow-sm shadow-teal-900/20">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+          <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+      </div>
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="font-extrabold text-base tracking-tight text-slate-900">CareFlow</span>
+          <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#E6F7F2] text-[#0D6E6E] border border-[#BBEBE0]">
+            <span class="w-1.5 h-1.5 rounded-full bg-[#0D6E6E] animate-pulse"></span>
+            20 Pages Live
+          </span>
+        </div>
+        <p class="text-[10px] font-semibold text-slate-500 tracking-wider uppercase">Patient Experience Suite</p>
+      </div>
+    </div>
+
+    <!-- Center: Page Selector & Quick Navigation -->
+    <div class="flex items-center gap-2 max-w-xl w-full justify-center">
+      
+      <!-- Prev Button -->
+      <button id="master-prev-btn" title="Previous Page (Left Arrow)" class="p-1.5 rounded-xl bg-slate-50 hover:bg-[#E6F7F2] border border-slate-200 hover:border-[#0D6E6E]/40 text-slate-600 hover:text-[#0D6E6E] transition-all shadow-xs flex items-center justify-center">
+        <span class="material-symbols-outlined text-lg">chevron_left</span>
+      </button>
+
+      <!-- Dropdown Select -->
+      <div class="relative w-full max-w-sm">
+        <select id="master-page-select" class="w-full bg-slate-50 hover:bg-white border border-slate-200 hover:border-[#0D6E6E]/50 text-slate-800 text-xs font-semibold rounded-xl pl-3.5 pr-8 py-2 appearance-none focus:outline-none focus:ring-2 focus:ring-[#0D6E6E] focus:border-[#0D6E6E] shadow-xs cursor-pointer transition-all">
+          <optgroup label="✨ Getting Started" class="bg-white text-slate-800 font-bold">
+            <option value="p01">P01: Patient Landing & Welcome (स्वागत)</option>
+            <option value="p02">P02: Patient Login & OTP Access (लॉग इन)</option>
+          </optgroup>
+          <optgroup label="🏥 Patient Hub" class="bg-white text-slate-800 font-bold">
+            <option value="p03" selected>P03: Patient Dashboard (डैशबोर्ड)</option>
+          </optgroup>
+          <optgroup label="🩺 Health & Clinical" class="bg-white text-slate-800 font-bold">
+            <option value="p05">P05: My Health Overview & Vitals (स्वास्थ्य)</option>
+            <option value="p06">P06: My Symptoms & Health Info (लक्षण)</option>
+            <option value="p07">P07: My Health Questionnaire (प्रश्नावली)</option>
+            <option value="p10">P10: Visit Intake Complete (इंटेक पूर्ण)</option>
+          </optgroup>
+          <optgroup label="📅 Appointments" class="bg-white text-slate-800 font-bold">
+            <option value="p11">P11: My Appointments Hub (अपॉइंटमेंट)</option>
+            <option value="p12">P12: Appointment Details & Video (विवरण)</option>
+            <option value="p13">P13: Book an Appointment Wizard (बुक करें)</option>
+          </optgroup>
+          <optgroup label="📂 Records & Vault" class="bg-white text-slate-800 font-bold">
+            <option value="p08">P08: My Documents & Vault (दस्तावेज़)</option>
+            <option value="p09">P09: My Care Summary (देखभाल सारांश)</option>
+            <option value="p14">P14: Prescriptions & Lab Reports (दवाएं)</option>
+            <option value="p15">P15: Health Timeline & Visit History (इतिहास)</option>
+          </optgroup>
+          <optgroup label="💬 Communications" class="bg-white text-slate-800 font-bold">
+            <option value="p16">P16: Notifications Center (सूचनाएं)</option>
+            <option value="p17">P17: Messages & Care Team Chat (संदेश)</option>
+          </optgroup>
+          <optgroup label="⚙️ Account & Support" class="bg-white text-slate-800 font-bold">
+            <option value="p04">P04: My Profile & ABHA Card (प्रोफ़ाइल)</option>
+            <option value="p18">P18: Privacy & ABDM Consent (गोपनीयता)</option>
+            <option value="p19">P19: My Settings & Security (सेटिंग्स)</option>
+            <option value="p20">P20: Help & Support Center (सहायता)</option>
+          </optgroup>
+          <optgroup label="🛡️ Administration & Triage" class="bg-white text-slate-800 font-bold">
+            <option value="admin">ADM: Admin & Operations Control Center (प्रशासनिक नियंत्रण)</option>
+          </optgroup>
+        </select>
+        <span class="material-symbols-outlined text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-base">unfold_more</span>
+      </div>
+
+      <!-- Next Button -->
+      <button id="master-next-btn" title="Next Page (Right Arrow)" class="p-1.5 rounded-xl bg-slate-50 hover:bg-[#E6F7F2] border border-slate-200 hover:border-[#0D6E6E]/40 text-slate-600 hover:text-[#0D6E6E] transition-all shadow-xs flex items-center justify-center">
+        <span class="material-symbols-outlined text-lg">chevron_right</span>
+      </button>
+
+      <!-- Admin Panel Button -->
+      <button id="master-admin-btn" onclick="setPage('admin')" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#0D6E6E] hover:bg-[#005454] text-white text-xs font-bold transition-all shadow-xs cursor-pointer">
+        <span class="material-symbols-outlined text-sm">admin_panel_settings</span>
+        <span>Admin Panel</span>
+      </button>
+
+      <!-- Guided Journeys Button -->
+      <button id="master-flows-btn" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#E6F7F2] hover:bg-[#d1f2e8] text-[#0D6E6E] border border-[#BBEBE0] text-xs font-bold transition-all shadow-xs">
+        <span class="material-symbols-outlined text-sm">route</span>
+        <span>Flows</span>
+      </button>
+    </div>
+
+    <!-- Right: Viewport Controls & Open Standalone -->
+    <div class="flex items-center gap-2 shrink-0">
+      
+      <!-- Responsive Viewport Switcher -->
+      <div class="hidden lg:flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200 gap-1 text-xs">
+        <button data-viewport="100%" title="Responsive (Fluid)" class="vp-btn active px-2.5 py-1 rounded-lg font-bold bg-[#0D6E6E] text-white shadow-xs transition flex items-center gap-1">
+          <span class="material-symbols-outlined text-sm">devices</span>
+          <span class="text-[11px]">Auto</span>
+        </button>
+        <button data-viewport="1280px" title="Laptop View (1280px)" class="vp-btn px-2.5 py-1 rounded-lg font-semibold text-slate-600 hover:text-slate-900 hover:bg-white/80 transition flex items-center gap-1">
+          <span class="material-symbols-outlined text-sm">laptop_mac</span>
+          <span class="text-[11px]">1280</span>
+        </button>
+        <button data-viewport="768px" title="Tablet View (768px)" class="vp-btn px-2.5 py-1 rounded-lg font-semibold text-slate-600 hover:text-slate-900 hover:bg-white/80 transition flex items-center gap-1">
+          <span class="material-symbols-outlined text-sm">tablet_mac</span>
+          <span class="text-[11px]">768</span>
+        </button>
+        <button data-viewport="390px" title="Mobile View (390px)" class="vp-btn px-2.5 py-1 rounded-lg font-semibold text-slate-600 hover:text-slate-900 hover:bg-white/80 transition flex items-center gap-1">
+          <span class="material-symbols-outlined text-sm">smartphone</span>
+          <span class="text-[11px]">390</span>
+        </button>
+      </div>
+
+      <!-- Open Page in Standalone Tab -->
+      <a id="master-standalone-link" href="#" target="_blank" title="Open Current Page Standalone" class="p-2 rounded-xl bg-slate-50 hover:bg-[#E6F7F2] border border-slate-200 hover:border-[#0D6E6E]/40 text-slate-600 hover:text-[#0D6E6E] transition-all shadow-xs flex items-center justify-center">
+        <span class="material-symbols-outlined text-base">open_in_new</span>
+      </a>
+
+    </div>
+  </header>
+
+  <!-- Main Viewport Area -->
+  <main class="flex-1 bg-[#F4F7F6] flex items-center justify-center relative overflow-hidden p-0 sm:p-3">
+    <div id="frame-container" class="w-full h-full flex items-center justify-center transition-all duration-300 ease-out">
+      <iframe id="page-frame" src="./careflow_patient_web_p03_patient_dashboard/code.html" class="w-full h-full border-0 bg-white transition-opacity duration-200" title="CareFlow Page Preview"></iframe>
+    </div>
+  </main>
+
+  <script>
+    const PAGES = [
+      { id: 'admin', dir: 'careflow_admin_panel', title: 'ADM: Admin & Operations Control Center' },
+      { id: 'p01', dir: 'careflow_patient_web_p01_patient_landing_welcome', title: 'P01: Patient Landing & Welcome' },
+      { id: 'p02', dir: 'careflow_patient_web_p02_patient_login_access', title: 'P02: Patient Login & OTP Access' },
+      { id: 'p03', dir: 'careflow_patient_web_p03_patient_dashboard', title: 'P03: Patient Dashboard' },
+      { id: 'p04', dir: 'careflow_patient_web_p04_my_profile', title: 'P04: My Profile & ABHA Card' },
+      { id: 'p05', dir: 'careflow_patient_web_p05_my_health_overview', title: 'P05: My Health Overview & Vitals' },
+      { id: 'p06', dir: 'careflow_patient_web_p06_my_symptoms_health_information', title: 'P06: My Symptoms & Health Info' },
+      { id: 'p07', dir: 'careflow_patient_web_p07_my_health_questionnaire', title: 'P07: My Health Questionnaire' },
+      { id: 'p08', dir: 'careflow_patient_web_p08_my_documents', title: 'P08: My Documents & Vault' },
+      { id: 'p09', dir: 'careflow_patient_web_p09_my_care_summary', title: 'P09: My Care Summary' },
+      { id: 'p10', dir: 'careflow_patient_web_p10_visit_intake_complete', title: 'P10: Visit Intake Complete' },
+      { id: 'p11', dir: 'careflow_patient_web_p11_my_appointments', title: 'P11: My Appointments Hub' },
+      { id: 'p12', dir: 'careflow_patient_web_p12_appointment_details', title: 'P12: Appointment Details & Video' },
+      { id: 'p13', dir: 'careflow_patient_web_p13_book_an_appointment', title: 'P13: Book an Appointment Wizard' },
+      { id: 'p14', dir: 'careflow_patient_web_p14_prescriptions_lab_reports', title: 'P14: Prescriptions & Lab Reports' },
+      { id: 'p15', dir: 'careflow_patient_web_p15_health_timeline_visit_history', title: 'P15: Health Timeline & History' },
+      { id: 'p16', dir: 'careflow_patient_web_p16_notifications', title: 'P16: Notifications Center' },
+      { id: 'p17', dir: 'careflow_patient_web_p17_messages_care_team', title: 'P17: Messages & Care Team Chat' },
+      { id: 'p18', dir: 'careflow_patient_web_p18_privacy_consent', title: 'P18: Privacy & ABDM Consent' },
+      { id: 'p19', dir: 'careflow_patient_web_p19_my_settings', title: 'P19: My Settings & Security' },
+      { id: 'p20', dir: 'careflow_patient_web_p20_help_support', title: 'P20: Help & Support Center' }
+    ];
+
+    const frame = document.getElementById('page-frame');
+    const select = document.getElementById('master-page-select');
+    const prevBtn = document.getElementById('master-prev-btn');
+    const nextBtn = document.getElementById('master-next-btn');
+    const standaloneLink = document.getElementById('master-standalone-link');
+    const container = document.getElementById('frame-container');
+    const flowsBtn = document.getElementById('master-flows-btn');
+
+    let currentPageId = 'p03';
+
+    function setPage(pageId, updateHistory = true) {
+      const page = PAGES.find(p => p.id === pageId || p.dir.includes(pageId));
+      if (!page) return;
+
+      currentPageId = page.id;
+      select.value = page.id;
+      const targetUrl = `./${page.dir}/code.html`;
+
+      frame.style.opacity = '0.3';
+      frame.src = targetUrl;
+      standaloneLink.href = targetUrl;
+
+      if (updateHistory) {
+        window.location.hash = `#/${page.id}`;
+      }
+
+      setTimeout(() => {
+        frame.style.opacity = '1';
+      }, 150);
+    }
+
+    // Select change
+    select.addEventListener('change', (e) => {
+      setPage(e.target.value);
+    });
+
+    // Prev / Next buttons
+    prevBtn.addEventListener('click', () => {
+      const idx = PAGES.findIndex(p => p.id === currentPageId);
+      const prevIdx = idx > 0 ? idx - 1 : PAGES.length - 1;
+      setPage(PAGES[prevIdx].id);
+    });
+
+    nextBtn.addEventListener('click', () => {
+      const idx = PAGES.findIndex(p => p.id === currentPageId);
+      const nextIdx = idx < PAGES.length - 1 ? idx + 1 : 0;
+      setPage(PAGES[nextIdx].id);
+    });
+
+    // Keyboard shortcuts: Left/Right arrow
+    window.addEventListener('keydown', (e) => {
+      if (document.activeElement && ['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName)) return;
+      if (e.key === 'ArrowLeft') prevBtn.click();
+      if (e.key === 'ArrowRight') nextBtn.click();
+    });
+
+    // Listen to postMessage from iframe
+    window.addEventListener('message', (e) => {
+      if (e.data && e.data.type === 'CAREFLOW_NAVIGATE') {
+        setPage(e.data.pageId);
+      }
+    });
+
+    // Track iframe load to sync active page if navigated inside
+    frame.addEventListener('load', () => {
+      try {
+        const framePath = frame.contentWindow.location.pathname;
+        const matched = PAGES.find(p => framePath.includes(p.dir));
+        if (matched && matched.id !== currentPageId) {
+          currentPageId = matched.id;
+          select.value = matched.id;
+          window.location.hash = `#/${matched.id}`;
+          standaloneLink.href = `./${matched.dir}/code.html`;
+        }
+      } catch (e) {}
+    });
+
+    // Hash change handler
+    window.addEventListener('hashchange', () => {
+      const hash = window.location.hash.replace('#/', '').toLowerCase();
+      if (hash && PAGES.some(p => p.id === hash)) {
+        setPage(hash, false);
+      }
+    });
+
+    // Viewport switcher
+    document.querySelectorAll('.vp-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.vp-btn').forEach(b => {
+          b.classList.remove('active', 'bg-[#0D6E6E]', 'bg-brand-teal', 'text-white', 'shadow-xs');
+          b.classList.add('text-slate-600');
+        });
+        btn.classList.add('active', 'bg-[#0D6E6E]', 'text-white', 'shadow-xs');
+        btn.classList.remove('text-slate-600');
+
+        const width = btn.getAttribute('data-viewport');
+        if (width === '100%') {
+          container.style.maxWidth = '100%';
+          container.style.height = '100%';
+          frame.style.borderRadius = '0';
+          frame.classList.remove('device-shadow');
+        } else {
+          container.style.maxWidth = width;
+          container.style.height = '94%';
+          frame.style.borderRadius = width === '390px' ? '40px' : '16px';
+          frame.classList.add('device-shadow');
+        }
+      });
+    });
+
+    // Flows modal inside master shell
+    flowsBtn.addEventListener('click', () => {
+      if (frame.contentWindow && frame.contentWindow.CareFlow) {
+        frame.contentWindow.CareFlow.openModal ? 
+          frame.contentWindow.document.getElementById('careflow-dock-flows-btn')?.click() : null;
+      }
+    });
+
+    // Initialize from Hash or default
+    const initialHash = window.location.hash.replace('#/', '').toLowerCase();
+    if (initialHash && PAGES.some(p => p.id === initialHash)) {
+      setPage(initialHash, false);
+    } else {
+      setPage('p01', false); // Start on Welcome Landing
+    }
+
+    // Expose CareFlowMaster
+    window.CareFlowMaster = {
+      setPage: setPage,
+      currentPage: () => currentPageId
+    };
+  </script>
+</body>
+</html>

@@ -4,6 +4,7 @@ import { CodeableConceptSchema, CodingSchema, ReferenceSchema } from "./common";
 export const ConditionSchema = z.object({
   resourceType: z.literal("Condition"),
   id: z.string(),
+  meta: z.object({ tag: z.array(CodingSchema) }).optional(),
   clinicalStatus: CodeableConceptSchema,
   code: CodeableConceptSchema,
   subject: ReferenceSchema,
@@ -26,12 +27,15 @@ export interface BuildConditionInput {
   patientRef: z.infer<typeof ReferenceSchema>;
   encounterRef?: z.infer<typeof ReferenceSchema>;
   recordedDate?: string | null;
+  /** `meta.tag` entries — e.g. flag a NAMASTE→ICD-11 mapping nobody has reviewed yet. */
+  tags?: z.infer<typeof CodingSchema>[];
 }
 
 export function buildCondition(input: BuildConditionInput): Condition {
   return ConditionSchema.parse({
     resourceType: "Condition",
     id: input.id,
+    ...(input.tags && input.tags.length > 0 ? { meta: { tag: input.tags } } : {}),
     clinicalStatus: { coding: [{ system: "http://terminology.hl7.org/CodeSystem/condition-clinical", code: "active" }] },
     code: {
       text: input.displayText,

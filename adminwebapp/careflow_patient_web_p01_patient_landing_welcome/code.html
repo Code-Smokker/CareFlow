@@ -1,0 +1,489 @@
+<!DOCTYPE html><html lang="en" class="h-full"><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0" name="viewport"><title>CareFlow Patient Web — P01 Patient Landing & Welcome</title><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&amp;family=Inter:wght@500;600&amp;display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"><script src="../shared_nav.js"></script><style>@layer base { html, body { margin: 0; padding: 0; } body { overscroll-behavior: auto; } main > :first-child { margin-top: 0 !important; } main > :last-child { margin-bottom: 0 !important; } } ::-webkit-scrollbar { display: none; }</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "surface-mint": "#D1F2E8", "canvas-bg": "#FAF8FF", "tertiary-container": "#296b7a", "on-tertiary-container": "#abe9fb", "on-surface": "#0c1b33", "primary-container": "#0d6e6e", "surface": "#f9f9ff", "on-secondary-fixed": "#00201c", "on-secondary-container": "#0b6f63", "on-primary": "#ffffff", "surface-bright": "#f9f9ff", "primary": "#005454", "on-primary-fixed": "#002020", "background": "#f9f9ff", "surface-dim": "#ccdafa", "on-secondary": "#ffffff", "on-tertiary-fixed-variant": "#004e5c", "tertiary-fixed-dim": "#92d0e2", "border-subtle": "#E2E8F0", "on-background": "#0c1b33", "on-primary-container": "#9dedec", "outline-variant": "#bec9c8", "primary-fixed": "#a0f0f0", "on-primary-fixed-variant": "#004f50", "secondary-container": "#9cefdf", "tertiary": "#015362", "on-tertiary": "#ffffff", "text-muted": "#3E4948", "surface-mint-subtle": "#E6F7F2", "on-secondary-fixed-variant": "#005047", "secondary-fixed": "#9ff2e2", "surface-container-high": "#dfe8ff", "secondary-fixed-dim": "#83d5c6", "on-error": "#ffffff", "surface-container-lowest": "#ffffff", "error": "#ba1a1a", "inverse-on-surface": "#ecf0ff", "surface-container-highest": "#d7e3ff", "navy-dark": "#0B192C", "border-teal": "#D6E4E2", "surface-container": "#e8eeff", "on-tertiary-fixed": "#001f26", "surface-variant": "#d7e3ff", "status-error-bg": "#FFDAD6", "error-container": "#ffdad6", "on-error-container": "#93000a", "primary-fixed-dim": "#84d4d3", "outline": "#6e7979", "status-error": "#BA1A1A", "secondary": "#006b5f", "inverse-surface": "#223149", "tertiary-fixed": "#aeecfe", "surface-container-low": "#f1f3ff", "surface-tint": "#016a6a", "surface-card": "#FFFFFF", "on-surface-variant": "#3e4948", "inverse-primary": "#84d4d3" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "container-max": "1320px", "space-xl": "2rem", "padding-card": "1.5rem", "space-lg": "1.5rem", "gutter-mobile": "1rem", "sidebar-width": "260px", "space-2xl": "3rem", "space-md": "1rem", "gutter-desktop": "1.5rem", "space-sm": "0.5rem", "space-xs": "0.25rem" }, "fontFamily": { "body-sm-bilingual": ["Plus Jakarta Sans"], "body-lg": ["Plus Jakarta Sans"], "label-md": ["Inter"], "title-md": ["Plus Jakarta Sans"], "headline-lg": ["Plus Jakarta Sans"], "label-sm": ["Inter"], "body-md": ["Plus Jakarta Sans"], "headline-lg-mobile": ["Plus Jakarta Sans"], "display-lg": ["Plus Jakarta Sans"], "headline-md": ["Plus Jakarta Sans"], "display-lg-mobile": ["Plus Jakarta Sans"] }, "fontSize": { "body-sm-bilingual": ["12px", { "lineHeight": "18px", "fontWeight": "400" }], "body-lg": ["16px", { "lineHeight": "26px", "fontWeight": "400" }], "label-md": ["13px", { "lineHeight": "18px", "letterSpacing": "0.01em", "fontWeight": "600" }], "title-md": ["18px", { "lineHeight": "26px", "fontWeight": "600" }], "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.015em", "fontWeight": "600" }], "label-sm": ["11px", { "lineHeight": "16px", "letterSpacing": "0.03em", "fontWeight": "600" }], "body-md": ["14px", { "lineHeight": "22px", "fontWeight": "400" }], "headline-lg-mobile": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }], "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "headline-md": ["22px", { "lineHeight": "30px", "letterSpacing": "-0.01em", "fontWeight": "600" }], "display-lg-mobile": ["34px", { "lineHeight": "42px", "letterSpacing": "-0.02em", "fontWeight": "700" }] } } } };</script></head><body class="bg-canvas-bg font-body-md text-on-surface antialiased"><header class="fixed top-0 left-0 right-0 z-50 bg-surface-card/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(13,110,110,0.04)]"><div class="h-16 max-w-[1320px] mx-auto px-gutter-mobile lg:px-gutter-desktop flex items-center justify-between"><div class="flex items-center gap-space-lg"><a class="flex items-center gap-space-sm group" data-path="patient-portal-home" href="#"><div class="w-9 h-9 rounded-full bg-surface-mint flex items-center justify-center"><span class="material-symbols-outlined text-primary text-[20px]">favorite</span></div><span class="font-title-md text-title-md text-navy-dark tracking-tight">CareFlow</span></a><nav class="hidden md:flex items-center gap-space-xs" data-active-classes="bg-surface-mint-subtle text-primary font-semibold"><a aria-current="page" class="px-space-md py-space-xs rounded-full transition-colors bg-surface-mint-subtle text-primary font-semibold" data-path="patient-portal-home" href="#">Home</a><a class="px-space-md py-space-xs rounded-full font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="book-consultation" href="#">Book Appointment</a><a class="px-space-md py-space-xs rounded-full font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="health-records-abdm" href="#">Health Records</a><a class="px-space-md py-space-xs rounded-full font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="patient-care-plans" href="#">Care Plans</a></nav></div><div class="flex items-center gap-space-md"><div class="flex items-center bg-surface-container-low p-space-xs rounded-full"><button class="px-space-md py-1 rounded-full bg-surface-card shadow-[0_1px_4px_rgba(0,0,0,0.04)] font-label-sm text-label-sm text-primary transition-all" type="button">English</button><button class="px-space-md py-1 rounded-full font-body-sm-bilingual text-body-sm-bilingual text-on-surface-variant hover:text-on-surface transition-colors" type="button">हिन्दी</button></div><a class="inline-flex items-center justify-center px-space-lg py-space-xs h-[40px] rounded-full bg-primary text-on-primary font-label-md text-label-md hover:bg-primary-container transition-all shadow-[0_2px_8px_-2px_rgba(13,110,110,0.2)]" data-path="patient-sign-in" href="#">Sign In</a><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="w-full pt-16 bg-canvas-bg min-h-screen"><div class="flex flex-col w-full font-body-md text-on-surface">
+<!-- HERO SECTION -->
+<section class="relative overflow-hidden pt-8 pb-16 lg:py-24">
+<!-- Ambient Backdrop Gradients -->
+<div class="pointer-events-none absolute -top-24 -left-24 w-96 h-96 rounded-full bg-surface-mint-subtle/70 blur-3xl -z-10"></div>
+<div class="pointer-events-none absolute top-1/2 -right-20 w-[480px] h-[480px] rounded-full bg-secondary-container/20 blur-[100px] -z-10"></div>
+<div class="max-w-[1320px] mx-auto px-gutter-mobile lg:px-gutter-desktop">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+<!-- Hero Left Column -->
+<div class="lg:col-span-6 flex flex-col items-start">
+<!-- Badge -->
+<div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-surface-mint text-primary mb-6 shadow-sm">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+<span class="font-label-md text-label-md tracking-wide uppercase font-semibold">SIMPLER HEALTHCARE</span>
+<span class="text-primary/40">•</span>
+<span class="font-body-sm-bilingual text-body-sm-bilingual text-primary/90 font-medium">आसान स्वास्थ्य देखभाल</span>
+</div>
+<!-- Headings -->
+<h1 class="font-display-lg text-display-lg-mobile lg:text-display-lg text-navy-dark font-bold tracking-tight mb-2">
+            Your care, all in <span class="text-primary underline decoration-surface-mint decoration-wavy decoration-2 underline-offset-8">one place</span>.
+          </h1>
+<p class="font-headline-md text-headline-md text-primary font-medium mb-6">
+            आपकी देखभाल, एक ही जगह।
+          </p>
+<!-- Supporting Text -->
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-xl mb-8 leading-relaxed">
+            Manage appointments, view your health information, access verified documents, and stay seamlessly connected with your primary care team in a private, patient-friendly portal.
+          </p>
+<!-- CTAs -->
+<div class="flex flex-wrap items-center gap-4 w-full sm:w-auto mb-10">
+<a class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full bg-primary text-on-primary font-label-md text-label-md shadow-md hover:bg-primary-container hover:shadow-lg transition-all transform active:scale-95 group" data-path="book-consultation" href="#">
+<span>Get started (शुरू करें)</span>
+<span class="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</a>
+<a class="w-full sm:w-auto inline-flex items-center justify-center px-8 py-3.5 rounded-full bg-surface-card text-primary font-label-md text-label-md shadow-sm hover:bg-surface-mint-subtle transition-all" data-path="patient-sign-in" href="#">
+              Sign in (साइन इन)
+            </a>
+</div>
+<!-- Trust Badges Row -->
+<div class="flex flex-wrap items-center gap-y-2 gap-x-4 text-on-surface-variant font-label-sm text-label-sm bg-surface-card/70 backdrop-blur-md px-4 py-2.5 rounded-full shadow-sm">
+<div class="flex items-center gap-1.5 text-primary font-medium">
+<span class="material-symbols-outlined text-[18px]">lock</span>
+<span>Private &amp; Secure</span>
+</div>
+<span class="text-border-subtle">•</span>
+<div class="flex items-center gap-1.5 text-primary font-medium">
+<span class="material-symbols-outlined text-[18px]">verified</span>
+<span>ABDM Compliant</span>
+</div>
+<span class="text-border-subtle">•</span>
+<div class="flex items-center gap-1.5 text-primary font-medium">
+<span class="material-symbols-outlined text-[18px]">shield</span>
+<span>256-bit Encrypted</span>
+</div>
+</div>
+</div>
+<!-- Hero Right Column: Patient Dashboard Journey Card -->
+<div class="lg:col-span-6 relative">
+<div class="relative mx-auto max-w-lg lg:max-w-none">
+<!-- Atmospheric card backglow -->
+<div class="absolute -inset-2 bg-gradient-to-r from-surface-mint/60 via-surface-mint-subtle/40 to-tertiary-fixed/40 rounded-3xl blur-xl opacity-70 transform rotate-1"></div>
+<!-- Main Patient Snapshot Container -->
+<div class="relative bg-surface-card rounded-3xl shadow-xl overflow-hidden p-6 sm:p-8">
+<!-- Patient Top Bar -->
+<div class="flex items-center justify-between pb-5 mb-6 bg-surface-container-low/60 -mx-6 -mt-6 px-6 pt-6">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-full bg-surface-mint flex items-center justify-center text-primary font-bold shadow-sm">
+<span class="font-headline-md text-headline-md">R</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<h2 class="font-title-md text-title-md text-navy-dark font-semibold">Rajesh Kumar</h2>
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-surface-mint text-primary">ABHA ACTIVE</span>
+</div>
+<p class="font-body-sm-bilingual text-body-sm-bilingual text-on-surface-variant">
+                      Welcome back • स्वागत है <span class="text-primary font-medium">#ABHA-9821</span>
+</p>
+</div>
+</div>
+<div class="w-10 h-10 rounded-full bg-surface-card flex items-center justify-center text-primary shadow-sm">
+<span class="material-symbols-outlined text-[20px]">notifications_none</span>
+</div>
+</div>
+<!-- Live Status Pill -->
+<div class="flex items-center justify-between bg-surface-mint-subtle/80 px-4 py-2.5 rounded-xl mb-6">
+<div class="flex items-center gap-2">
+<span class="relative flex h-2.5 w-2.5">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-secondary"></span>
+</span>
+<span class="font-label-md text-label-md text-secondary font-semibold">Triage Check-In Complete</span>
+</div>
+<span class="font-body-sm-bilingual text-body-sm-bilingual text-secondary font-medium">QR टोकन #14</span>
+</div>
+<!-- Upcoming Appointment Sub-Card -->
+<div class="bg-surface-container-low rounded-2xl p-5 mb-4 shadow-sm hover:shadow-md transition-all group">
+<div class="flex items-start justify-between mb-3">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-card flex items-center justify-center text-primary shrink-0 shadow-sm">
+<span class="material-symbols-outlined text-[22px]">stethoscope</span>
+</div>
+<div>
+<span class="font-label-sm text-label-sm text-primary uppercase font-bold tracking-wider">Upcoming Consultation</span>
+<h3 class="font-title-md text-title-md text-navy-dark font-semibold">Dr. Priya Sharma</h3>
+<p class="font-body-sm-bilingual text-body-sm-bilingual text-on-surface-variant">General Medicine • सामान्य चिकित्सा</p>
+</div>
+</div>
+<span class="px-2.5 py-1 rounded-full bg-surface-card text-on-surface-variant font-label-sm text-label-sm shadow-xs font-semibold">Today</span>
+</div>
+<div class="grid grid-cols-2 gap-3 pt-3 mt-2 bg-surface-card/60 rounded-xl px-3 py-2 text-on-surface">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[18px]">schedule</span>
+<span class="font-label-md text-label-md font-medium">02:30 PM (दोपहर)</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[18px]">meeting_room</span>
+<span class="font-label-md text-label-md font-medium">Room 104, OPD</span>
+</div>
+</div>
+<div class="mt-3.5 flex items-center justify-between pt-2">
+<span class="font-body-sm-bilingual text-body-sm-bilingual text-on-surface-variant">Queue: 2 patients ahead</span>
+<a class="font-label-md text-label-md text-primary font-semibold inline-flex items-center gap-1 group-hover:translate-x-0.5 transition-transform" href="#">
+<span>View details</span>
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+</a>
+</div>
+</div>
+<!-- Recent Care Summary Sub-Card -->
+<div class="bg-surface-card rounded-2xl p-4 shadow-sm">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-xl bg-surface-mint flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[20px]">assignment_turned_in</span>
+</div>
+<div>
+<h4 class="font-label-md text-label-md text-navy-dark font-semibold">Health Intake Summary</h4>
+<p class="font-body-sm-bilingual text-body-sm-bilingual text-on-surface-variant">Ready for Doctor Review • 2 records attached</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-primary/60 text-[20px]">verified_user</span>
+</div>
+</div>
+<!-- Calm Health Tracking Sparkline / Micro Visual -->
+<div class="mt-5 pt-4 flex items-center justify-between px-2">
+<div class="flex items-center gap-2">
+<div class="w-2.5 h-2.5 rounded-full bg-secondary"></div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Vitals logged: BP 118/78 • SpO2 99%</span>
+</div>
+<!-- Inline Micro SVG Rhythm Curve -->
+<svg class="w-28 h-6 text-primary" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 100 24">
+<path d="M0 12h20l4-8 6 16 5-12 5 6 4-2h56" opacity="0.65" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- QUICK VALUE CARDS SECTION -->
+<section class="py-12 bg-surface-container-low/40">
+<div class="max-w-[1320px] mx-auto px-gutter-mobile lg:px-gutter-desktop">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Card 01: Appointments -->
+<div class="bg-surface-card rounded-2xl p-7 shadow-sm hover:shadow-lg transition-all flex flex-col justify-between group">
+<div>
+<div class="w-14 h-14 rounded-2xl bg-surface-mint flex items-center justify-center text-primary mb-6 group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-[28px]">calendar_month</span>
+</div>
+<div class="flex items-baseline gap-2 mb-2">
+<h3 class="font-title-md text-title-md text-navy-dark font-semibold">Appointments</h3>
+<span class="font-body-sm-bilingual text-body-sm-bilingual text-on-surface-variant">अपॉइंटमेंट</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed mb-6">
+              View and manage your upcoming clinic visits, consult timings, OPD tokens, and scheduled check-ups with your preferred specialists.
+            </p>
+</div>
+<a class="inline-flex items-center gap-1.5 font-label-md text-label-md text-primary font-semibold group-hover:text-primary-container" data-path="book-consultation" href="#">
+<span>Manage visits</span>
+<span class="font-body-sm-bilingual text-[12px] opacity-75">(विज़िट देखें)</span>
+<span class="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</a>
+</div>
+<!-- Card 02: Health Records -->
+<div class="bg-surface-card rounded-2xl p-7 shadow-sm hover:shadow-lg transition-all flex flex-col justify-between group">
+<div>
+<div class="w-14 h-14 rounded-2xl bg-surface-mint flex items-center justify-center text-primary mb-6 group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-[28px]">folder_managed</span>
+</div>
+<div class="flex items-baseline gap-2 mb-2">
+<h3 class="font-title-md text-title-md text-navy-dark font-semibold">Health records</h3>
+<span class="font-body-sm-bilingual text-body-sm-bilingual text-on-surface-variant">स्वास्थ्य रिकॉर्ड</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed mb-6">
+              Instant access to your clinical care summaries, diagnostic test reports, e-prescriptions, and linked ABDM health locker records.
+            </p>
+</div>
+<a class="inline-flex items-center gap-1.5 font-label-md text-label-md text-primary font-semibold group-hover:text-primary-container" data-path="health-records-abdm" href="#">
+<span>View records</span>
+<span class="font-body-sm-bilingual text-[12px] opacity-75">(रिकॉर्ड्स देखें)</span>
+<span class="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</a>
+</div>
+<!-- Card 03: Stay Connected -->
+<div class="bg-surface-card rounded-2xl p-7 shadow-sm hover:shadow-lg transition-all flex flex-col justify-between group">
+<div>
+<div class="w-14 h-14 rounded-2xl bg-surface-mint flex items-center justify-center text-primary mb-6 group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-[28px]">health_and_safety</span>
+</div>
+<div class="flex items-baseline gap-2 mb-2">
+<h3 class="font-title-md text-title-md text-navy-dark font-semibold">Stay connected</h3>
+<span class="font-body-sm-bilingual text-body-sm-bilingual text-on-surface-variant">जुड़े रहें</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed mb-6">
+              Keep up with real-time care plan updates, dosage reminders, follow-up notifications, and doctor recommendations between consultations.
+            </p>
+</div>
+<a class="inline-flex items-center gap-1.5 font-label-md text-label-md text-primary font-semibold group-hover:text-primary-container" data-path="patient-care-plans" href="#">
+<span>Learn more</span>
+<span class="font-body-sm-bilingual text-[12px] opacity-75">(अधिक जानें)</span>
+<span class="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</a>
+</div>
+</div>
+</div>
+</section>
+<!-- HOW CAREFLOW HELPS SECTION -->
+<section class="py-20 lg:py-28 relative">
+<div class="max-w-[1320px] mx-auto px-gutter-mobile lg:px-gutter-desktop">
+<!-- Section Header -->
+<div class="text-center max-w-2xl mx-auto mb-16">
+<span class="font-label-sm text-label-sm uppercase tracking-widest text-primary font-bold mb-2 block">Step-By-Step Guidance</span>
+<h2 class="font-headline-lg text-headline-lg-mobile lg:text-headline-lg text-navy-dark font-semibold mb-2">
+          Your care journey, simplified.
+        </h2>
+<p class="font-headline-md text-headline-md text-primary font-medium mb-4">
+          आपकी देखभाल, आसान तरीके से।
+        </p>
+<p class="font-body-lg text-body-lg text-on-surface-variant">
+          Three simple steps to take control of your clinical care experience before, during, and after your visit.
+        </p>
+</div>
+<!-- 3 Steps Grid -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
+<!-- Step 01 -->
+<div class="bg-surface-card rounded-3xl p-8 shadow-sm flex flex-col relative overflow-hidden group hover:shadow-md transition-all">
+<div class="absolute -right-4 -top-6 text-[110px] font-bold text-surface-container-low select-none pointer-events-none group-hover:text-surface-mint/40 transition-colors">
+            01
+          </div>
+<div class="w-12 h-12 rounded-2xl bg-surface-mint flex items-center justify-center text-primary font-bold mb-6 z-10 shadow-xs">
+<span class="material-symbols-outlined text-[24px]">edit_note</span>
+</div>
+<div class="mb-3 z-10">
+<h3 class="font-title-md text-title-md text-navy-dark font-semibold">Prepare</h3>
+<span class="font-body-sm-bilingual text-body-sm-bilingual text-primary font-medium">तैयारी करें</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed z-10">
+            Complete your guided health questionnaire and upload prior prescriptions or scan reports right from your phone before arriving at the hospital.
+          </p>
+<div class="mt-6 pt-4 bg-surface-container-low/50 -mx-8 -mb-8 p-6 z-10 flex items-center gap-2 text-primary font-label-sm text-label-sm font-semibold">
+<span class="material-symbols-outlined text-[16px]">check_circle</span>
+<span>Saves 15 minutes of clinic waiting</span>
+</div>
+</div>
+<!-- Step 02 -->
+<div class="bg-surface-card rounded-3xl p-8 shadow-sm flex flex-col relative overflow-hidden group hover:shadow-md transition-all">
+<div class="absolute -right-4 -top-6 text-[110px] font-bold text-surface-container-low select-none pointer-events-none group-hover:text-surface-mint/40 transition-colors">
+            02
+          </div>
+<div class="w-12 h-12 rounded-2xl bg-surface-mint flex items-center justify-center text-primary font-bold mb-6 z-10 shadow-xs">
+<span class="material-symbols-outlined text-[24px]">qr_code_scanner</span>
+</div>
+<div class="mb-3 z-10">
+<h3 class="font-title-md text-title-md text-navy-dark font-semibold">Connect</h3>
+<span class="font-body-sm-bilingual text-body-sm-bilingual text-primary font-medium">जुड़ें</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed z-10">
+            Check in instantly via ABHA QR code scan or mobile OTP. Bypass crowded reception queues and connect directly with your scheduled doctor.
+          </p>
+<div class="mt-6 pt-4 bg-surface-container-low/50 -mx-8 -mb-8 p-6 z-10 flex items-center gap-2 text-primary font-label-sm text-label-sm font-semibold">
+<span class="material-symbols-outlined text-[16px]">check_circle</span>
+<span>Zero paperwork at registration</span>
+</div>
+</div>
+<!-- Step 03 -->
+<div class="bg-surface-card rounded-3xl p-8 shadow-sm flex flex-col relative overflow-hidden group hover:shadow-md transition-all">
+<div class="absolute -right-4 -top-6 text-[110px] font-bold text-surface-container-low select-none pointer-events-none group-hover:text-surface-mint/40 transition-colors">
+            03
+          </div>
+<div class="w-12 h-12 rounded-2xl bg-surface-mint flex items-center justify-center text-primary font-bold mb-6 z-10 shadow-xs">
+<span class="material-symbols-outlined text-[24px]">fact_check</span>
+</div>
+<div class="mb-3 z-10">
+<h3 class="font-title-md text-title-md text-navy-dark font-semibold">Continue</h3>
+<span class="font-body-sm-bilingual text-body-sm-bilingual text-primary font-medium">जारी रखें</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed z-10">
+            Access bilingual read-back summaries, digital discharge instructions, and pharmacy-ready e-prescriptions on your device right after your consult.
+          </p>
+<div class="mt-6 pt-4 bg-surface-container-low/50 -mx-8 -mb-8 p-6 z-10 flex items-center gap-2 text-primary font-label-sm text-label-sm font-semibold">
+<span class="material-symbols-outlined text-[16px]">check_circle</span>
+<span>Lifelong access via Ayushman vault</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- PATIENT BENEFITS SECTION -->
+<section class="py-16 bg-surface-container-low/60">
+<div class="max-w-[1320px] mx-auto px-gutter-mobile lg:px-gutter-desktop">
+<div class="flex flex-col lg:flex-row lg:items-end justify-between mb-12 gap-6">
+<div>
+<span class="font-label-sm text-label-sm uppercase tracking-widest text-primary font-bold mb-2 block">Comprehensive Features</span>
+<h2 class="font-headline-lg text-headline-lg-mobile lg:text-headline-lg text-navy-dark font-semibold">
+            Everything you need for your care
+          </h2>
+<p class="font-headline-md text-headline-md text-primary font-medium">
+            आपकी देखभाल के लिए सब कुछ
+          </p>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-md">
+          Designed specifically for patients and families across India with effortless bilingual clarity and zero technical barrier.
+        </p>
+</div>
+<!-- 6-Item Clean Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+<!-- Item 1 -->
+<div class="bg-surface-card rounded-2xl p-6 shadow-sm flex items-start gap-4 hover:bg-surface-mint-subtle/40 transition-colors">
+<div class="w-8 h-8 rounded-full bg-surface-mint flex items-center justify-center text-secondary shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[20px] font-bold">check</span>
+</div>
+<div>
+<h4 class="font-title-md text-title-md text-navy-dark font-semibold mb-1">Appointments</h4>
+<p class="font-body-sm-bilingual text-body-sm-bilingual text-on-surface-variant font-medium">अपॉइंटमेंट बुकिंग व ट्रैकिंग</p>
+<p class="font-body-md text-body-md text-on-surface-variant mt-2 text-sm">Instant slot scheduling and live clinic token status tracking.</p>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="bg-surface-card rounded-2xl p-6 shadow-sm flex items-start gap-4 hover:bg-surface-mint-subtle/40 transition-colors">
+<div class="w-8 h-8 rounded-full bg-surface-mint flex items-center justify-center text-secondary shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[20px] font-bold">check</span>
+</div>
+<div>
+<h4 class="font-title-md text-title-md text-navy-dark font-semibold mb-1">Health information</h4>
+<p class="font-body-sm-bilingual text-body-sm-bilingual text-on-surface-variant font-medium">डिजिटल स्वास्थ्य जानकारी</p>
+<p class="font-body-md text-body-md text-on-surface-variant mt-2 text-sm">Vitals, allergies, and ongoing medical conditions at a glance.</p>
+</div>
+</div>
+<!-- Item 3 -->
+<div class="bg-surface-card rounded-2xl p-6 shadow-sm flex items-start gap-4 hover:bg-surface-mint-subtle/40 transition-colors">
+<div class="w-8 h-8 rounded-full bg-surface-mint flex items-center justify-center text-secondary shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[20px] font-bold">check</span>
+</div>
+<div>
+<h4 class="font-title-md text-title-md text-navy-dark font-semibold mb-1">Care summaries</h4>
+<p class="font-body-sm-bilingual text-body-sm-bilingual text-on-surface-variant font-medium">केयर सारांश एवं डॉक्टर नोट्स</p>
+<p class="font-body-md text-body-md text-on-surface-variant mt-2 text-sm">Clear plain-language explanations of doctor diagnoses.</p>
+</div>
+</div>
+<!-- Item 4 -->
+<div class="bg-surface-card rounded-2xl p-6 shadow-sm flex items-start gap-4 hover:bg-surface-mint-subtle/40 transition-colors">
+<div class="w-8 h-8 rounded-full bg-surface-mint flex items-center justify-center text-secondary shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[20px] font-bold">check</span>
+</div>
+<div>
+<h4 class="font-title-md text-title-md text-navy-dark font-semibold mb-1">Documents</h4>
+<p class="font-body-sm-bilingual text-body-sm-bilingual text-on-surface-variant font-medium">दस्तावेज़ एवं पर्चे संग्रह</p>
+<p class="font-body-md text-body-md text-on-surface-variant mt-2 text-sm">Central repository for imaging scans, discharge slips, and bills.</p>
+</div>
+</div>
+<!-- Item 5 -->
+<div class="bg-surface-card rounded-2xl p-6 shadow-sm flex items-start gap-4 hover:bg-surface-mint-subtle/40 transition-colors">
+<div class="w-8 h-8 rounded-full bg-surface-mint flex items-center justify-center text-secondary shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[20px] font-bold">check</span>
+</div>
+<div>
+<h4 class="font-title-md text-title-md text-navy-dark font-semibold mb-1">Prescriptions</h4>
+<p class="font-body-sm-bilingual text-body-sm-bilingual text-on-surface-variant font-medium">सत्यापित डिजिटल प्रिस्क्रिप्शन</p>
+<p class="font-body-md text-body-md text-on-surface-variant mt-2 text-sm">QR-authenticated digital Rx with bilingual dosage schedules.</p>
+</div>
+</div>
+<!-- Item 6 -->
+<div class="bg-surface-card rounded-2xl p-6 shadow-sm flex items-start gap-4 hover:bg-surface-mint-subtle/40 transition-colors">
+<div class="w-8 h-8 rounded-full bg-surface-mint flex items-center justify-center text-secondary shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[20px] font-bold">check</span>
+</div>
+<div>
+<h4 class="font-title-md text-title-md text-navy-dark font-semibold mb-1">Lab reports</h4>
+<p class="font-body-sm-bilingual text-body-sm-bilingual text-on-surface-variant font-medium">लैब परीक्षण परिणाम एवं रिपोर्ट</p>
+<p class="font-body-md text-body-md text-on-surface-variant mt-2 text-sm">Pathology and radiology results delivered the moment they are approved.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- TRUST & PRIVACY SECTION -->
+<section class="py-20 lg:py-24">
+<div class="max-w-[1320px] mx-auto px-gutter-mobile lg:px-gutter-desktop">
+<div class="bg-surface-card rounded-3xl p-8 sm:p-12 shadow-md relative overflow-hidden">
+<!-- Header -->
+<div class="max-w-3xl mb-12">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-mint text-primary text-xs font-semibold uppercase tracking-wider mb-4">
+<span class="material-symbols-outlined text-[16px]">privacy_tip</span>
+<span>Your Privacy, Protected Always</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg-mobile lg:text-headline-lg text-navy-dark font-semibold mb-2">
+            Your information matters.
+          </h2>
+<p class="font-headline-md text-headline-md text-primary font-medium mb-4">
+            आपकी जानकारी महत्वपूर्ण है।
+          </p>
+<p class="font-body-lg text-body-lg text-on-surface-variant leading-relaxed">
+            CareFlow is designed to help you access and manage your healthcare information with care, dignity, and transparency. Your health data remains strictly under your personal control.
+          </p>
+</div>
+<!-- 3 Feature Pillars -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<div class="bg-surface-container-low/50 rounded-2xl p-6">
+<div class="w-12 h-12 rounded-xl bg-surface-card shadow-xs flex items-center justify-center text-primary mb-4">
+<span class="material-symbols-outlined text-[26px]">manage_accounts</span>
+</div>
+<h3 class="font-title-md text-title-md text-navy-dark font-semibold mb-2">Patient-Owned Data</h3>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+              Medical records belong to you. Information is only shared with care providers you explicitly consent to via OTP authorization.
+            </p>
+</div>
+<div class="bg-surface-container-low/50 rounded-2xl p-6">
+<div class="w-12 h-12 rounded-xl bg-surface-card shadow-xs flex items-center justify-center text-primary mb-4">
+<span class="material-symbols-outlined text-[26px]">hub</span>
+</div>
+<h3 class="font-title-md text-title-md text-navy-dark font-semibold mb-2">ABDM Ecosystem Integrated</h3>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+              Seamless linkage with your 14-digit Ayushman Bharat Health Account (ABHA). Port your records effortlessly between any hospital in India.
+            </p>
+</div>
+<div class="bg-surface-container-low/50 rounded-2xl p-6">
+<div class="w-12 h-12 rounded-xl bg-surface-card shadow-xs flex items-center justify-center text-primary mb-4">
+<span class="material-symbols-outlined text-[26px]">enhanced_encryption</span>
+</div>
+<h3 class="font-title-md text-title-md text-navy-dark font-semibold mb-2">Bank-Grade Encryption</h3>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+              Protected by 256-bit AES encryption in transit and at rest. Clinical files are stored in India's sovereign cloud infrastructure.
+            </p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- FINAL CALL TO ACTION -->
+<section class="pb-20 lg:pb-28">
+<div class="max-w-[1320px] mx-auto px-gutter-mobile lg:px-gutter-desktop">
+<div class="relative bg-primary text-on-primary rounded-3xl p-8 sm:p-14 overflow-hidden shadow-xl text-center">
+<!-- Decorative subtle elements -->
+<div class="pointer-events-none absolute -top-24 -right-24 w-80 h-80 rounded-full bg-primary-container/40 blur-3xl"></div>
+<div class="pointer-events-none absolute -bottom-24 -left-24 w-80 h-80 rounded-full bg-secondary-container/20 blur-2xl"></div>
+<div class="relative z-10 max-w-3xl mx-auto flex flex-col items-center">
+<div class="w-14 h-14 rounded-full bg-on-primary/10 flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-surface-mint text-[28px]">favorite</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg-mobile lg:text-headline-lg font-bold tracking-tight mb-2">
+            Ready to continue your care?
+          </h2>
+<p class="font-headline-md text-headline-md text-surface-mint font-medium mb-4">
+            अपनी देखभाल जारी रखने के लिए तैयार हैं?
+          </p>
+<p class="font-body-lg text-body-lg text-on-primary-container/90 max-w-xl mb-8">
+            Join thousands of patients who experience stress-free, connected healthcare across India with CareFlow.
+          </p>
+<!-- Buttons -->
+<div class="flex flex-wrap items-center justify-center gap-4 w-full sm:w-auto mb-6">
+<a class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-surface-card text-primary font-label-md text-label-md shadow-lg hover:bg-surface-mint-subtle transition-all transform active:scale-95 group" data-path="book-consultation" href="#">
+<span>Get started (शुरू करें)</span>
+<span class="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</a>
+<a class="w-full sm:w-auto inline-flex items-center justify-center px-8 py-4 rounded-full bg-transparent text-on-primary font-label-md text-label-md hover:bg-on-primary/10 transition-all" data-path="patient-sign-in" href="#">
+              Sign in (साइन इन)
+            </a>
+</div>
+<!-- Assurance Note -->
+<p class="font-body-sm-bilingual text-body-sm-bilingual text-surface-mint-subtle/80 flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px]">check_circle</span>
+<span>Free for patients • No app download required • Works on any browser</span>
+</p>
+</div>
+</div>
+</div>
+</section>
+</div></main><footer class="w-full bg-surface-container-low py-space-2xl"><div class="max-w-[1320px] mx-auto px-gutter-mobile lg:px-gutter-desktop"><div class="grid grid-cols-1 md:grid-cols-3 gap-space-xl items-start pb-space-xl"><div class="flex items-start gap-space-md"><div class="w-10 h-10 rounded-full bg-surface-mint flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-primary text-[22px]">verified_user</span></div><div><h4 class="font-label-md text-label-md text-on-surface">ABDM Compliant</h4><p class="font-body-sm-bilingual text-body-sm-bilingual text-on-surface-variant">Seamless integration with Ayushman Bharat Digital Mission and Ayushman Bharat Health Account (ABHA).</p></div></div><div class="flex items-start gap-space-md"><div class="w-10 h-10 rounded-full bg-surface-mint flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-primary text-[22px]">lock</span></div><div><h4 class="font-label-md text-label-md text-on-surface">256-Bit AES Health Vault</h4><p class="font-body-sm-bilingual text-body-sm-bilingual text-on-surface-variant">Your clinical diagnostic reports, prescriptions, and summaries remain client-side encrypted at rest.</p></div></div><div class="flex items-start gap-space-md"><div class="w-10 h-10 rounded-full bg-surface-mint flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-primary text-[22px]">shield_with_heart</span></div><div><h4 class="font-label-md text-label-md text-on-surface">Patient Privacy First</h4><p class="font-body-sm-bilingual text-body-sm-bilingual text-on-surface-variant">Complete consent-driven data handling. You control when and which doctor accesses your medical record.</p></div></div></div><div class="pt-space-lg flex flex-col md:flex-row items-center justify-between gap-space-md"><div class="flex items-center gap-space-sm"><div class="w-6 h-6 rounded-full bg-surface-mint flex items-center justify-center"><span class="material-symbols-outlined text-primary text-[14px]">favorite</span></div><span class="font-title-md text-title-md text-navy-dark">CareFlow Health</span><span class="font-label-sm text-label-sm text-on-surface-variant pl-space-xs">© 2024 CareFlow Inc. All rights reserved.</span></div><div class="flex items-center gap-space-lg font-label-sm text-label-sm text-on-surface-variant"><a class="hover:text-primary transition-colors" data-path="privacy-policy" href="#">Privacy Policy</a><a class="hover:text-primary transition-colors" data-path="patient-rights" href="#">Patient Rights &amp; Consent</a><a class="hover:text-primary transition-colors" data-path="terms-of-service" href="#">Terms of Service</a><a class="hover:text-primary transition-colors" data-path="patient-support" href="#">Clinical Support 24/7</a></div></div></div></footer><div id="snapdom-sandbox" data-snapdom-sandbox="true" aria-hidden="true" style="position: absolute; left: -9999px; top: -9999px; width: 0px; height: 0px; overflow: hidden;"></div></body></html>

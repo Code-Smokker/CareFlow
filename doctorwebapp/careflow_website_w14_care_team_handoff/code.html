@@ -1,0 +1,202 @@
+<!DOCTYPE html><html class="h-full bg-[#F8FAFC]" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>CareFlow — W14 Care Team Handoff</title>
+<script src="../careflow-nav.js" defer></script>
+<!-- Tailwind CSS v3 with Plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#F0F9F8',
+              100: '#E6F7F2',
+              200: '#C7EFE4',
+              500: '#14B8A6',
+              700: '#0D6E6E',
+              800: '#094E4E',
+              900: '#053131',
+            },
+            clinical: {
+              navy: '#0F172A',
+              slate: '#334155',
+              muted: '#64748B',
+              border: '#E2E8F0',
+              cardBg: '#FFFFFF',
+              bgLight: '#F8FAFC'
+            },
+            alert: {
+              amberBg: '#FFFDF5',
+              amberBorder: '#FDE68A',
+              amberText: '#B45309',
+              amberLight: '#FEF3C7',
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'Plus Jakarta Sans', 'system-ui', '-apple-system', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+<!-- BEGIN: Custom Styles -->
+<style data-purpose="custom-scrollbars">
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #F1F5F9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #CBD5E1;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94A3B8;
+    }
+  </style>
+<style data-purpose="badge-and-dot">
+    .status-dot-active {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background-color: #0D6E6E;
+      display: inline-block;
+    }
+    .pulse-dot {
+      animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: .4; }
+    }
+  </style>
+<!-- END: Custom Styles -->
+</head>
+<body class="h-full font-sans text-clinical-navy antialiased flex flex-col bg-[#F8FAFC]">
+<div class="flex flex-1 min-h-screen">
+<!-- BEGIN: PersistentLeftSidebar -->
+<aside class="w-64 bg-white border-r border-clinical-border flex flex-col justify-between flex-shrink-0 z-30 select-none" data-purpose="navigation-sidebar">
+<div>
+<!-- Brand Header -->
+<div class="h-16 flex items-center justify-between px-5 border-b border-clinical-border">
+<div class="flex items-center space-x-3">
+<div class="w-9 h-9 rounded-lg bg-brand-800 flex items-center justify-center text-white shadow-sm">
+<!-- CareFlow heart & medical cross / hands icon -->
+<svg class="w-5 h-5 text-[#34D399]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"></path>
+</svg>
+</div>
+<div>
+<div class="font-bold text-base tracking-tight text-clinical-navy leading-none">CareFlow</div>
+<div class="text-[11px] text-clinical-muted mt-0.5">Clinical Care Team</div>
+</div>
+</div>
+<span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-brand-100 text-brand-800 tracking-wide">OPD</span>
+</div>
+<!-- Navigation Links -->
+<nav class="p-3 space-y-1 text-sm font-medium"><a class="flex items-center justify-between px-3 py-2 rounded-lg text-clinical-slate hover:bg-slate-50 transition-colors" href="#"><div class="flex items-center space-x-3"><svg class="w-4 h-4 text-clinical-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path></svg><span>Dashboard</span></div></a><a class="flex items-center justify-between px-3 py-2 rounded-lg bg-brand-100 text-brand-700 font-semibold shadow-xs" href="#"><div class="flex items-center space-x-3"><svg class="w-4 h-4 text-brand-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path></svg><span>Patients</span></div><span class="status-dot-active pulse-dot"></span></a><a class="flex items-center justify-between px-3 py-2 rounded-lg text-clinical-slate hover:bg-slate-50 transition-colors" href="#"><div class="flex items-center space-x-3"><svg class="w-4 h-4 text-clinical-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path></svg><span>Appointments</span></div></a><a class="flex items-center justify-between px-3 py-2 rounded-lg text-clinical-slate hover:bg-slate-50 transition-colors" href="#"><div class="flex items-center space-x-3"><svg class="w-4 h-4 text-clinical-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path></svg><span>Documents</span></div></a><a class="flex items-center justify-between px-3 py-2 rounded-lg text-clinical-slate hover:bg-slate-50 transition-colors" href="#"><div class="flex items-center space-x-3"><svg class="w-4 h-4 text-clinical-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path></svg><span>Care Summaries</span></div></a><a class="flex items-center justify-between px-3 py-2 rounded-lg text-clinical-slate hover:bg-slate-50 transition-colors" href="#"><div class="flex items-center space-x-3"><svg class="w-4 h-4 text-clinical-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg><span>Alerts</span></div><span class="w-2 h-2 rounded-full bg-rose-500"></span></a><a class="flex items-center justify-between px-3 py-2 rounded-lg text-clinical-slate hover:bg-slate-50 transition-colors" href="#"><div class="flex items-center space-x-3"><svg class="w-4 h-4 text-clinical-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path></svg><span>Analytics</span></div></a></nav>
+</div>
+<!-- Bottom Sidebar Items -->
+<div class="p-3 border-t border-clinical-border space-y-1">
+<a class="flex items-center space-x-3 px-3 py-2 rounded-lg text-clinical-slate hover:bg-slate-50 text-sm" href="#">
+<svg class="w-4 h-4 text-clinical-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path>
+<path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path>
+</svg>
+<span>Settings</span>
+</a>
+<a class="flex items-center space-x-3 px-3 py-2 rounded-lg text-clinical-slate hover:bg-slate-50 text-sm" href="#">
+<svg class="w-4 h-4 text-clinical-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path>
+</svg>
+<span>Help &amp; Support</span>
+</a>
+<!-- Clinician Profile Card -->
+<div class="mt-3 pt-3 border-t border-clinical-border flex items-center justify-between p-2 rounded-lg bg-slate-50 border border-slate-100">
+<div class="flex items-center space-x-2.5">
+<div class="relative">
+<div class="w-8 h-8 rounded-full bg-brand-700 flex items-center justify-center text-xs font-bold text-white">AI</div>
+<span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-white"></span>
+</div>
+<div class="leading-tight">
+<p class="text-xs font-semibold text-clinical-navy">Dr. Ananya Iyer</p>
+<p class="text-[10px] text-clinical-muted">Desk 4 • OPD Session</p>
+</div>
+</div>
+<button aria-label="More options" class="text-clinical-muted hover:text-clinical-navy p-1">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</button>
+</div>
+</div>
+</aside>
+<!-- END: PersistentLeftSidebar -->
+<!-- BEGIN: MainContentWrapper -->
+<div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+<!-- Universal Header -->
+<header class="h-16 bg-white border-b border-clinical-border px-8 flex items-center justify-between flex-shrink-0 z-20" data-purpose="top-header">
+<!-- Search Field -->
+<div class="w-full max-w-md relative">
+<div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+<svg class="w-4 h-4 text-clinical-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<input class="w-full pl-10 pr-12 py-1.5 bg-slate-50 border border-slate-200 rounded-full text-xs text-clinical-navy placeholder-clinical-muted focus:bg-white focus:outline-none focus:ring-1.5 focus:ring-brand-700 focus:border-brand-700 transition-all" placeholder="Search patients, UHID, ABHA..." type="text">
+<div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+<kbd class="text-[10px] text-clinical-muted bg-white border border-slate-200 px-1.5 py-0.5 rounded font-mono">⌘K</kbd>
+</div>
+</div>
+<!-- Right Utility Tools -->
+<div class="flex items-center space-x-3.5">
+<!-- Language Toggle -->
+<div class="flex items-center space-x-1 px-2.5 py-1 bg-slate-50 border border-slate-200 rounded-full text-xs font-medium text-clinical-slate hover:bg-slate-100 cursor-pointer">
+<svg class="w-3.5 h-3.5 text-clinical-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path>
+</svg>
+<span>English (हिन्दी)</span>
+<svg class="w-3 h-3 text-clinical-muted ml-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<!-- Notification Bell with Alert Badge -->
+<button aria-label="Notifications" class="relative p-2 rounded-full text-clinical-muted hover:text-clinical-navy hover:bg-slate-100 transition-colors">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path>
+</svg>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 rounded-full ring-2 ring-white"></span>
+</button>
+<!-- Top User Circle -->
+<div class="w-8 h-8 rounded-full bg-brand-800 text-white flex items-center justify-center text-xs font-semibold cursor-pointer">
+            AI
+          </div>
+</div>
+</header>
+<!-- Scrollable Main Viewport -->
+<main class="flex-1 overflow-y-auto px-8 py-6 space-y-6"><!-- BEGIN: BreadcrumbAndLiveSync --><div class="flex flex-wrap items-center justify-between gap-3 text-xs" data-purpose="sub-navigation-bar"><div class="flex items-center space-x-2 text-clinical-muted"><a class="inline-flex items-center text-brand-700 hover:text-brand-800 font-medium py-1 px-2.5 rounded-md hover:bg-brand-50 transition-colors cursor-pointer" href="../careflow_website_w13_red_flag_alerts/code.html"><svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M10 19l-7-7m0 0l7-7m-7 7h18" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>← Red Flag Alerts</a><span>/</span><span class="text-clinical-slate">Patients</span><span>/</span><span class="text-clinical-slate font-medium">Aarav Sharma</span><span>/</span><span class="text-clinical-slate">Care Summary</span><span>/</span><span class="text-clinical-navy font-semibold">Care Team Handoff</span></div><div class="inline-flex items-center px-3 py-1 rounded-full bg-[#E8F5E9] text-[#2E7D32] border border-[#C8E6C9] font-medium text-[11px]"><span class="w-2 h-2 rounded-full bg-[#4CAF50] mr-1.5 pulse-dot"></span><span>ABHA Sync: Active</span><span class="mx-1.5 text-[#81C784]">•</span><span class="text-[#1B5E20] font-mono">ABHA ID: 91-8472-3021-9920</span></div></div><!-- END: BreadcrumbAndLiveSync --><!-- BEGIN: PageHeader --><div class="flex flex-wrap items-center justify-between gap-4" data-purpose="page-title-row"><div><div class="flex items-center space-x-2.5 mb-1.5"><span class="px-2.5 py-0.5 rounded text-[11px] font-semibold bg-brand-100 text-brand-800 tracking-wide uppercase">CARE TEAM HANDOFF • केयर टीम हैंडऑफ</span><span class="text-[11px] font-mono text-clinical-muted bg-slate-100 px-2 py-0.5 rounded border border-slate-200">UHID: CF-1024</span></div><h1 class="text-2xl font-bold tracking-tight text-clinical-navy flex items-center gap-2">Hand off patient • <span class="text-clinical-slate font-medium text-xl">मरीज को आगे भेजें</span></h1><p class="text-xs text-clinical-muted mt-1">Share the completed intake summary with the appropriate care-team member.</p></div><div class="flex items-center space-x-2.5"><div class="inline-flex items-center px-3.5 py-1.5 rounded-full bg-brand-100 text-brand-800 border border-brand-200 text-xs font-semibold"><span class="w-2 h-2 rounded-full bg-brand-700 mr-2 pulse-dot"></span><span>Ready for handoff • हैंडऑफ के लिए तैयार</span></div><button class="inline-flex items-center px-3.5 py-1.5 rounded-full bg-white border border-slate-200 text-clinical-slate text-xs font-medium hover:bg-slate-50 transition-colors shadow-xs"><svg class="w-3.5 h-3.5 mr-1.5 text-clinical-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path></svg><span>Audit Log</span></button></div></div><!-- END: PageHeader --><!-- BEGIN: PatientContextCard --><div class="bg-white rounded-xl border border-clinical-border p-4 shadow-xs flex flex-wrap items-center justify-between gap-4" data-purpose="patient-summary-card"><div class="flex items-center space-x-4"><div class="w-12 h-12 rounded-xl bg-navy-dark text-white font-bold text-base flex items-center justify-center shadow-xs">AS</div><div><div class="flex items-center space-x-2"><h2 class="text-base font-bold text-clinical-navy">Aarav Sharma</h2><span class="px-2 py-0.5 rounded text-[11px] font-medium bg-slate-100 text-clinical-slate">28 Y / M</span><span class="px-2 py-0.5 rounded font-mono text-[11px] bg-slate-100 text-clinical-muted">UHID: CF-1024</span></div><div class="flex items-center space-x-3 text-xs text-clinical-muted mt-1"><span class="inline-flex items-center"><svg class="w-3.5 h-3.5 mr-1 text-clinical-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path></svg>Intake completed: Today • 09:28 AM</span><span>•</span><span class="inline-flex items-center font-mono"><svg class="w-3.5 h-3.5 mr-1 text-clinical-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path></svg>ABHA: 91-8293-1029-44</span></div></div></div><div class="inline-flex items-center px-3.5 py-1.5 rounded-full bg-brand-100 text-brand-800 border border-brand-200 text-xs font-semibold"><span class="w-2 h-2 rounded-full bg-emerald-500 mr-2 pulse-dot"></span><span>Ready for handoff • हैंडऑफ के लिए तैयार</span></div></div><!-- END: PatientContextCard --><!-- BEGIN: MainTwoColumnGrid --><div class="grid grid-cols-1 lg:grid-cols-12 gap-6" data-purpose="main-grid-layout"><!-- LEFT COLUMN: DOMINANT CLINICAL HANDOFF DOSSIER --><div class="lg:col-span-7 space-y-5"><!-- 1. HANDOFF SUMMARY METRICS --><section class="bg-white rounded-xl border border-clinical-border p-5 shadow-xs"><div class="flex items-center justify-between mb-3"><div><h3 class="text-sm font-bold text-clinical-navy">Handoff summary • हैंडऑफ सारांश</h3><p class="text-xs text-clinical-muted">Key information for the receiving care team.</p></div><span class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Intake Completed</span></div><div class="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-1"><div class="p-3 rounded-lg bg-slate-50 border border-slate-100"><div class="text-[11px] font-medium text-clinical-muted">Chief Complaint</div><div class="text-xs font-bold text-clinical-navy mt-1">Fever &amp; cough</div><div class="text-[10px] text-clinical-slate mt-0.5">Duration: 3 days</div></div><div class="p-3 rounded-lg bg-slate-50 border border-slate-100"><div class="text-[11px] font-medium text-clinical-muted">Severity Score</div><div class="text-xs font-bold text-amber-700 mt-1 flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-amber-500"></span>Moderate (4/10)</div><div class="text-[10px] text-clinical-slate mt-0.5">Clinical triage</div></div><div class="p-3 rounded-lg bg-slate-50 border border-slate-100"><div class="text-[11px] font-medium text-clinical-muted">Documents</div><div class="text-xs font-bold text-clinical-navy mt-1">2 files verified</div><div class="text-[10px] text-emerald-700 font-medium mt-0.5">OCR completed</div></div><div class="p-3 rounded-lg bg-amber-50/70 border border-amber-200/80"><div class="text-[11px] font-medium text-amber-800">Alerts</div><div class="text-xs font-bold text-amber-900 mt-1">2 items to review</div><div class="text-[10px] text-amber-700 mt-0.5">Clinical signoff req.</div></div><div class="p-3 rounded-lg bg-slate-50 border border-slate-100 col-span-2 sm:col-span-2"><div class="text-[11px] font-medium text-clinical-muted">Questionnaire Status</div><div class="text-xs font-bold text-clinical-navy mt-1 flex items-center justify-between"><span>12/12 Complete (100%)</span><span class="text-[11px] text-emerald-700 font-semibold">All verified ✓</span></div><div class="w-full bg-slate-200 h-1.5 rounded-full mt-2 overflow-hidden"><div class="bg-brand-700 h-full rounded-full w-full"></div></div></div></div></section><!-- 2. CLINICAL SNAPSHOT --><section class="bg-white rounded-xl border border-clinical-border p-5 shadow-xs"><div class="flex items-center space-x-2 mb-3.5"><div class="w-7 h-7 rounded-lg bg-brand-100 text-brand-800 flex items-center justify-center font-bold text-xs"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path></svg></div><h3 class="text-sm font-bold text-clinical-navy">Clinical snapshot • क्लिनिकल सारांश</h3></div><div class="space-y-3 text-xs"><div class="p-3 bg-slate-50 rounded-lg border border-slate-100"><div class="text-[11px] font-semibold text-clinical-muted uppercase tracking-wider">Main Concern / मुख्य समस्या</div><p class="text-clinical-navy font-semibold text-xs mt-1">Fever &amp; cough (reported 3 days, gradual progression)</p><p class="text-clinical-slate text-[11px] mt-0.5 italic">“Fever for about three days, accompanied by fatigue and mild cough.”</p></div><div class="grid grid-cols-1 sm:grid-cols-2 gap-3"><div class="p-3 bg-slate-50 rounded-lg border border-slate-100"><div class="text-[11px] font-semibold text-clinical-muted uppercase tracking-wider">Reported Symptoms</div><ul class="mt-1.5 space-y-1 text-clinical-slate text-[11px]"><li class="flex items-center space-x-1.5"><span class="w-1.5 h-1.5 rounded-full bg-brand-700"></span><span>Fever (101.4°F peak, intermittent)</span></li><li class="flex items-center space-x-1.5"><span class="w-1.5 h-1.5 rounded-full bg-brand-700"></span><span>Dry cough, worse at night</span></li><li class="flex items-center space-x-1.5"><span class="w-1.5 h-1.5 rounded-full bg-brand-700"></span><span>Fatigue and generalized malaise</span></li><li class="flex items-center space-x-1.5"><span class="w-1.5 h-1.5 rounded-full bg-brand-700"></span><span>Mild throat tightness</span></li></ul></div><div class="p-3 bg-slate-50 rounded-lg border border-slate-100"><div class="text-[11px] font-semibold text-clinical-muted uppercase tracking-wider">Medications &amp; Allergies</div><div class="mt-1.5 space-y-2 text-[11px]"><div><span class="text-clinical-navy font-semibold">Current Med:</span><p class="text-clinical-slate">Paracetamol 650mg <span class="text-amber-700 font-medium">(Needs dosage confirmation)</span></p></div><div><span class="text-clinical-navy font-semibold">Allergies:</span><p class="text-emerald-700 font-medium flex items-center gap-1"><span class="font-bold">✓</span> No known drug allergies (Verified)</p></div></div></div></div></div></section><!-- 3. IMPORTANT ITEMS TO REVIEW --><section class="bg-alert-amberBg border border-alert-amberBorder rounded-xl p-5 shadow-xs"><div class="flex items-center justify-between mb-3"><div class="flex items-center space-x-2"><svg class="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg><h3 class="text-sm font-bold text-amber-900">Important to review • समीक्षा के लिए महत्वपूर्ण</h3></div><span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-200/70 text-amber-900 uppercase tracking-wide">2 Flags</span></div><div class="space-y-2.5 text-xs"><div class="p-3 bg-white rounded-lg border border-amber-200 flex items-start space-x-3"><span class="w-2 h-2 rounded-full bg-amber-500 mt-1.5 flex-shrink-0"></span><div><p class="font-bold text-clinical-navy">Persistent fever • लगातार बुखार</p><p class="text-clinical-slate text-[11px] mt-0.5">Reported for approximately 3 days (peaking at 101.4°F). Requires clinician review before consultation.</p></div></div><div class="p-3 bg-white rounded-lg border border-amber-200 flex items-start space-x-3"><span class="w-2 h-2 rounded-full bg-amber-500 mt-1.5 flex-shrink-0"></span><div><p class="font-bold text-clinical-navy">Medication dosage confirmation • दवा की मात्रा की पुष्टि</p><p class="text-clinical-slate text-[11px] mt-0.5">Paracetamol 650mg TDS extracted from Apollo OPD Prescription. Needs clinician signoff before saving to active chart.</p></div></div></div></section><!-- 4. DOCUMENTS INCLUDED --><section class="bg-white rounded-xl border border-clinical-border p-5 shadow-xs"><div class="flex items-center justify-between mb-3"><div class="flex items-center space-x-2"><svg class="w-4 h-4 text-brand-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path></svg><h3 class="text-sm font-bold text-clinical-navy">Documents included • शामिल दस्तावेज़</h3></div><a class="text-xs text-brand-700 hover:text-brand-800 underline font-medium cursor-pointer" onclick="CareFlow.navigate(9)" href="javascript:void(0)">View documents → (दस्तावेज़ देखें)</a></div><div class="space-y-2.5"><div class="flex items-center justify-between p-3 rounded-lg bg-slate-50 border border-slate-100 text-xs"><div class="flex items-center space-x-3"><div class="w-8 h-8 rounded bg-brand-100 text-brand-800 flex items-center justify-center font-bold text-[11px]">PDF</div><div><p class="font-semibold text-clinical-navy">CBC &amp; Platelet Lab Report</p><p class="text-[11px] text-clinical-muted">2 pages • Processed OCR • Uploaded 09:24 AM</p></div></div><span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Verified</span></div><div class="flex items-center justify-between p-3 rounded-lg bg-slate-50 border border-slate-100 text-xs"><div class="flex items-center space-x-3"><div class="w-8 h-8 rounded bg-amber-100 text-amber-800 flex items-center justify-center font-bold text-[11px]">RX</div><div><p class="font-semibold text-clinical-navy">Apollo OPD Prescription</p><p class="text-[11px] text-clinical-muted">1 page • Paracetamol 650mg extracted</p></div></div><span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-amber-50 text-amber-800 border border-amber-200">Needs review</span></div></div></section><!-- 5. INTAKE COMPLETION CHECKLIST --><section class="bg-white rounded-xl border border-clinical-border p-5 shadow-xs"><h3 class="text-sm font-bold text-clinical-navy mb-3 flex items-center space-x-2"><svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg><span>Intake completed • इनटेक पूरा हुआ</span></h3><div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-clinical-slate"><div class="flex items-center space-x-2 p-2 rounded-lg bg-slate-50"><span class="text-emerald-600 font-bold">✓</span><span>Identity confirmed (ABHA verified)</span></div><div class="flex items-center space-x-2 p-2 rounded-lg bg-slate-50"><span class="text-emerald-600 font-bold">✓</span><span>Symptoms recorded (Chief complaint + Body map)</span></div><div class="flex items-center space-x-2 p-2 rounded-lg bg-slate-50"><span class="text-emerald-600 font-bold">✓</span><span>Questionnaire completed (12 questions)</span></div><div class="flex items-center space-x-2 p-2 rounded-lg bg-slate-50"><span class="text-emerald-600 font-bold">✓</span><span>Documents uploaded &amp; OCR verified (2 files)</span></div><div class="flex items-center space-x-2 p-2 rounded-lg bg-slate-50 sm:col-span-2"><span class="text-emerald-600 font-bold">✓</span><span>Summary reviewed &amp; confirmed by patient</span></div></div></section></div><!-- RIGHT COLUMN: ASSIGNMENT WORKFLOW, DESTINATION & HANDOFF ACTION --><div class="lg:col-span-5 space-y-5"><!-- 1. ASSIGN TO CARE TEAM --><div class="bg-white rounded-xl border border-clinical-border p-4 shadow-xs"><div class="flex items-center justify-between mb-1.5"><h4 class="text-xs font-bold uppercase tracking-wider text-clinical-slate">Assign to care team • केयर टीम को सौंपें</h4><span class="text-[11px] text-brand-700 font-medium">Select 1 clinician</span></div><p class="text-xs text-clinical-muted mb-3">Choose the person who should receive this patient handoff.</p><div class="relative mb-3"><div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><svg class="w-3.5 h-3.5 text-clinical-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg></div><input class="w-full pl-9 pr-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs text-clinical-navy placeholder-clinical-muted focus:bg-white focus:outline-none focus:ring-1.5 focus:ring-brand-700" placeholder="Search care team... • केयर टीम खोजें..." type="text"></div><div class="space-y-2"><!-- SELECTED CLINICIAN: Dr. Priya Sharma --><div class="p-3 rounded-xl border-2 border-brand-700 bg-brand-50/50 flex items-center justify-between cursor-pointer transition-all shadow-xs"><div class="flex items-center space-x-3"><div class="relative"><div class="w-9 h-9 rounded-full bg-brand-800 text-white flex items-center justify-center text-xs font-bold">PS</div><span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-white"></span></div><div><div class="flex items-center space-x-1.5"><p class="text-xs font-bold text-clinical-navy">Dr. Priya Sharma, MD</p><span class="text-[10px] font-semibold text-emerald-700 bg-emerald-100/80 px-1.5 py-0.2 rounded">Available</span></div><p class="text-[11px] text-clinical-muted">General Medicine • OPD Clinic 1</p></div></div><div class="w-5 h-5 rounded-full bg-brand-700 text-white flex items-center justify-center text-xs">✓</div></div><!-- OPTION 2: Dr. Rohan Mehta --><div class="p-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 flex items-center justify-between cursor-pointer transition-colors"><div class="flex items-center space-x-3"><div class="relative"><div class="w-9 h-9 rounded-full bg-slate-200 text-clinical-slate flex items-center justify-center text-xs font-bold">RM</div><span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-white"></span></div><div><div class="flex items-center space-x-1.5"><p class="text-xs font-semibold text-clinical-navy">Dr. Rohan Mehta, MBBS</p><span class="text-[10px] font-semibold text-emerald-700 bg-emerald-100/80 px-1.5 py-0.2 rounded">Available</span></div><p class="text-[11px] text-clinical-muted">General Medicine • Desk 2</p></div></div><div class="w-4 h-4 rounded-full border border-slate-300"></div></div><!-- OPTION 3: Dr. Ananya Rao --><div class="p-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 flex items-center justify-between cursor-pointer transition-colors"><div class="flex items-center space-x-3"><div class="relative"><div class="w-9 h-9 rounded-full bg-slate-200 text-clinical-slate flex items-center justify-center text-xs font-bold">AR</div><span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-amber-500 ring-2 ring-white"></span></div><div><div class="flex items-center space-x-1.5"><p class="text-xs font-semibold text-clinical-navy">Dr. Ananya Rao, MD</p><span class="text-[10px] font-semibold text-amber-800 bg-amber-100 px-1.5 py-0.2 rounded">Busy</span></div><p class="text-[11px] text-clinical-muted">Primary Care • OPD Clinic 3</p></div></div><div class="w-4 h-4 rounded-full border border-slate-300"></div></div></div></div><!-- 2. DESTINATION --><div class="bg-white rounded-xl border border-clinical-border p-4 shadow-xs"><div class="flex items-center space-x-2 mb-2"><svg class="w-4 h-4 text-brand-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path><path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path></svg><h4 class="text-xs font-bold uppercase tracking-wider text-clinical-slate">Destination • गंतव्य</h4></div><div class="grid grid-cols-2 gap-2 text-xs"><div class="p-2.5 bg-slate-50 rounded-lg border border-slate-100"><p class="text-[11px] text-clinical-muted">Department</p><p class="font-semibold text-clinical-navy mt-0.5">General Medicine OPD</p></div><div class="p-2.5 bg-slate-50 rounded-lg border border-slate-100"><p class="text-[11px] text-clinical-muted">Location</p><p class="font-semibold text-clinical-navy mt-0.5">Floor 2, Desk 4</p></div></div></div><!-- 3. HANDOFF NOTE --><div class="bg-white rounded-xl border border-clinical-border p-4 shadow-xs"><div class="flex items-center space-x-2 mb-1.5"><svg class="w-4 h-4 text-brand-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg><h4 class="text-xs font-bold uppercase tracking-wider text-clinical-slate">Handoff note • हैंडऑफ टिप्पणी</h4></div><p class="text-xs text-clinical-muted mb-2.5">Add context for the receiving care team.</p><div class="flex flex-wrap gap-1.5 mb-2.5"><button class="text-[10px] bg-slate-100 hover:bg-slate-200 text-clinical-slate px-2 py-1 rounded transition-colors">+ Review fever onset</button><button class="text-[10px] bg-slate-100 hover:bg-slate-200 text-clinical-slate px-2 py-1 rounded transition-colors">+ Check paracetamol dosage</button><button class="text-[10px] bg-slate-100 hover:bg-slate-200 text-clinical-slate px-2 py-1 rounded transition-colors">+ Patient fatigued</button></div><textarea class="w-full text-xs text-clinical-navy placeholder-clinical-muted border border-slate-200 rounded-lg p-2.5 focus:outline-none focus:ring-1.5 focus:ring-brand-700 focus:border-brand-700 resize-none leading-relaxed" rows="3">Patient reports fever and cough for approximately 3 days. Please review the medication dosage before consultation.</textarea></div><!-- 4. INFORMATION TO SHARE & PRIVACY NOTE --><div class="bg-white rounded-xl border border-clinical-border p-4 shadow-xs space-y-3"><div class="flex items-center space-x-2"><svg class="w-4 h-4 text-brand-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path></svg><h4 class="text-xs font-bold uppercase tracking-wider text-clinical-slate">Information to share • साझा की जाने वाली जानकारी</h4></div><div class="space-y-1.5 text-xs text-clinical-navy"><label class="flex items-center space-x-2"><input checked="checked" class="w-3.5 h-3.5 rounded text-brand-700 focus:ring-brand-700 border-slate-300" type="checkbox"><span>Patient identity &amp; demographics</span></label><label class="flex items-center space-x-2"><input checked="checked" class="w-3.5 h-3.5 rounded text-brand-700 focus:ring-brand-700 border-slate-300" type="checkbox"><span>Intake summary &amp; triage synthesis</span></label><label class="flex items-center space-x-2"><input checked="checked" class="w-3.5 h-3.5 rounded text-brand-700 focus:ring-brand-700 border-slate-300" type="checkbox"><span>Symptoms &amp; duration details</span></label><label class="flex items-center space-x-2"><input checked="checked" class="w-3.5 h-3.5 rounded text-brand-700 focus:ring-brand-700 border-slate-300" type="checkbox"><span>Questionnaire responses (12/12)</span></label><label class="flex items-center space-x-2"><input checked="checked" class="w-3.5 h-3.5 rounded text-brand-700 focus:ring-brand-700 border-slate-300" type="checkbox"><span>Relevant clinical documents (2 files)</span></label><label class="flex items-center space-x-2"><input checked="checked" class="w-3.5 h-3.5 rounded text-brand-700 focus:ring-brand-700 border-slate-300" type="checkbox"><span>Review alerts (2 items)</span></label></div><div class="p-2.5 rounded-lg bg-slate-50 border border-slate-100 flex items-start space-x-2 text-[11px] text-clinical-muted"><svg class="w-3.5 h-3.5 text-clinical-slate flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path></svg><p>Only information relevant to this patient's care will be shared with the selected care-team member. • मरीज की देखभाल से संबंधित आवश्यक जानकारी ही चुने गए केयर टीम सदस्य के साथ साझा की जाएगी।</p></div></div><!-- 5. READY TO SEND PREVIEW CARD --><div class="bg-brand-50/70 border border-brand-200 rounded-xl p-4 shadow-xs"><div class="flex items-center justify-between mb-2"><h4 class="text-xs font-bold uppercase tracking-wider text-brand-800">Ready to send • भेजने के लिए तैयार</h4><span class="w-2 h-2 rounded-full bg-emerald-500 pulse-dot"></span></div><div class="space-y-1.5 text-xs"><div class="flex items-center justify-between"><span class="text-clinical-muted">Recipient:</span><span class="font-semibold text-clinical-navy">Dr. Priya Sharma (General Medicine)</span></div><div class="flex items-center justify-between"><span class="text-clinical-muted">Patient:</span><span class="font-semibold text-clinical-navy">Aarav Sharma (CF-1024)</span></div><div class="flex items-center justify-between"><span class="text-clinical-muted">Included:</span><span class="text-clinical-slate font-medium">Summary, Symptoms, Documents, Alerts</span></div></div></div><!-- 6. FINAL ACTION PANEL --><div class="bg-white rounded-xl border border-clinical-border p-5 shadow-xs space-y-3"><button class="w-full py-2.5 px-4 rounded-full bg-brand-700 hover:bg-brand-800 text-white text-xs font-semibold shadow-xs flex items-center justify-center space-x-1.5 transition-all hover:shadow cursor-pointer" type="button" onclick="CareFlow.navigate(15)"><span>Send handoff →</span><span class="font-normal opacity-90">(हैंडऑफ भेजें)</span></button><button class="w-full py-2 px-4 rounded-full bg-white border border-slate-200 text-clinical-slate hover:bg-slate-50 text-xs font-medium transition-colors cursor-pointer" type="button" onclick="CareFlow.showToast('Handoff draft saved', 'success')">Save for later (बाद के लिए सहेजें)</button><div class="text-center pt-1"><a class="text-xs font-medium text-clinical-muted hover:text-brand-700 hover:underline cursor-pointer" onclick="CareFlow.navigate(13)" href="javascript:void(0)">Back to alerts (अलर्ट्स पर वापस जाएँ)</a></div></div></div></div><!-- END: MainTwoColumnGrid --></main>
+<!-- BEGIN: ComplianceFooter -->
+<footer class="h-12 bg-white border-t border-clinical-border px-8 flex items-center justify-between text-xs text-clinical-muted flex-shrink-0 z-20" data-purpose="regulatory-compliance-footer">
+<div class="flex items-center space-x-2">
+<svg class="w-4 h-4 text-clinical-slate" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path>
+</svg>
+<span class="font-medium text-clinical-slate">Patient documents are protected • मरीज के दस्तावेज़ सुरक्षित हैं</span>
+</div>
+<div class="flex items-center space-x-4">
+<span>ABDM M1/M2/M3 Compliant</span>
+<span>•</span>
+<span>256-bit AES Vault</span>
+<span>•</span>
+<span class="font-semibold text-brand-700">HIPAA &amp; DISHA Standard</span>
+</div>
+</footer>
+<!-- END: ComplianceFooter -->
+</div>
+<!-- END: MainContentWrapper -->
+</div>
+</body></html>

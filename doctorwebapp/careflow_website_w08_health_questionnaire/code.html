@@ -1,0 +1,819 @@
+<!DOCTYPE html><html lang="en" class="h-full scroll-smooth"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>CareFlow - Health Questionnaire (Aarav Sharma)</title>
+<script src="../careflow-nav.js" defer></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#0D6E6E",
+            "primary-container": "#005454",
+            "on-primary": "#ffffff",
+            "secondary": "#006b5f",
+            "secondary-container": "#E6F7F2",
+            "surface-mint": "#D1F2E8",
+            "surface-mint-subtle": "#E6F7F2",
+            "background": "#F9F9FF",
+            "surface": "#FAF8FF",
+            "surface-card": "#FFFFFF",
+            "surface-container-lowest": "#FFFFFF",
+            "surface-container-low": "#F1F3FF",
+            "surface-container": "#E8EEFF",
+            "surface-container-high": "#DFE8FF",
+            "surface-dim": "#D2D9F4",
+            "on-surface": "#0F1E36",
+            "on-surface-variant": "#3E4948",
+            "outline": "#6E7979",
+            "outline-variant": "#BEC9C8",
+            "border-subtle": "#E2E8F0",
+            "error": "#BA1A1A",
+            "error-container": "#FFDAD6"
+          },
+          fontFamily: {
+            sans: ["Plus Jakarta Sans", "Inter", "sans-serif"],
+            mono: ["ui-monospace", "SFMono-Regular", "Menlo", "monospace"]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    body {
+      background-color: #F9F9FF;
+      color: #0F1E36;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+    }
+    .material-symbols-outlined.fill {
+      font-variation-settings: 'FILL' 1;
+    }
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #D2D9F4;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #BEC9C8;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex bg-background text-[#0F1E36] antialiased">
+<!-- 1. PERSISTENT LEFT SIDEBAR NAVIGATION -->
+<aside class="w-64 bg-white border-r border-slate-200 fixed top-0 bottom-0 left-0 z-40 flex flex-col justify-between select-none">
+<!-- Top Brand & Navigation -->
+<div class="flex flex-col">
+<!-- Logo Header -->
+<div class="h-16 px-5 flex items-center justify-between border-b border-slate-100">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-[#0D6E6E] flex items-center justify-center text-white shadow-sm">
+<span class="material-symbols-outlined fill text-[22px]">volunteer_activism</span>
+</div>
+<div class="flex flex-col">
+<span class="font-bold text-[18px] tracking-tight text-[#0F1E36] leading-none">CareFlow</span>
+<span class="text-[11px] font-medium text-slate-500 mt-0.5">Clinical Care Team</span>
+</div>
+</div>
+<span class="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded-md bg-[#E6F7F2] text-[#0D6E6E] border border-[#0D6E6E]/20">OPD</span>
+</div>
+<!-- Navigation Menu Items -->
+<nav class="p-3 space-y-1">
+<!-- Dashboard -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 text-sm font-medium transition-colors" href="javascript:void(0)">
+<span class="material-symbols-outlined text-[20px] text-slate-400">grid_view</span>
+<span>Dashboard</span>
+</a>
+<!-- Patients (Active State) -->
+<a class="flex items-center justify-between px-3 py-2.5 rounded-xl bg-[#E6F7F2] text-[#0D6E6E] text-sm font-semibold transition-colors shadow-sm" href="javascript:void(0)">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[20px] text-[#0D6E6E] fill">group</span>
+<span>Patients</span>
+</div>
+<span class="w-2 h-2 rounded-full bg-[#0D6E6E]"></span>
+</a>
+<!-- Appointments -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 text-sm font-medium transition-colors" href="javascript:void(0)">
+<span class="material-symbols-outlined text-[20px] text-slate-400">calendar_month</span>
+<span>Appointments</span>
+</a>
+<!-- Documents -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 text-sm font-medium transition-colors" href="javascript:void(0)">
+<span class="material-symbols-outlined text-[20px] text-slate-400">folder</span>
+<span>Documents</span>
+</a>
+<!-- Care Summaries -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 text-sm font-medium transition-colors" href="javascript:void(0)">
+<span class="material-symbols-outlined text-[20px] text-slate-400">description</span>
+<span>Care Summaries</span>
+</a>
+<!-- Alerts -->
+<a class="flex items-center justify-between px-3 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 text-sm font-medium transition-colors" href="javascript:void(0)">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[20px] text-slate-400">notifications</span>
+<span>Alerts</span>
+</div>
+<span class="w-2 h-2 rounded-full bg-red-500"></span>
+</a>
+<!-- Analytics -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 text-sm font-medium transition-colors" href="javascript:void(0)">
+<span class="material-symbols-outlined text-[20px] text-slate-400">trending_up</span>
+<span>Analytics</span>
+</a>
+</nav>
+</div>
+<!-- Bottom Sidebar (Settings, Support & Clinician Profile) -->
+<div class="p-3 border-t border-slate-100 flex flex-col gap-1">
+<a class="flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 text-sm font-medium transition-colors" href="javascript:void(0)">
+<span class="material-symbols-outlined text-[20px] text-slate-400">settings</span>
+<span>Settings</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 text-sm font-medium transition-colors" href="javascript:void(0)">
+<span class="material-symbols-outlined text-[20px] text-slate-400">help</span>
+<span>Help &amp; Support</span>
+</a>
+<!-- Clinician Profile Card -->
+<div class="mt-2 p-2.5 rounded-xl bg-slate-50 border border-slate-200/70 flex items-center justify-between">
+<div class="flex items-center gap-2.5 min-w-0">
+<div class="relative w-9 h-9 rounded-full bg-[#0D6E6E] text-white flex items-center justify-center font-bold text-xs shrink-0">
+            AI
+            <span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-white"></span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="text-xs font-bold text-[#0F1E36] truncate">Dr. Ananya Iyer</span>
+<span class="text-[11px] text-slate-500 truncate">Desk 4 • OPD Session</span>
+</div>
+</div>
+<button aria-label="More options" class="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-200/50 transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</div>
+</aside>
+<!-- MAIN APP WRAPPER (Offset by sidebar w-64) -->
+<div class="flex-1 ml-64 flex flex-col min-h-screen">
+<!-- 2. PERSISTENT TOP APP BAR -->
+<header class="sticky top-0 z-30 h-16 bg-white/95 backdrop-blur border-b border-slate-200 px-6 flex items-center justify-between">
+<!-- Search Input with Keyboard Shortcut -->
+<div class="w-96 max-w-md relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[18px]">search</span>
+<input class="w-full h-10 pl-9 pr-12 rounded-xl bg-slate-50 border border-slate-200 text-sm text-[#0F1E36] placeholder-slate-400 focus:outline-none focus:border-[#0D6E6E] focus:ring-1 focus:ring-[#0D6E6E] transition-all" placeholder="Search patients, UHID, ABHA... ⌘K" type="text">
+<kbd class="absolute right-2.5 top-1/2 -translate-y-1/2 px-1.5 py-0.5 text-[10px] font-semibold text-slate-400 bg-white border border-slate-200 rounded shadow-2xs">⌘K</kbd>
+</div>
+<!-- Right Side Controls -->
+<div class="flex items-center gap-3">
+<!-- Language Selector Pill -->
+<button class="h-9 px-3 rounded-full bg-slate-50 border border-slate-200 text-slate-700 hover:bg-slate-100 text-xs font-semibold flex items-center gap-1.5 transition-colors" type="button">
+<span class="material-symbols-outlined text-[#0D6E6E] text-[16px]">language</span>
+<span>English (हिन्दी) ▼</span>
+</button>
+<!-- Notification Bell with Red Badge -->
+<button class="relative w-9 h-9 rounded-full bg-slate-50 border border-slate-200 text-slate-600 hover:bg-slate-100 flex items-center justify-center transition-colors" type="button">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+<span class="absolute top-1 right-1 w-2 h-2 rounded-full bg-red-500 ring-2 ring-white"></span>
+</button>
+<!-- Clinician Profile Avatar -->
+<button class="w-9 h-9 rounded-full bg-[#0D6E6E] text-white flex items-center justify-center font-bold text-xs ring-2 ring-[#E6F7F2] transition-transform hover:scale-105" type="button">
+          AI
+        </button>
+</div>
+</header>
+<!-- CONTENT AREA -->
+<main class="flex-1 p-6 md:p-8 max-w-7xl w-full mx-auto space-y-6">
+<!-- 3. PAGE NAVIGATION & BREADCRUMB -->
+<section class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+<div class="flex flex-wrap items-center gap-2 text-xs font-medium text-slate-500">
+<a class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer" href="../careflow_website_w07_symptoms_chief_complaint/code.html">
+<span class="material-symbols-outlined text-[15px] text-[#0D6E6E]">arrow_back</span>
+<span>Symptoms <span class="text-slate-400 font-normal">(लक्षण)</span></span>
+</a>
+<span class="text-slate-300">/</span>
+<span>Patients</span>
+<span class="text-slate-300">/</span>
+<span class="text-slate-700 font-semibold">Aarav Sharma</span>
+<span class="text-slate-300">/</span>
+<span class="text-[#0D6E6E] font-bold">Health Questions <span class="font-normal opacity-80">(स्वास्थ्य प्रश्न)</span></span>
+</div>
+<div class="inline-flex items-center gap-2 self-start sm:self-auto px-3.5 py-1.5 rounded-full bg-[#E6F7F2] border border-[#0D6E6E]/20 text-[#006b5f] text-xs font-medium">
+<span class="relative flex h-2 w-2">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#0D6E6E] opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-[#0D6E6E]"></span>
+</span>
+<span class="font-bold text-[#0D6E6E]">ABHA Sync: Active</span>
+<span class="text-slate-300">•</span>
+<span class="font-mono text-slate-600">ABHA ID: 91-8472-3021-9920</span>
+</div>
+</section>
+<!-- 4. PAGE HEADER & PRIMARY ACTIONS -->
+<section class="flex flex-col lg:flex-row lg:items-end justify-between gap-4 pt-1">
+<div class="space-y-1.5">
+<div class="inline-flex items-center gap-2">
+<span class="px-2.5 py-0.5 rounded-full bg-[#E6F7F2] text-[#0D6E6E] text-[11px] font-bold uppercase tracking-wider">
+              HEALTH QUESTIONS • स्वास्थ्य संबंधी प्रश्न
+            </span>
+</div>
+<h1 class="text-2xl lg:text-3xl font-bold tracking-tight text-[#0F1E36]">
+            Health questionnaire <span class="text-slate-500 font-normal text-xl lg:text-2xl">• स्वास्थ्य प्रश्नावली</span>
+</h1>
+<p class="text-sm text-slate-600 max-w-2xl">
+            Review and verify structured clinical responses collected during Aarav Sharma's mobile self-intake session.
+          </p>
+</div>
+<div class="flex flex-wrap items-center gap-3">
+<div class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-[#E6F7F2] text-[#006b5f] text-xs font-semibold border border-[#0D6E6E]/20 shadow-xs">
+<span class="material-symbols-outlined text-[16px] text-[#006b5f] fill">check_circle</span>
+<span>12 of 12 Answered • 100% पूर्ण</span>
+</div>
+<button class="h-10 px-4 rounded-full bg-white border border-slate-300 text-[#0D6E6E] text-xs font-semibold hover:bg-[#E6F7F2]/40 transition-colors shadow-xs flex items-center gap-1.5 cursor-pointer" type="button" onclick="CareFlow.showToast('Responses edit mode active', 'info')">
+<span class="material-symbols-outlined text-[16px]">edit</span>
+<span>Edit responses <span class="font-normal opacity-80">(संशोधन)</span></span>
+</button>
+<button class="h-10 px-5 rounded-full bg-[#0D6E6E] text-white text-xs font-bold hover:bg-[#005454] transition-all shadow-sm flex items-center gap-1.5 cursor-pointer" type="button" onclick="CareFlow.navigate(9)">
+<span>Continue to documents</span>
+<span class="font-normal opacity-80">(दस्तावेज़ पर जाएं)</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</button>
+</div>
+</section>
+<!-- 5. PATIENT MINI HEADER & PROGRESS -->
+<section class="p-4 rounded-2xl bg-white border border-slate-200/80 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div class="flex items-center gap-3.5 min-w-0">
+<div class="relative w-12 h-12 rounded-2xl bg-[#0D6E6E] flex items-center justify-center text-white font-bold text-base shadow-inner shrink-0">
+            AS
+            <span class="absolute -bottom-1 -right-1 w-3.5 h-3.5 rounded-full bg-emerald-500 ring-2 ring-white"></span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex flex-wrap items-center gap-2">
+<span class="font-bold text-[#0F1E36] text-base truncate">Aarav Sharma</span>
+<span class="text-xs text-slate-500 font-medium">(आरव शर्मा)</span>
+<span class="px-2 py-0.5 rounded-md bg-slate-100 font-mono text-[11px] font-semibold text-[#0D6E6E]">#CF-1024</span>
+</div>
+<div class="flex flex-wrap items-center gap-2 text-xs text-slate-500 mt-0.5">
+<span class="font-medium text-slate-700">28 Y / M</span>
+<span class="text-slate-300">•</span>
+<span>Today • 09:21 AM</span>
+<span class="text-slate-300">•</span>
+<span class="text-[#006b5f] font-medium flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[14px]">verified</span> Mobile Self-Intake
+              </span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-3 self-end md:self-auto bg-[#E6F7F2] border border-[#0D6E6E]/20 px-3.5 py-2 rounded-xl">
+<div class="w-8 h-8 rounded-full bg-white flex items-center justify-center text-[#0D6E6E] shadow-2xs">
+<span class="material-symbols-outlined text-[18px] fill">task_alt</span>
+</div>
+<div class="flex flex-col text-right">
+<span class="text-xs font-bold text-[#0F1E36]">Questionnaire Step 03/05</span>
+<span class="text-[11px] text-[#006b5f] font-semibold">Complete &amp; Verified</span>
+</div>
+</div>
+</section>
+<!-- PROGRESS INDICATOR BAR -->
+<section class="p-4 rounded-2xl bg-white border border-slate-200/80 shadow-xs flex flex-col gap-2">
+<div class="flex flex-wrap items-center justify-between gap-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[#0D6E6E] text-[20px]">assignment_turned_in</span>
+<span class="text-sm font-bold text-[#0F1E36]">Questionnaire Progress <span class="text-slate-500 font-normal">(प्रश्नावली प्रगति)</span></span>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-xs text-slate-500">All core clinical questions answered via mobile flow</span>
+<span class="px-2.5 py-0.5 rounded-full bg-[#E6F7F2] text-[#006b5f] font-mono text-xs font-bold border border-[#0D6E6E]/20">12 / 12 (100%)</span>
+</div>
+</div>
+<div class="w-full h-2 rounded-full bg-slate-100 overflow-hidden">
+<div class="h-full bg-[#0D6E6E] rounded-full w-full"></div>
+</div>
+</section>
+<!-- 6. QUESTION CATEGORY FILTER TABS -->
+<section class="flex items-center gap-2 overflow-x-auto pb-1">
+<button class="filter-tab px-4 py-2 rounded-full bg-[#0D6E6E] text-white text-xs font-semibold shadow-xs whitespace-nowrap active-tab" data-filter="all" type="button">
+          All Questions (12)
+        </button>
+<button class="filter-tab px-4 py-2 rounded-full bg-white border border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-50 text-xs font-medium shadow-xs transition-colors whitespace-nowrap" data-filter="symptoms" type="button">
+          General &amp; Symptoms (4)
+        </button>
+<button class="filter-tab px-4 py-2 rounded-full bg-white border border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-50 text-xs font-medium shadow-xs transition-colors whitespace-nowrap" data-filter="medications" type="button">
+          Medications (2)
+        </button>
+<button class="filter-tab px-4 py-2 rounded-full bg-white border border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-50 text-xs font-medium shadow-xs transition-colors whitespace-nowrap" data-filter="allergies" type="button">
+          Allergies (2)
+        </button>
+<button class="filter-tab px-4 py-2 rounded-full bg-white border border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-50 text-xs font-medium shadow-xs transition-colors whitespace-nowrap" data-filter="history" type="button">
+          Medical History (2)
+        </button>
+<button class="filter-tab px-4 py-2 rounded-full bg-white border border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-50 text-xs font-medium shadow-xs transition-colors whitespace-nowrap" data-filter="lifestyle" type="button">
+          Lifestyle (2)
+        </button>
+</section>
+<!-- 7. MAIN CONTENT (2-COLUMN CLINICAL GRID) -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+<!-- LEFT COLUMN: THE QUESTIONNAIRE RESPONSES (8 cols) -->
+<div class="lg:col-span-8 space-y-5">
+<!-- SECTION A: GENERAL & SYMPTOM ONSET -->
+<div class="question-group bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs space-y-4" data-category="symptoms">
+<div class="flex items-center justify-between pb-3 border-b border-slate-100">
+<div class="flex items-center gap-2.5">
+<span class="w-7 h-7 rounded-lg bg-[#E6F7F2] text-[#0D6E6E] font-bold text-xs flex items-center justify-center">A</span>
+<div>
+<h2 class="text-sm font-bold text-[#0F1E36]">General &amp; Symptom Onset</h2>
+<span class="text-xs text-slate-500">लक्षण एवं शुरुआत (4 प्रश्न)</span>
+</div>
+</div>
+<span class="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 text-xs font-semibold">4/4 Verified</span>
+</div>
+<div class="space-y-4 divide-y divide-slate-100">
+<!-- Q01 -->
+<div class="pt-3 first:pt-0 space-y-2">
+<div class="flex items-start justify-between gap-3">
+<div>
+<span class="text-[11px] font-mono text-slate-400 font-semibold uppercase">Q01 • Clinical Triage</span>
+<p class="text-sm font-semibold text-[#0F1E36]">Have you experienced fever in the last few days?</p>
+<p class="text-xs text-slate-500">क्या आपको पिछले कुछ दिनों में बुखार हुआ है?</p>
+</div>
+<span class="px-3 py-1 rounded-full bg-[#E6F7F2] text-[#0D6E6E] text-xs font-bold flex items-center gap-1 shrink-0 border border-[#0D6E6E]/20">
+<span class="material-symbols-outlined text-[15px] fill">check_circle</span> Yes (हाँ)
+                  </span>
+</div>
+<div class="p-3 rounded-xl bg-slate-50 flex flex-col sm:flex-row sm:items-center justify-between gap-2 border border-slate-100">
+<div class="flex items-center gap-2 text-xs text-slate-700">
+<span class="material-symbols-outlined text-red-600 text-[18px]">thermostat</span>
+<span>Reported onset 3 days ago • Peak temp <strong class="text-red-600 font-bold">101.4°F</strong> recorded</span>
+</div>
+<span class="text-[11px] text-slate-400 bg-white px-2 py-0.5 rounded border border-slate-200 self-start sm:self-auto">Source: Patient response</span>
+</div>
+</div>
+<!-- Q02 -->
+<div class="pt-4 space-y-2">
+<div class="flex items-start justify-between gap-3">
+<div>
+<span class="text-[11px] font-mono text-slate-400 font-semibold uppercase">Q02 • Duration</span>
+<p class="text-sm font-semibold text-[#0F1E36]">How long have you had these symptoms?</p>
+<p class="text-xs text-slate-500">आपको यह लक्षण कितने समय से हैं?</p>
+</div>
+<span class="px-3 py-1 rounded-full bg-slate-100 text-[#0D6E6E] text-xs font-bold shrink-0 border border-slate-200">
+                    3 days (Ongoing)
+                  </span>
+</div>
+<div class="p-3 rounded-xl bg-slate-50 flex items-center justify-between border border-slate-100">
+<span class="text-xs text-slate-700 font-medium">3 दिन (जारी है) • Moderate gradual onset pattern</span>
+<span class="text-[11px] text-slate-400 bg-white px-2 py-0.5 rounded border border-slate-200">Source: Patient response</span>
+</div>
+</div>
+<!-- Q03 -->
+<div class="pt-4 space-y-2">
+<div class="flex items-start justify-between gap-3">
+<div>
+<span class="text-[11px] font-mono text-slate-400 font-semibold uppercase">Q03 • Red Flag Screen</span>
+<p class="text-sm font-semibold text-[#0F1E36]">Have you experienced shortness of breath or breathing difficulty?</p>
+<p class="text-xs text-slate-500">क्या आपको सांस लेने में तकलीफ हुई है?</p>
+</div>
+<span class="px-3 py-1 rounded-full bg-slate-100 text-slate-600 text-xs font-semibold flex items-center gap-1 shrink-0 border border-slate-200">
+<span class="material-symbols-outlined text-[15px]">close</span> No (नहीं)
+                  </span>
+</div>
+<div class="p-2.5 rounded-xl bg-[#E6F7F2]/50 border border-[#0D6E6E]/10 flex items-center gap-2 text-[#006b5f] text-xs">
+<span class="material-symbols-outlined text-[16px]">verified</span>
+<span>Negative screening for acute dyspnea • Normal work of breathing reported</span>
+</div>
+</div>
+<!-- Q04 -->
+<div class="pt-4 space-y-2">
+<div class="flex items-start justify-between gap-3">
+<div>
+<span class="text-[11px] font-mono text-slate-400 font-semibold uppercase">Q04 • Red Flag Screen</span>
+<p class="text-sm font-semibold text-[#0F1E36]">Do you have chest pain, pressure or radiation to arm/jaw?</p>
+<p class="text-xs text-slate-500">क्या सीने में दर्द या भारीपन है?</p>
+</div>
+<span class="px-3 py-1 rounded-full bg-slate-100 text-slate-600 text-xs font-semibold flex items-center gap-1 shrink-0 border border-slate-200">
+<span class="material-symbols-outlined text-[15px]">close</span> No (नहीं)
+                  </span>
+</div>
+<div class="p-2.5 rounded-xl bg-slate-50 border border-slate-100 flex items-center gap-2 text-slate-600 text-xs">
+<span class="material-symbols-outlined text-[16px] text-[#0D6E6E]">info</span>
+<span>Chest discomfort localized to upper throat tickle only • No retrosternal pressure</span>
+</div>
+</div>
+</div>
+</div>
+<!-- SECTION B: CURRENT MEDICATIONS & RELIEF -->
+<div class="question-group bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs space-y-4" data-category="medications">
+<div class="flex items-center justify-between pb-3 border-b border-slate-100">
+<div class="flex items-center gap-2.5">
+<span class="w-7 h-7 rounded-lg bg-[#E6F7F2] text-[#0D6E6E] font-bold text-xs flex items-center justify-center">B</span>
+<div>
+<h2 class="text-sm font-bold text-[#0F1E36]">Current Medications &amp; Relief</h2>
+<span class="text-xs text-slate-500">वर्तमान दवाएँ (2 प्रश्न)</span>
+</div>
+</div>
+<span class="px-2.5 py-0.5 rounded-full bg-[#E6F7F2] text-[#006b5f] text-xs font-semibold border border-[#0D6E6E]/20">1 Reported Active</span>
+</div>
+<div class="space-y-4 divide-y divide-slate-100">
+<!-- Q05 -->
+<div class="pt-3 first:pt-0 space-y-2">
+<div class="flex items-start justify-between gap-3">
+<div>
+<span class="text-[11px] font-mono text-slate-400 font-semibold uppercase">Q05 • Symptom Relief</span>
+<p class="text-sm font-semibold text-[#0F1E36]">Have you taken any medication for these symptoms?</p>
+<p class="text-xs text-slate-500">क्या आपने इन लक्षणों के लिए कोई दवा ली है?</p>
+</div>
+<span class="px-3 py-1 rounded-full bg-[#E6F7F2] text-[#0D6E6E] text-xs font-bold flex items-center gap-1 shrink-0 border border-[#0D6E6E]/20">
+<span class="material-symbols-outlined text-[15px] fill">check_circle</span> Yes (हाँ)
+                  </span>
+</div>
+<div class="p-3 rounded-xl bg-slate-50 flex flex-col sm:flex-row sm:items-center justify-between gap-2 border border-slate-100">
+<div class="flex items-center gap-2 text-xs">
+<span class="material-symbols-outlined text-[#0D6E6E] text-[18px]">medication</span>
+<span class="font-bold text-[#0F1E36]">Paracetamol 650mg</span>
+<span class="text-slate-300">•</span>
+<span class="text-slate-600">Taken yesterday evening, transient relief</span>
+</div>
+<span class="text-[11px] text-slate-400 bg-white px-2 py-0.5 rounded border border-slate-200 self-start sm:self-auto">Source: Patient response</span>
+</div>
+</div>
+<!-- Q06 -->
+<div class="pt-4 space-y-2">
+<div class="flex items-start justify-between gap-3">
+<div>
+<span class="text-[11px] font-mono text-slate-400 font-semibold uppercase">Q06 • Chronic Prescriptions</span>
+<p class="text-sm font-semibold text-[#0F1E36]">Are you taking any daily prescription medications?</p>
+<p class="text-xs text-slate-500">क्या आप कोई दैनिक दवाएं ले रहे हैं?</p>
+</div>
+<span class="px-3 py-1 rounded-full bg-slate-100 text-slate-600 text-xs font-semibold shrink-0 border border-slate-200">
+                    ✕ None (कोई नहीं)
+                  </span>
+</div>
+<div class="p-2.5 rounded-xl bg-slate-50 border border-slate-100 text-xs text-slate-600">
+                  No chronic medications reported • No antihypertensive, antidiabetic, or steroid therapies.
+                </div>
+</div>
+</div>
+</div>
+<!-- SECTION C: ALLERGIES -->
+<div class="question-group bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs space-y-4" data-category="allergies">
+<div class="flex items-center justify-between pb-3 border-b border-slate-100">
+<div class="flex items-center gap-2.5">
+<span class="w-7 h-7 rounded-lg bg-[#E6F7F2] text-[#0D6E6E] font-bold text-xs flex items-center justify-center">C</span>
+<div>
+<h2 class="text-sm font-bold text-[#0F1E36]">Allergies &amp; Sensitivities</h2>
+<span class="text-xs text-slate-500">एलर्जी (2 प्रश्न)</span>
+</div>
+</div>
+<span class="px-2.5 py-0.5 rounded-full bg-[#E6F7F2] text-[#006b5f] text-xs font-bold border border-[#0D6E6E]/20">NKDA Verified</span>
+</div>
+<div class="space-y-4 divide-y divide-slate-100">
+<!-- Q07 -->
+<div class="pt-3 first:pt-0 space-y-2">
+<div class="flex items-start justify-between gap-3">
+<div>
+<span class="text-[11px] font-mono text-slate-400 font-semibold uppercase">Q07 • Drug Allergy</span>
+<p class="text-sm font-semibold text-[#0F1E36]">Do you have any known drug or medication allergies?</p>
+<p class="text-xs text-slate-500">क्या आपको किसी दवा से एलर्जी है?</p>
+</div>
+<span class="px-3 py-1 rounded-full bg-[#E6F7F2] text-[#0D6E6E] text-xs font-bold shrink-0 flex items-center gap-1 border border-[#0D6E6E]/20">
+<span class="material-symbols-outlined text-[15px] fill">verified</span> NKDA (No known allergies)
+                  </span>
+</div>
+<div class="p-2.5 rounded-xl bg-slate-50 border border-slate-100 text-xs text-slate-700 flex items-center gap-2">
+<span class="material-symbols-outlined text-[#006b5f] text-[17px]">check_circle</span>
+<span>Patient confirmed no adverse drug reactions to penicillins, cephalosporins, or NSAIDs</span>
+</div>
+</div>
+<!-- Q08 -->
+<div class="pt-4 space-y-2">
+<div class="flex items-start justify-between gap-3">
+<div>
+<span class="text-[11px] font-mono text-slate-400 font-semibold uppercase">Q08 • Environmental &amp; Food</span>
+<p class="text-sm font-semibold text-[#0F1E36]">Any seasonal, environmental or food allergies?</p>
+<p class="text-xs text-slate-500">कोई मौसमी या खाद्य एलर्जी?</p>
+</div>
+<span class="px-3 py-1 rounded-full bg-slate-100 text-slate-600 text-xs font-semibold shrink-0 border border-slate-200">
+                    ✕ None reported
+                  </span>
+</div>
+<div class="p-2.5 rounded-xl bg-slate-50 border border-slate-100 text-xs text-slate-600">
+                  No documented environmental rhinitis, asthma triggers, or specific food intolerance.
+                </div>
+</div>
+</div>
+</div>
+<!-- SECTION D: MEDICAL & SURGICAL HISTORY -->
+<div class="question-group bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs space-y-4" data-category="history">
+<div class="flex items-center justify-between pb-3 border-b border-slate-100">
+<div class="flex items-center gap-2.5">
+<span class="w-7 h-7 rounded-lg bg-[#E6F7F2] text-[#0D6E6E] font-bold text-xs flex items-center justify-center">D</span>
+<div>
+<h2 class="text-sm font-bold text-[#0F1E36]">Medical &amp; Surgical History</h2>
+<span class="text-xs text-slate-500">चिकित्सा इतिहास (2 प्रश्न)</span>
+</div>
+</div>
+<span class="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 text-xs font-semibold">Clean History</span>
+</div>
+<div class="space-y-4 divide-y divide-slate-100">
+<!-- Q09 -->
+<div class="pt-3 first:pt-0 space-y-2">
+<div class="flex items-start justify-between gap-3">
+<div>
+<span class="text-[11px] font-mono text-slate-400 font-semibold uppercase">Q09 • Chronic Conditions</span>
+<p class="text-sm font-semibold text-[#0F1E36]">Do you have any pre-existing chronic conditions?</p>
+<p class="text-xs text-slate-500">मधुमेह, उच्च रक्तचाप आदि?</p>
+</div>
+<span class="px-3 py-1 rounded-full bg-slate-100 text-slate-600 text-xs font-semibold shrink-0 border border-slate-200">
+                    ✕ None declared
+                  </span>
+</div>
+<div class="p-2.5 rounded-xl bg-slate-50 border border-slate-100 text-xs text-slate-600">
+                  No past history of Hypertension, Diabetes Mellitus Type 2, Asthma, or Cardiovascular Disease.
+                </div>
+</div>
+<!-- Q10 -->
+<div class="pt-4 space-y-2">
+<div class="flex items-start justify-between gap-3">
+<div>
+<span class="text-[11px] font-mono text-slate-400 font-semibold uppercase">Q10 • Surgical &amp; Inpatient</span>
+<p class="text-sm font-semibold text-[#0F1E36]">Any prior hospitalizations or surgeries in past 2 years?</p>
+<p class="text-xs text-slate-500">पूर्व अस्पताल में भर्ती?</p>
+</div>
+<span class="px-3 py-1 rounded-full bg-slate-100 text-slate-600 text-xs font-semibold shrink-0 border border-slate-200">
+                    ✕ None reported
+                  </span>
+</div>
+<div class="p-2.5 rounded-xl bg-slate-50 border border-slate-100 text-xs text-slate-600">
+                  No hospital admissions, emergency visits, or major surgical procedures in past 24 months.
+                </div>
+</div>
+</div>
+</div>
+<!-- SECTION E: LIFESTYLE & EXPOSURE -->
+<div class="question-group bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs space-y-4" data-category="lifestyle">
+<div class="flex items-center justify-between pb-3 border-b border-slate-100">
+<div class="flex items-center gap-2.5">
+<span class="w-7 h-7 rounded-lg bg-[#E6F7F2] text-[#0D6E6E] font-bold text-xs flex items-center justify-center">E</span>
+<div>
+<h2 class="text-sm font-bold text-[#0F1E36]">Lifestyle &amp; Exposure</h2>
+<span class="text-xs text-slate-500">जीवनशैली (2 प्रश्न)</span>
+</div>
+</div>
+<span class="px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-300 text-xs font-bold">Exposure Flag</span>
+</div>
+<div class="space-y-4 divide-y divide-slate-100">
+<!-- Q11 -->
+<div class="pt-3 first:pt-0 space-y-2">
+<div class="flex items-start justify-between gap-3">
+<div>
+<span class="text-[11px] font-mono text-slate-400 font-semibold uppercase">Q11 • Social Habits</span>
+<p class="text-sm font-semibold text-[#0F1E36]">Tobacco or Alcohol consumption?</p>
+<p class="text-xs text-slate-500">तंबाकू या शराब का सेवन?</p>
+</div>
+<span class="px-3 py-1 rounded-full bg-slate-100 text-slate-800 text-xs font-semibold shrink-0 border border-slate-200">
+                    Non-smoker • Social Alcohol
+                  </span>
+</div>
+<div class="p-2.5 rounded-xl bg-slate-50 border border-slate-100 text-xs text-slate-600">
+                  Non-smoker • Alcohol: Occasional / Social • Non-habitual pattern reported.
+                </div>
+</div>
+<!-- Q12 -->
+<div class="pt-4 space-y-2">
+<div class="flex items-start justify-between gap-3">
+<div>
+<span class="text-[11px] font-mono text-slate-400 font-semibold uppercase">Q12 • Infectious Contact</span>
+<p class="text-sm font-semibold text-[#0F1E36]">Recent travel or known sick contacts at home/work?</p>
+<p class="text-xs text-slate-500">हाल की यात्रा या बीमार संपर्क?</p>
+</div>
+<span class="px-3 py-1 rounded-full bg-amber-100 text-amber-900 border border-amber-300 text-xs font-bold flex items-center gap-1 shrink-0">
+<span class="material-symbols-outlined text-[15px] text-amber-700">warning</span> Yes (हाँ)
+                  </span>
+</div>
+<div class="p-3 rounded-xl bg-[#FEF3C7]/40 border border-[#F59E0B]/30 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+<div class="flex items-center gap-2 text-xs text-amber-950 font-medium">
+<span class="material-symbols-outlined text-[#F59E0B] text-[18px]">group</span>
+<span>Colleague with seasonal viral flu reported at office last Thursday</span>
+</div>
+<span class="text-[11px] text-slate-400 bg-white px-2 py-0.5 rounded border border-slate-200 self-start sm:self-auto">Source: Patient response</span>
+</div>
+</div>
+</div>
+</div>
+<!-- SECTION F: VERBATIM OPEN-ENDED REMARKS -->
+<div class="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs space-y-3">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2.5">
+<span class="w-7 h-7 rounded-lg bg-[#E6F7F2] text-[#0D6E6E] font-bold text-xs flex items-center justify-center">F</span>
+<div>
+<h2 class="text-sm font-bold text-[#0F1E36]">Verbatim Open-ended Remarks</h2>
+<span class="text-xs text-slate-500">मरीज की खुली टिप्पणी</span>
+</div>
+</div>
+<span class="px-3 py-1 rounded-full bg-[#E6F7F2] text-[#0D6E6E] text-xs font-semibold flex items-center gap-1 border border-[#0D6E6E]/20">
+<span class="material-symbols-outlined text-[15px]">mic</span> Voice Response (0:42)
+              </span>
+</div>
+<div class="p-4 rounded-xl bg-[#E6F7F2]/50 border border-[#0D6E6E]/15 relative">
+<span class="material-symbols-outlined absolute top-3 right-3 text-[#0D6E6E]/15 text-[38px] select-none pointer-events-none">format_quote</span>
+<p class="text-sm text-slate-800 leading-relaxed italic relative z-10 font-medium">
+                “I have been feeling tired since the fever started 3 days ago. Mild tickling cough in the throat that gets slightly worse when lying down at night.”
+              </p>
+<div class="mt-3 pt-2.5 border-t border-[#0D6E6E]/15 flex flex-wrap items-center justify-between text-xs text-[#006b5f] font-medium">
+<span>Audio Transcription Engine: Whisper Health v3.1</span>
+<span class="font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px] fill">check_circle</span> 98.4% transcription confidence
+                </span>
+</div>
+</div>
+</div>
+</div>
+<!-- RIGHT COLUMN: CLINICAL TRIAGE & SNAPSHOT (4 cols) -->
+<div class="lg:col-span-4 space-y-5">
+<!-- NEEDS ATTENTION CARD (महत्वपूर्ण ध्यान) -->
+<div class="p-4 rounded-2xl bg-[#FEF3C7] border border-[#F59E0B] shadow-xs space-y-3">
+<div class="flex items-start gap-2.5">
+<div class="w-8 h-8 rounded-xl bg-amber-200 flex items-center justify-center text-amber-900 shrink-0">
+<span class="material-symbols-outlined text-[19px] fill">warning</span>
+</div>
+<div>
+<span class="text-sm font-bold text-amber-950 block">Needs Attention</span>
+<span class="text-[11px] text-amber-800 font-medium">महत्वपूर्ण ध्यान देने योग्य बिंदु</span>
+</div>
+</div>
+<p class="text-xs text-amber-950 leading-relaxed font-medium">
+              Persistent fever for 3 days (101.4°F peak) with reported self-medication (Paracetamol 650mg). Temperature monitoring and lung auscultation advised prior to prescribing.
+            </p>
+<div class="pt-1 border-t border-[#F59E0B]/30">
+<a class="inline-flex items-center gap-1 text-xs font-bold text-amber-900 hover:text-amber-950 hover:underline" href="javascript:void(0)">
+<span>Review clinical flag</span>
+<span class="material-symbols-outlined text-[15px]">arrow_forward</span>
+</a>
+</div>
+</div>
+<!-- INTAKE SNAPSHOT SUMMARY (प्रश्नावली सारांश) -->
+<div class="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-xs space-y-4">
+<div class="flex items-center justify-between pb-3 border-b border-slate-100">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[#0D6E6E] text-[20px]">insights</span>
+<span class="text-sm font-bold text-[#0F1E36]">Intake Snapshot</span>
+</div>
+<span class="text-xs text-slate-500">प्रश्नावली सारांश</span>
+</div>
+<div class="space-y-3">
+<div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+<span class="text-xs font-medium text-slate-700">Total Questions</span>
+<span class="font-mono font-bold text-[#0D6E6E] text-xs">12 answered (100%)</span>
+</div>
+<!-- Positive Flags List -->
+<div class="space-y-1.5 p-3 rounded-xl bg-[#E6F7F2]/60 border border-[#0D6E6E]/15">
+<span class="text-[10px] font-bold text-[#006b5f] uppercase tracking-wider block">Positive Indications</span>
+<ul class="text-xs text-slate-800 space-y-1.5">
+<li class="flex items-center gap-2">
+<span class="w-1.5 h-1.5 rounded-full bg-[#0D6E6E] shrink-0"></span>
+<span>Fever (3-day duration, 101.4°F peak)</span>
+</li>
+<li class="flex items-center gap-2">
+<span class="w-1.5 h-1.5 rounded-full bg-[#0D6E6E] shrink-0"></span>
+<span>Mild throat tickle cough</span>
+</li>
+<li class="flex items-center gap-2">
+<span class="w-1.5 h-1.5 rounded-full bg-[#0D6E6E] shrink-0"></span>
+<span>Known viral sick contact at office</span>
+</li>
+<li class="flex items-center gap-2">
+<span class="w-1.5 h-1.5 rounded-full bg-[#0D6E6E] shrink-0"></span>
+<span>Paracetamol 650mg self-administered</span>
+</li>
+</ul>
+</div>
+<!-- Rule Outs -->
+<div class="space-y-1.5 p-3 rounded-xl bg-slate-50 border border-slate-100">
+<span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Rule-outs (Negative Screen)</span>
+<ul class="text-xs text-slate-600 space-y-1.5">
+<li class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[15px] text-[#006b5f]">check</span>
+<span>No Dyspnea / Shortness of breath</span>
+</li>
+<li class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[15px] text-[#006b5f]">check</span>
+<span>No Chest pain or radiation</span>
+</li>
+<li class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[15px] text-[#006b5f]">check</span>
+<span>NKDA (No known drug allergies)</span>
+</li>
+<li class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[15px] text-[#006b5f]">check</span>
+<span>No chronic comorbidities reported</span>
+</li>
+</ul>
+</div>
+<div class="p-2.5 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between text-xs text-slate-500">
+<span>Input source mix</span>
+<span class="font-bold text-slate-700">10 Touch • 2 Voice</span>
+</div>
+</div>
+</div>
+<!-- CLINICAL AUDIT TRAIL (ऑडिट विवरण) -->
+<div class="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-xs space-y-3">
+<div class="flex items-center justify-between pb-3 border-b border-slate-100">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[#0D6E6E] text-[20px]">history_toggle_off</span>
+<span class="text-sm font-bold text-[#0F1E36]">Clinical Audit Trail</span>
+</div>
+<span class="text-xs text-slate-500">ऑडिट विवरण</span>
+</div>
+<div class="relative pl-5 space-y-3.5 text-xs before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-slate-200">
+<div class="relative">
+<span class="absolute -left-5 top-0.5 w-2.5 h-2.5 rounded-full bg-[#006b5f] ring-2 ring-white"></span>
+<span class="font-mono text-slate-400 font-semibold">09:12 AM</span>
+<p class="text-slate-700 font-medium">Identity confirmed via ABHA OTP</p>
+</div>
+<div class="relative">
+<span class="absolute -left-5 top-0.5 w-2.5 h-2.5 rounded-full bg-[#006b5f] ring-2 ring-white"></span>
+<span class="font-mono text-slate-400 font-semibold">09:18 AM</span>
+<p class="text-slate-700 font-medium">Symptoms &amp; Body Map completed</p>
+</div>
+<div class="relative">
+<span class="absolute -left-5 top-0.5 w-2.5 h-2.5 rounded-full bg-[#0D6E6E] ring-2 ring-white"></span>
+<span class="font-mono text-[#0D6E6E] font-bold">09:21 AM</span>
+<p class="text-[#0F1E36] font-bold">Health Questionnaire (12/12) locked</p>
+</div>
+</div>
+<div class="pt-2">
+<div class="p-2.5 rounded-xl bg-[#E6F7F2]/60 border border-[#0D6E6E]/20 text-center text-xs text-slate-600">
+                Mode: <strong class="text-[#0D6E6E]">Patient Mobile Self-Intake</strong> (Verified)
+              </div>
+</div>
+</div>
+</div>
+</div>
+<!-- 8. BOTTOM STICKY ACTION BAR -->
+<section class="sticky bottom-4 z-20 p-4 rounded-2xl bg-white/95 backdrop-blur border border-slate-200/90 shadow-md flex flex-col md:flex-row items-center justify-between gap-3">
+<div class="flex flex-wrap items-center gap-2.5 w-full md:w-auto">
+<button class="h-10 px-4 rounded-full bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 text-xs font-semibold transition-colors flex items-center gap-1.5 shadow-2xs cursor-pointer" type="button" onclick="CareFlow.navigate(7)">
+<span class="material-symbols-outlined text-[16px]">arrow_back</span>
+<span>Back to symptoms <span class="font-normal opacity-75">(लक्षणों पर वापस)</span></span>
+</button>
+<button class="h-10 px-4 rounded-full bg-white border border-slate-300 text-[#0D6E6E] hover:bg-[#E6F7F2]/40 text-xs font-semibold transition-colors flex items-center gap-1.5 shadow-2xs cursor-pointer" type="button" onclick="CareFlow.navigate(9)">
+<span class="material-symbols-outlined text-[16px]">description</span>
+<span>View documents <span class="font-normal opacity-75">(दस्तावेज़ देखें)</span></span>
+</button>
+</div>
+<div class="flex items-center gap-3 w-full md:w-auto justify-end">
+<button class="h-11 px-6 rounded-full bg-[#0D6E6E] text-white text-xs font-bold hover:bg-[#005454] transition-all shadow-sm flex items-center gap-2 cursor-pointer" type="button" onclick="CareFlow.navigate(9)">
+<span>Continue to documents</span>
+<span class="text-white/80 font-normal">(दस्तावेज़ पर जाएं)</span>
+<span class="material-symbols-outlined text-[17px]">arrow_forward</span>
+</button>
+</div>
+</section>
+<!-- REGULATORY SECURITY FOOTNOTE -->
+<footer class="py-4 text-center text-xs text-slate-500 flex items-center justify-center gap-1.5">
+<span class="material-symbols-outlined text-[15px] text-[#0D6E6E]">lock</span>
+<span>CareFlow Clinical Security • ABDM M1/M2/M3 Compliant • Patient information is strictly protected</span>
+</footer>
+</main>
+</div>
+<script>
+    // Tab Filter Interaction
+    document.addEventListener('DOMContentLoaded', () => {
+      const filterTabs = document.querySelectorAll('.filter-tab');
+      const questionGroups = document.querySelectorAll('.question-group');
+
+      filterTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          const filter = tab.getAttribute('data-filter');
+
+          // Reset all tabs
+          filterTabs.forEach(t => {
+            t.classList.remove('bg-[#0D6E6E]', 'text-white', 'active-tab');
+            t.classList.add('bg-white', 'border', 'border-slate-200', 'text-slate-600');
+          });
+
+          // Activate clicked tab
+          tab.classList.remove('bg-white', 'border', 'border-slate-200', 'text-slate-600');
+          tab.classList.add('bg-[#0D6E6E]', 'text-white', 'active-tab');
+
+          // Filter groups
+          questionGroups.forEach(group => {
+            const category = group.getAttribute('data-category');
+            if (filter === 'all' || category === filter) {
+              group.style.display = 'block';
+            } else {
+              group.style.display = 'none';
+            }
+          });
+        });
+      });
+    });
+  </script>
+<div id="snapdom-sandbox" data-snapdom-sandbox="true" aria-hidden="true" style="position: absolute; left: -9999px; top: -9999px; width: 0px; height: 0px; overflow: hidden;"></div></body></html>

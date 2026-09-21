@@ -17,6 +17,22 @@ paths:
       operationId: createSession
       summary: Start a new intake session
       tags: [sessions]
+      description: >
+        `department` is set by staff (the check-in URL / QR a desk or kiosk is configured with),
+        never chosen by the patient. AYUSH mode is a property of the department, read from the
+        gateway's visit config (`AYUSH_DEPARTMENTS`): an AYUSH department runs the complaint
+        module and then the Prashna modules under packages/ontology/modules/ayush/.
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                department:
+                  type: string
+                  pattern: "^[a-z][a-z0-9_-]{0,31}$"
+                  description: Defaults to `general`.
       responses:
         "201":
           description: Session created
@@ -24,11 +40,13 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [session_id, resume_token, qr_url]
+                required: [session_id, resume_token, qr_url, department, ayush_mode]
                 properties:
                   session_id: { $ref: "#/components/schemas/SessionId" }
                   resume_token: { type: string }
                   qr_url: { type: string, format: uri }
+                  department: { type: string }
+                  ayush_mode: { type: boolean }
         default: { $ref: "#/components/responses/Error" }
 
   /v1/sessions/{id}:
@@ -556,6 +574,150 @@ paths:
               schema: { $ref: "#/components/schemas/VisitDiff" }
         default: { $ref: "#/components/responses/Error" }
 
+  /v1/ayurveda/vocabulary:
+    get:
+      operationId: getAyurvedaVocabulary
+      summary: The Pariksha vocabulary — every examination field and option
+      tags: [clinician]
+      description: >
+        Serves packages/ontology/modules/ayush/pariksha-vocabulary.yaml. UI and API read
+        options only from here; no component hardcodes one. `status` is PENDING_EXPERT_REVIEW
+        until an Ayurveda practitioner has verified the file — clients must show that.
+      responses:
+        "200":
+          description: Vocabulary
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AyurvedaVocabulary" }
+        default: { $ref: "#/components/responses/Error" }
+
+  /v1/visits/{id}/ayurveda:
+    parameters:
+      - $ref: "#/components/parameters/VisitIdParam"
+    get:
+      operationId: getAyurvedaRecord
+      summary: Ayurvedic case record — Prashna answers and every examination field
+      tags: [clinician]
+      description: >
+        Prashna is composed live from the patient's intake answers (with provenance and
+        confidence) and is read-only. Everything the Vaidya recorded is returned beside the
+        patient-reported reference values. CareFlow never computes or suggests Vikriti,
+        Samprapti or a diagnosis — `computed` carries only BMI and the Vaya band, both pure
+        arithmetic over fields the Vaidya entered.
+      responses:
+        "200":
+          description: Case record
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AyurvedaRecord" }
+        default: { $ref: "#/components/responses/Error" }
+    put:
+      operationId: saveAyurvedaExam
+      summary: Save examination fields (partial saves allowed)
+      tags: [clinician]
+      description: >
+        Only fields present in the request are touched. A `null` value clears a field. For a
+        field the patient answered (a `patient_reference` with a `map` in the vocabulary), the
+        server decides the disposition: the patient's mapped value → `confirmed`; any other
+        value → `overridden`, and the original patient value is kept beside it. Every save
+        writes one row to the append-only audit log. A signed visit rejects saves (409).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [recorded_by, fields]
+              properties:
+                recorded_by:
+                  type: string
+                  minLength: 1
+                  description: Same identifier convention as `signed_by` — no RBAC until Day 4.
+                fields:
+                  type: array
+                  minItems: 1
+                  items:
+                    type: object
+                    required: [field_id, value]
+                    properties:
+                      field_id: { type: string }
+                      value:
+                        description: Type depends on the field — see the vocabulary. `null` clears.
+      responses:
+        "200":
+          description: Updated case record
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AyurvedaRecord" }
+        default: { $ref: "#/components/responses/Error" }
+
+  /v1/terminology/search:
+    get:
+      operationId: searchTerminology
+      summary: Search NAMASTE / ICD-11 concepts (proxied to the terminology service)
+      tags: [clinician]
+      description: >
+        Lets a browser client reach the terminology service through the gateway (the terminology
+        service has no browser CORS of its own). Results carry a relevance `score`; clients
+        picking a diagnosis must NOT rank or suggest by it (CLAUDE.md rule 2) — list
+        alphabetically and let the Vaidya pick. 502 when the terminology service is unreachable.
+      parameters:
+        - { name: q, in: query, required: true, schema: { type: string, minLength: 1 } }
+        - name: system
+          in: query
+          required: false
+          schema: { type: string, enum: [namaste, icd11-tm2, icd11-bio], default: namaste }
+      responses:
+        "200":
+          description: Matches
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  required: [system, code, display, score]
+                  properties:
+                    system: { type: string, enum: [namaste, icd11-tm2, icd11-bio] }
+                    code: { type: string }
+                    display: { type: string }
+                    score: { type: number }
+        default: { $ref: "#/components/responses/Error" }
+
+  /v1/terminology/translate:
+    post:
+      operationId: translateTerminology
+      summary: Crosswalk a concept, e.g. NAMASTE to ICD-11 TM2
+      tags: [clinician]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [system, code, target]
+              properties:
+                system: { type: string, enum: [namaste, icd11-tm2, icd11-bio] }
+                code: { type: string }
+                target: { type: string, enum: [namaste, icd11-tm2, icd11-bio] }
+      responses:
+        "200":
+          description: "Match, or matched=false when no mapping exists (never a fabricated target)"
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [matched]
+                properties:
+                  matched: { type: boolean }
+                  equivalence: { type: [string, "null"] }
+                  target_system: { type: string }
+                  target_code: { type: [string, "null"] }
+                  target_display: { type: [string, "null"] }
+                  reviewed_by: { type: [string, "null"] }
+                  provenance: { type: [string, "null"] }
+        default: { $ref: "#/components/responses/Error" }
+
   /v1/redflags/{id}/acknowledge:
     parameters:
       - name: id
@@ -989,6 +1151,347 @@ components:
             is derived live from the red_flag table on every request, not a separate stamped
             flag that could drift out of sync with it.
           items: { $ref: "#/components/schemas/RedFlag" }
+        ayurveda_sections:
+          type: array
+          description: >
+            The Ayurvedic case sheet in PS 26047 order — Prashna, Trividha, Ashtavidha,
+            Dashavidha, Vyadhi Vinishchaya — composed live from the patient's answers and the
+            Vaidya's examination record. Empty for a visit with no Ayurvedic data.
+          items: { $ref: "#/components/schemas/AyurvedicSection" }
+
+    AyurvedaVocabulary:
+      type: object
+      required: [id, status, version, title, review, prashna, prakriti_scoring, steps, summary_step]
+      properties:
+        id: { type: string }
+        status:
+          type: string
+          enum: [PENDING_EXPERT_REVIEW, VERIFIED]
+        version: { type: integer }
+        title: { $ref: "#/components/schemas/VocabLabel" }
+        review:
+          type: object
+          required: [status, note]
+          properties:
+            status: { type: string }
+            note: { type: string }
+            verified_by: { type: [string, "null"] }
+        prashna:
+          type: object
+          required: [label, gloss, groups]
+          properties:
+            label: { type: string }
+            gloss: { type: string }
+            groups:
+              type: array
+              items:
+                type: object
+                required: [id, label, gloss, module]
+                properties:
+                  id: { type: string }
+                  label: { type: string }
+                  gloss: { type: string }
+                  module:
+                    type: [string, "null"]
+                    description: Interview module id; null = the chief-complaint module the patient picked.
+        prakriti_scoring:
+          type: object
+          required: [label, gloss, caveat, doshas, slots]
+          properties:
+            label: { type: string }
+            gloss: { type: string }
+            caveat: { type: string }
+            doshas:
+              type: array
+              items:
+                type: object
+                required: [value, label]
+                properties:
+                  value: { type: string }
+                  label: { type: string }
+            slots:
+              type: object
+              description: slot id → (option value → dosha value)
+              additionalProperties:
+                type: object
+                additionalProperties: { type: string }
+        steps:
+          type: array
+          items: { $ref: "#/components/schemas/ExamStep" }
+        summary_step: { $ref: "#/components/schemas/VocabLabelWithId" }
+
+    VocabLabel:
+      type: object
+      required: [label, gloss]
+      properties:
+        label: { type: string, description: The Sanskrit term. }
+        gloss: { type: string, description: Short English gloss. }
+
+    VocabLabelWithId:
+      type: object
+      required: [id, label, gloss]
+      properties:
+        id: { type: string }
+        label: { type: string }
+        gloss: { type: string }
+
+    ExamStep:
+      type: object
+      required: [id, label, gloss, sections]
+      properties:
+        id: { type: string }
+        label: { type: string }
+        gloss: { type: string }
+        sections:
+          type: array
+          items: { $ref: "#/components/schemas/ExamSection" }
+
+    ExamSection:
+      type: object
+      required: [id, label, gloss, fields]
+      properties:
+        id: { type: string }
+        label: { type: string }
+        gloss: { type: string }
+        link_to_step:
+          type: string
+          description: This section is a pointer to another step, not a form.
+        show_prakriti_score:
+          type: boolean
+          description: Show the patient's Prakriti questionnaire score beside this section, as reference only.
+        fields:
+          type: array
+          items: { $ref: "#/components/schemas/ExamField" }
+
+    ExamField:
+      type: object
+      required: [id, label, gloss, type]
+      properties:
+        id: { type: string, description: "Dotted, prefixed with its step id — e.g. ashtavidha.mala.nature." }
+        label: { type: string }
+        gloss: { type: string }
+        type:
+          type: string
+          enum: [text, enum, enum_multi, number, computed, namaste_codes]
+        required: { type: boolean }
+        options:
+          type: array
+          items: { $ref: "#/components/schemas/VocabOption" }
+        min: { type: number }
+        max: { type: number }
+        unit: { type: string }
+        patient_reference:
+          type: array
+          items:
+            type: object
+            required: [slot]
+            properties:
+              slot: { type: string }
+              map:
+                type: object
+                description: Patient option value → this field's option value. Present = offered as a pre-fill.
+                additionalProperties: { type: string }
+        computed:
+          type: object
+          required: [kind]
+          properties:
+            kind: { type: string, enum: [bmi, vaya_band] }
+            height_field: { type: string }
+            weight_field: { type: string }
+            age_field: { type: string }
+        source: { type: string, description: Classical source note for a computed field's cut-offs. }
+        bands:
+          type: array
+          items:
+            type: object
+            required: [value, label, gloss, below_age_years]
+            properties:
+              value: { type: string }
+              label: { type: string }
+              gloss: { type: string }
+              below_age_years: { type: [number, "null"], description: Exclusive upper bound; null = no upper bound. }
+        namaste_code:
+          type: [string, "null"]
+          description: Verified NAMASTE code, if one exists. null → PLACEHOLDER in the FHIR bundle.
+
+    VocabOption:
+      type: object
+      required: [value, label, gloss]
+      properties:
+        value: { type: string }
+        label: { type: string }
+        gloss: { type: string }
+
+    AyurvedaRecord:
+      type: object
+      required: [visit_id, signed, department, ayush_mode, prashna, exam, patient_reference, computed, completion]
+      properties:
+        visit_id: { type: string }
+        signed: { type: boolean }
+        department: { type: [string, "null"] }
+        ayush_mode: { type: boolean }
+        prashna: { $ref: "#/components/schemas/PrashnaRecord" }
+        exam:
+          type: array
+          items: { $ref: "#/components/schemas/ExamValue" }
+        patient_reference:
+          type: object
+          description: Exam field id → what the patient reported that bears on it.
+          additionalProperties:
+            type: array
+            items: { $ref: "#/components/schemas/PrashnaItem" }
+        computed:
+          type: object
+          required: [bmi, vaya]
+          properties:
+            bmi: { type: [number, "null"] }
+            vaya:
+              type: object
+              required: [age_years, age_source, band]
+              properties:
+                age_years: { type: [integer, "null"] }
+                age_source:
+                  type: [string, "null"]
+                  enum: [dob, clinician, null]
+                band: { type: [string, "null"] }
+        completion:
+          type: array
+          items:
+            type: object
+            required: [step_id, filled, required_total, status]
+            properties:
+              step_id: { type: string }
+              filled: { type: integer }
+              required_total: { type: integer }
+              status: { type: string, enum: [not_started, in_progress, complete] }
+
+    PrashnaRecord:
+      type: object
+      required: [groups, answered, total, prakriti_score]
+      properties:
+        groups:
+          type: array
+          items:
+            type: object
+            required: [id, label, gloss, items]
+            properties:
+              id: { type: string }
+              label: { type: string }
+              gloss: { type: string }
+              items:
+                type: array
+                items: { $ref: "#/components/schemas/PrashnaItem" }
+        answered: { type: integer }
+        total: { type: integer }
+        prakriti_score:
+          oneOf:
+            - $ref: "#/components/schemas/PrakritiScore"
+            - { type: "null" }
+
+    PrashnaItem:
+      type: object
+      required: [slot_id, question, value, value_label, source, confidence, audio_offset_ms, suggested_value]
+      properties:
+        slot_id: { type: string }
+        question: { type: string }
+        value: {}
+        value_label: { type: string, description: Human-readable label(s) of the answer, from the ontology option labels. }
+        source:
+          type: string
+          enum: [voice, tap, bodymap, proxy, ocr]
+        confidence: { type: number }
+        audio_offset_ms: { type: [integer, "null"] }
+        suggested_value:
+          type: [string, "null"]
+          description: The exam-field value the vocabulary maps this answer to (a pre-fill offer); null when reference only.
+
+    PrakritiScore:
+      type: object
+      required: [label, gloss, caveat, counts, answered, total]
+      description: >
+        A count per dosha of the patient's questionnaire answers, REFERENCE only. There is
+        deliberately no "dominant dosha" field — CareFlow never asserts a constitution.
+      properties:
+        label: { type: string }
+        gloss: { type: string }
+        caveat: { type: string }
+        counts:
+          type: array
+          items:
+            type: object
+            required: [dosha, label, count]
+            properties:
+              dosha: { type: string }
+              label: { type: string }
+              count: { type: integer }
+        answered: { type: integer }
+        total: { type: integer }
+
+    ExamValue:
+      type: object
+      required: [field_id, value, source, disposition, recorded_by, recorded_at, original]
+      properties:
+        field_id: { type: string }
+        value: {}
+        source:
+          type: string
+          enum: [clinician]
+        disposition:
+          type: string
+          enum: [entered, confirmed, overridden]
+          description: >
+            entered = the Vaidya's own finding; confirmed = the Vaidya accepted the
+            patient-reported value; overridden = the Vaidya replaced it (the original is kept).
+        recorded_by: { type: string }
+        recorded_at: { type: string, format: date-time }
+        original:
+          description: The patient-reported value this one confirms or overrides; never discarded.
+          oneOf:
+            - $ref: "#/components/schemas/ExamOriginal"
+            - { type: "null" }
+
+    ExamOriginal:
+      type: object
+      required: [value, value_label, source, confidence]
+      properties:
+        value: {}
+        value_label: { type: string }
+        source:
+          type: string
+          enum: [voice, tap, bodymap, proxy, ocr]
+        confidence: { type: number }
+
+    AyurvedicSection:
+      type: object
+      required: [id, label, gloss, rows]
+      properties:
+        id: { type: string }
+        label: { type: string }
+        gloss: { type: string }
+        rows:
+          type: array
+          items: { $ref: "#/components/schemas/AyurvedicRow" }
+
+    AyurvedicRow:
+      type: object
+      required: [group, label, gloss, value_label, source, confidence, disposition, original, recorded_by]
+      properties:
+        group: { type: [string, "null"], description: Sub-heading (e.g. "Nadi — Pulse"). }
+        label: { type: string }
+        gloss: { type: string }
+        value_label: { type: string }
+        source:
+          type: string
+          enum: [voice, tap, bodymap, proxy, ocr, clinician, computed]
+        confidence: { type: [number, "null"] }
+        disposition:
+          type: [string, "null"]
+          enum: [entered, confirmed, overridden, null]
+        original:
+          oneOf:
+            - $ref: "#/components/schemas/ExamOriginal"
+            - { type: "null" }
+        recorded_by: { type: [string, "null"] }
 
     VisitDiff:
       type: object

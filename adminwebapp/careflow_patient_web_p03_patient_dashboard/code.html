@@ -1,0 +1,622 @@
+<!DOCTYPE html><html class="h-full bg-slate-50" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>CareFlow Patient Web — P03 Patient Dashboard</title>
+<!-- Tailwind CSS v3 with Plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Google Fonts: Plus Jakarta Sans -->
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<script src="../shared_nav.js"></script>
+<script data-purpose="tailwind-config">
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              teal: '#0D6E6E',
+              'teal-dark': '#094E4E',
+              'teal-light': '#148E8E',
+              mint: '#E6F7F2',
+              'mint-subtle': '#F2FBF8',
+              navy: '#0F172A',
+            }
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'system-ui', '-apple-system', 'sans-serif'],
+          }
+        }
+      }
+    };
+  </script>
+<style data-purpose="typography-custom">
+    body {
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+  </style>
+</head>
+<body class="min-h-full flex flex-col bg-slate-50 text-slate-900 pb-20 md:pb-10">
+<!-- BEGIN: TopHeader -->
+<header class="sticky top-0 z-40 bg-white/95 backdrop-blur border-b border-slate-200" data-purpose="patient-portal-header">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex items-center justify-between h-16 sm:h-20">
+<!-- Left: CareFlow Logo & Badge -->
+<div class="flex items-center gap-3">
+<a class="flex items-center gap-2.5 focus:outline-none focus:ring-2 focus:ring-brand-teal rounded-lg p-1" href="#">
+<!-- Authentic CareFlow Heart in Hands Logo Icon -->
+<div class="w-10 h-10 rounded-xl bg-brand-teal flex items-center justify-center shadow-sm">
+<svg aria-hidden="true" class="w-6 h-6 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+<path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+<div class="flex flex-col">
+<span class="text-xl font-extrabold tracking-tight text-slate-900 leading-none">CareFlow</span>
+<span class="text-[10px] font-semibold text-brand-teal tracking-wide uppercase mt-0.5">Patient Care</span>
+</div>
+</a>
+<span class="hidden sm:inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-brand-mint text-brand-teal border border-brand-teal/20">
+            Patient Portal
+          </span>
+</div>
+<!-- Center: Web Navigation Links (Desktop) -->
+<nav aria-label="Main Navigation" class="hidden md:flex items-center space-x-1 lg:space-x-2">
+<a aria-current="page" class="px-3.5 py-2 rounded-full text-sm font-bold text-brand-teal bg-brand-mint border border-brand-teal/20 flex items-center gap-1.5" href="#">
+<span>Home</span>
+<span class="text-[11px] font-normal text-brand-teal/80">गृह</span>
+</a>
+<a class="px-3.5 py-2 rounded-full text-sm font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors flex items-center gap-1.5" href="#">
+<span>My Health</span>
+<span class="text-[11px] font-normal text-slate-400">स्वास्थ्य</span>
+</a>
+<a class="px-3.5 py-2 rounded-full text-sm font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors flex items-center gap-1.5" href="#">
+<span>Appointments</span>
+<span class="text-[11px] font-normal text-slate-400">अपॉइंटमेंट</span>
+</a>
+<a class="px-3.5 py-2 rounded-full text-sm font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors flex items-center gap-1.5" href="#">
+<span>Documents</span>
+<span class="text-[11px] font-normal text-slate-400">दस्तावेज़</span>
+</a>
+<a class="px-3.5 py-2 rounded-full text-sm font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors flex items-center gap-1.5" href="#">
+<span>Care Summary</span>
+<span class="text-[11px] font-normal text-slate-400">सारांश</span>
+</a>
+</nav>
+<!-- Right: Utility Controls & Patient Chip -->
+<div class="flex items-center gap-2 sm:gap-3">
+<!-- Language Toggle -->
+<div class="hidden sm:flex items-center bg-slate-100 rounded-full p-0.5 border border-slate-200 text-xs font-medium">
+<button class="px-2.5 py-1 bg-white rounded-full text-slate-900 font-semibold shadow-xs" type="button">English</button>
+<button class="px-2.5 py-1 text-slate-500 hover:text-slate-800" type="button">हिन्दी</button>
+</div>
+<!-- Notification Bell -->
+<button aria-label="Notifications" class="relative p-2 rounded-full text-slate-600 hover:text-slate-900 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-brand-teal" type="button">
+<span class="absolute top-1.5 right-1.5 flex h-2.5 w-2.5">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-rose-500 border border-white"></span>
+</span>
+<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+<path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</button>
+<!-- Patient Identity Chip -->
+<div class="flex items-center gap-2.5 pl-1.5 pr-2.5 py-1.5 rounded-full bg-slate-50 border border-slate-200 hover:border-slate-300 transition-colors">
+<div class="w-8 h-8 rounded-full bg-brand-teal text-white flex items-center justify-center font-bold text-xs tracking-wider">
+              AS
+            </div>
+<div class="hidden lg:flex flex-col text-left">
+<div class="flex items-center gap-1.5">
+<span class="text-xs font-bold text-slate-900 leading-tight">Aarav Sharma</span>
+<span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+</div>
+<span class="text-[10px] font-mono text-slate-500">ABHA: 91-8472-3021-9920</span>
+</div>
+<button aria-label="Account Settings" class="text-slate-400 hover:text-slate-600 focus:outline-none ml-0.5" type="button">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+<path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" stroke-linecap="round" stroke-linejoin="round"></path>
+<path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</button>
+</div>
+</div>
+</div>
+</div>
+</header>
+<!-- END: TopHeader -->
+<!-- BEGIN: MainContent -->
+<main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6">
+<!-- BEGIN: GreetingAndStatus -->
+<section aria-labelledby="dashboard-welcome" class="space-y-4">
+<div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+<div>
+<h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight" id="dashboard-welcome">
+            Good morning, Aarav 👋 <span class="text-lg sm:text-xl font-medium text-slate-500 ml-1 font-hindi">सुप्रभात, आरव 👋</span>
+</h1>
+<p class="text-sm sm:text-base text-slate-600 mt-1">
+            Here's what's happening with your care today. <span class="text-slate-500 text-xs sm:text-sm">आज आपकी देखभाल से जुड़ी जानकारी यहाँ देखें।</span>
+</p>
+</div>
+<!-- Quick ABHA status badge -->
+<div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-brand-mint border border-brand-teal/20 text-brand-teal text-xs font-semibold w-fit">
+<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+<span>ABHA Active • 91-8472-3021-9920</span>
+</div>
+</div>
+<!-- Reassuring Status Banner -->
+<div class="bg-gradient-to-r from-emerald-50 to-teal-50/70 border border-emerald-200/80 rounded-2xl p-4 sm:p-5 flex items-start sm:items-center gap-3.5 shadow-xs">
+<div class="w-9 h-9 rounded-xl bg-emerald-600 text-white flex-shrink-0 flex items-center justify-center">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+<path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+<div class="flex-1">
+<div class="flex flex-wrap items-center gap-2">
+<h2 class="text-sm sm:text-base font-bold text-slate-900">Your care is up to date</h2>
+<span class="text-xs sm:text-sm text-slate-600 font-medium">आपकी देखभाल अपडेट है</span>
+</div>
+<p class="text-xs sm:text-sm text-slate-600 mt-0.5">
+            No immediate action is required from you. <span class="text-slate-500">फिलहाल आपकी ओर से किसी कार्रवाई की आवश्यकता नहीं है।</span>
+</p>
+</div>
+</div>
+</section>
+<!-- END: GreetingAndStatus -->
+<!-- Responsive Grid Layout (Desktop: 2 Columns, Mobile: Stacked by priority) -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+<!-- BEGIN: LeftPrimaryColumn (lg:col-span-8) -->
+<div class="lg:col-span-8 space-y-6">
+<!-- BEGIN: NextAppointmentCard -->
+<section aria-labelledby="appointment-heading" class="bg-white rounded-2xl border border-slate-200/90 p-5 sm:p-6 shadow-xs relative overflow-hidden">
+<!-- Top subtle accent border -->
+<div class="absolute top-0 left-0 right-0 h-1.5 bg-brand-teal"></div>
+<div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+<div class="flex items-center gap-2">
+<span class="text-xs font-bold uppercase tracking-wider text-brand-teal">Next appointment</span>
+<span class="text-xs text-slate-400">•</span>
+<span class="text-xs font-medium text-slate-500">अगली अपॉइंटमेंट</span>
+</div>
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-50 border border-amber-200 text-amber-800 text-xs font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+              Live OPD Token #14 • Wait: ~10 mins
+            </div>
+</div>
+<!-- Appointment Core Body -->
+<div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 bg-slate-50 rounded-xl p-4 border border-slate-100">
+<!-- Calendar Date Badge -->
+<div class="flex-shrink-0 w-full sm:w-20 bg-white border border-slate-200 rounded-xl p-2.5 text-center shadow-2xs">
+<span class="block text-[11px] font-bold text-brand-teal uppercase tracking-wider">TOMORROW</span>
+<span class="block text-xl font-extrabold text-slate-900 mt-0.5">10:15</span>
+<span class="block text-[11px] font-medium text-slate-500 uppercase">AM IST</span>
+</div>
+<!-- Doctor & Clinic Information -->
+<div class="flex-1 min-w-0">
+<div class="flex flex-wrap items-center gap-2">
+<h3 class="text-lg font-bold text-slate-900 truncate" id="appointment-heading">Dr. Priya Sharma</h3>
+<span class="text-xs px-2 py-0.5 rounded-md bg-white text-slate-700 font-medium border border-slate-200">Room 104, OPD Wing B</span>
+</div>
+<p class="text-xs sm:text-sm text-slate-600 mt-0.5">Senior Resident • General Medicine (सामान्य चिकित्सा)</p>
+<p class="text-xs text-slate-500 mt-1 flex items-center gap-1">
+<svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+<path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" stroke-linecap="round" stroke-linejoin="round"></path>
+<path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+                CareFlow Health Clinic, Bangalore
+              </p>
+</div>
+</div>
+<!-- Appointment Actions -->
+<div class="mt-5 flex flex-col sm:flex-row items-center gap-3">
+<a href="../careflow_patient_web_p12_appointment_details/code.html" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-brand-teal text-white text-sm font-bold shadow-xs hover:bg-brand-teal-dark transition-colors focus:ring-2 focus:ring-brand-teal focus:ring-offset-2">
+<span>View appointment details (अपॉइंटमेंट देखें)</span>
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+<path d="M14 5l7 7m0 0l-7 7m7-7H3" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</a>
+<a href="../careflow_patient_web_p13_book_an_appointment/code.html" class="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2.5 rounded-full bg-white text-slate-700 text-sm font-semibold border border-slate-300 hover:bg-slate-50 transition-colors">
+              Reschedule / Manage
+            </a>
+</div>
+</section>
+<!-- END: NextAppointmentCard -->
+<!-- BEGIN: MobilePriorityPlacement: Pending Profile Action (Only visible on small devices here) -->
+<div class="block lg:hidden">
+<div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs">
+<div class="flex items-center justify-between">
+<span class="text-xs font-bold text-brand-teal uppercase tracking-wider">Action Needed</span>
+<span class="text-xs font-bold text-brand-teal">85% Complete</span>
+</div>
+<h3 class="text-base font-bold text-slate-900 mt-1">Complete your health profile • स्वास्थ्य प्रोफ़ाइल पूर्ण करें</h3>
+<div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden my-2.5">
+<div class="bg-brand-teal h-full rounded-full" style="width: 85%"></div>
+</div>
+<p class="text-xs text-slate-600 mb-3">Add previous emergency contact and AYUSH preferences to speed up desk triage.</p>
+<a href="../careflow_patient_web_p04_my_profile/code.html" class="w-full py-2.5 rounded-full bg-brand-teal text-white text-xs font-bold hover:bg-brand-teal-dark transition-colors flex items-center justify-center gap-1.5">
+<span>Continue (जारी रखें)</span>
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 5l7 7m0 0l-7 7m7-7H3" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+</a>
+</div>
+</div>
+<!-- END: MobilePriorityPlacement -->
+<!-- BEGIN: YourCareGrid -->
+<section aria-labelledby="your-care-heading">
+<div class="flex items-center justify-between mb-3">
+<div>
+<h2 class="text-lg font-bold text-slate-900" id="your-care-heading">Your care • आपकी देखभाल</h2>
+<p class="text-xs text-slate-500">Quick access to medical essentials and care summaries</p>
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+<!-- Card 1: My Health -->
+<a class="group bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-xs hover:border-brand-teal/50 hover:shadow-md transition-all flex flex-col justify-between" href="../careflow_patient_web_p05_my_health_overview/code.html">
+<div>
+<div class="w-10 h-10 rounded-xl bg-teal-50 text-brand-teal flex items-center justify-center group-hover:bg-brand-teal group-hover:text-white transition-colors mb-3">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+<path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+<h3 class="text-sm sm:text-base font-bold text-slate-900 group-hover:text-brand-teal transition-colors">
+                  My Health • <span class="font-normal text-xs text-slate-500">मेरा स्वास्थ्य</span>
+</h3>
+<p class="text-xs text-slate-500 mt-1">View your health vitals, active symptoms &amp; allergy record.</p>
+</div>
+<div class="mt-4 flex items-center text-xs font-bold text-brand-teal">
+<span>View vitals</span>
+<span class="ml-1 group-hover:translate-x-1 transition-transform">→</span>
+</div>
+</a>
+<!-- Card 2: Care Summary -->
+<a class="group bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-xs hover:border-brand-teal/50 hover:shadow-md transition-all flex flex-col justify-between" href="../careflow_patient_web_p09_my_care_summary/code.html">
+<div>
+<div class="w-10 h-10 rounded-xl bg-teal-50 text-brand-teal flex items-center justify-center group-hover:bg-brand-teal group-hover:text-white transition-colors mb-3">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+<path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+<h3 class="text-sm sm:text-base font-bold text-slate-900 group-hover:text-brand-teal transition-colors">
+                  Care Summary • <span class="font-normal text-xs text-slate-500">केयर सारांश</span>
+</h3>
+<p class="text-xs text-slate-500 mt-1">Review latest AI-assisted clinical visit summary &amp; notes.</p>
+</div>
+<div class="mt-4 flex items-center text-xs font-bold text-brand-teal">
+<span>Read summary</span>
+<span class="ml-1 group-hover:translate-x-1 transition-transform">→</span>
+</div>
+</a>
+<!-- Card 3: Documents -->
+<a class="group bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-xs hover:border-brand-teal/50 hover:shadow-md transition-all flex flex-col justify-between" href="../careflow_patient_web_p08_my_documents/code.html">
+<div>
+<div class="w-10 h-10 rounded-xl bg-teal-50 text-brand-teal flex items-center justify-center group-hover:bg-brand-teal group-hover:text-white transition-colors mb-3">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+<path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+<h3 class="text-sm sm:text-base font-bold text-slate-900 group-hover:text-brand-teal transition-colors">
+                  Documents • <span class="font-normal text-xs text-slate-500">दस्तावेज़</span>
+</h3>
+<p class="text-xs text-slate-500 mt-1">Access 2 verified prescriptions, lab reports &amp; OPD slips.</p>
+</div>
+<div class="mt-4 flex items-center text-xs font-bold text-brand-teal">
+<span>Open vault</span>
+<span class="ml-1 group-hover:translate-x-1 transition-transform">→</span>
+</div>
+</a>
+</div>
+</section>
+<!-- END: YourCareGrid -->
+<!-- BEGIN: RecentDocumentsSection -->
+<section aria-labelledby="documents-heading" class="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 shadow-xs">
+<div class="flex items-center justify-between pb-4 border-b border-slate-100">
+<div>
+<h2 class="text-base sm:text-lg font-bold text-slate-900" id="documents-heading">Recent documents • हाल के दस्तावेज़</h2>
+<p class="text-xs text-slate-500">Verified clinical summaries and diagnostic records</p>
+</div>
+<a class="text-xs sm:text-sm font-bold text-brand-teal hover:underline flex items-center gap-1" href="../careflow_patient_web_p08_my_documents/code.html">
+<span>View all (सभी देखें)</span>
+<span>→</span>
+</a>
+</div>
+<div class="divide-y divide-slate-100 mt-1">
+<!-- Document 1: CBC Lab Report -->
+<div class="py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-slate-50/75 p-2 rounded-xl transition-colors">
+<div class="flex items-start gap-3">
+<div class="w-10 h-10 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center flex-shrink-0 mt-0.5">
+<svg class="w-5 h-5 text-brand-teal" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+<path d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+<div>
+<h3 class="text-sm font-bold text-slate-900">Complete Blood Count (CBC) &amp; Metabolic Panel</h3>
+<div class="flex flex-wrap items-center gap-2 mt-0.5 text-xs text-slate-500">
+<span>Lab Report</span>
+<span>•</span>
+<span>Added Sep 7, 2026</span>
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                      Ready / Available
+                    </span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-2 self-end sm:self-center">
+<button class="px-3.5 py-1.5 rounded-full text-xs font-bold text-brand-teal bg-brand-mint hover:bg-brand-teal hover:text-white transition-colors" type="button">
+                  View PDF / Summary
+                </button>
+</div>
+</div>
+<!-- Document 2: Prescription -->
+<div class="py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-slate-50/75 p-2 rounded-xl transition-colors">
+<div class="flex items-start gap-3">
+<div class="w-10 h-10 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center flex-shrink-0 mt-0.5">
+<svg class="w-5 h-5 text-brand-teal" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+<path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+<div>
+<h3 class="text-sm font-bold text-slate-900">OPD Digital Prescription — Dr. Priya Sharma</h3>
+<div class="flex flex-wrap items-center gap-2 mt-0.5 text-xs text-slate-500">
+<span>2 Medications</span>
+<span>•</span>
+<span>Added Sep 5, 2026</span>
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-sky-50 text-sky-700 border border-sky-200">
+                      Active
+                    </span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-2 self-end sm:self-center">
+<button class="px-3.5 py-1.5 rounded-full text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 transition-colors" type="button">
+                  View details
+                </button>
+</div>
+</div>
+</div>
+</section>
+<!-- END: RecentDocumentsSection -->
+<!-- BEGIN: RecentCareActivityTimeline -->
+<section aria-labelledby="activity-heading" class="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 shadow-xs">
+<div class="mb-4">
+<h2 class="text-base sm:text-lg font-bold text-slate-900" id="activity-heading">Recent care activity • हाल की गतिविधि</h2>
+<p class="text-xs text-slate-500">Chronological history of interactions with your care team</p>
+</div>
+<ol class="relative border-l border-slate-200 ml-3 space-y-6">
+<!-- Timeline Item 1 -->
+<li class="ml-6">
+<span class="absolute -left-2 flex items-center justify-center w-4 h-4 rounded-full bg-brand-teal ring-4 ring-white"></span>
+<div class="flex flex-col sm:flex-row sm:items-center justify-between">
+<h3 class="text-sm font-semibold text-slate-900">Care summary generated following mobile intake check-in</h3>
+<time class="text-[11px] font-medium text-slate-400">Today, 09:24 AM</time>
+</div>
+<p class="text-xs text-slate-500 mt-1">Recorded symptoms: Fever &amp; cough (3 days duration, moderate severity). Assigned to Desk 4.</p>
+</li>
+<!-- Timeline Item 2 -->
+<li class="ml-6">
+<span class="absolute -left-2 flex items-center justify-center w-4 h-4 rounded-full bg-slate-300 ring-4 ring-white"></span>
+<div class="flex flex-col sm:flex-row sm:items-center justify-between">
+<h3 class="text-sm font-semibold text-slate-900">Prescription updated by Dr. Priya Sharma</h3>
+<time class="text-[11px] font-medium text-slate-400">Sep 5, 2026</time>
+</div>
+<p class="text-xs text-slate-500 mt-1">Paracetamol 650mg &amp; Cetirizine added with dosage instructions in English &amp; Hindi.</p>
+</li>
+<!-- Timeline Item 3 -->
+<li class="ml-6">
+<span class="absolute -left-2 flex items-center justify-center w-4 h-4 rounded-full bg-slate-300 ring-4 ring-white"></span>
+<div class="flex flex-col sm:flex-row sm:items-center justify-between">
+<h3 class="text-sm font-semibold text-slate-900">General OPD consultation completed</h3>
+<time class="text-[11px] font-medium text-slate-400">Sep 3, 2026</time>
+</div>
+<p class="text-xs text-slate-500 mt-1">Bangalore Clinic • Physical vitals logged: BP 118/78, SpO2 99%.</p>
+</li>
+</ol>
+</section>
+<!-- END: RecentCareActivityTimeline -->
+</div>
+<!-- END: LeftPrimaryColumn -->
+<!-- BEGIN: RightSupportingColumn (lg:col-span-4) -->
+<div class="lg:col-span-4 space-y-6">
+<!-- BEGIN: PendingActionProfileCard (Desktop display) -->
+<div class="hidden lg:block bg-white rounded-2xl border border-slate-200 p-5 shadow-xs" data-purpose="profile-completion-card">
+<div class="flex items-center justify-between">
+<span class="text-xs font-bold text-brand-teal uppercase tracking-wider">Health Profile</span>
+<span class="text-xs font-bold text-brand-teal">85% Complete</span>
+</div>
+<h3 class="text-base font-bold text-slate-900 mt-1.5">Complete your health profile</h3>
+<p class="text-xs text-slate-500">स्वास्थ्य प्रोफ़ाइल पूर्ण करें</p>
+<!-- Progress bar -->
+<div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden my-3">
+<div class="bg-brand-teal h-full rounded-full transition-all" style="width: 85%"></div>
+</div>
+<div class="flex items-center gap-2 text-xs text-emerald-700 font-medium mb-2">
+<svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+<path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<span>ABHA linked • Vitals logged</span>
+</div>
+<p class="text-xs text-slate-600 mb-4 leading-relaxed">
+            Add previous emergency contact and AYUSH preferences to speed up desk triage.
+          </p>
+<button class="w-full py-2.5 rounded-full bg-brand-teal text-white text-xs font-bold shadow-xs hover:bg-brand-teal-dark transition-colors flex items-center justify-center gap-1.5" type="button">
+<span>Continue (जारी रखें)</span>
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+<path d="M14 5l7 7m0 0l-7 7m7-7H3" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</button>
+</div>
+<!-- END: PendingActionProfileCard -->
+<!-- BEGIN: CareTeamCard -->
+<section aria-labelledby="care-team-heading" class="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs">
+<div class="flex items-center justify-between mb-3.5">
+<div>
+<h2 class="text-sm sm:text-base font-bold text-slate-900" id="care-team-heading">Your care team</h2>
+<p class="text-xs text-slate-500">आपकी देखभाल टीम • 2 Active</p>
+</div>
+<span class="inline-block w-2 h-2 rounded-full bg-emerald-500"></span>
+</div>
+<div class="space-y-3">
+<!-- Doctor 1 -->
+<div class="flex items-center gap-3 p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+<div class="w-9 h-9 rounded-full bg-brand-teal/15 text-brand-teal flex items-center justify-center font-bold text-xs">
+                PS
+              </div>
+<div class="flex-1 min-w-0">
+<h3 class="text-xs sm:text-sm font-bold text-slate-900 truncate">Dr. Priya Sharma</h3>
+<p class="text-[11px] text-slate-500">MD General Medicine • Desk 4</p>
+</div>
+<span class="text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">OPD</span>
+</div>
+<!-- Coordinator 2 -->
+<div class="flex items-center gap-3 p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+<div class="w-9 h-9 rounded-full bg-brand-teal/15 text-brand-teal flex items-center justify-center font-bold text-xs">
+                NA
+              </div>
+<div class="flex-1 min-w-0">
+<h3 class="text-xs sm:text-sm font-bold text-slate-900 truncate">Nurse Ananya</h3>
+<p class="text-[11px] text-slate-500">Triage &amp; Records Coordinator</p>
+</div>
+<span class="text-[10px] font-semibold text-slate-600 bg-white px-2 py-0.5 rounded-full border border-slate-200">Online</span>
+</div>
+</div>
+<div class="mt-3.5 pt-3 border-t border-slate-100">
+<a class="text-xs font-bold text-brand-teal hover:underline flex items-center justify-between" href="../careflow_patient_web_p17_messages_care_team/code.html">
+<span>Message care team or view schedules</span>
+<span>→</span>
+</a>
+</div>
+</section>
+<!-- END: CareTeamCard -->
+<!-- BEGIN: UpdatesAndAlerts -->
+<section aria-labelledby="alerts-heading" class="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs">
+<div class="flex items-center justify-between mb-3">
+<h2 class="text-sm sm:text-base font-bold text-slate-900" id="alerts-heading">Updates &amp; alerts • नए अपडेट</h2>
+<span class="w-2 h-2 rounded-full bg-brand-teal"></span>
+</div>
+<div class="space-y-3">
+<!-- Alert 1 -->
+<a href="../careflow_patient_web_p14_prescriptions_lab_reports/code.html" class="block p-3 rounded-xl bg-teal-50/50 border border-teal-100 hover:bg-teal-50 transition-colors">
+<div class="flex items-center justify-between text-[11px] text-slate-500 mb-1">
+<span class="font-bold text-brand-teal">Lab report ready</span>
+<span>2h ago</span>
+</div>
+<p class="text-xs text-slate-700">Your CBC results have been verified by the clinical lab and attached to your vault.</p>
+</a>
+<!-- Alert 2 -->
+<a href="../careflow_patient_web_p12_appointment_details/code.html" class="block p-3 rounded-xl bg-slate-50 border border-slate-100 hover:bg-slate-100/80 transition-colors">
+<div class="flex items-center justify-between text-[11px] text-slate-500 mb-1">
+<span class="font-bold text-slate-800">Appointment confirmed</span>
+<span>Yesterday</span>
+</div>
+<p class="text-xs text-slate-600">Confirmed for tomorrow at 10:15 AM with Dr. Priya Sharma at Bangalore Clinic.</p>
+</a>
+</div>
+</section>
+<!-- END: UpdatesAndAlerts -->
+<!-- BEGIN: QuickAccessPills -->
+<section aria-labelledby="quick-actions-heading" class="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs">
+<h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3" id="quick-actions-heading">Quick actions</h2>
+<div class="grid grid-cols-2 gap-2">
+<a href="../careflow_patient_web_p13_book_an_appointment/code.html" class="p-2.5 text-center rounded-xl bg-slate-50 border border-slate-200 hover:bg-brand-mint hover:border-brand-teal/30 hover:text-brand-teal transition-all text-xs font-semibold text-slate-800 flex items-center justify-center gap-1">
+  🗓️ Book Follow-up
+</a>
+<button onclick="CareFlow.openModal('<div class=\'text-center py-4\'><span class=\'material-symbols-outlined text-5xl text-teal-700 mb-2\'>qr_code_scanner</span><h4 class=\'font-bold text-slate-800\'>Scan Clinic QR</h4><p class=\'text-xs text-slate-500 mt-1\'>Point camera to check in instantly</p></div>', 'Check-in QR Scanner')" class="p-2.5 text-center rounded-xl bg-slate-50 border border-slate-200 hover:bg-brand-mint hover:border-brand-teal/30 hover:text-brand-teal transition-all text-xs font-semibold text-slate-800" type="button">
+  📱 Scan Clinic QR
+</button>
+<a href="../careflow_patient_web_p04_my_profile/code.html" class="p-2.5 text-center rounded-xl bg-slate-50 border border-slate-200 hover:bg-brand-mint hover:border-brand-teal/30 hover:text-brand-teal transition-all text-xs font-semibold text-slate-800 flex items-center justify-center gap-1">
+  🪪 Health Card
+</a>
+<a href="../careflow_patient_web_p20_help_support/code.html" class="p-2.5 text-center rounded-xl bg-slate-50 border border-slate-200 hover:bg-brand-mint hover:border-brand-teal/30 hover:text-brand-teal transition-all text-xs font-semibold text-slate-800 flex items-center justify-center gap-1">
+  💬 Help &amp; Support
+</a>
+</div>
+</section>
+<!-- END: QuickAccessPills -->
+</div>
+<!-- END: RightSupportingColumn -->
+</div>
+</main>
+<!-- END: MainContent -->
+<!-- BEGIN: BottomNavigationMobile (Mobile-only: < 768px) -->
+<nav aria-label="Mobile Bottom Navigation" class="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur border-t border-slate-200 px-2 py-2 flex items-center justify-around shadow-lg">
+<a aria-current="page" class="flex flex-col items-center justify-center p-1.5 text-brand-teal" href="../careflow_patient_web_p03_patient_dashboard/code.html">
+<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+<path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path>
+</svg>
+<span class="text-[10px] font-bold mt-0.5">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center p-1.5 text-slate-500 hover:text-slate-900" href="../careflow_patient_web_p05_my_health_overview/code.html">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+<path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<span class="text-[10px] font-medium mt-0.5">Health</span>
+</a>
+<a class="flex flex-col items-center justify-center p-1.5 text-slate-500 hover:text-slate-900" href="../careflow_patient_web_p11_my_appointments/code.html">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+<path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<span class="text-[10px] font-medium mt-0.5">Visits</span>
+</a>
+<a class="flex flex-col items-center justify-center p-1.5 text-slate-500 hover:text-slate-900" href="../careflow_patient_web_p08_my_documents/code.html">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+<path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<span class="text-[10px] font-medium mt-0.5">Vault</span>
+</a>
+<a class="flex flex-col items-center justify-center p-1.5 text-slate-500 hover:text-slate-900" href="../careflow_patient_web_p04_my_profile/code.html">
+<div class="w-5 h-5 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center text-[10px] font-bold">
+        AS
+      </div>
+<span class="text-[10px] font-medium mt-0.5">Profile</span>
+</a>
+</nav>
+<!-- END: BottomNavigationMobile -->
+<!-- BEGIN: SiteFooter -->
+<footer class="mt-auto border-t border-slate-200 bg-white" data-purpose="patient-portal-footer">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- Privacy and Security Assurance Banner -->
+<div class="flex flex-col sm:flex-row items-center justify-between gap-4 pb-6 border-b border-slate-100 text-center sm:text-left">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-teal-50 text-brand-teal flex items-center justify-center flex-shrink-0">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+<path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+<div>
+<p class="text-xs sm:text-sm font-bold text-slate-900">
+              Your health information is handled with care • <span class="font-normal text-slate-600">आपकी स्वास्थ्य जानकारी सुरक्षित है</span>
+</p>
+<p class="text-[11px] text-slate-500">Only authorized doctors and caregivers access your digital prescription with patient consent.</p>
+</div>
+</div>
+<div class="flex flex-wrap items-center justify-center gap-3 text-[11px] font-medium text-slate-500">
+<span class="flex items-center gap-1">
+<svg class="w-3.5 h-3.5 text-emerald-600" fill="currentColor" viewBox="0 0 20 20"><path clip-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" fill-rule="evenodd"></path></svg>
+            ABDM M1/M2/M3 Compliant
+          </span>
+<span>•</span>
+<span>256-bit AES Vault</span>
+<span>•</span>
+<span>HIPAA &amp; DISHA Standard</span>
+</div>
+</div>
+<!-- Copyright & Secondary Links -->
+<div class="pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+<div class="flex items-center gap-2">
+<!-- Logo Mini -->
+<div class="w-5 h-5 rounded bg-brand-teal text-white flex items-center justify-center text-[10px] font-bold">
+<svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+<path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+<span>© 2026 CareFlow Health Inc. All rights reserved.</span>
+</div>
+<div class="flex flex-wrap gap-4 text-xs font-medium">
+<a class="hover:text-slate-900 transition-colors" href="#">Privacy Policy</a>
+<a class="hover:text-slate-900 transition-colors" href="#">Patient Rights &amp; Consent</a>
+<a class="hover:text-slate-900 transition-colors" href="#">Terms of Service</a>
+<a class="hover:text-slate-900 transition-colors" href="#">Clinical Support 24/7</a>
+</div>
+</div>
+</div>
+</footer>
+<!-- END: SiteFooter -->
+</body></html>

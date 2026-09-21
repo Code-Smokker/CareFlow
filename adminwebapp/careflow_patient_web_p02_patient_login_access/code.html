@@ -1,0 +1,527 @@
+<!DOCTYPE html><html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CareFlow Patient Web — P02 Patient Login / Access</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+  <script src="../shared_nav.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              teal: '#0D6E6E',
+              'teal-hover': '#095454',
+              'teal-light': '#E6F7F2',
+              navy: '#0F172A',
+              slate: '#475569',
+              muted: '#64748B',
+              bg: '#F8FAFC',
+              card: '#FFFFFF',
+              border: '#E2E8F0',
+              'border-subtle': '#F1F5F9',
+              accent: '#2DD4BF',
+              warning: '#D97706',
+              'warning-light': '#FEF3C7',
+            }
+          },
+          boxShadow: {
+            'card': '0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.02)',
+            'card-lg': '0 12px 32px -4px rgba(15, 23, 42, 0.06), 0 4px 12px -2px rgba(15, 23, 42, 0.03)',
+            'btn': '0 2px 8px rgba(13, 110, 110, 0.25)',
+          },
+          borderRadius: {
+            'xl': '1rem',
+            '2xl': '1.25rem',
+            '3xl': '1.75rem',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      background-color: #F8FAFC;
+      color: #0F172A;
+      -webkit-font-smoothing: antialiased;
+    }
+    input::placeholder {
+      color: #94A3B8;
+    }
+    .focus-ring:focus-within {
+      border-color: #0D6E6E;
+      box-shadow: 0 0 0 3px rgba(13, 110, 110, 0.15);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between bg-[#F8FAFC] text-[#0F172A] selection:bg-[#E6F7F2] selection:text-[#0D6E6E]">
+
+  <!-- Top Minimal Patient Web Header (Consistent with P01) -->
+  <header class="w-full bg-white/90 backdrop-blur-md border-b border-brand-border sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
+      
+      <!-- Brand Logo -->
+      <a href="#" class="flex items-center gap-2.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-teal rounded-lg">
+        <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-brand-teal flex items-center justify-center text-white shadow-sm">
+          <!-- CareFlow Medical Heart SVG Icon -->
+          <svg class="w-5 h-5 sm:w-6 sm:h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
+            <path d="M12 5v14"></path>
+            <path d="M5 12h14"></path>
+          </svg>
+        </div>
+        <div class="flex flex-col">
+          <span class="font-bold text-lg sm:text-xl tracking-tight text-brand-navy">CareFlow</span>
+          <span class="text-[10px] font-medium tracking-wide text-brand-teal -mt-1 uppercase">Patient Care</span>
+        </div>
+      </a>
+
+      <!-- Right Navigation Items: Language Selector + Back to Home Link -->
+      <div class="flex items-center gap-3 sm:gap-4">
+        <!-- Bilingual Language Selector -->
+        <div class="flex items-center gap-1.5 bg-[#F1F5F9] px-3 py-1.5 rounded-full border border-brand-border text-xs font-medium text-brand-slate">
+          <svg class="w-3.5 h-3.5 text-brand-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="2" y1="12" x2="22" y2="12"></line>
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+          </svg>
+          <span class="font-semibold text-brand-navy">English</span>
+          <span class="text-gray-300">|</span>
+          <span class="text-brand-muted hover:text-brand-teal transition cursor-pointer">हिन्दी</span>
+        </div>
+
+        <a href="#" class="text-xs sm:text-sm font-semibold text-brand-teal hover:text-brand-teal-hover transition flex items-center gap-1">
+          <span class="hidden sm:inline">Back to Home</span>
+          <span class="sm:hidden">Home</span>
+          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m9 18 6-6-6-6"></path>
+          </svg>
+        </a>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Main Patient Authentication Container -->
+  <main class="flex-grow flex items-center justify-center px-4 py-8 sm:py-12 lg:py-16">
+    <div class="w-full max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center">
+
+      <!-- LEFT COLUMN: Patient Healthcare Context & Reassurance (Desktop only / hidden on small mobile for lean experience) -->
+      <div class="hidden lg:flex lg:col-span-6 flex-col justify-center space-y-8 pr-4">
+        
+        <!-- Eyebrow Pill -->
+        <div>
+          <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-brand-teal-light text-brand-teal text-xs font-semibold tracking-wide">
+            <span class="w-2 h-2 rounded-full bg-brand-teal animate-pulse"></span>
+            PATIENT PORTAL • रोगी पोर्टल
+          </span>
+        </div>
+
+        <!-- Headline & Value Pitch -->
+        <div class="space-y-3">
+          <h1 class="text-3xl sm:text-4xl font-extrabold text-brand-navy leading-tight tracking-tight">
+            Manage your health journey with ease and privacy.
+          </h1>
+          <p class="text-base text-brand-slate font-medium leading-relaxed">
+            अपनी स्वास्थ्य यात्रा को आसानी और पूर्ण गोपनीयता के साथ प्रबंधित करें।
+          </p>
+          <p class="text-sm text-brand-muted leading-relaxed pt-1">
+            Access your verified clinical summaries, OPD check-ins, lab prescriptions, and consult notes in one private portal directly linked to your phone.
+          </p>
+        </div>
+
+        <!-- 3 Key Patient Reassurance Cards -->
+        <div class="space-y-3 pt-2">
+          
+          <div class="flex items-start gap-3.5 p-3.5 rounded-2xl bg-white border border-brand-border shadow-sm">
+            <div class="w-9 h-9 rounded-xl bg-brand-teal-light flex-shrink-0 flex items-center justify-center text-brand-teal">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
+              </svg>
+            </div>
+            <div>
+              <h4 class="text-sm font-bold text-brand-navy">Instant Health Records • स्वास्थ्य रिकॉर्ड्स</h4>
+              <p class="text-xs text-brand-slate mt-0.5">Read-back visit summaries, prescriptions, and lab results without paper slips.</p>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-3.5 p-3.5 rounded-2xl bg-white border border-brand-border shadow-sm">
+            <div class="w-9 h-9 rounded-xl bg-brand-teal-light flex-shrink-0 flex items-center justify-center text-brand-teal">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+              </svg>
+            </div>
+            <div>
+              <h4 class="text-sm font-bold text-brand-navy">Live OPD Token Tracking • लाइव टोकन ट्रैकिंग</h4>
+              <p class="text-xs text-brand-slate mt-0.5">Track queue status, estimated doctor consult timings, and room numbers live.</p>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-3.5 p-3.5 rounded-2xl bg-white border border-brand-border shadow-sm">
+            <div class="w-9 h-9 rounded-xl bg-brand-teal-light flex-shrink-0 flex items-center justify-center text-brand-teal">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                <path d="m9 12 2 2 4-4"></path>
+              </svg>
+            </div>
+            <div>
+              <h4 class="text-sm font-bold text-brand-navy">Patient-Owned &amp; ABDM Linked • सुरक्षित एवं प्रमाणित</h4>
+              <p class="text-xs text-brand-slate mt-0.5">Seamless integration with Ayushman Bharat Health Account (ABHA).</p>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Trust Note on Desktop Left -->
+        <div class="flex items-center gap-2 text-xs font-medium text-brand-muted">
+          <svg class="w-4 h-4 text-brand-teal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+          <span>256-bit encrypted · Consent-based data access only</span>
+        </div>
+
+      </div>
+
+      <!-- RIGHT COLUMN / PRIMARY MOBILE FOCUS: Login Card -->
+      <div class="w-full lg:col-span-6 flex flex-col items-center justify-center">
+        
+        <!-- Main Login Card Container -->
+        <div class="w-full max-w-[440px] bg-white rounded-3xl border border-brand-border shadow-card-lg p-6 sm:p-8 relative">
+          
+          <!-- Card Header / Icon -->
+          <div class="flex flex-col items-center text-center space-y-2 mb-6">
+            <div class="w-12 h-12 rounded-2xl bg-brand-teal-light flex items-center justify-center text-brand-teal mb-1">
+              <!-- CareFlow Heart Logo Mark -->
+              <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
+                <path d="M12 5v14"></path>
+                <path d="M5 12h14"></path>
+              </svg>
+            </div>
+
+            <h2 class="text-2xl font-bold text-brand-navy tracking-tight">
+              Welcome back
+            </h2>
+            <p class="text-xs font-medium text-brand-teal -mt-1">
+              वापसी पर स्वागत है
+            </p>
+
+            <p class="text-xs sm:text-sm text-brand-slate max-w-xs leading-relaxed pt-1">
+              Sign in to securely access your CareFlow health information.
+            </p>
+            <p class="text-[11px] text-brand-muted">
+              अपनी CareFlow स्वास्थ्य जानकारी सुरक्षित रूप से देखने के लिए साइन इन करें।
+            </p>
+          </div>
+
+            <!-- Form Area: Step 1 (Phone/ABHA) -->
+            <div id="login-step-1">
+              <form id="phone-login-form" class="space-y-4" onsubmit="event.preventDefault();">
+                <!-- Mobile Number Input Field -->
+                <div class="space-y-1.5">
+                  <div class="flex items-baseline justify-between">
+                    <label for="mobile-number" class="text-xs font-semibold text-brand-navy flex items-center gap-1.5">
+                      Mobile number
+                      <span class="text-[11px] font-normal text-brand-muted">• मोबाइल नंबर</span>
+                    </label>
+                    <span class="text-[11px] font-medium text-brand-teal">India (+91)</span>
+                  </div>
+
+                  <!-- Input with Phone Prefix Icon -->
+                  <div class="relative flex items-center border border-brand-border rounded-xl bg-[#FAFAFC] focus-ring transition overflow-hidden">
+                    <div class="pl-3.5 pr-2 py-3 flex items-center gap-1.5 border-r border-brand-border bg-white text-xs font-semibold text-brand-navy select-none">
+                      <span class="text-base">🇮🇳</span>
+                      <span>+91</span>
+                    </div>
+                    <input type="tel" id="mobile-number" value="98765 43210" maxlength="11" class="w-full bg-transparent px-3.5 py-3 text-sm font-semibold text-brand-navy placeholder:text-gray-400 focus:outline-none tracking-wider" required>
+                  </div>
+
+                  <p class="text-[11px] text-brand-muted leading-tight pt-0.5">
+                    We'll send a one-time verification code to this number.
+                    <span class="block text-[10px] text-gray-400 mt-0.5">हम इस नंबर पर एक सत्यापन कोड भेजेंगे।</span>
+                  </p>
+                </div>
+
+                <!-- Primary Action Button: Continue (जारी रखें) -->
+                <button type="submit" id="send-otp-btn" class="w-full py-3.5 px-4 rounded-xl bg-brand-teal hover:bg-brand-teal-hover active:scale-[0.99] text-white font-semibold text-sm shadow-btn transition flex items-center justify-center gap-2 group mt-2 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-teal">
+                  <span>Send OTP</span>
+                  <span class="text-xs font-normal opacity-80">(ओटीपी भेजें)</span>
+                  <svg class="w-4 h-4 transform group-hover:translate-x-0.5 transition" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <polyline points="12 5 19 12 12 19"></polyline>
+                  </svg>
+                </button>
+              </form>
+
+              <!-- Divider with 'OR / या' -->
+              <div class="relative my-6">
+                <div class="absolute inset-0 flex items-center">
+                  <div class="w-full border-t border-brand-border"></div>
+                </div>
+                <div class="relative flex justify-center text-xs uppercase">
+                  <span class="bg-white px-3 text-brand-muted font-medium tracking-wider text-[11px]">
+                    Or access via • या
+                  </span>
+                </div>
+              </div>
+
+              <!-- Alternative ABHA Option: Use ABHA -->
+              <div class="space-y-3">
+                <button type="button" id="use-abha-btn" class="w-full py-3 px-4 rounded-xl border border-brand-border hover:border-brand-teal bg-white hover:bg-brand-teal-light/40 active:scale-[0.99] transition flex items-center justify-between group focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-teal">
+                  <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-[#E0F2FE] text-[#0369A1] flex items-center justify-center font-bold text-xs">
+                      ABHA
+                    </div>
+                    <div class="text-left">
+                      <div class="text-xs font-bold text-brand-navy group-hover:text-brand-teal transition">
+                        Use ABHA ID (91-8472-3021-9920)
+                      </div>
+                      <div class="text-[10px] text-brand-muted">
+                        ABHA से जारी रखें • Ayushman Bharat ID
+                      </div>
+                    </div>
+                  </div>
+                  <svg class="w-4 h-4 text-brand-muted group-hover:text-brand-teal group-hover:translate-x-0.5 transition" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                  </svg>
+                </button>
+
+                <!-- Instant QR Scan Shortcut for Clinic Check-ins -->
+                <button type="button" id="scan-qr-btn" class="w-full py-2.5 px-4 rounded-xl border border-dashed border-brand-border hover:border-brand-teal bg-[#FAFAFC] hover:bg-white text-brand-slate text-xs font-medium transition flex items-center justify-center gap-2">
+                  <svg class="w-4 h-4 text-brand-teal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect width="5" height="5" x="3" y="3" rx="1"></rect>
+                    <rect width="5" height="5" x="16" y="3" rx="1"></rect>
+                    <rect width="5" height="5" x="3" y="16" rx="1"></rect>
+                    <path d="M21 16h-3a2 2 0 0 0-2 2v3"></path>
+                    <path d="M21 21v.01"></path>
+                    <path d="M12 7v3a2 2 0 0 1-2 2H7"></path>
+                    <path d="M3 12h.01"></path>
+                    <path d="M12 3h.01"></path>
+                    <path d="M12 16v.01"></path>
+                    <path d="M16 12h1"></path>
+                    <path d="M21 12v.01"></path>
+                    <path d="M12 21v-1"></path>
+                  </svg>
+                  <span>Scan Clinic Check-in QR • क्लिनिक QR स्कैन</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Form Area: Step 2 (OTP Verification, initially hidden) -->
+            <div id="login-step-2" class="hidden space-y-4">
+              <div class="p-3 rounded-xl bg-brand-teal-light border border-teal-200 flex items-center justify-between">
+                <div>
+                  <p class="text-xs font-bold text-brand-navy">OTP sent to +91 <span id="display-phone">98765 43210</span></p>
+                  <p class="text-[11px] text-brand-teal">Demo verification code: <strong class="font-mono text-xs">482910</strong></p>
+                </div>
+                <button type="button" id="edit-phone-btn" class="text-xs text-brand-teal font-semibold underline">Edit</button>
+              </div>
+
+              <!-- 6 Digit OTP input boxes -->
+              <div class="space-y-1.5">
+                <label class="text-xs font-semibold text-brand-navy">Enter 6-digit Code (सत्यापन कोड दर्ज करें)</label>
+                <div class="flex items-center justify-between gap-2">
+                  <input type="text" maxlength="1" class="otp-box w-11 h-12 text-center text-lg font-bold border border-slate-300 rounded-xl focus:border-brand-teal focus:ring-2 focus:ring-teal-100 bg-[#FAFAFC] outline-none" autofocus>
+                  <input type="text" maxlength="1" class="otp-box w-11 h-12 text-center text-lg font-bold border border-slate-300 rounded-xl focus:border-brand-teal focus:ring-2 focus:ring-teal-100 bg-[#FAFAFC] outline-none">
+                  <input type="text" maxlength="1" class="otp-box w-11 h-12 text-center text-lg font-bold border border-slate-300 rounded-xl focus:border-brand-teal focus:ring-2 focus:ring-teal-100 bg-[#FAFAFC] outline-none">
+                  <input type="text" maxlength="1" class="otp-box w-11 h-12 text-center text-lg font-bold border border-slate-300 rounded-xl focus:border-brand-teal focus:ring-2 focus:ring-teal-100 bg-[#FAFAFC] outline-none">
+                  <input type="text" maxlength="1" class="otp-box w-11 h-12 text-center text-lg font-bold border border-slate-300 rounded-xl focus:border-brand-teal focus:ring-2 focus:ring-teal-100 bg-[#FAFAFC] outline-none">
+                  <input type="text" maxlength="1" class="otp-box w-11 h-12 text-center text-lg font-bold border border-slate-300 rounded-xl focus:border-brand-teal focus:ring-2 focus:ring-teal-100 bg-[#FAFAFC] outline-none">
+                </div>
+              </div>
+
+              <div class="flex items-center justify-between text-xs">
+                <span id="otp-timer" class="text-slate-400">Resend code in 24s</span>
+                <button type="button" id="autofill-otp-btn" class="text-brand-teal font-bold hover:underline">Auto-fill 482910</button>
+              </div>
+
+              <button type="button" id="verify-otp-btn" class="w-full py-3.5 px-4 rounded-xl bg-brand-teal hover:bg-brand-teal-hover active:scale-[0.99] text-white font-semibold text-sm shadow-btn transition flex items-center justify-center gap-2">
+                <span>Verify & Sign In</span>
+                <span class="text-xs font-normal opacity-80">(सत्यापित करें और साइन इन करें)</span>
+              </button>
+            </div>
+
+          <!-- Bottom Card Footnotes: Help & Privacy Note -->
+          <div class="mt-6 pt-5 border-t border-brand-border-subtle flex flex-col items-center text-center space-y-3">
+            
+            <!-- Help Link -->
+            <div class="text-xs text-brand-slate">
+              <span>Need help signing in? </span>
+              <a href="../careflow_patient_web_p20_help_support/code.html" class="font-semibold text-brand-teal hover:underline inline-flex items-center gap-0.5">
+                Get help
+                <span class="text-[10px] font-normal text-brand-muted">(मदद चाहिए?)</span>
+              </a>
+            </div>
+
+            <!-- Trust / Privacy Assurance Statement -->
+            <div class="flex items-center justify-center gap-1.5 text-[11px] text-brand-muted bg-[#F8FAFC] py-1.5 px-3 rounded-lg border border-brand-border w-full">
+              <svg class="w-3.5 h-3.5 text-brand-teal flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+              </svg>
+              <span>Your health information is protected and handled with care.</span>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- NEW PATIENT PATH: Below the card (Visually secondary) -->
+        <div class="mt-5 text-center">
+          <p class="text-xs text-brand-slate">
+            New to CareFlow? <span class="text-brand-muted font-normal text-[11px]">(CareFlow पर पहली बार?)</span>
+          </p>
+          <a href="../careflow_patient_web_p04_my_profile/code.html" class="inline-flex items-center gap-1 text-xs font-bold text-brand-teal hover:text-brand-teal-hover hover:underline mt-0.5 transition">
+            <span>Create your profile</span>
+            <span class="text-[11px] font-medium text-brand-slate">(अपनी प्रोफ़ाइल बनाएँ)</span>
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m9 18 6-6-6-6"></path>
+            </svg>
+          </a>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Patient Portal Minimal Footer (ABDM Compliant, Encryption Reassurance) -->
+  <footer class="w-full bg-white border-t border-brand-border py-4 sm:py-6 text-xs text-brand-muted">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
+      
+      <!-- Regulatory & Standards Assurances -->
+      <div class="flex flex-wrap items-center justify-center sm:justify-start gap-x-4 gap-y-1 text-[11px]">
+        <span class="flex items-center gap-1">
+          <svg class="w-3 h-3 text-brand-teal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+          </svg>
+          ABDM M1/M2/M3 Compliant
+        </span>
+        <span class="text-gray-300">•</span>
+        <span>256-bit AES Vault</span>
+        <span class="text-gray-300">•</span>
+        <span>HIPAA &amp; DISHA Standard</span>
+      </div>
+
+      <!-- Copyright & Terms -->
+      <div class="flex items-center gap-4 text-[11px]">
+        <span>© 2026 CareFlow Health Inc.</span>
+        <a href="../careflow_patient_web_p18_privacy_consent/code.html" class="hover:text-brand-teal transition">Privacy Policy</a>
+        <a href="../careflow_patient_web_p18_privacy_consent/code.html" class="hover:text-brand-teal transition">Patient Rights</a>
+      </div>
+
+    </div>
+  </footer>
+
+  <script>
+    const step1 = document.getElementById('login-step-1');
+    const step2 = document.getElementById('login-step-2');
+    const sendOtpBtn = document.getElementById('send-otp-btn');
+    const useAbhaBtn = document.getElementById('use-abha-btn');
+    const scanQrBtn = document.getElementById('scan-qr-btn');
+    const editPhoneBtn = document.getElementById('edit-phone-btn');
+    const autofillBtn = document.getElementById('autofill-otp-btn');
+    const verifyOtpBtn = document.getElementById('verify-otp-btn');
+    const mobileInput = document.getElementById('mobile-number');
+    const displayPhone = document.getElementById('display-phone');
+    const otpBoxes = document.querySelectorAll('.otp-box');
+
+    function showOtpStep(phone) {
+      step1.classList.add('hidden');
+      step2.classList.remove('hidden');
+      displayPhone.textContent = phone || '98765 43210';
+      CareFlow.showToast('Demo OTP Code sent: 482910', 'info');
+      otpBoxes[0].focus();
+    }
+
+    sendOtpBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const val = mobileInput.value.trim() || '98765 43210';
+      showOtpStep(val);
+    });
+
+    useAbhaBtn.addEventListener('click', () => {
+      showOtpStep('ABHA 91-8472-3021-9920');
+    });
+
+    scanQrBtn.addEventListener('click', () => {
+      CareFlow.openModal(`
+        <div class="text-center py-4">
+          <div class="w-48 h-48 mx-auto bg-slate-100 rounded-2xl border-2 border-dashed border-teal-500 flex flex-col items-center justify-center relative overflow-hidden">
+            <div class="absolute inset-x-0 h-1 bg-teal-500 animate-pulse top-1/2"></div>
+            <span class="material-symbols-outlined text-4xl text-teal-600 mb-2">qr_code_scanner</span>
+            <span class="text-xs font-semibold text-slate-600">Simulating QR Scanner...</span>
+          </div>
+          <p class="text-xs text-slate-500 mt-4">Point your camera at the clinic registration desk QR code.</p>
+          <button id="simulate-scan-success" class="mt-4 px-4 py-2 bg-teal-700 text-white rounded-xl text-xs font-bold shadow hover:bg-teal-800 transition">Simulate Desk Check-in Scan</button>
+        </div>
+      `, 'Scan Clinic Check-in QR');
+      document.getElementById('simulate-scan-success')?.addEventListener('click', () => {
+        CareFlow.closeModal();
+        CareFlow.showToast('Clinic QR recognized! Logging you in...', 'success');
+        setTimeout(() => {
+          CareFlow.navigateTo('p03');
+        }, 800);
+      });
+    });
+
+    editPhoneBtn.addEventListener('click', () => {
+      step2.classList.add('hidden');
+      step1.classList.remove('hidden');
+      mobileInput.focus();
+    });
+
+    // Handle 6-digit OTP input auto-tabbing
+    otpBoxes.forEach((box, index) => {
+      box.addEventListener('input', (e) => {
+        if (box.value.length === 1 && index < otpBoxes.length - 1) {
+          otpBoxes[index + 1].focus();
+        }
+      });
+      box.addEventListener('keydown', (e) => {
+        if (e.key === 'Backspace' && !box.value && index > 0) {
+          otpBoxes[index - 1].focus();
+        }
+        if (e.key === 'Enter') {
+          verifyOtpBtn.click();
+        }
+      });
+    });
+
+    autofillBtn.addEventListener('click', () => {
+      const code = '482910';
+      otpBoxes.forEach((box, i) => box.value = code[i]);
+      CareFlow.showToast('Demo OTP 482910 filled', 'success');
+      verifyOtpBtn.focus();
+    });
+
+    verifyOtpBtn.addEventListener('click', () => {
+      verifyOtpBtn.innerHTML = `
+        <span class="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+        <span>Verifying Security Token...</span>
+      `;
+      setTimeout(() => {
+        CareFlow.showToast('Signed in as Aarav Sharma! Loading dashboard...', 'success');
+        setTimeout(() => {
+          CareFlow.navigateTo('p03');
+        }, 600);
+      }, 700);
+    });
+  </script>
+
+</body></html>

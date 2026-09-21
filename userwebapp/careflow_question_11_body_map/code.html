@@ -1,0 +1,352 @@
+<!DOCTYPE html><html lang="en" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
+<title>CareFlow — Question 11: Body Map</title>
+<!-- Tailwind CSS v3 with Plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration for CareFlow Design System -->
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            careflow: {
+              teal: '#0D6E6E',
+              'teal-dark': '#094E4E',
+              'teal-light': '#E6F4F1',
+              'teal-subtle': '#F0F9F8',
+              navy: '#0F172A',
+              coral: '#EF4444',
+              'coral-soft': '#FEE2E2',
+              mint: '#D1FAE5',
+              surface: '#FAF9F6',
+              border: '#E2E8F0'
+            }
+          },
+          fontFamily: {
+            sans: ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Inter', 'sans-serif']
+          },
+          boxShadow: {
+            'card': '0 4px 20px -2px rgba(13, 110, 110, 0.06), 0 2px 6px -1px rgba(0, 0, 0, 0.04)',
+            'btn': '0 4px 14px 0 rgba(13, 110, 110, 0.35)'
+          },
+          animation: {
+            'pulse-subtle': 'pulseRipple 2.5s cubic-bezier(0.4, 0, 0.6, 1) infinite'
+          },
+          keyframes: {
+            pulseRipple: {
+              '0%, 100%': { transform: 'scale(1)', opacity: '0.45' },
+              '50%': { transform: 'scale(1.15)', opacity: '0.15' }
+            }
+          }
+        }
+      }
+    }
+  </script>
+<script src="../shared_careflow.js"></script>
+<!-- Custom Typography & Layout Styles -->
+<style data-purpose="base-typography">
+    body {
+      background-color: #FAF9F6;
+      color: #0F172A;
+      -webkit-font-smoothing: antialiased;
+      -webkit-tap-highlight-color: transparent;
+    }
+  </style>
+<style data-purpose="interactive-markers">
+    .ripple-ring-outer {
+      animation: pulseRipple 2.4s ease-out infinite;
+    }
+    .ripple-ring-inner {
+      animation: pulseRipple 2.4s ease-out 0.4s infinite;
+    }
+  </style>
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
+
+<link rel="preload" href="../material-symbols-outlined.woff2" as="font" type="font/woff2" crossorigin>
+<style id="careflow-material-symbols-core">
+  @font-face {
+    font-family: "Material Symbols Outlined";
+    font-style: normal;
+    font-weight: 100 700;
+    font-display: block;
+    src: url("../material-symbols-outlined.woff2") format("woff2"),
+         url("/material-symbols-outlined.woff2") format("woff2"),
+         url("https://fonts.gstatic.com/s/materialsymbolsoutlined/v373/kJEhBvYX7BgnkSrUwT8OhrdQw4oELdPIeeII9v6oFsLjBuVY.woff2") format("woff2");
+  }
+  .material-symbols-outlined {
+    font-family: "Material Symbols Outlined" !important;
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -webkit-font-feature-settings: "liga";
+    -moz-font-feature-settings: "liga";
+    font-feature-settings: "liga";
+    -webkit-font-smoothing: antialiased;
+    vertical-align: middle;
+  }
+</style>
+</head>
+<body class="bg-careflow-surface min-h-screen flex flex-col justify-between max-w-xl md:max-w-2xl mx-auto antialiased selection:bg-teal-100 selection:text-teal-900 shadow-sm relative overflow-x-hidden">
+<!-- BEGIN: TopNavigationHeader -->
+<div class="w-full px-5 pt-3 pb-1 flex justify-between items-center text-xs font-semibold text-slate-800 bg-careflow-surface select-none z-30 sticky top-0"><span class="">9:41</span><div class="flex items-center space-x-1.5"><svg class="w-4 h-4 text-slate-800" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3c-4.97 0-9 4.03-9 9 0 2.12.74 4.07 1.97 5.61L4.35 19.4c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0l1.9-1.9C9.22 19.64 10.56 20 12 20c4.97 0 9-4.03 9-9s-4.03-9-9-9zm0 15c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6z"></path></svg><svg class="w-4 h-4 text-slate-800" fill="currentColor" viewBox="0 0 24 24"><path d="M12 4C7.31 4 3.07 5.9 0 8.98L12 21 24 8.98A16.88 16.88 0 0012 4z"></path></svg><div class="w-5 h-2.5 border border-slate-800 rounded-sm p-0.5 flex items-center"><div class="h-full w-3 bg-slate-800 rounded-xs"></div></div></div></div><header class="pt-3 px-4 pb-2.5 bg-careflow-surface sticky top-0 z-30 flex items-center justify-between border-b border-slate-100/80 backdrop-blur-md bg-opacity-95" data-purpose="app-header"><div class="flex items-center space-x-2"><button id="body-map-back-btn" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-700 hover:bg-slate-200 active:scale-95 transition-all mr-1" type="button" aria-label="Go Back"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"></path></svg></button><div class="w-9 h-9 rounded-xl bg-[#084242] flex items-center justify-center shadow-sm text-white flex-shrink-0"><svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="1.9" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2 14h6m-6 4h4m4-1a3 3 0 013-3h1.8a2 2 0 001.4-.6L18 11.6a2.5 2.5 0 013.5 0v0a2.5 2.5 0 010 3.5l-3.2 3.2a4 4 0 01-2.8 1.2H12l-2-2z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M14.5 4.5a2.12 2.12 0 013 0l.5.5.5-.5a2.12 2.12 0 113 3L18 11l-3.5-3.5a2.12 2.12 0 010-3z"></path></svg></div><span class="text-[19px] font-bold tracking-tight text-[#084242] font-sans">CareFlow</span></div><div class="flex items-center space-x-2.5"><button class="flex items-center space-x-1.5 px-3 py-1.5 bg-[#EEF4FF] hover:bg-[#E2EDFE] rounded-full text-xs font-semibold text-[#0F1E36] transition-colors" type="button"><svg class="w-4 h-4 text-[#0F1E36]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><path stroke-linecap="round" stroke-linejoin="round" d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"></path></svg><span class="text-[13px] font-medium text-[#0F1E36]">English</span><svg class="w-3 h-3 text-[#0F1E36]" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"></path></svg></button><button aria-label="User Profile" class="w-9 h-9 rounded-full bg-[#084242] hover:opacity-90 flex items-center justify-center text-white shadow-sm transition-opacity" type="button"><svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"></path></svg></button></div></header>
+<!-- END: TopNavigationHeader -->
+<!-- BEGIN: MainContent -->
+<main class="flex-1 px-4 pt-3 pb-24 flex flex-col">
+<!-- Progress Indicator Tracker -->
+<div class="mb-4" data-purpose="progress-tracker">
+<div class="flex items-center justify-between text-xs mb-1.5">
+<span class="font-medium text-slate-600">Step 3 of 5 • Health Questions</span>
+<span class="px-2 py-0.5 text-[11px] font-semibold bg-emerald-50 text-careflow-teal border border-emerald-200/60 rounded-full">50% Complete</span>
+</div>
+<!-- Stepper Bar -->
+<div class="w-full bg-slate-200/80 rounded-full h-1.5 overflow-hidden flex">
+<div class="bg-careflow-teal h-full rounded-full transition-all duration-300" style="width: 50%;"></div>
+</div>
+<!-- Milestone Track Pills -->
+<div class="flex items-center justify-between text-[11px] mt-2 text-slate-400 font-medium px-0.5">
+<span class="text-careflow-teal font-semibold flex items-center">✓ Basics</span>
+<span class="text-careflow-teal font-semibold flex items-center">✓ Symptoms</span>
+<span class="text-careflow-teal font-bold px-1.5 py-0.5 bg-careflow-teal/10 rounded">Body Map</span>
+<span class="text-slate-400">Review</span>
+</div>
+</div>
+<!-- Question Heading & Bilingual Context -->
+<section class="mb-3" data-purpose="question-header">
+<div class="inline-block px-2.5 py-0.5 mb-1.5 bg-careflow-teal-light text-careflow-teal font-bold text-[10px] tracking-wider uppercase rounded-full">
+        QUESTION 4 · BODY MAP
+      </div>
+<div class="flex items-start justify-between">
+<div>
+<h1 class="text-[22px] leading-tight font-extrabold text-slate-900 tracking-tight">Where does it hurt?</h1>
+<p class="text-sm font-semibold text-slate-600 mt-0.5">दर्द कहाँ हो रहा है?</p>
+</div>
+<!-- Audio Assistance Pill -->
+<button aria-label="Listen to Question" class="flex items-center space-x-1 bg-emerald-50/80 hover:bg-emerald-100 border border-emerald-200/70 text-careflow-teal text-xs font-semibold px-2.5 py-1.5 rounded-full transition-colors shadow-sm active:scale-95" type="button">
+<svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+<path d="M14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77zm-2.5-1.23L6.5 6H2v12h4.5l5 4V2z"></path>
+</svg>
+<span class="text-[11px]">Hear Question</span>
+</button>
+</div>
+<p class="text-xs text-slate-500 mt-1">Tap the area that hurts. <span class="text-slate-400 font-normal">(जहाँ दर्द हो रहा है, वहाँ टैप करें।)</span></p>
+</section>
+<!-- BEGIN: BodyMapInteractiveCard -->
+<div class="bg-white rounded-2xl border border-emerald-100/90 shadow-card p-3 relative flex flex-col items-center" data-purpose="body-map-container">
+<!-- Front / Back Toggle Segment -->
+
+<!-- Human Body Vector Canvas / Interactive Illustration -->
+<div class="relative w-full h-[255px] flex items-center justify-center py-1 select-none" data-purpose="human-body-vector"><div class="relative w-full max-w-[320px] mx-auto flex items-center justify-center"><img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCK7msgn8iSV3OvYqskmvjGq7--spP_Sf9efJy38gk_EY1HSUlPsZ5EIwbR_go53BKe5576J3vqck1qzQORrezhPFiau5VsvI3sCmUQlplwMq9bZMp0ugNwAD-V1Sm0a_9lmyIRFQbBzcdseJrr7T4agHBHBNFZ5pEE_Pb8eMoL9ytoc89VqaIwGfxxSkA99cwe8M5gXBaRX3xWfQ2DFImQTq8w29UygPBQfhJCBfpf4exT5y3GsxRvq_Az6tmzpeICrK0" alt="Front and Back Body Map" class="w-full h-auto object-contain select-none pointer-events-none"><div class="absolute top-[28%] left-[29.5%] -translate-x-1/2 -translate-y-1/2 pointer-events-none cursor-pointer flex items-center justify-center" style="transform: translate(-50%, -50%);"><div class="w-12 h-12 rounded-full bg-red-400/30 absolute animate-ping opacity-75"></div><div class="w-10 h-10 rounded-full bg-red-500/25 absolute ripple-ring-outer"></div><div class="w-7 h-7 rounded-full bg-red-500/40 absolute ripple-ring-inner border border-red-500/50"></div><div class="w-4 h-4 rounded-full bg-red-600 shadow-md border-2 border-white relative z-10 flex items-center justify-center"><div class="w-1.5 h-1.5 bg-white rounded-full"></div></div></div></div></div>
+<!-- Selected Area Summary Bar (Matching Reference Image System) -->
+<div class="w-full mt-1 bg-emerald-50/70 border border-emerald-200/80 rounded-xl p-2.5 flex items-center justify-between shadow-xs" data-purpose="selection-summary-bar">
+<div class="flex items-center space-x-2.5">
+<!-- Target Check Icon -->
+<div class="w-7 h-7 rounded-full bg-careflow-teal text-white flex items-center justify-center shadow-xs">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+<circle cx="12" cy="12" r="9"></circle>
+<circle cx="12" cy="12" fill="currentColor" r="3"></circle>
+</svg>
+</div>
+<div>
+<div class="text-[10px] uppercase font-bold tracking-wider text-slate-400">Selected Area</div>
+<div id="selected-area-label" class="text-sm font-bold text-slate-900 leading-tight">
+              Left Mid-Chest <span class="font-medium text-xs text-slate-600">(बाएं सीने में)</span>
+</div>
+</div>
+</div>
+<!-- Change / Adjust Trigger -->
+<button id="adjust-area-btn" class="text-xs font-bold text-careflow-teal hover:text-careflow-teal-dark px-2 py-1 rounded hover:bg-emerald-100/50 transition-colors" type="button">
+          Change
+        </button>
+</div>
+</div><div class="mt-3.5 bg-white rounded-2xl border border-slate-200/80 shadow-card p-3.5" data-purpose="pain-severity-scale"><div class="mb-3"><div><h2 class="text-[17px] leading-snug font-extrabold text-slate-900 tracking-tight">How severe is the pain?</h2><p class="text-xs font-semibold text-slate-600 mt-0.5">दर्द कितना तेज है?</p></div><p class="text-[11px] text-slate-500 mt-0.5">Select the option that best matches your pain.</p></div><div class="grid grid-cols-5 gap-1.5" id="pain-scale-group"><button type="button" data-score="0" class="pain-btn flex flex-col items-center justify-between py-2 px-1 rounded-xl bg-slate-50 border border-slate-200/70 hover:bg-emerald-50/50 transition-all text-center group active:scale-95"><span class="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-lg mb-1 shadow-xs">😊</span><span class="text-xs font-bold text-slate-800">0</span><span class="text-[10px] text-slate-500 font-medium leading-tight mt-0.5">No pain</span></button><button type="button" data-score="2" class="pain-btn flex flex-col items-center justify-between py-2 px-1 rounded-xl bg-slate-50 border border-slate-200/70 hover:bg-emerald-50/50 transition-all text-center group active:scale-95"><span class="w-8 h-8 rounded-full bg-emerald-200/80 flex items-center justify-center text-lg mb-1 shadow-xs">🙂</span><span class="text-xs font-bold text-slate-800">2</span><span class="text-[10px] text-slate-500 font-medium leading-tight mt-0.5">Mild</span></button><button type="button" data-score="4" class="pain-btn flex flex-col items-center justify-between py-2 px-1 rounded-xl bg-slate-50 border border-slate-200/70 hover:bg-amber-50 transition-all text-center group active:scale-95"><span class="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center text-lg mb-1 shadow-xs">😐</span><span class="text-xs font-bold text-slate-800">4</span><span class="text-[10px] text-slate-500 font-medium leading-tight mt-0.5">Moderate</span></button><button type="button" data-score="6" class="pain-btn flex flex-col items-center justify-between py-2 px-1 rounded-xl bg-careflow-teal-light border-2 border-careflow-teal shadow-xs transition-all text-center ring-2 ring-careflow-teal/20 active:scale-95"><span class="w-8 h-8 rounded-full bg-orange-200/90 flex items-center justify-center text-lg mb-1 shadow-xs">🙁</span><span class="text-xs font-bold text-careflow-teal">6</span><span class="text-[10px] text-careflow-teal font-bold leading-tight mt-0.5">Severe</span></button><button type="button" data-score="8" class="pain-btn flex flex-col items-center justify-between py-2 px-1 rounded-xl bg-slate-50 border border-slate-200/70 hover:bg-red-50 transition-all text-center group active:scale-95"><span class="w-8 h-8 rounded-full bg-red-200/80 flex items-center justify-center text-lg mb-1 shadow-xs">😫</span><span class="text-xs font-bold text-slate-800">8</span><span class="text-[10px] text-slate-500 font-medium leading-tight mt-0.5">Very severe</span></button></div></div>
+<!-- END: BodyMapInteractiveCard -->
+<!-- BEGIN: VoiceAssistanceCard -->
+<div class="mt-3.5 bg-white rounded-xl border border-slate-200 p-2.5 shadow-sm flex items-center justify-between" data-purpose="voice-input-alternative">
+<div class="flex items-center space-x-2.5">
+<div class="w-8 h-8 rounded-full bg-amber-50 border border-amber-200/60 flex items-center justify-center text-base">
+          🎙️
+        </div>
+<div>
+<p class="text-xs font-bold text-slate-800 leading-tight">
+            Tell us where it hurts
+          </p>
+<p class="text-[11px] text-slate-500">
+            बोलकर भी बता सकते हैं • Not sure where to tap?
+          </p>
+</div>
+</div>
+<button id="body-map-speak-btn" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-800 text-xs font-bold rounded-full border border-slate-200 shadow-xs flex items-center space-x-1" type="button">
+<span class="">Speak</span>
+<span class="text-slate-400">→</span>
+</button>
+</div>
+<!-- END: VoiceAssistanceCard -->
+</main>
+<!-- END: MainContent -->
+<!-- BEGIN: StickyFooterActions -->
+<footer class="fixed bottom-0 left-0 right-0 max-w-xl md:max-w-2xl mx-auto bg-careflow-surface/95 backdrop-blur-md px-4 pt-2 pb-5 border-t border-slate-200/60 z-30" data-purpose="navigation-footer">
+<!-- Primary CTA Button -->
+<button id="body-map-continue-btn" class="w-full h-[52px] bg-careflow-teal hover:bg-careflow-teal-dark active:scale-[0.99] text-white font-bold text-base rounded-full shadow-btn flex items-center justify-center space-x-2 transition-all" type="button">
+<span id="body-map-btn-text">Continue (1 Area Selected)</span>
+<svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+<path d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</button>
+<!-- Footer Privacy & Regulatory Reassurance -->
+<div class="mt-2.5 flex items-center justify-center space-x-1.5 text-center">
+<svg class="w-3.5 h-3.5 text-slate-400" fill="currentColor" viewBox="0 0 20 20">
+<path clip-rule="evenodd" d="M10 1a4.5 4.5 0 00-4.5 4.5V9H5a2 2 0 00-2 2v6a2 2 0 002 2h10a2 2 0 002-2v-6a2 2 0 00-2-2h-.5V5.5A4.5 4.5 0 0010 1zm3 8V5.5a3 3 0 10-6 0V9h6z" fill-rule="evenodd"></path>
+</svg>
+<p class="text-[11px] text-slate-500 font-medium tracking-tight">
+        Private &amp; Secure · ABDM Compliant · <span class="text-slate-400">आपके उत्तर सुरक्षित हैं</span>
+</p>
+</div>
+</footer>
+<!-- END: StickyFooterActions -->
+
+<script>
+  (function initBodyMap() {
+    // Back navigation
+    const backBtn = document.getElementById('body-map-back-btn');
+    if (backBtn) {
+      backBtn.addEventListener('click', () => {
+        CareFlow.navigate('../careflow_question_10_multi_select_standardized/code.html');
+      });
+    }
+
+    // Audio assistance
+    const hearBtn = document.querySelector('button[aria-label="Listen to Question"]');
+    if (hearBtn) {
+      hearBtn.addEventListener('click', () => {
+        CareFlow.speak("Where does it hurt? Tap the area that hurts on your body.");
+      });
+    }
+
+    const speakBtn = document.getElementById('body-map-speak-btn');
+    if (speakBtn) {
+      speakBtn.addEventListener('click', () => {
+        CareFlow.speak("Where do you feel pain? For example, chest, head, throat, or stomach.");
+        CareFlow.showToast('Voice matched: "Left Mid-Chest"');
+      });
+    }
+
+    let selectedArea = "Left Mid-Chest (बाएं सीने में)";
+    let selectedPainScore = "6";
+
+    // Restore state
+    const state = CareFlow.getState();
+    if (state.painArea) selectedArea = state.painArea;
+    if (state.painSeverity !== undefined) selectedPainScore = state.painSeverity.toString();
+
+    const areaLabel = document.getElementById('selected-area-label');
+    if (areaLabel) areaLabel.innerHTML = selectedArea;
+
+    // Interactive pain severity buttons
+    const painButtons = document.querySelectorAll('.pain-btn');
+    painButtons.forEach(btn => {
+      if (btn.dataset.score === selectedPainScore) {
+        setPainActive(btn);
+      }
+      btn.addEventListener('click', () => {
+        selectedPainScore = btn.dataset.score;
+        setPainActive(btn);
+      });
+    });
+
+    function setPainActive(activeBtn) {
+      painButtons.forEach(b => {
+        b.className = 'pain-btn flex flex-col items-center justify-between py-2 px-1 rounded-xl bg-slate-50 border border-slate-200/70 hover:bg-emerald-50/50 transition-all text-center group active:scale-95';
+        const num = b.querySelector('.text-xs');
+        if (num) num.className = 'text-xs font-bold text-slate-800';
+      });
+      activeBtn.className = 'pain-btn flex flex-col items-center justify-between py-2 px-1 rounded-xl bg-careflow-teal-light border-2 border-careflow-teal shadow-xs transition-all text-center ring-2 ring-careflow-teal/20 active:scale-95';
+      const num = activeBtn.querySelector('.text-xs');
+      if (num) num.className = 'text-xs font-bold text-careflow-teal';
+    }
+
+    // Interactive Body Map Canvas Tap
+    const bodyVector = document.querySelector('[data-purpose="human-body-vector"]');
+    const marker = bodyVector ? bodyVector.querySelector('.absolute.top-\\[28\\%\\]') : null;
+
+    const presets = [
+      { name: "Head / Forehead (सिर में)", top: "14%", left: "30%" },
+      { name: "Throat & Neck (गले में)", top: "21%", left: "30%" },
+      { name: "Left Mid-Chest (बाएं सीने में)", top: "28%", left: "29.5%" },
+      { name: "Right Chest (दाएं सीने में)", top: "28%", left: "36%" },
+      { name: "Upper Abdomen (पेट में)", top: "40%", left: "30%" },
+      { name: "Lower Back (कमर में)", top: "42%", left: "70%" },
+      { name: "Right Shoulder (दाएं कंधे में)", top: "26%", left: "64%" }
+    ];
+
+    let presetIdx = 0;
+    const adjustBtn = document.getElementById('adjust-area-btn');
+    if (adjustBtn) {
+      adjustBtn.addEventListener('click', () => {
+        presetIdx = (presetIdx + 1) % presets.length;
+        const p = presets[presetIdx];
+        selectedArea = p.name;
+        if (areaLabel) areaLabel.innerHTML = selectedArea;
+        if (marker) {
+          marker.style.top = p.top;
+          marker.style.left = p.left;
+        }
+        CareFlow.showToast(`Selected: ${p.name}`);
+      });
+    }
+
+    if (bodyVector) {
+      bodyVector.style.cursor = 'crosshair';
+      bodyVector.addEventListener('click', (e) => {
+        const rect = bodyVector.getBoundingClientRect();
+        const x = ((e.clientX - rect.left) / rect.width) * 100;
+        const y = ((e.clientY - rect.top) / rect.height) * 100;
+
+        if (marker) {
+          marker.style.top = `${y}%`;
+          marker.style.left = `${x}%`;
+        }
+
+        if (y < 20) {
+          selectedArea = "Head / Neck (सिर व गला)";
+        } else if (y < 35 && x < 50) {
+          selectedArea = "Left Chest (बाएं सीने में)";
+        } else if (y < 35 && x >= 50) {
+          selectedArea = "Upper Back / Shoulder (कंधे में)";
+        } else if (y < 55) {
+          selectedArea = "Abdomen / Stomach (पेट में)";
+        } else {
+          selectedArea = "Limbs / Lower Body (हाथ-पैर में)";
+        }
+
+        if (areaLabel) areaLabel.innerHTML = selectedArea;
+        CareFlow.showToast(`Selected: ${selectedArea}`);
+      });
+    }
+
+    // Continue action
+    const continueBtn = document.getElementById('body-map-continue-btn');
+    if (continueBtn) {
+      continueBtn.addEventListener('click', () => {
+        CareFlow.saveState({
+          painArea: selectedArea,
+          painSeverity: parseInt(selectedPainScore, 10) || 6
+        });
+        CareFlow.speak(`Area ${selectedArea} with pain level ${selectedPainScore} saved.`);
+        CareFlow.showToast('Body location recorded! ✓');
+        setTimeout(() => {
+          CareFlow.navigate('../careflow_question_12_face_scale_pain_severity/code.html');
+        }, 400);
+      });
+    }
+  })();
+</script>
+</body></html>

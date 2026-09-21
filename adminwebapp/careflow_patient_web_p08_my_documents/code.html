@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Shared CareFlow Universal Navigation & Utilities -->
+<script src="../shared_nav.js"></script>
+<style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"inverse-on-surface":"#ecf0ff","on-tertiary-fixed-variant":"#004e5c","on-primary":"#ffffff","inverse-primary":"#84d4d3","primary":"#005454","outline-variant":"#bec9c8","tertiary-container":"#296b7a","on-secondary-fixed":"#00201c","surface-bright":"#f9f9ff","status-error-bg":"#FFDAD6","text-muted":"#3E4948","surface-container":"#e8eeff","surface":"#f9f9ff","primary-container":"#0d6e6e","error":"#ba1a1a","on-secondary":"#ffffff","on-error-container":"#93000a","on-secondary-fixed-variant":"#005047","on-surface":"#0c1b33","tertiary-fixed":"#aeecfe","secondary":"#006b5f","on-tertiary-fixed":"#001f26","on-error":"#ffffff","background":"#f9f9ff","surface-card":"#FFFFFF","outline":"#6e7979","surface-tint":"#016a6a","surface-container-low":"#f1f3ff","inverse-surface":"#223149","surface-container-lowest":"#ffffff","tertiary":"#015362","secondary-fixed":"#9ff2e2","border-subtle":"#E2E8F0","border-teal":"#D6E4E2","surface-variant":"#d7e3ff","canvas-bg":"#FAF8FF","primary-fixed":"#a0f0f0","surface-container-highest":"#d7e3ff","surface-container-high":"#dfe8ff","on-secondary-container":"#0b6f63","surface-mint-subtle":"#E6F7F2","tertiary-fixed-dim":"#92d0e2","on-surface-variant":"#3e4948","status-error":"#BA1A1A","secondary-container":"#9cefdf","surface-dim":"#ccdafa","on-background":"#0c1b33","on-tertiary-container":"#abe9fb","navy-dark":"#0B192C","secondary-fixed-dim":"#83d5c6","surface-mint":"#D1F2E8","on-tertiary":"#ffffff","error-container":"#ffdad6","on-primary-fixed-variant":"#004f50","on-primary-fixed":"#002020","on-primary-container":"#9dedec","primary-fixed-dim":"#84d4d3"},borderRadius:{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},spacing:{"space-xl":"2rem","container-max":"1320px","gutter-mobile":"1rem","gutter-desktop":"1.5rem","space-sm":"0.5rem","space-2xl":"3rem","space-md":"1rem","space-lg":"1.5rem","sidebar-width":"260px","padding-card":"1.5rem","space-xs":"0.25rem"},fontFamily:{"display-lg":["Plus Jakarta Sans"],"body-lg":["Plus Jakarta Sans"],"headline-lg-mobile":["Plus Jakarta Sans"],"label-md":["Inter"],"body-md":["Plus Jakarta Sans"],"label-sm":["Inter"],"display-lg-mobile":["Plus Jakarta Sans"],"headline-lg":["Plus Jakarta Sans"],"body-sm-bilingual":["Plus Jakarta Sans"],"title-md":["Plus Jakarta Sans"],"headline-md":["Plus Jakarta Sans"]},fontSize:{"display-lg":["48px",{lineHeight:"56px",letterSpacing:"-0.02em",fontWeight:"700"}],"body-lg":["16px",{lineHeight:"26px",fontWeight:"400"}],"headline-lg-mobile":["24px",{lineHeight:"32px",letterSpacing:"-0.01em",fontWeight:"600"}],"label-md":["13px",{lineHeight:"18px",letterSpacing:"0.01em",fontWeight:"600"}],"body-md":["14px",{lineHeight:"22px",fontWeight:"400"}],"label-sm":["11px",{lineHeight:"16px",letterSpacing:"0.03em",fontWeight:"600"}],"display-lg-mobile":["34px",{lineHeight:"42px",letterSpacing:"-0.02em",fontWeight:"700"}],"headline-lg":["32px",{lineHeight:"40px",letterSpacing:"-0.015em",fontWeight:"600"}],"body-sm-bilingual":["12px",{lineHeight:"18px",fontWeight:"400"}],"title-md":["18px",{lineHeight:"26px",fontWeight:"600"}],"headline-md":["22px",{lineHeight:"30px",letterSpacing:"-0.01em",fontWeight:"600"}]}}}}</script></head><body class="bg-surface font-body-md text-body-md text-on-surface antialiased"><div class="min-h-screen flex flex-col justify-between"><main class="relative w-full flex-1 bg-surface"><div class="flex flex-col w-full">
+<!-- Top Navigation Shell (Exact match to Reference Image 4) -->
+<header class="sticky top-0 z-40 w-full bg-surface-card border-b border-gray-100 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+<div class="max-w-[1380px] mx-auto px-4 sm:px-6 h-[70px] flex items-center justify-between gap-3">
+<!-- Left: Logo, Pill & Sublabel -->
+<div class="flex items-center gap-3">
+<div class="w-11 h-11 rounded-2xl bg-[#0D6E6E] flex items-center justify-center text-white shadow-sm flex-shrink-0">
+<span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 0, 'wght' 400;">favorite</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="text-[20px] font-bold text-gray-900 tracking-tight leading-none font-headline-md">CareFlow</span>
+<span class="px-2.5 py-0.5 rounded-full bg-[#E6F7F2] text-[#0D6E6E] text-[11px] font-semibold tracking-wide">Patient Portal</span>
+</div>
+<span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mt-0.5">PATIENT CARE</span>
+</div>
+</div>
+<!-- Center: Nav links with Hindi translation (Exact to Image 4) -->
+<nav class="hidden md:flex items-center gap-5 lg:gap-7">
+<a class="flex items-baseline gap-1 text-[14px] font-medium text-gray-700 hover:text-gray-900 transition-colors" href="#home">
+<span>Home</span>
+<span class="text-[12px] text-gray-400 font-normal">गृह</span>
+</a>
+<a class="flex items-baseline gap-1 text-[14px] font-medium text-gray-700 hover:text-gray-900 transition-colors" href="#health">
+<span>My Health</span>
+<span class="text-[12px] text-gray-400 font-normal">स्वास्थ्य</span>
+</a>
+<a class="flex items-baseline gap-1 text-[14px] font-medium text-gray-700 hover:text-gray-900 transition-colors" href="#appointments">
+<span>Appointments</span>
+<span class="text-[12px] text-gray-400 font-normal">अपॉइंटमेंट</span>
+</a>
+<!-- ACTIVE TAB: Documents with teal dot and mint pill -->
+<a class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#E8F5E9] text-[#0D6E6E] text-[14px] font-medium" href="#documents">
+<span class="w-2 h-2 rounded-full bg-[#0D6E6E]"></span>
+<span>Documents</span>
+<span class="text-[12px] text-[#0D6E6E]/80 font-normal">दस्तावेज़</span>
+</a>
+<a class="flex items-baseline gap-1 text-[14px] font-medium text-gray-700 hover:text-gray-900 transition-colors" href="#care-summary">
+<span>Care Summary</span>
+<span class="text-[12px] text-gray-400 font-normal">सारांश</span>
+</a>
+</nav>
+<!-- Right Utilities: Language Switcher, Bell, Profile Chip (Exact to Image 4) -->
+<div class="flex items-center gap-3 sm:gap-4">
+<!-- Language Switcher Pill -->
+<div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-gray-200 text-xs">
+<span class="font-bold text-gray-900">English</span>
+<span class="text-gray-400 font-normal">हिन्दी</span>
+</div>
+<!-- Notification Bell with Red Badge -->
+<button aria-label="Notifications" class="relative p-1.5 text-gray-600 hover:text-gray-900 transition-colors" type="button">
+<span class="material-symbols-outlined text-[24px]">notifications</span>
+<span class="absolute top-1 right-1 w-2 h-2 rounded-full bg-[#E53935]"></span>
+</button>
+<!-- User Profile Chip with Online Indicator -->
+<div class="flex items-center gap-2.5 pl-1 pr-3 py-1 rounded-full border border-gray-100 hover:bg-gray-50 transition-colors cursor-pointer">
+<div class="relative w-9 h-9 rounded-full bg-[#D4F2E7] text-[#0D6E6E] text-xs font-bold flex items-center justify-center flex-shrink-0">
+<span>AS</span>
+<span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-[#00C853] border-2 border-white"></span>
+</div>
+<div class="flex flex-col text-left">
+<span class="text-[13px] font-bold text-gray-900 leading-tight">Aarav Sharma</span>
+<span class="text-[11px] text-gray-400 leading-none mt-0.5">ABHA: 91-8472-3021-9920</span>
+</div>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Patient Workspace -->
+<main class="w-full bg-[#F8FAFC] min-h-screen py-7">
+<div class="max-w-[1380px] mx-auto px-4 sm:px-6 flex flex-col gap-6">
+<!-- Page Header & Primary Action Row (Matches Image 3) -->
+<div class="flex flex-col md:flex-row md:items-start justify-between gap-4">
+<div class="flex flex-col gap-1 max-w-3xl">
+<!-- Eyebrow + ABDM Pill Badge -->
+<div class="flex items-center gap-2.5 flex-wrap">
+<span class="text-xs font-bold text-[#0D6E6E] tracking-wider uppercase">
+MY HEALTH • मेरा स्वास्थ्य
+</span>
+<span class="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-[#E6F7F2] text-[#0D6E6E] text-[11px] font-semibold">
+<span class="material-symbols-outlined text-[14px]">verified_user</span>
+ABDM Verified Vault • 256-bit AES
+</span>
+</div>
+<!-- Title -->
+<h1 class="text-[28px] sm:text-[32px] text-gray-900 font-extrabold tracking-tight leading-tight mt-0.5">
+My Documents <span class="text-gray-500 font-normal text-[22px] sm:text-[24px]">मेरे दस्तावेज़</span>
+</h1>
+<!-- Subtitle -->
+<p class="text-[13px] sm:text-[14px] text-gray-500 leading-normal">
+Access your health reports, prescriptions, and clinical documents in one place. • <span class="font-normal">अपनी स्वास्थ्य रिपोर्ट, प्रिस्क्रिप्शन और अन्य दस्तावेज़ एक ही जगह पर देखें।</span>
+</p>
+</div>
+<!-- Top Right Action Button -->
+<div class="flex-shrink-0">
+<button class="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full bg-[#0D6E6E] text-white text-[13px] font-semibold shadow hover:bg-[#095454] transition-all active:scale-[0.98]" onclick="document.getElementById('uploadDropzoneCard').scrollIntoView({behavior: 'smooth'})" type="button">
+<span class="material-symbols-outlined text-[19px]">cloud_upload</span>
+<span>+ Upload document (दस्तावेज़ अपलोड करें)</span>
+</button>
+</div>
+</div>
+<!-- Main Content Two-Column Grid: 68% Left / 32% Right -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+<!-- LEFT / MAIN COLUMN (approx 68% width -> lg:col-span-8) -->
+<div class="lg:col-span-8 flex flex-col gap-5">
+<!-- 3 Top Metric Cards in a grid -->
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+<!-- Metric 1 -->
+<div class="flex items-center gap-3.5 p-3.5 rounded-2xl bg-white border border-gray-100 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+<div class="w-10 h-10 rounded-xl bg-[#F0FDF4] text-[#16A34A] flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[22px]">description</span>
+</div>
+<div class="flex flex-col">
+<span class="text-[22px] font-bold text-gray-900 leading-tight">12</span>
+<span class="text-[11px] text-gray-500 font-medium">Total Documents (कुल दस्तावेज़)</span>
+</div>
+</div>
+<!-- Metric 2 -->
+<div class="flex items-center gap-3.5 p-3.5 rounded-2xl bg-white border border-gray-100 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+<div class="w-10 h-10 rounded-xl bg-[#E6F7F2] text-[#0D6E6E] flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[22px]">verified</span>
+</div>
+<div class="flex flex-col">
+<span class="text-[22px] font-bold text-[#0D6E6E] leading-tight">12</span>
+<span class="text-[11px] text-gray-500 font-medium">Available &amp; Verified (सत्यापित)</span>
+</div>
+</div>
+<!-- Metric 3 -->
+<div class="flex items-center gap-3.5 p-3.5 rounded-2xl bg-white border border-gray-100 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+<div class="w-10 h-10 rounded-xl bg-[#EFF6FF] text-[#2563EB] flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[22px]">history</span>
+</div>
+<div class="flex flex-col">
+<span class="text-[22px] font-bold text-[#2563EB] leading-tight">3</span>
+<span class="text-[11px] text-gray-500 font-medium">Recent This Month (हाल ही में)</span>
+</div>
+</div>
+</div>
+<!-- Search & Filter Row Card -->
+<div class="p-4 rounded-2xl bg-white border border-gray-100 shadow-[0_1px_3px_rgba(0,0,0,0.03)] flex flex-col gap-3">
+<div class="flex flex-col sm:flex-row items-center gap-3">
+<!-- Search Input -->
+<div class="relative w-full flex-1">
+<span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-[19px]">search</span>
+<input class="w-full pl-10 pr-4 py-2 rounded-xl bg-[#F8FAFC] border border-gray-200 text-gray-800 text-[13px] placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0D6E6E]/20 focus:border-[#0D6E6E]" id="docSearchInput" placeholder="Search documents by name, doctor, or test... (दस्तावेज़ खोजें)" type="text"/>
+</div>
+<!-- Sort Dropdown -->
+<div class="relative w-full sm:w-auto flex-shrink-0">
+<select class="w-full sm:w-auto appearance-none pl-3.5 pr-8 py-2 rounded-xl bg-[#F8FAFC] border border-gray-200 text-gray-700 text-[13px] font-medium focus:outline-none focus:ring-2 focus:ring-[#0D6E6E]/20 focus:border-[#0D6E6E] cursor-pointer">
+<option>Sort: Newest first (नवीनतम पहले)</option>
+<option>Sort: Oldest first (पुरातन पहले)</option>
+<option>Sort: Document Type (दस्तावेज़ प्रकार)</option>
+</select>
+<span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none text-[18px]">expand_more</span>
+</div>
+</div>
+<!-- Filter Pills -->
+<div class="flex items-center gap-2 overflow-x-auto pb-0.5 no-scrollbar">
+<button class="px-4 py-1.5 rounded-full bg-[#0D6E6E] text-white text-[12px] font-semibold whitespace-nowrap shadow-sm" type="button">
+All (सभी)
+</button>
+<button class="px-3.5 py-1.5 rounded-full bg-[#F1F5F9] text-gray-700 hover:bg-gray-200 text-[12px] font-medium whitespace-nowrap transition-colors" type="button">
+Lab Reports (लैब रिपोर्ट) <span class="ml-1 text-[11px] font-semibold text-gray-600">5</span>
+</button>
+<button class="px-3.5 py-1.5 rounded-full bg-[#F1F5F9] text-gray-700 hover:bg-gray-200 text-[12px] font-medium whitespace-nowrap transition-colors" type="button">
+Prescriptions (प्रिस्क्रिप्शन) <span class="ml-1 text-[11px] font-semibold text-gray-600">4</span>
+</button>
+<button class="px-3.5 py-1.5 rounded-full bg-[#F1F5F9] text-gray-700 hover:bg-gray-200 text-[12px] font-medium whitespace-nowrap transition-colors" type="button">
+Consultations (परामर्श) <span class="ml-1 text-[11px] font-semibold text-gray-600">2</span>
+</button>
+</div>
+</div>
+<!-- Section Header: Your documents • आपके दस्तावेज़ -->
+<div class="flex items-center justify-between px-1 pt-1">
+<h2 class="text-[16px] font-bold text-gray-900">
+Your documents <span class="text-gray-500 font-normal">• आपके दस्तावेज़</span>
+</h2>
+<span class="text-[12px] text-gray-400 font-medium">Showing 4 of 12</span>
+</div>
+<!-- DOCUMENT CARD 1: CBC & CRP Report -->
+<article class="p-5 rounded-2xl bg-white border border-gray-100 shadow-[0_1px_4px_rgba(0,0,0,0.03)] flex flex-col gap-3.5">
+<div class="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+<div class="flex items-start gap-3.5">
+<div class="w-11 h-11 rounded-xl bg-[#E6F7F2] text-[#0D6E6E] flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[24px]">science</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-2 flex-wrap">
+<h3 class="text-[16px] font-bold text-gray-900">Complete Blood Count (CBC) &amp; CRP Report</h3>
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#E8F5E9] text-[#2E7D32] text-[11px] font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-[#2E7D32]"></span>
+Available (उपलब्ध)
+</span>
+</div>
+<div class="flex items-center gap-1.5 text-gray-500 text-[12px] mt-1 flex-wrap">
+<span class="font-semibold text-[#0D6E6E]">Lab Report (लैब रिपोर्ट)</span>
+<span>•</span>
+<span>Sep 5, 2026</span>
+<span>•</span>
+<span>Issued by: Metropolis Healthcare / Dr. Priya Sharma</span>
+</div>
+</div>
+</div>
+<div class="flex sm:flex-col items-end gap-0.5 flex-shrink-0 text-right">
+<span class="text-[11px] text-gray-500 font-medium">PDF • 2 pages • 1.8 MB</span>
+<span class="text-[11px] text-[#0D6E6E] font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px]">verified</span> ABDM Linked
+</span>
+</div>
+</div>
+<!-- Snippet Box -->
+<div class="p-3 rounded-xl bg-[#F8FAFC] border border-gray-100 flex items-start gap-2.5">
+<span class="material-symbols-outlined text-gray-500 text-[18px] flex-shrink-0 mt-0.5">analytics</span>
+<div class="text-[12px] text-gray-600 leading-relaxed">
+<strong class="text-gray-900 font-semibold">Patient Summary Snippet:</strong> Hemoglobin 14.2 g/dL, Platelets 210,000 /mcL • <span class="text-[#0D6E6E] font-semibold">Verified within normal ranges</span>
+</div>
+</div>
+<!-- Card Action Footer -->
+<div class="flex items-center justify-between pt-1 flex-wrap gap-2">
+<span class="text-[11px] text-gray-500 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">lock</span> Encrypted Vault Copy
+</span>
+<div class="flex items-center gap-2">
+<button class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[#0D6E6E] text-white text-[12px] font-semibold shadow-sm hover:bg-[#095454] transition-colors" onclick="document.getElementById('previewDrawerModal').classList.remove('hidden')" type="button">
+<span class="material-symbols-outlined text-[16px]">visibility</span>
+<span>View (देखें)</span>
+</button>
+<button class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full border border-gray-200 text-[#0D6E6E] hover:bg-gray-50 text-[12px] font-semibold transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">download</span>
+<span>Download (डाउनलोड)</span>
+</button>
+</div>
+</div>
+</article>
+<!-- DOCUMENT CARD 2: Digital Prescription -->
+<article class="p-5 rounded-2xl bg-white border border-gray-100 shadow-[0_1px_4px_rgba(0,0,0,0.03)] flex flex-col gap-3.5">
+<div class="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+<div class="flex items-start gap-3.5">
+<div class="w-11 h-11 rounded-xl bg-[#EFF6FF] text-[#2563EB] flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[24px]">receipt_long</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-2 flex-wrap">
+<h3 class="text-[16px] font-bold text-gray-900">Digital Prescription — Acute Respiratory Care</h3>
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#E8F5E9] text-[#2E7D32] text-[11px] font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-[#2E7D32]"></span>
+Available (उपलब्ध)
+</span>
+</div>
+<div class="flex items-center gap-1.5 text-gray-500 text-[12px] mt-1 flex-wrap">
+<span class="font-semibold text-[#2563EB]">Prescription (प्रिस्क्रिप्शन)</span>
+<span>•</span>
+<span>Sep 3, 2026</span>
+<span>•</span>
+<span>Prescribed by: Dr. Priya Sharma (CareFlow OPD Desk 4)</span>
+</div>
+</div>
+</div>
+<div class="flex sm:flex-col items-end gap-0.5 flex-shrink-0 text-right">
+<span class="text-[11px] text-gray-500 font-medium">Digitized Rx • 1 page • 620 KB</span>
+<span class="text-[11px] text-[#0D6E6E] font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px]">medication</span> Active Course
+</span>
+</div>
+</div>
+<!-- Snippet Box -->
+<div class="p-3 rounded-xl bg-[#F8FAFC] border border-gray-100 flex items-start gap-2.5">
+<span class="material-symbols-outlined text-gray-500 text-[18px] flex-shrink-0 mt-0.5">medication</span>
+<div class="text-[12px] text-gray-600 leading-relaxed">
+<strong class="text-gray-900 font-semibold">Medication List Preview:</strong> Paracetamol 650mg (TDS), Cetirizine 10mg (OD), Steam Inhalation 2x daily
+</div>
+</div>
+<!-- Card Action Footer -->
+<div class="flex items-center justify-between pt-1 flex-wrap gap-2">
+<span class="text-[11px] text-gray-500">Pharmacy validation QR active</span>
+<div class="flex items-center gap-2">
+<button class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[#0D6E6E] text-white text-[12px] font-semibold shadow-sm hover:bg-[#095454] transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">receipt_long</span>
+<span>View Rx (प्रिस्क्रिप्शन देखें)</span>
+</button>
+<button class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full border border-gray-200 text-[#0D6E6E] hover:bg-gray-50 text-[12px] font-semibold transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">download</span>
+<span>Download PDF (डाउनलोड)</span>
+</button>
+</div>
+</div>
+</article>
+<!-- DOCUMENT CARD 3: Consultation Summary -->
+<article class="p-5 rounded-2xl bg-white border border-gray-100 shadow-[0_1px_4px_rgba(0,0,0,0.03)] flex flex-col gap-3.5">
+<div class="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+<div class="flex items-start gap-3.5">
+<div class="w-11 h-11 rounded-xl bg-[#F0FDF4] text-[#16A34A] flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[24px]">medical_services</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-2 flex-wrap">
+<h3 class="text-[16px] font-bold text-gray-900">OPD Consultation Summary &amp; Vitals Note</h3>
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#E8F5E9] text-[#2E7D32] text-[11px] font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-[#2E7D32]"></span>
+Available (उपलब्ध)
+</span>
+</div>
+<div class="flex items-center gap-1.5 text-gray-500 text-[12px] mt-1 flex-wrap">
+<span class="font-semibold text-[#16A34A]">Consultation (परामर्श)</span>
+<span>•</span>
+<span>Sep 3, 2026</span>
+<span>•</span>
+<span>Care Team: Desk 4, Dr. Ananya Iyer</span>
+</div>
+</div>
+</div>
+<div class="flex sm:flex-col items-end gap-0.5 flex-shrink-0 text-right">
+<span class="text-[11px] text-gray-500 font-medium">Clinical Note • 2 pages • 940 KB</span>
+<span class="text-[11px] text-gray-500 flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px]">stethoscope</span> OPD Encounter
+</span>
+</div>
+</div>
+<!-- Card Action Footer -->
+<div class="flex items-center justify-between pt-1 flex-wrap gap-2">
+<span class="text-[11px] text-gray-500">Recorded during OPD In-Person Visit</span>
+<div class="flex items-center gap-2">
+<button class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[#0D6E6E] text-white text-[12px] font-semibold shadow-sm hover:bg-[#095454] transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">visibility</span>
+<span>View (देखें)</span>
+</button>
+<button class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full border border-gray-200 text-[#0D6E6E] hover:bg-gray-50 text-[12px] font-semibold transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">download</span>
+<span>Download (डाउनलोड)</span>
+</button>
+</div>
+</div>
+</article>
+<!-- DOCUMENT CARD 4: Pre-Consultation Health Questionnaire -->
+<article class="p-5 rounded-2xl bg-white border border-gray-100 shadow-[0_1px_4px_rgba(0,0,0,0.03)] flex flex-col gap-3.5">
+<div class="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+<div class="flex items-start gap-3.5">
+<div class="w-11 h-11 rounded-xl bg-[#F8FAFC] text-gray-600 flex items-center justify-center flex-shrink-0 border border-gray-200">
+<span class="material-symbols-outlined text-[24px]">contact_support</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-2 flex-wrap">
+<h3 class="text-[16px] font-bold text-gray-900">Pre-Consultation Health Questionnaire Record</h3>
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#E8F5E9] text-[#2E7D32] text-[11px] font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-[#2E7D32]"></span>
+Completed (पूर्ण)
+</span>
+</div>
+<div class="flex items-center gap-1.5 text-gray-500 text-[12px] mt-1 flex-wrap">
+<span class="font-semibold text-gray-700">Health Record (स्वास्थ्य रिकॉर्ड)</span>
+<span>•</span>
+<span>Sep 1, 2026</span>
+<span>•</span>
+<span>Self-reported via Patient Mobile App</span>
+</div>
+</div>
+</div>
+<div class="flex sm:flex-col items-end gap-0.5 flex-shrink-0 text-right">
+<span class="text-[11px] text-gray-500 font-medium">ABDM Sync • 12 Questions Answered</span>
+<span class="text-[11px] text-[#0D6E6E] font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px]">sync_saved_locally</span> Synced
+</span>
+</div>
+</div>
+<!-- Card Action Footer -->
+<div class="flex items-center justify-between pt-1 flex-wrap gap-2">
+<span class="text-[11px] text-gray-500">Pre-triage intake answers validated</span>
+<div class="flex items-center gap-2">
+<button class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[#0D6E6E] text-white text-[12px] font-semibold shadow-sm hover:bg-[#095454] transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">assignment_turned_in</span>
+<span>View responses (उत्तर देखें)</span>
+</button>
+<button class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full border border-gray-200 text-[#0D6E6E] hover:bg-gray-50 text-[12px] font-semibold transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">ios_share</span>
+<span>Export (निर्यात)</span>
+</button>
+</div>
+</div>
+</article>
+</div>
+<!-- RIGHT SIDEBAR COLUMN (approx 32% width -> lg:col-span-4) -->
+<div class="lg:col-span-4 flex flex-col gap-5">
+<!-- Card 1: Upload Document Card -->
+<div class="p-5 rounded-2xl bg-white border border-gray-100 shadow-[0_1px_3px_rgba(0,0,0,0.03)] flex flex-col gap-4" id="uploadDropzoneCard">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[#0D6E6E] text-[22px]">cloud_upload</span>
+<h3 class="text-[16px] font-bold text-gray-900 leading-tight">Upload<br/>document</h3>
+</div>
+<span class="text-[12px] text-gray-400">दस्तावेज़ अपलोड करें</span>
+</div>
+<!-- Dropzone Area -->
+<div class="p-5 rounded-xl border border-dashed border-gray-200 bg-[#F8FAFC] hover:bg-[#F0FDF4] transition-colors flex flex-col items-center justify-center text-center cursor-pointer group">
+<div class="w-10 h-10 rounded-full bg-white text-[#0D6E6E] flex items-center justify-center shadow-sm mb-3 group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-[24px]">arrow_upward</span>
+</div>
+<p class="text-[13px] font-bold text-gray-800 max-w-[220px]">
+Drag and drop your report or prescription here, or click to browse
+</p>
+<span class="text-[11px] text-gray-400 mt-1">यहाँ फ़ाइल खींचें या ब्राउज़ करें</span>
+<span class="text-[10px] text-gray-400 font-medium mt-3">Supports PDF, JPG, PNG up to 25 MB • ABDM Linked</span>
+</div>
+<!-- Action Buttons -->
+<div class="grid grid-cols-2 gap-2.5">
+<button class="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-full bg-[#0D6E6E] text-white text-[12px] font-semibold hover:bg-[#095454] transition-colors shadow-sm" type="button">
+<span class="material-symbols-outlined text-[16px]">folder_open</span>
+<span>Choose file</span>
+</button>
+<button class="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-full bg-[#F1F5F9] text-gray-700 hover:bg-gray-200 text-[12px] font-medium transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">photo_camera</span>
+<span>Scan / Photo</span>
+</button>
+</div>
+</div>
+<!-- Card 2: Recently Added -->
+<div class="p-5 rounded-2xl bg-white border border-gray-100 shadow-[0_1px_3px_rgba(0,0,0,0.03)] flex flex-col gap-3.5">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-gray-600 text-[18px]">schedule</span>
+<h3 class="text-[15px] font-bold text-gray-900">Recently added</h3>
+</div>
+<span class="text-[12px] text-gray-400">हाल ही में जोड़े गए</span>
+</div>
+<div class="flex flex-col gap-2">
+<!-- Recent 1 -->
+<div class="p-2.5 rounded-xl bg-[#F8FAFC] border border-gray-100 flex items-center justify-between hover:bg-gray-100/60 transition-colors">
+<div class="flex items-center gap-2.5 min-w-0">
+<span class="material-symbols-outlined text-[#0D6E6E] text-[20px]">science</span>
+<div class="flex flex-col min-w-0">
+<span class="text-[12px] font-bold text-gray-800 truncate">CBC_Report_Sep5.pdf</span>
+<span class="text-[10px] text-gray-400">Today at 10:45 AM</span>
+</div>
+</div>
+<button aria-label="Quick View" class="p-1 text-gray-400 hover:text-[#0D6E6E] transition-colors" onclick="document.getElementById('previewDrawerModal').classList.remove('hidden')" type="button">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+</div>
+<!-- Recent 2 -->
+<div class="p-2.5 rounded-xl bg-[#F8FAFC] border border-gray-100 flex items-center justify-between hover:bg-gray-100/60 transition-colors">
+<div class="flex items-center gap-2.5 min-w-0">
+<span class="material-symbols-outlined text-[#2563EB] text-[20px]">receipt_long</span>
+<div class="flex flex-col min-w-0">
+<span class="text-[12px] font-bold text-gray-800 truncate">Rx_AcuteRespiratory.pdf</span>
+<span class="text-[10px] text-gray-400">Sep 3, 2026 • 04:15 PM</span>
+</div>
+</div>
+<button aria-label="Quick View" class="p-1 text-gray-400 hover:text-[#0D6E6E] transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+</div>
+<!-- Recent 3 -->
+<div class="p-2.5 rounded-xl bg-[#F8FAFC] border border-gray-100 flex items-center justify-between hover:bg-gray-100/60 transition-colors">
+<div class="flex items-center gap-2.5 min-w-0">
+<span class="material-symbols-outlined text-[#16A34A] text-[20px]">clinical_notes</span>
+<div class="flex flex-col min-w-0">
+<span class="text-[12px] font-bold text-gray-800 truncate">OPD_Vitals_Summary.pdf</span>
+<span class="text-[10px] text-gray-400">Sep 3, 2026 • 04:30 PM</span>
+</div>
+</div>
+<button aria-label="Quick View" class="p-1 text-gray-400 hover:text-[#0D6E6E] transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Card 3: Shared with Care Team -->
+<div class="p-5 rounded-2xl bg-white border border-gray-100 shadow-[0_1px_3px_rgba(0,0,0,0.03)] flex flex-col gap-3">
+<div class="flex items-center gap-2 text-[#0D6E6E]">
+<span class="material-symbols-outlined text-[20px]">group</span>
+<h3 class="text-[15px] font-bold text-gray-900">Shared with care team</h3>
+</div>
+<p class="text-[12px] text-gray-600 leading-relaxed">
+Your verified documents are securely accessible to <strong class="text-gray-900">Dr. Priya Sharma</strong> and your authorized CareFlow care team during your consultations.
+</p>
+<div class="p-2.5 rounded-xl bg-[#E6F7F2] flex items-center gap-2">
+<span class="material-symbols-outlined text-[#0D6E6E] text-[16px] flex-shrink-0">shield</span>
+<span class="text-[11px] text-[#0D6E6E] font-medium">Consent can be revoked anytime from Settings</span>
+</div>
+</div>
+<!-- Card 4: Your Privacy is Protected -->
+<div class="p-5 rounded-2xl bg-white border border-gray-100 shadow-[0_1px_3px_rgba(0,0,0,0.03)] flex flex-col gap-3">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[#0D6E6E] text-[20px]">verified_user</span>
+<h3 class="text-[15px] font-bold text-gray-900">Your privacy is protected</h3>
+</div>
+<span class="text-[12px] text-gray-400">गोपनीयता</span>
+</div>
+<div class="flex flex-col gap-2 pt-1 text-[11px] text-gray-600">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[#0D6E6E] text-[16px] flex-shrink-0">lock</span>
+<span>256-bit AES Patient Vault</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[#0D6E6E] text-[16px] flex-shrink-0">verified</span>
+<span>ABDM M1/M2/M3 Compliant Architecture</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[#0D6E6E] text-[16px] flex-shrink-0">policy</span>
+<span>DISHA Healthcare Privacy Standard</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[#0D6E6E] text-[16px] flex-shrink-0">cancel</span>
+<span>No documents shared without patient consent</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Interactive Document Preview Modal Mockup -->
+<div class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4" id="previewDrawerModal">
+<div class="w-full max-w-2xl bg-white rounded-2xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden border border-gray-100">
+<!-- Modal Top Bar -->
+<div class="px-6 py-4 bg-white border-b border-gray-100 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-xl bg-[#E6F7F2] text-[#0D6E6E] flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">science</span>
+</div>
+<div class="flex flex-col">
+<h4 class="text-[15px] font-bold text-gray-900">Complete Blood Count (CBC) &amp; CRP</h4>
+<span class="text-[11px] text-gray-400">Metropolis Healthcare • Sep 5, 2026 • Verified ABDM Vault</span>
+</div>
+</div>
+<button aria-label="Close Preview" class="p-1.5 rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-700 transition-colors" onclick="document.getElementById('previewDrawerModal').classList.add('hidden')" type="button">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<!-- Modal Body Document Viewer -->
+<div class="p-6 overflow-y-auto flex flex-col gap-4 bg-[#F8FAFC]">
+<div class="p-6 rounded-xl bg-white border border-gray-200 shadow-sm flex flex-col gap-4">
+<!-- Laboratory Header -->
+<div class="flex items-start justify-between">
+<div class="flex flex-col">
+<span class="text-[18px] text-[#0D6E6E] font-bold">METROPOLIS HEALTHCARE</span>
+<span class="text-[11px] text-gray-500">Accredited Clinical Pathology Lab • NABL Certified</span>
+<span class="text-[11px] text-gray-500">Ref Doctor: Dr. Priya Sharma (CareFlow OPD)</span>
+</div>
+<!-- ABDM QR Seal Placeholder -->
+<div class="p-2 rounded-lg bg-gray-50 border border-gray-200 flex flex-col items-center">
+<svg class="w-14 h-14 text-gray-800" fill="currentColor" viewbox="0 0 100 100">
+<path d="M10 10h30v30h-30z M15 15v20h20v-20z M20 20h10v10h-10z M60 10h30v30h-30z M65 15v20h20v-20z M70 20h10v10h-10z M10 60h30v30h-30z M15 65v20h20v-20z M20 70h10v10h-10z M50 20h5v10h-5z M50 45h10v5h-10z M70 50h15v5h-15z M60 70h10v20h-10z M80 75h10v15h-10z"></path>
+</svg>
+<span class="text-[8px] font-mono uppercase font-bold text-[#0D6E6E] mt-1">ABDM SECURED</span>
+</div>
+</div>
+<!-- Patient Identity Details -->
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-2 p-3 rounded-lg bg-[#F8FAFC] border border-gray-100 text-gray-800 text-[11px]">
+<div>
+<span class="text-gray-400 block">Patient Name:</span>
+<strong>Aarav Sharma</strong>
+</div>
+<div>
+<span class="text-gray-400 block">Age / Gender:</span>
+<strong>32 Yrs / Male</strong>
+</div>
+<div>
+<span class="text-gray-400 block">Sample Collected:</span>
+<strong>Sep 5, 08:30 AM</strong>
+</div>
+<div>
+<span class="text-gray-400 block">Report Status:</span>
+<strong class="text-[#0D6E6E]">Verified Final</strong>
+</div>
+</div>
+<!-- Test Value Table -->
+<div class="flex flex-col gap-2 pt-2">
+<div class="flex items-center justify-between text-[11px] font-bold text-gray-400 pb-1 border-b border-gray-100">
+<span>TEST PARAMETER</span>
+<span>RESULT VALUE</span>
+<span>REFERENCE RANGE</span>
+</div>
+<div class="flex items-center justify-between py-1.5 text-[13px] text-gray-800">
+<span>Hemoglobin (Hb)</span>
+<span class="font-bold text-[#0D6E6E]">14.2 g/dL</span>
+<span class="text-gray-400 text-[11px]">13.0 - 17.0 g/dL</span>
+</div>
+<div class="flex items-center justify-between py-1.5 text-[13px] text-gray-800">
+<span>Platelet Count</span>
+<span class="font-bold text-[#0D6E6E]">210,000 /mcL</span>
+<span class="text-gray-400 text-[11px]">150,000 - 450,000</span>
+</div>
+<div class="flex items-center justify-between py-1.5 text-[13px] text-gray-800">
+<span>Total WBC Count</span>
+<span class="font-bold text-[#0D6E6E]">6,800 /cumm</span>
+<span class="text-gray-400 text-[11px]">4,000 - 11,000</span>
+</div>
+<div class="flex items-center justify-between py-1.5 text-[13px] text-gray-800">
+<span>C-Reactive Protein (CRP)</span>
+<span class="font-bold text-[#0D6E6E]">1.8 mg/L</span>
+<span class="text-gray-400 text-[11px]">&lt; 3.0 mg/L (Normal)</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Modal Footer Controls -->
+<div class="px-6 py-3.5 bg-white border-t border-gray-100 flex items-center justify-between">
+<span class="text-[11px] text-gray-400">ABHA Linked: 91-8472-3021-9920</span>
+<div class="flex items-center gap-2">
+<button class="px-4 py-1.5 rounded-full border border-gray-200 hover:bg-gray-50 text-gray-700 text-[12px] font-semibold transition-colors flex items-center gap-1.5" type="button">
+<span class="material-symbols-outlined text-[16px]">print</span>
+<span>Print Report</span>
+</button>
+<button class="px-4 py-1.5 rounded-full bg-[#0D6E6E] text-white text-[12px] font-semibold hover:bg-[#095454] transition-colors flex items-center gap-1.5 shadow-sm" type="button">
+<span class="material-symbols-outlined text-[16px]">download</span>
+<span>Download PDF</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom Footer (Matches Image 3) -->
+<footer class="w-full bg-white border-t border-gray-100 py-6">
+<div class="max-w-[1380px] mx-auto px-4 sm:px-6 flex flex-col gap-3">
+<div class="flex flex-col md:flex-row items-center justify-between gap-3 text-[11px] text-gray-500">
+<!-- Compliance Badges -->
+<div class="flex items-center gap-2 flex-wrap justify-center md:justify-start">
+<div class="flex items-center gap-1 text-[#0D6E6E] font-semibold">
+<span class="material-symbols-outlined text-[15px]">verified_user</span>
+<span>ABDM M1/M2/M3 Compliant</span>
+</div>
+<span>•</span>
+<span>256-bit AES Patient Vault</span>
+<span>•</span>
+<span>HIPAA &amp; DISHA Standard</span>
+</div>
+<!-- Copyright & Terms -->
+<div class="flex items-center gap-3 flex-wrap justify-center md:justify-end">
+<span>© 2026 CareFlow Inc. All rights reserved.</span>
+<a class="hover:text-[#0D6E6E] transition-colors" href="#privacy">Privacy Policy (गोपनीयता नीति)</a>
+<a class="hover:text-[#0D6E6E] transition-colors" href="#terms">Terms of Use (नियम एवं शर्तें)</a>
+</div>
+</div>
+<!-- Reassurance Subbar -->
+<div class="pt-2 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-2 text-[10px] text-gray-400">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-[#0D6E6E]">shield</span>
+<span><strong>CareFlow Clinical Security</strong> • Patient information is protected • <a class="text-[#0D6E6E] underline" href="#abdm">ABDM M1/M2/M3 Compliant</a></span>
+</div>
+<span>मरीजों की जानकारी सुरक्षित एवं गोपनीय है</span>
+</div>
+</div>
+</footer>
+</div>
+<input type="file" id="docFileInput" class="hidden" accept=".pdf,.png,.jpg,.jpeg"/>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const searchInput = document.getElementById('docSearchInput');
+    const docArticles = Array.from(document.querySelectorAll('main article'));
+    let activeFilter = 'All';
+
+    // Apply combined filter (Search + Category)
+    function applyFilters() {
+      const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
+      let visibleCount = 0;
+
+      docArticles.forEach(article => {
+        const text = article.innerText.toLowerCase();
+        const matchesQuery = !query || text.includes(query);
+        let matchesCategory = true;
+
+        if (activeFilter === 'Lab Reports') {
+          matchesCategory = text.includes('lab report') || text.includes('लैब रिपोर्ट') || text.includes('cbc');
+        } else if (activeFilter === 'Prescriptions') {
+          matchesCategory = text.includes('prescription') || text.includes('प्रिस्क्रिप्शन') || text.includes('rx');
+        } else if (activeFilter === 'Consultations') {
+          matchesCategory = text.includes('consultation') || text.includes('परामर्श') || text.includes('opd') || text.includes('summary');
+        }
+
+        if (matchesQuery && matchesCategory) {
+          article.style.display = 'flex';
+          visibleCount++;
+        } else {
+          article.style.display = 'none';
+        }
+      });
+
+      const countEl = document.querySelector('h2 + span');
+      if (countEl) {
+        countEl.textContent = `Showing ${visibleCount} of ${docArticles.length}`;
+      }
+    }
+
+    if (searchInput) {
+      searchInput.addEventListener('input', applyFilters);
+    }
+
+    // Filter pill buttons
+    const filterPills = document.querySelectorAll('.overflow-x-auto button');
+    filterPills.forEach(btn => {
+      btn.addEventListener('click', () => {
+        filterPills.forEach(b => {
+          b.className = 'px-3.5 py-1.5 rounded-full bg-[#F1F5F9] text-gray-700 hover:bg-gray-200 text-[12px] font-medium whitespace-nowrap transition-colors';
+        });
+        btn.className = 'px-4 py-1.5 rounded-full bg-[#0D6E6E] text-white text-[12px] font-semibold whitespace-nowrap shadow-sm';
+        
+        const rawText = btn.textContent.trim();
+        if (rawText.includes('All')) activeFilter = 'All';
+        else if (rawText.includes('Lab Reports')) activeFilter = 'Lab Reports';
+        else if (rawText.includes('Prescriptions')) activeFilter = 'Prescriptions';
+        else if (rawText.includes('Consultations')) activeFilter = 'Consultations';
+
+        applyFilters();
+      });
+    });
+
+    // File Upload handling
+    const fileInput = document.getElementById('docFileInput');
+    const dropzone = document.querySelector('#uploadDropzoneCard .border-dashed');
+    const chooseFileBtn = Array.from(document.querySelectorAll('#uploadDropzoneCard button')).find(b => b.textContent.includes('Choose file'));
+    const scanBtn = Array.from(document.querySelectorAll('#uploadDropzoneCard button')).find(b => b.textContent.includes('Scan'));
+
+    function handleFile(file) {
+      if (!file) return;
+      if (window.CareFlow) {
+        CareFlow.showToast(`Encrypting & uploading "${file.name}" to ABDM Vault...`, 'info');
+      }
+      setTimeout(() => {
+        // Create new article
+        const newArt = document.createElement('article');
+        newArt.className = 'p-5 rounded-2xl bg-white border border-emerald-300 shadow-[0_1px_4px_rgba(0,0,0,0.03)] flex flex-col gap-3.5 animate-fade-in';
+        newArt.innerHTML = `
+          <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+            <div class="flex items-start gap-3.5">
+              <div class="w-11 h-11 rounded-xl bg-[#E6F7F2] text-[#0D6E6E] flex items-center justify-center flex-shrink-0">
+                <span class="material-symbols-outlined text-[24px]">description</span>
+              </div>
+              <div class="flex flex-col min-w-0">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <h3 class="text-[16px] font-bold text-gray-900">${file.name}</h3>
+                  <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#E8F5E9] text-[#2E7D32] text-[11px] font-semibold">
+                    Uploaded Just Now
+                  </span>
+                </div>
+                <div class="flex items-center gap-1.5 text-gray-500 text-[12px] mt-1 flex-wrap">
+                  <span class="font-semibold text-[#0D6E6E]">Patient Document</span>
+                  <span>•</span>
+                  <span>Today</span>
+                  <span>•</span>
+                  <span>Uploaded by Aarav Sharma</span>
+                </div>
+              </div>
+            </div>
+            <div class="flex sm:flex-col items-end gap-0.5 flex-shrink-0 text-right">
+              <span class="text-[11px] text-gray-500 font-medium">Uploaded File</span>
+              <span class="text-[11px] text-[#0D6E6E] font-semibold flex items-center gap-1">
+                <span class="material-symbols-outlined text-[13px]">verified</span> ABDM Queued
+              </span>
+            </div>
+          </div>
+          <div class="flex items-center justify-between pt-1 flex-wrap gap-2">
+            <span class="text-[11px] text-gray-500 flex items-center gap-1">
+              <span class="material-symbols-outlined text-[14px]">lock</span> Encrypted Vault Copy
+            </span>
+            <div class="flex items-center gap-2">
+              <button class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[#0D6E6E] text-white text-[12px] font-semibold shadow-sm hover:bg-[#095454] transition-colors" onclick="document.getElementById('previewDrawerModal').classList.remove('hidden')" type="button">
+                <span class="material-symbols-outlined text-[16px]">visibility</span>
+                <span>View</span>
+              </button>
+              <button class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full border border-gray-200 text-[#0D6E6E] hover:bg-gray-50 text-[12px] font-semibold transition-colors" onclick="CareFlow.showToast('Downloading document copy...', 'success')" type="button">
+                <span class="material-symbols-outlined text-[16px]">download</span>
+                <span>Download</span>
+              </button>
+            </div>
+          </div>
+        `;
+
+        const articlesContainer = document.querySelector('.lg\\:col-span-8');
+        const sectionHeader = document.querySelector('.lg\\:col-span-8 .px-1.pt-1');
+        if (sectionHeader && sectionHeader.nextElementSibling) {
+          sectionHeader.parentNode.insertBefore(newArt, sectionHeader.nextElementSibling);
+        }
+        docArticles.unshift(newArt);
+        applyFilters();
+
+        if (window.CareFlow) {
+          CareFlow.showToast(`"${file.name}" uploaded & encrypted successfully in ABDM vault!`, 'success');
+        }
+        newArt.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 1200);
+    }
+
+    if (chooseFileBtn && fileInput) {
+      chooseFileBtn.addEventListener('click', () => fileInput.click());
+    }
+    if (dropzone && fileInput) {
+      dropzone.addEventListener('click', () => fileInput.click());
+      dropzone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropzone.classList.add('border-[#0D6E6E]', 'bg-[#E6F7F2]');
+      });
+      dropzone.addEventListener('dragleave', () => {
+        dropzone.classList.remove('border-[#0D6E6E]', 'bg-[#E6F7F2]');
+      });
+      dropzone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropzone.classList.remove('border-[#0D6E6E]', 'bg-[#E6F7F2]');
+        if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+          handleFile(e.dataTransfer.files[0]);
+        }
+      });
+    }
+
+    if (fileInput) {
+      fileInput.addEventListener('change', (e) => {
+        if (e.target.files && e.target.files[0]) {
+          handleFile(e.target.files[0]);
+        }
+      });
+    }
+
+    if (scanBtn) {
+      scanBtn.addEventListener('click', () => {
+        if (window.CareFlow) {
+          CareFlow.openModal(`
+            <div class="p-5 text-center">
+              <div class="w-14 h-14 mx-auto rounded-full bg-[#E6F7F2] text-[#0D6E6E] flex items-center justify-center mb-3">
+                <span class="material-symbols-outlined text-3xl">photo_camera</span>
+              </div>
+              <h3 class="font-bold text-slate-900 text-lg mb-1">Document Scanner</h3>
+              <p class="text-xs text-slate-500 mb-4">Position your physical lab report or doctor prescription in front of your camera.</p>
+              <div class="w-full h-48 bg-slate-900 rounded-xl flex items-center justify-center text-white text-xs relative overflow-hidden mb-4">
+                <div class="absolute inset-4 border-2 border-dashed border-emerald-400 rounded-lg flex items-center justify-center">
+                  <span class="text-emerald-300 font-mono text-[11px] animate-pulse">Align document within frame</span>
+                </div>
+              </div>
+              <div class="flex justify-center gap-3">
+                <button onclick="CareFlow.closeModal()" class="px-4 py-2 text-xs font-semibold text-slate-600 border border-slate-200 rounded-full">Cancel</button>
+                <button onclick="CareFlow.closeModal(); CareFlow.showToast('Document captured and processed via OCR!', 'success')" class="px-5 py-2 text-xs font-bold text-white bg-[#0D6E6E] rounded-full">Capture &amp; Upload</button>
+              </div>
+            </div>
+          `);
+        }
+      });
+    }
+
+    // Wire all download buttons
+    document.querySelectorAll('button').forEach(btn => {
+      const txt = btn.textContent.trim();
+      if (txt.includes('Download') && !btn.hasAttribute('onclick')) {
+        btn.addEventListener('click', () => {
+          const title = btn.closest('article')?.querySelector('h3')?.textContent?.trim() || 'Document';
+          if (window.CareFlow) {
+            CareFlow.showToast(`Downloading secure encrypted PDF for "${title}"...`, 'success');
+          }
+        });
+      }
+      if (txt.includes('Print') && !btn.hasAttribute('onclick')) {
+        btn.addEventListener('click', () => {
+          if (window.CareFlow) {
+            CareFlow.showToast('Preparing print version with verified ABDM cryptographic watermark...', 'info');
+          }
+        });
+      }
+    });
+  });
+</script>
+</main></div></body></html>

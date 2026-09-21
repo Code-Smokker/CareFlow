@@ -1,0 +1,65 @@
+id: agni
+label: Agni (digestion)
+framework: custom
+description: >
+  What the patient can honestly report about their digestion: appetite, heaviness after meals,
+  bloating and acidity. The Vaidya alone decides the state of Agni (Samagni, Vishamagni,
+  Tikshnagni, Mandagni) in Dashavidha Pariksha — nothing here maps to one.
+source: >
+  Engineer-authored patient-reportable symptom items. PENDING_EXPERT_REVIEW
+  (packages/ontology/modules/ayush/pariksha-vocabulary.yaml).
+triggers:
+  - agni
+  - digestion
+  - अग्नि
+  - पाचन
+
+slots:
+  - id: agni_appetite
+    type: enum
+    required: true
+    input: [voice, chips]
+    prompt:
+      en: How is your appetite these days?
+      hi: आजकल आपकी भूख कैसी है?
+    options:
+      - { value: good, icon: restaurant, label: { en: "Good, regular", hi: "अच्छी, नियमित" } }
+      - { value: irregular, icon: shuffle, label: { en: "Irregular — sometimes strong, sometimes none", hi: "अनियमित — कभी तेज़ कभी बिल्कुल नहीं" } }
+      - { value: excessive, icon: lunch_dining, label: { en: "Very strong, cannot wait", hi: "बहुत तेज़, रुका नहीं जाता" } }
+      - { value: poor, icon: no_meals, label: { en: "Poor, little desire to eat", hi: "कमज़ोर, खाने की इच्छा कम" } }
+
+  - id: agni_heaviness
+    type: enum
+    required: true
+    input: [voice, chips]
+    prompt:
+      en: Do you feel heavy after meals?
+      hi: क्या खाने के बाद भारीपन महसूस होता है?
+    options:
+      - { value: never, icon: sentiment_satisfied, label: { en: "Never", hi: "कभी नहीं" } }
+      - { value: sometimes, icon: sentiment_neutral, label: { en: "Sometimes", hi: "कभी-कभी" } }
+      - { value: often, icon: sentiment_dissatisfied, label: { en: "Often, for hours", hi: "अक्सर, कई घंटों तक" } }
+
+  - id: agni_bloating
+    type: enum
+    required: true
+    input: [voice, chips]
+    prompt:
+      en: Do you have bloating or gas?
+      hi: क्या पेट फूलना या गैस की शिकायत रहती है?
+    options:
+      - { value: never, icon: sentiment_satisfied, label: { en: "Never", hi: "कभी नहीं" } }
+      - { value: sometimes, icon: sentiment_neutral, label: { en: "Sometimes", hi: "कभी-कभी" } }
+      - { value: often, icon: bubble_chart, label: { en: "Often", hi: "अक्सर" } }
+
+  - id: agni_acidity
+    type: enum
+    required: true
+    input: [voice, chips]
+    prompt:
+      en: Do you have acidity or a burning feeling in the chest or throat?
+      hi: क्या सीने या गले में जलन या एसिडिटी रहती है?
+    options:
+      - { value: never, icon: sentiment_satisfied, label: { en: "Never", hi: "कभी नहीं" } }
+      - { value: sometimes, icon: sentiment_neutral, label: { en: "Sometimes", hi: "कभी-कभी" } }
+      - { value: often, icon: local_fire_department, label: { en: "Often", hi: "अक्सर" } }

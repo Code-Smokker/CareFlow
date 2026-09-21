@@ -1,0 +1,70 @@
+id: satmya
+label: Satmya (what suits)
+framework: custom
+description: >
+  Foods, climate and habits the patient says suit them or disagree with them. Shown to the Vaidya
+  beside the Satmya grading in Dashavidha Pariksha as reference only.
+source: >
+  Engineer-authored patient-reportable items. PENDING_EXPERT_REVIEW.
+triggers:
+  - satmya
+  - what suits me
+  - सात्म्य
+
+slots:
+  - id: satmya_foods
+    type: enum_multi
+    required: true
+    input: [voice, multi]
+    prompt:
+      en: Which kinds of food suit you well? Choose all that apply.
+      hi: कौन-सा खाना आपको अच्छा लगता और रास आता है? जो लागू हो सब चुनें।
+    options:
+      - { value: warm_cooked, icon: soup_kitchen, label: { en: "Warm, freshly cooked food", hi: "गर्म, ताज़ा पका खाना" } }
+      - { value: cold_raw, icon: ac_unit, label: { en: "Cold or raw food", hi: "ठंडा या कच्चा खाना" } }
+      - { value: spicy, icon: local_fire_department, label: { en: "Spicy food", hi: "तीखा खाना" } }
+      - { value: bland, icon: spa, label: { en: "Plain, mild food", hi: "सादा, हल्का खाना" } }
+      - { value: sweet, icon: cookie, label: { en: "Sweet food", hi: "मीठा खाना" } }
+
+  - id: satmya_disagree
+    type: enum_multi
+    required: true
+    input: [voice, multi]
+    prompt:
+      en: Which foods disagree with you? Choose all that apply.
+      hi: कौन-सा खाना आपको रास नहीं आता? जो लागू हो सब चुनें।
+    options:
+      - { value: milk, icon: local_drink, label: { en: "Milk or dairy", hi: "दूध या डेयरी" } }
+      - { value: fried_oily, icon: lunch_dining, label: { en: "Fried or oily food", hi: "तला या तेलीय खाना" } }
+      - { value: spicy, icon: local_fire_department, label: { en: "Spicy food", hi: "तीखा खाना" } }
+      - { value: cold_drinks, icon: ac_unit, label: { en: "Cold drinks or ice", hi: "ठंडे पेय या बर्फ़" } }
+      - { value: heavy, icon: monitor_weight, label: { en: "Heavy meals", hi: "भारी खाना" } }
+      - { value: none, icon: check_circle, label: { en: "Nothing in particular", hi: "कुछ विशेष नहीं" } }
+
+  - id: satmya_climate
+    type: enum
+    required: true
+    input: [voice, chips]
+    prompt:
+      en: Which climate suits you best?
+      hi: कौन-सा मौसम आपको सबसे ज़्यादा रास आता है?
+    options:
+      - { value: warm, icon: wb_sunny, label: { en: "Warm weather", hi: "गर्म मौसम" } }
+      - { value: cool, icon: ac_unit, label: { en: "Cool weather", hi: "ठंडा मौसम" } }
+      - { value: dry, icon: air, label: { en: "Dry weather", hi: "सूखा मौसम" } }
+      - { value: humid, icon: water_drop, label: { en: "Humid weather", hi: "नम मौसम" } }
+      - { value: no_preference, icon: sentiment_neutral, label: { en: "No difference", hi: "कोई फ़र्क नहीं" } }
+
+  - id: satmya_habits
+    type: enum_multi
+    required: true
+    input: [voice, multi]
+    prompt:
+      en: Which habits suit you? Choose all that apply.
+      hi: कौन-सी आदतें आपको रास आती हैं? जो लागू हो सब चुनें।
+    options:
+      - { value: early_rising, icon: alarm, label: { en: "Waking early", hi: "जल्दी उठना" } }
+      - { value: regular_meals, icon: schedule, label: { en: "Regular meal times", hi: "नियमित समय पर खाना" } }
+      - { value: daily_walk, icon: directions_walk, label: { en: "A daily walk", hi: "रोज़ टहलना" } }
+      - { value: afternoon_rest, icon: hotel, label: { en: "Rest after lunch", hi: "दोपहर में आराम" } }
+      - { value: none, icon: help, label: { en: "Not sure", hi: "पता नहीं" } }

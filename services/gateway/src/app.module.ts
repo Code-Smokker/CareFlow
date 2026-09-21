@@ -6,6 +6,7 @@ import { AbdmModule } from "./abdm/abdm.module";
 import { AiModule } from "./ai/ai.module";
 import { AnalyticsModule } from "./analytics/analytics.module";
 import { AuditModule } from "./audit/audit.module";
+import { AyurvedaModule } from "./ayurveda/ayurveda.module";
 import { DeidModule } from "./deid/deid.module";
 import { StorageModule } from "./common/storage.module";
 import { DocAiModule } from "./docai/docai.module";
@@ -50,6 +51,7 @@ import { WebsocketModule } from "./websocket/websocket.module";
     AuditModule,
     IntegrationsModule,
     AnalyticsModule,
+    AyurvedaModule,
   ],
 })
 export class AppModule {}

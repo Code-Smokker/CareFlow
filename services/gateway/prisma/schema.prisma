@@ -120,6 +120,22 @@ enum SummaryStatus {
   signed
 }
 
+/// Who a stored examination value came from. Patient-reported values live in `answer` (with its
+/// own AnswerSource) and are never copied here — a row in ayurveda_exam_field is always the
+/// Vaidya's, and `original_*` keeps the patient value it confirmed or replaced.
+enum ExamSource {
+  clinician
+}
+
+/// entered   = the Vaidya's own finding.
+/// confirmed = the Vaidya accepted the patient-reported value.
+/// overridden = the Vaidya replaced the patient-reported value; the original is kept.
+enum ExamDisposition {
+  entered
+  confirmed
+  overridden
+}
+
 enum CascadeOutcome {
   success
   failure
@@ -179,6 +195,7 @@ model Visit {
 
   sessions   IntakeSession[]
   summaries  Summary[]
+  ayurvedaExamFields AyurvedaExamField[]
 
   @@index([department, priority(sort: Desc), tokenNo])
   @@map("visit")
@@ -310,6 +327,34 @@ model Summary {
   createdAt     DateTime      @default(now()) @map("created_at")
 
   @@map("summary")
+}
+
+/// One row per (visit, field) of the Ayurvedic case record — Trividha, Ashtavidha, Dashavidha and
+/// Vyadhi Vinishchaya findings the Vaidya recorded. `field_id` is a vocabulary id
+/// (packages/ontology/modules/ayush/pariksha-vocabulary.yaml, e.g. `ashtavidha.mala.nature`), not
+/// an enum: the vocabulary is the single source of what exists, so a new field never needs a
+/// migration. Patient-reported Prashna answers are NOT stored here — they stay in `answer`.
+///
+/// Overrides keep the original: when the Vaidya replaces a patient-reported value, that value is
+/// copied into `original_*` (with its source and confidence) and both stay visible. Every write
+/// also lands in the append-only audit_log in the same transaction.
+model AyurvedaExamField {
+  id                 String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  visitId            String          @map("visit_id") @db.Uuid
+  visit              Visit           @relation(fields: [visitId], references: [id])
+  fieldId            String          @map("field_id")
+  value              Json
+  source             ExamSource      @default(clinician)
+  disposition        ExamDisposition
+  recordedBy         String          @map("recorded_by")
+  recordedAt         DateTime        @default(now()) @map("recorded_at")
+  originalSlotId     String?         @map("original_slot_id")
+  originalValue      Json?           @map("original_value")
+  originalSource     AnswerSource?   @map("original_source")
+  originalConfidence Float?          @map("original_confidence")
+
+  @@unique([visitId, fieldId])
+  @@map("ayurveda_exam_field")
 }
 
 model Consent {

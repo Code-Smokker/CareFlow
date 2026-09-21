@@ -1,0 +1,582 @@
+<!DOCTYPE html><html lang="en" class="h-full scroll-smooth"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>CareFlow - Read-back / Summary Review (Aarav Sharma)</title>
+<script src="../careflow-nav.js" defer></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#005454",
+            "primary-container": "#0d6e6e",
+            "on-primary": "#ffffff",
+            "secondary": "#006b5f",
+            "secondary-container": "#E6F7F2",
+            "surface-mint": "#D1F2E8",
+            "surface-mint-subtle": "#E6F7F2",
+            "background": "#F8FAFC",
+            "surface": "#FAF8FF",
+            "surface-card": "#FFFFFF",
+            "surface-container-lowest": "#FFFFFF",
+            "surface-container-low": "#F1F3FF",
+            "surface-container": "#E8EEFF",
+            "surface-container-high": "#DFE8FF",
+            "surface-dim": "#D2D9F4",
+            "on-surface": "#0c1b33",
+            "on-surface-variant": "#3E4948",
+            "outline": "#6E7979",
+            "outline-variant": "#BEC9C8",
+            "border-subtle": "#E2E8F0",
+            "navy-dark": "#0B192C",
+            "text-muted": "#3E4948",
+            "error": "#BA1A1A",
+            "error-container": "#FFDAD6"
+          },
+          fontFamily: {
+            sans: ["Plus Jakarta Sans", "Inter", "sans-serif"],
+            mono: ["ui-monospace", "SFMono-Regular", "Menlo", "monospace"]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    body {
+      background-color: #FAF8FF;
+      color: #0c1b33;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+    }
+    .material-symbols-outlined.fill {
+      font-variation-settings: 'FILL' 1;
+    }
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #D2D9F4;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #BEC9C8;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex bg-[#FAF8FF] text-[#0c1b33] antialiased">
+<!-- 1. PERSISTENT LEFT SIDEBAR NAVIGATION -->
+<aside class="w-64 bg-white border-r border-slate-200 fixed top-0 bottom-0 left-0 z-40 flex flex-col justify-between select-none">
+<!-- Top Brand & Navigation -->
+<div class="flex flex-col">
+<!-- Logo Header -->
+<div class="h-16 px-5 flex items-center justify-between border-b border-slate-100">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-[#0D6E6E] flex items-center justify-center text-white shadow-sm">
+<span class="material-symbols-outlined fill text-[22px]">volunteer_activism</span>
+</div>
+<div class="flex flex-col">
+<span class="font-bold text-[18px] tracking-tight text-[#0F1E36] leading-none">CareFlow</span>
+<span class="text-[11px] font-medium text-slate-500 mt-0.5">Clinical Care Team</span>
+</div>
+</div>
+<span class="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded-md bg-[#E6F7F2] text-[#0D6E6E] border border-[#0D6E6E]/20">OPD</span>
+</div>
+<!-- Navigation Menu Items -->
+<nav class="p-3 space-y-1">
+<!-- Dashboard -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 text-sm font-medium transition-colors" href="javascript:void(0)">
+<span class="material-symbols-outlined text-[20px] text-slate-400">grid_view</span>
+<span>Dashboard</span>
+</a>
+<!-- Patients -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 text-sm font-medium transition-colors" href="javascript:void(0)">
+<span class="material-symbols-outlined text-[20px] text-slate-400">group</span>
+<span>Patients</span>
+</a>
+<!-- Appointments -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 text-sm font-medium transition-colors" href="javascript:void(0)">
+<span class="material-symbols-outlined text-[20px] text-slate-400">calendar_month</span>
+<span>Appointments</span>
+</a>
+<!-- Documents -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 text-sm font-medium transition-colors" href="javascript:void(0)">
+<span class="material-symbols-outlined text-[20px] text-slate-400">folder</span>
+<span>Documents</span>
+</a>
+<!-- Care Summaries (Active State!) -->
+<a class="flex items-center justify-between px-3 py-2.5 rounded-xl bg-[#E6F7F2] text-[#0D6E6E] text-sm font-medium transition-colors shadow-xs" href="javascript:void(0)">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[20px] text-[#0D6E6E] fill">description</span>
+<span>Care Summaries</span>
+</div>
+<span class="w-2 h-2 rounded-full bg-[#0D6E6E]"></span>
+</a>
+<!-- Alerts -->
+<a class="flex items-center justify-between px-3 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 text-sm font-medium transition-colors" href="javascript:void(0)">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[20px] text-slate-400">notifications</span>
+<span>Alerts</span>
+</div>
+<span class="w-2 h-2 rounded-full bg-red-500"></span>
+</a>
+<!-- Analytics -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 text-sm font-medium transition-colors" href="javascript:void(0)">
+<span class="material-symbols-outlined text-[20px] text-slate-400">trending_up</span>
+<span>Analytics</span>
+</a>
+</nav>
+</div>
+<!-- Bottom Sidebar (Settings, Support & Clinician Profile) -->
+<div class="p-3 border-t border-slate-100 flex flex-col gap-1">
+<a class="flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 text-sm font-medium transition-colors" href="javascript:void(0)">
+<span class="material-symbols-outlined text-[20px] text-slate-400">settings</span>
+<span>Settings</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 text-sm font-medium transition-colors" href="javascript:void(0)">
+<span class="material-symbols-outlined text-[20px] text-slate-400">help</span>
+<span>Help &amp; Support</span>
+</a>
+<!-- Clinician Profile Card -->
+<div class="mt-2 p-2.5 rounded-xl bg-slate-50 border border-slate-200/70 flex items-center justify-between">
+<div class="flex items-center gap-2.5 min-w-0">
+<div class="relative w-9 h-9 rounded-full bg-[#0D6E6E] text-white flex items-center justify-center font-bold text-xs shrink-0">
+            AI
+            <span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-white"></span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="text-xs font-bold text-[#0F1E36] truncate">Dr. Ananya Iyer</span>
+<span class="text-[11px] text-slate-500 truncate">Desk 4 • OPD Session</span>
+</div>
+</div>
+<button aria-label="More options" class="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-200/50 transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</div>
+</aside>
+<!-- MAIN APP WRAPPER (Offset by sidebar w-64) -->
+<div class="flex-1 ml-64 flex flex-col min-h-screen min-w-0">
+<!-- 2. PERSISTENT TOP APP BAR -->
+<header class="sticky top-0 z-30 h-16 bg-white/95 backdrop-blur border-b border-slate-200 px-8 flex items-center justify-between">
+<!-- Search Input with Keyboard Shortcut -->
+<div class="w-96 max-w-md relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[18px]">search</span>
+<input class="w-full h-10 pl-9 pr-12 rounded-xl bg-slate-50 border border-slate-200 text-sm text-[#0F1E36] placeholder-slate-400 focus:outline-none focus:border-[#0D6E6E] focus:ring-1 focus:ring-[#0D6E6E] transition-all" placeholder="Search patients, UHID, ABHA... ⌘K" type="text">
+<kbd class="absolute right-2.5 top-1/2 -translate-y-1/2 px-1.5 py-0.5 text-[10px] font-semibold text-slate-400 bg-white border border-slate-200 rounded shadow-2xs">⌘K</kbd>
+</div>
+<!-- Right Side Controls -->
+<div class="flex items-center gap-3">
+<!-- Language Selector Pill -->
+<button class="h-9 px-3 rounded-full bg-slate-50 border border-slate-200 text-slate-700 hover:bg-slate-100 text-xs font-semibold flex items-center gap-1.5 transition-colors" type="button">
+<span class="material-symbols-outlined text-[#0D6E6E] text-[16px]">language</span>
+<span>English (हिन्दी) ▼</span>
+</button>
+<!-- Notification Bell with Red Badge -->
+<button class="relative w-9 h-9 rounded-full bg-slate-50 border border-slate-200 text-slate-600 hover:bg-slate-100 flex items-center justify-center transition-colors" type="button">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+<span class="absolute top-1 right-1 w-2 h-2 rounded-full bg-red-500 ring-2 ring-white"></span>
+</button>
+<!-- Clinician Profile Avatar -->
+<button class="w-9 h-9 rounded-full bg-[#0D6E6E] text-white flex items-center justify-center font-bold text-xs ring-2 ring-[#E6F7F2] transition-transform hover:scale-105" type="button">
+          AI
+        </button>
+</div>
+</header>
+<!-- MAIN CONTENT AREA (Screen W12 - Read-back / Summary Review) -->
+<main class="flex-1 p-8 max-w-7xl w-full mx-auto space-y-6">
+<!-- 1. NAVIGATION & BREADCRUMBS & LIVE ABDM BADGE -->
+<div class="flex flex-wrap items-center justify-between gap-3 pb-2 border-b border-border-subtle/70">
+<div class="flex items-center gap-2 text-xs font-medium text-slate-500">
+<a class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-slate-200 text-primary hover:text-primary-container transition-colors font-semibold cursor-pointer" href="../careflow_website_w11_care_summary/code.html">
+<span class="material-symbols-outlined text-[16px] text-primary">arrow_back</span>
+<span>Care Summary (सारांश)</span>
+</a>
+<span class="text-slate-300">/</span>
+<span class="text-slate-500">Patients</span>
+<span class="text-slate-300">/</span>
+<span class="text-slate-700 font-semibold">Aarav Sharma</span>
+<span class="text-slate-300">/</span>
+<span class="text-slate-500">Care Summary</span>
+<span class="text-slate-300">/</span>
+<span class="text-primary font-bold">Review</span>
+</div>
+<div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface-mint-subtle border border-[#0D6E6E]/20 text-secondary text-xs font-medium shadow-xs">
+<span class="relative flex h-2 w-2">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#0D6E6E] opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-[#0D6E6E]"></span>
+</span>
+<span class="font-bold text-[#0D6E6E]">ABHA Sync: Active</span>
+<span class="text-slate-300">•</span>
+<span class="font-mono text-slate-600">ABHA ID: 91-8472-3021-9920</span>
+</div>
+</div>
+<!-- 2. PAGE HEADER & PRIMARY ACTIONS -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div>
+<div class="flex items-center gap-2 mb-1.5">
+<span class="px-2.5 py-0.5 rounded-full bg-surface-mint-subtle border border-[#0D6E6E]/20 text-primary font-semibold text-[11px] uppercase tracking-wider">
+          FINAL REVIEW • अंतिम समीक्षा
+        </span>
+<span class="text-xs font-mono font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded">UHID: CF-1024</span>
+</div>
+<h1 class="text-2xl lg:text-3xl font-bold text-on-surface tracking-tight">
+        Review before continuing <span class="text-slate-500 font-normal text-xl lg:text-2xl">• आगे बढ़ने से पहले समीक्षा करें</span>
+</h1>
+<p class="text-sm text-on-surface-variant mt-1 max-w-3xl">
+        Confirm that the information collected during intake is accurate.
+      </p>
+</div>
+<div class="flex items-center gap-2.5 self-start md:self-auto">
+<div class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-surface-mint-subtle border border-[#0D6E6E]/20 text-secondary text-xs font-semibold shadow-xs">
+<span class="material-symbols-outlined text-[16px] text-secondary">verified</span>
+<span>Ready for confirmation • पुष्टि के लिए तैयार</span>
+</div>
+<button class="inline-flex items-center gap-1.5 h-10 px-4 rounded-full bg-white border border-slate-300 text-on-surface-variant hover:text-on-surface hover:bg-slate-50 transition-all text-xs font-semibold shadow-2xs" type="button">
+<span class="material-symbols-outlined text-[16px] text-slate-500">history</span>
+<span>Audit Log</span>
+</button>
+</div>
+</div>
+<!-- 3. PATIENT CONTEXT CARD & PROGRESS STEPPER -->
+<div class="rounded-2xl bg-white border border-slate-200/80 shadow-xs divide-y divide-slate-100">
+<div class="p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+<div class="flex items-center gap-4">
+<div class="w-14 h-14 rounded-2xl bg-primary-container text-white font-bold text-lg flex items-center justify-center shrink-0 shadow-xs ring-4 ring-surface-mint-subtle">
+          AS
+        </div>
+<div>
+<div class="flex flex-wrap items-center gap-2.5">
+<h2 class="text-lg font-bold text-on-surface">Aarav Sharma</h2>
+<span class="text-xs font-medium text-slate-500 bg-slate-100 px-2.5 py-0.5 rounded-full">28 Y / M</span>
+<span class="text-xs font-mono font-semibold text-slate-600 bg-slate-100 px-2.5 py-0.5 rounded-full">UHID: CF-1024</span>
+</div>
+<div class="flex flex-wrap items-center gap-3 text-xs text-slate-500 mt-1.5">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px] text-slate-400">schedule</span>
+            Intake completed: Today • 09:28 AM IST
+          </span>
+<span class="text-slate-300">•</span>
+<span class="flex items-center gap-1 font-mono">
+<span class="material-symbols-outlined text-[15px] text-secondary">fingerprint</span>
+            ABHA: 91-8293-1029-44
+          </span>
+</div>
+</div>
+</div>
+<div class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-mint-subtle border border-[#0D6E6E]/20 text-secondary text-xs font-semibold">
+<span class="material-symbols-outlined text-[16px]">task_alt</span>
+<span>Ready for confirmation • पुष्टि के लिए तैयार</span>
+</div>
+</div>
+<!-- Review Progress Bar / Stepper -->
+<div class="p-4 bg-slate-50/60 rounded-b-2xl">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[18px]">fact_check</span>
+<span class="text-xs font-bold text-on-surface">Everything collected • सभी जानकारी एकत्रित</span>
+<span class="text-[11px] text-slate-500">— All required intake sections have been completed.</span>
+</div>
+<span class="text-xs font-semibold text-secondary">Step 5 of 5</span>
+</div>
+<div class="grid grid-cols-5 gap-2 text-xs">
+<div class="flex items-center gap-1.5 text-secondary font-medium">
+<span class="w-5 h-5 rounded-full bg-surface-mint flex items-center justify-center text-[12px] font-bold">✓</span>
+<span class="truncate">Identity</span>
+</div>
+<div class="flex items-center gap-1.5 text-secondary font-medium">
+<span class="w-5 h-5 rounded-full bg-surface-mint flex items-center justify-center text-[12px] font-bold">✓</span>
+<span class="truncate">Symptoms</span>
+</div>
+<div class="flex items-center gap-1.5 text-secondary font-medium">
+<span class="w-5 h-5 rounded-full bg-surface-mint flex items-center justify-center text-[12px] font-bold">✓</span>
+<span class="truncate">Questions</span>
+</div>
+<div class="flex items-center gap-1.5 text-secondary font-medium">
+<span class="w-5 h-5 rounded-full bg-surface-mint flex items-center justify-center text-[12px] font-bold">✓</span>
+<span class="truncate">Documents</span>
+</div>
+<div class="flex items-center gap-1.5 text-primary font-bold">
+<span class="w-5 h-5 rounded-full bg-primary text-white flex items-center justify-center text-[11px]">●</span>
+<span class="truncate">Summary Review</span>
+</div>
+</div>
+</div>
+</div>
+<!-- 4. 2-COLUMN CLINICAL VERIFICATION LAYOUT -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+<!-- LEFT MAIN COLUMN (7 cols on lg) -->
+<div class="lg:col-span-7 flex flex-col gap-5">
+<!-- "What we heard • हमने क्या समझा" narrative card -->
+<div class="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-xs space-y-3.5">
+<div class="flex items-center justify-between border-b border-border-subtle pb-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px] text-primary">record_voice_over</span>
+<h3 class="text-sm font-bold text-on-surface">What we heard • हमने क्या समझा</h3>
+</div>
+<span class="px-2.5 py-0.5 rounded-full bg-surface-mint-subtle text-secondary text-[11px] font-semibold">Triage synthesis</span>
+</div>
+<blockquote class="p-4 rounded-xl bg-slate-50 border-l-4 border-[#0D6E6E] text-xs text-on-surface leading-relaxed font-medium">
+          "Aarav Sharma has reported fever and cough for approximately 3 days, along with fatigue. The patient reports taking Paracetamol and has no known allergies."
+        </blockquote>
+<p class="text-[11px] text-slate-500">
+          Review the patient's information in a simple summary before clinical handoff.
+        </p>
+</div>
+<!-- SCANNABLE SUMMARY SECTIONS -->
+<div class="space-y-3">
+<!-- Section 01: Main concern -->
+<div class="p-4 rounded-xl bg-white border border-slate-200/80 shadow-xs flex items-center justify-between gap-4 hover:border-slate-300 transition-colors">
+<div class="flex items-start gap-3 min-w-0">
+<div class="w-7 h-7 rounded-lg bg-surface-mint-subtle text-primary flex items-center justify-center shrink-0 font-bold text-xs mt-0.5">
+            01
+          </div>
+<div>
+<div class="flex items-center gap-2">
+<h4 class="text-xs font-bold text-on-surface">Main concern • मुख्य समस्या</h4>
+<span class="px-2 py-0.5 rounded-full bg-amber-50 text-amber-800 text-[10px] font-semibold border border-amber-200">Moderate (4/10)</span>
+</div>
+<p class="text-xs text-slate-600 mt-1">Fever &amp; cough, 3 days duration</p>
+</div>
+</div>
+<button class="px-3 py-1 rounded-lg text-xs font-semibold text-primary hover:bg-surface-mint-subtle transition-colors shrink-0" type="button">
+          Edit
+        </button>
+</div>
+<!-- Section 02: Other symptoms -->
+<div class="p-4 rounded-xl bg-white border border-slate-200/80 shadow-xs flex items-center justify-between gap-4 hover:border-slate-300 transition-colors">
+<div class="flex items-start gap-3 min-w-0">
+<div class="w-7 h-7 rounded-lg bg-surface-mint-subtle text-primary flex items-center justify-center shrink-0 font-bold text-xs mt-0.5">
+            02
+          </div>
+<div>
+<h4 class="text-xs font-bold text-on-surface">Other symptoms • अन्य लक्षण</h4>
+<div class="flex flex-wrap gap-1.5 mt-1.5">
+<span class="px-2 py-0.5 rounded bg-slate-100 text-slate-700 text-[11px] font-medium">Fever (101.4°F peak)</span>
+<span class="px-2 py-0.5 rounded bg-slate-100 text-slate-700 text-[11px] font-medium">Dry Cough</span>
+<span class="px-2 py-0.5 rounded bg-slate-100 text-slate-700 text-[11px] font-medium">Fatigue</span>
+<span class="px-2 py-0.5 rounded bg-slate-100 text-slate-700 text-[11px] font-medium">Mild throat tightness</span>
+</div>
+</div>
+</div>
+<button class="px-3 py-1 rounded-lg text-xs font-semibold text-primary hover:bg-surface-mint-subtle transition-colors shrink-0" type="button">
+          Edit
+        </button>
+</div>
+<!-- Section 03: Medications -->
+<div class="p-4 rounded-xl bg-white border border-slate-200/80 shadow-xs flex items-center justify-between gap-4 hover:border-slate-300 transition-colors">
+<div class="flex items-start gap-3 min-w-0">
+<div class="w-7 h-7 rounded-lg bg-amber-100 text-amber-900 flex items-center justify-center shrink-0 font-bold text-xs mt-0.5">
+            03
+          </div>
+<div>
+<div class="flex items-center gap-2">
+<h4 class="text-xs font-bold text-on-surface">Medications • दवाएँ</h4>
+<span class="px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[10px] font-bold">Needs confirmation</span>
+</div>
+<p class="text-xs text-slate-600 mt-1">Paracetamol 650mg — Dosage: 1 tab TDS / As directed</p>
+</div>
+</div>
+<button class="px-3 py-1 rounded-lg text-xs font-semibold text-amber-700 bg-amber-50 hover:bg-amber-100 transition-colors shrink-0" type="button">
+          Review
+        </button>
+</div>
+<!-- Section 04: Allergies -->
+<div class="p-4 rounded-xl bg-white border border-slate-200/80 shadow-xs flex items-center justify-between gap-4 hover:border-slate-300 transition-colors">
+<div class="flex items-start gap-3 min-w-0">
+<div class="w-7 h-7 rounded-lg bg-surface-mint-subtle text-primary flex items-center justify-center shrink-0 font-bold text-xs mt-0.5">
+            04
+          </div>
+<div>
+<div class="flex items-center gap-2">
+<h4 class="text-xs font-bold text-on-surface">Allergies • एलर्जी</h4>
+<span class="px-2 py-0.5 rounded-full bg-surface-mint-subtle text-secondary text-[10px] font-semibold">Verified</span>
+</div>
+<p class="text-xs text-secondary font-medium mt-1">No known allergies (verified)</p>
+</div>
+</div>
+<button class="px-3 py-1 rounded-lg text-xs font-semibold text-primary hover:bg-surface-mint-subtle transition-colors shrink-0" type="button">
+          Edit
+        </button>
+</div>
+<!-- Section 05: Documents -->
+<div class="p-4 rounded-xl bg-white border border-slate-200/80 shadow-xs flex items-center justify-between gap-4 hover:border-slate-300 transition-colors">
+<div class="flex items-start gap-3 min-w-0">
+<div class="w-7 h-7 rounded-lg bg-surface-mint-subtle text-primary flex items-center justify-center shrink-0 font-bold text-xs mt-0.5">
+            05
+          </div>
+<div>
+<h4 class="text-xs font-bold text-on-surface">Documents • दस्तावेज़</h4>
+<p class="text-xs text-slate-600 mt-1">2 documents (CBC &amp; Platelet Lab Report [Processed], Apollo OPD Prescription [Reviewed])</p>
+</div>
+</div>
+<button class="px-3 py-1 rounded-lg text-xs font-semibold text-primary hover:bg-surface-mint-subtle transition-colors shrink-0" type="button">
+          View
+        </button>
+</div>
+</div>
+</div>
+<!-- RIGHT COLUMN: CONFIRMATION, READ-BACK & VERIFICATION (5 cols on lg) -->
+<div class="lg:col-span-5 flex flex-col gap-5">
+<!-- 1. "Please confirm • कृपया पुष्टि करें" gentle warning card -->
+<div class="rounded-2xl p-4 bg-amber-50/90 border border-amber-200 shadow-xs space-y-2.5">
+<div class="flex items-start gap-2.5">
+<span class="material-symbols-outlined text-amber-700 text-[20px] shrink-0 mt-0.5">warning</span>
+<div class="flex-1 min-w-0">
+<h4 class="text-xs font-bold text-amber-950">
+            Please confirm • कृपया पुष्टि करें
+          </h4>
+<p class="text-xs text-amber-900/90 mt-1 leading-relaxed">
+            Medication dosage: Confirm that the dosage information is correct before continuing.
+          </p>
+<div class="pt-2">
+<a class="text-xs font-bold text-amber-900 hover:text-amber-950 underline inline-flex items-center gap-1" href="javascript:void(0)">
+<span>Review medication</span>
+<span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+</a>
+</div>
+</div>
+</div>
+</div>
+<!-- 2. "Read back to patient • मरीज को पढ़कर सुनाएँ" -->
+<div class="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-xs space-y-3.5">
+<div class="flex items-center justify-between border-b border-border-subtle pb-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px] text-primary">hearing</span>
+<h3 class="text-sm font-bold text-on-surface">Read back to patient • मरीज को पढ़कर सुनाएँ</h3>
+</div>
+<span class="text-xs text-secondary font-semibold">Ready</span>
+</div>
+<p class="text-xs text-slate-600">
+        Review this summary with the patient to confirm that it is correct.
+      </p>
+<!-- Audio read-back control -->
+<div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70 flex items-center justify-between gap-3">
+<div class="flex items-center gap-3">
+<button class="w-9 h-9 rounded-full bg-[#0D6E6E] text-white flex items-center justify-center hover:bg-[#005454] transition-colors shadow-2xs shrink-0" type="button">
+<span class="material-symbols-outlined text-[20px]">play_arrow</span>
+</button>
+<div>
+<p class="text-xs font-bold text-on-surface">Read aloud / जोर से पढ़कर सुनाएँ</p>
+<p class="text-[11px] text-slate-500">Bilingual voice read-back (EN/HI)</p>
+</div>
+</div>
+<span class="font-mono text-xs text-slate-500 font-medium">0:45</span>
+</div>
+</div>
+<!-- 3. "Patient confirmation • मरीज की पुष्टि" -->
+<div class="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-xs space-y-3.5">
+<div>
+<h4 class="text-sm font-bold text-on-surface">Patient confirmation • मरीज की पुष्टि</h4>
+<p class="text-xs text-slate-600 mt-1">Does this summary accurately reflect what you told us?</p>
+</div>
+<div class="space-y-2">
+<!-- Option 1: Selected -->
+<label class="flex items-center gap-3 p-3 rounded-xl border-2 border-[#0D6E6E] bg-surface-mint-subtle/50 cursor-pointer">
+<input checked="" class="text-primary focus:ring-primary h-4 w-4" name="confirmation_status" type="radio">
+<span class="text-xs font-bold text-[#0D6E6E]">✓ Yes, this is correct • हाँ, यह सही है</span>
+</label>
+<!-- Option 2 -->
+<label class="flex items-center gap-3 p-3 rounded-xl border border-slate-200 hover:bg-slate-50 cursor-pointer">
+<input class="text-primary focus:ring-primary h-4 w-4" name="confirmation_status" type="radio">
+<span class="text-xs font-medium text-slate-700">Something needs to be changed • कुछ बदलना है</span>
+</label>
+</div>
+<!-- 4. "Add a correction • सुधार जोड़ें" -->
+<div class="pt-2 border-t border-slate-100 space-y-2">
+<label class="text-[11px] font-bold text-slate-600 uppercase tracking-wider block">
+          Add a correction • सुधार जोड़ें
+        </label>
+<textarea class="w-full text-xs rounded-xl border-slate-200 placeholder-slate-400 focus:border-[#0D6E6E] focus:ring-1 focus:ring-[#0D6E6E] p-2.5 resize-none" placeholder="Tell us what needs to be changed... (Optional)" rows="2"></textarea>
+<div class="flex justify-end">
+<button class="px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-slate-50 transition-colors" type="button">
+          Add note
+        </button>
+</div>
+</div>
+</div>
+<!-- 5. "Before you continue • आगे बढ़ने से पहले" Verification Checklist & CTAs -->
+<div class="p-5 rounded-2xl bg-gradient-to-br from-white to-slate-50 border border-slate-200/80 shadow-xs space-y-4">
+<div class="flex items-center justify-between border-b border-border-subtle pb-3">
+<h4 class="text-sm font-bold text-on-surface">Before you continue • आगे बढ़ने से पहले</h4>
+<span class="text-xs text-secondary font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+<span>5/5 Verified</span>
+</span>
+</div>
+<ul class="space-y-2 text-xs">
+<li class="flex items-center gap-2 text-secondary font-medium">
+<span class="material-symbols-outlined text-[16px]">check_circle</span>
+<span>Identity confirmed</span>
+</li>
+<li class="flex items-center gap-2 text-secondary font-medium">
+<span class="material-symbols-outlined text-[16px]">check_circle</span>
+<span>Symptoms reviewed</span>
+</li>
+<li class="flex items-center gap-2 text-secondary font-medium">
+<span class="material-symbols-outlined text-[16px]">check_circle</span>
+<span>Questions reviewed</span>
+</li>
+<li class="flex items-center gap-2 text-secondary font-medium">
+<span class="material-symbols-outlined text-[16px]">check_circle</span>
+<span>Documents reviewed</span>
+</li>
+<li class="flex items-center gap-2 text-secondary font-medium">
+<span class="material-symbols-outlined text-[16px]">check_circle</span>
+<span>Patient summary reviewed</span>
+</li>
+</ul>
+<!-- Primary & Secondary CTA Buttons -->
+<div class="flex flex-col gap-2.5 pt-2">
+<button class="w-full inline-flex items-center justify-center gap-2 h-12 px-6 rounded-full bg-[#0D6E6E] text-white font-bold text-sm shadow-sm hover:bg-[#005454] transition-all active:scale-[0.99]" onclick="proceedToRedFlags()" type="button">
+<span>Confirm &amp; continue → (पुष्टि करें और जारी रखें)</span>
+</button>
+<button class="w-full inline-flex items-center justify-center gap-1.5 h-10 px-5 rounded-full bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 font-semibold text-xs transition-colors shadow-2xs cursor-pointer" onclick="CareFlow.navigate(11)" type="button">
+<span>Back to care summary</span>
+</button>
+</div>
+<div class="pt-1 text-center">
+<p class="text-[11px] text-primary font-medium flex items-center justify-center gap-1">
+<span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+          Next: Proceed to W13 — Red Flag Alerts
+        </p>
+</div>
+</div>
+</div>
+</div>
+<!-- 5. BOTTOM REGULATORY & ENCRYPTION STRIP -->
+<footer class="w-full py-3.5 px-5 rounded-2xl bg-white border border-slate-200/80 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-[#0D6E6E]">lock</span>
+<span class="font-bold text-[#0F1E36]">Patient documents are protected</span>
+<span>• मरीज के दस्तावेज़ सुरक्षित हैं</span>
+</div>
+<div class="flex items-center gap-3 text-slate-500 flex-wrap justify-center">
+<span>ABDM M1/M2/M3 Compliant</span>
+<span class="text-slate-300">•</span>
+<span>256-bit AES Vault</span>
+<span class="text-slate-300">•</span>
+<span class="text-[#006b5f] font-semibold">HIPAA &amp; DISHA Standard</span>
+</div>
+</footer>
+</main>
+</div>
+<!-- INTERACTION SCRIPT -->
+<script>
+    function proceedToRedFlags() {
+      CareFlow.showToast('Intake confirmed by clinician & patient! Navigating to Red Flag Alerts...', 'success');
+      setTimeout(() => {
+        CareFlow.navigate(13);
+      }, 600);
+    }
+  </script>
+</body></html>

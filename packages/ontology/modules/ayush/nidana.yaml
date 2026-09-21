@@ -1,0 +1,30 @@
+id: nidana
+label: Nidana (aggravating factors)
+framework: custom
+description: >
+  What the patient notices makes the complaint worse — food, weather, stress or exertion. A
+  patient-reported list; the Vaidya draws any conclusion about causes in Vyadhi Vinishchaya.
+source: >
+  Engineer-authored patient-reportable item. PENDING_EXPERT_REVIEW.
+triggers:
+  - nidana
+  - aggravating factors
+  - निदान
+  - कारण
+
+slots:
+  - id: nidana_aggravating
+    type: enum_multi
+    required: true
+    input: [voice, multi]
+    prompt:
+      en: What seems to make your problem worse? Choose all that apply.
+      hi: आपकी समस्या किस चीज़ से बढ़ती है? जो लागू हो सब चुनें।
+    options:
+      - { value: food, icon: restaurant, label: { en: "Certain food", hi: "कुछ खाने की चीज़ें" } }
+      - { value: cold_weather, icon: ac_unit, label: { en: "Cold weather", hi: "ठंडा मौसम" } }
+      - { value: hot_weather, icon: wb_sunny, label: { en: "Hot weather", hi: "गर्म मौसम" } }
+      - { value: damp_weather, icon: water_drop, label: { en: "Damp or rainy weather", hi: "नमी या बारिश का मौसम" } }
+      - { value: stress, icon: psychology, label: { en: "Stress or worry", hi: "तनाव या चिंता" } }
+      - { value: exertion, icon: fitness_center, label: { en: "Physical exertion", hi: "शारीरिक मेहनत" } }
+      - { value: none_noticed, icon: help, label: { en: "Nothing I have noticed", hi: "कुछ पता नहीं चला" } }

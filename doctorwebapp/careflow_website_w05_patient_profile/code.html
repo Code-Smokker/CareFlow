@@ -1,0 +1,587 @@
+<!DOCTYPE html><html lang="en" class="h-full scroll-smooth"><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0" name="viewport"><title>Patient Profile - CareFlow Clinical</title><script src="../careflow-nav.js" defer></script><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"inverse-on-surface":"#ecf0ff","on-tertiary-fixed-variant":"#004e5c","on-primary":"#ffffff","inverse-primary":"#84d4d3","primary":"#005454","outline-variant":"#bec9c8","tertiary-container":"#296b7a","on-secondary-fixed":"#00201c","surface-bright":"#f9f9ff","status-error-bg":"#FFDAD6","text-muted":"#3E4948","surface-container":"#e8eeff","surface":"#f9f9ff","primary-container":"#0d6e6e","error":"#ba1a1a","on-secondary":"#ffffff","on-error-container":"#93000a","on-secondary-fixed-variant":"#005047","on-surface":"#0c1b33","tertiary-fixed":"#aeecfe","secondary":"#006b5f","on-tertiary-fixed":"#001f26","on-error":"#ffffff","background":"#f9f9ff","surface-card":"#FFFFFF","outline":"#6e7979","surface-tint":"#016a6a","surface-container-low":"#f1f3ff","inverse-surface":"#223149","surface-container-lowest":"#ffffff","tertiary":"#015362","secondary-fixed":"#9ff2e2","border-subtle":"#E2E8F0","border-teal":"#D6E4E2","surface-variant":"#d7e3ff","canvas-bg":"#FAF8FF","primary-fixed":"#a0f0f0","surface-container-highest":"#d7e3ff","surface-container-high":"#dfe8ff","on-secondary-container":"#0b6f63","surface-mint-subtle":"#E6F7F2","tertiary-fixed-dim":"#92d0e2","on-surface-variant":"#3e4948","status-error":"#BA1A1A","secondary-container":"#9cefdf","surface-dim":"#ccdafa","on-background":"#0c1b33","on-tertiary-container":"#abe9fb","navy-dark":"#0B192C","secondary-fixed-dim":"#83d5c6","surface-mint":"#D1F2E8","on-tertiary":"#ffffff","error-container":"#ffdad6","on-primary-fixed-variant":"#004f50","on-primary-fixed":"#002020","on-primary-container":"#9dedec","primary-fixed-dim":"#84d4d3"},borderRadius:{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},spacing:{"space-xl":"2rem","container-max":"1320px","gutter-mobile":"1rem","gutter-desktop":"1.5rem","space-sm":"0.5rem","space-2xl":"3rem","space-md":"1rem","space-lg":"1.5rem","sidebar-width":"260px","padding-card":"1.5rem","space-xs":"0.25rem"},fontFamily:{"display-lg":["Plus Jakarta Sans"],"body-lg":["Plus Jakarta Sans"],"headline-lg-mobile":["Plus Jakarta Sans"],"label-md":["Inter"],"body-md":["Plus Jakarta Sans"],"label-sm":["Inter"],"display-lg-mobile":["Plus Jakarta Sans"],"headline-lg":["Plus Jakarta Sans"],"body-sm-bilingual":["Plus Jakarta Sans"],"title-md":["Plus Jakarta Sans"],"headline-md":["Plus Jakarta Sans"]},fontSize:{"display-lg":["48px",{lineHeight:"56px",letterSpacing:"-0.02em",fontWeight:"700"}],"body-lg":["16px",{lineHeight:"26px",fontWeight:"400"}],"headline-lg-mobile":["24px",{lineHeight:"32px",letterSpacing:"-0.01em",fontWeight:"600"}],"label-md":["13px",{lineHeight:"18px",letterSpacing:"0.01em",fontWeight:"600"}],"body-md":["14px",{lineHeight:"22px",fontWeight:"400"}],"label-sm":["11px",{lineHeight:"16px",letterSpacing:"0.03em",fontWeight:"600"}],"display-lg-mobile":["34px",{lineHeight:"42px",letterSpacing:"-0.02em",fontWeight:"700"}],"headline-lg":["32px",{lineHeight:"40px",letterSpacing:"-0.015em",fontWeight:"600"}],"body-sm-bilingual":["12px",{lineHeight:"18px",fontWeight:"400"}],"title-md":["18px",{lineHeight:"26px",fontWeight:"600"}],"headline-md":["22px",{lineHeight:"30px",letterSpacing:"-0.01em",fontWeight:"600"}]}}}}</script></head><body class="bg-surface font-body-md text-body-md text-on-surface antialiased"><aside class="fixed left-0 top-0 h-screen w-sidebar-width bg-surface-card shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-50 flex flex-col justify-between select-none"><div class="flex flex-col flex-1 overflow-y-auto"><div class="h-16 px-space-lg flex items-center gap-space-sm"><div class="w-9 h-9 rounded-xl bg-surface-mint-subtle flex items-center justify-center"><span class="material-symbols-outlined text-primary-container text-[22px]">volunteer_activism</span></div><div class="flex flex-col"><span class="font-title-md text-title-md font-bold text-on-surface tracking-tight leading-none">CareFlow</span><span class="font-label-sm text-label-sm text-on-surface-variant font-medium mt-space-xs">Clinical Care Team</span></div></div><nav class="px-space-sm py-space-md flex flex-col gap-space-xs" data-active-classes="bg-surface-mint-subtle text-primary-container font-semibold border-l-4 border-primary-container"><a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-md text-body-md" data-path="dashboard" href="#"><span class="material-symbols-outlined text-[20px]">grid_view</span><span>Dashboard</span></a><a aria-current="page" class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg transition-all bg-surface-mint-subtle text-primary-container font-semibold border-l-4 border-primary-container" data-path="patients" href="#"><span class="material-symbols-outlined text-[20px]">group</span><span>Patients</span></a><a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-md text-body-md" data-path="appointments" href="#"><span class="material-symbols-outlined text-[20px]">calendar_today</span><span>Appointments</span></a><a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-md text-body-md" data-path="documents" href="#"><span class="material-symbols-outlined text-[20px]">folder_open</span><span>Documents</span></a><a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-md text-body-md" data-path="care-summaries" href="#"><span class="material-symbols-outlined text-[20px]">clinical_notes</span><span>Care Summaries</span></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-md text-body-md" data-path="alerts" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[20px]">notifications_active</span><span>Alerts</span></div><span class="w-2 h-2 rounded-full bg-error"></span></a><a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-md text-body-md" data-path="analytics" href="#"><span class="material-symbols-outlined text-[20px]">insights</span><span>Analytics</span></a></nav></div><div class="p-space-sm flex flex-col gap-space-xs bg-surface-card"><nav class="flex flex-col gap-space-xs" data-active-classes="bg-surface-mint-subtle text-primary-container font-semibold"><a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-md text-body-md" data-path="settings" href="#"><span class="material-symbols-outlined text-[20px]">settings</span><span>Settings</span></a><a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-md text-body-md" data-path="help-support" href="#"><span class="material-symbols-outlined text-[20px]">help_center</span><span>Help &amp; Support</span></a></nav><div class="mt-space-sm p-space-sm rounded-xl bg-surface-container-low flex items-center gap-space-sm"><div class="relative flex-shrink-0"><div class="w-9 h-9 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div><span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-secondary ring-2 ring-surface-card"></span></div><div class="flex flex-col min-w-0 flex-1"><span class="font-label-md text-label-md text-on-surface font-semibold truncate">Dr. Ananya Iyer</span><div class="flex items-center gap-1 mt-0.5"><span class="w-1.5 h-1.5 rounded-full bg-secondary"></span><span class="font-label-sm text-label-sm text-on-surface-variant truncate">Desk 4 • OPD Session</span></div></div></div></div></aside><div class="pl-sidebar-width min-h-screen flex flex-col justify-between"><header class="fixed top-0 left-sidebar-width right-0 h-16 bg-surface-card/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-40 px-gutter-desktop flex items-center justify-between"><div class="flex items-center flex-1 max-w-md"><div class="w-full flex items-center gap-space-sm px-space-md py-space-xs rounded-full bg-surface-container-low text-on-surface-variant"><span class="material-symbols-outlined text-[18px]">search</span><input class="w-full bg-transparent border-none outline-none font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant" placeholder="Search patients, UHID... ⌘K" readonly="" type="text"><kbd class="font-label-sm text-label-sm px-space-xs py-0.5 rounded bg-surface-card text-on-surface-variant shadow-[0_1px_2px_rgba(0,0,0,0.05)]">⌘K</kbd></div></div><div class="flex items-center gap-space-md"><div class="flex items-center p-0.5 rounded-full bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm"><button class="px-space-sm py-1 rounded-full bg-surface-card text-primary-container font-semibold shadow-[0_1px_2px_rgba(0,0,0,0.05)]" type="button">English</button><button class="px-space-sm py-1 rounded-full hover:text-on-surface transition-colors font-body-sm-bilingual text-body-sm-bilingual" type="button">हिन्दी</button></div><button class="relative p-space-xs rounded-full text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors" type="button"><span class="material-symbols-outlined text-[22px]">notifications</span><span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-error"></span></button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></header><main class="relative pt-16 w-full flex-1 bg-surface"><div class="flex flex-col w-full">
+<div class="w-full max-w-[1320px] mx-auto px-gutter-desktop py-space-md flex flex-col gap-space-md">
+<!-- 1. Breadcrumb / Navigation Back Action -->
+<nav aria-label="Breadcrumb" class="flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<a class="inline-flex items-center gap-1 font-label-md text-label-md text-primary-container hover:text-primary transition-colors group cursor-pointer" href="../careflow_website_w04_patient_list/code.html">
+<span class="material-symbols-outlined text-[18px] group-hover:-translate-x-0.5 transition-transform">arrow_back</span>
+<span>Patients</span>
+</a>
+<span class="text-outline-variant font-label-md text-label-md">/</span>
+<span class="font-label-md text-label-md text-on-surface font-semibold">Aarav Sharma</span>
+<span class="font-body-sm-bilingual text-body-sm-bilingual text-on-surface-variant font-normal">मरीज / आरव शर्मा</span>
+</div>
+<div class="hidden sm:flex items-center gap-space-xs text-on-surface-variant font-label-sm text-label-sm">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span>ABHA Sync: Active</span>
+<span class="text-outline-variant">•</span>
+<span>ABHA ID: 91-8472-3021-9920</span>
+</div>
+</nav>
+<!-- 2. Patient Header Card -->
+<header class="w-full bg-surface-card rounded-2xl p-space-lg shadow-[0_2px_8px_-2px_rgba(13,110,110,0.04),0_1px_4px_-1px_rgba(15,30,54,0.03)] flex flex-col lg:flex-row lg:items-center justify-between gap-space-lg">
+<div class="flex flex-wrap sm:flex-nowrap items-center gap-space-md">
+<!-- Patient Initials Avatar -->
+<div class="relative flex-shrink-0">
+<div class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-surface-mint flex items-center justify-center shadow-inner">
+<span class="font-headline-lg text-headline-lg font-bold text-primary-container tracking-tight">AS</span>
+</div>
+<span class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-surface-card flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-secondary text-[16px]">verified</span>
+</span>
+</div>
+<!-- Identity & Metadata -->
+<div class="flex flex-col min-w-0">
+<div class="flex flex-wrap items-center gap-x-space-sm gap-y-1">
+<h1 class="font-headline-lg text-headline-lg font-bold text-on-surface tracking-tight">Aarav Sharma</h1>
+<span class="font-body-md text-body-md text-on-surface-variant">आरव शर्मा</span>
+<span class="px-2.5 py-0.5 rounded-full bg-surface-container font-label-sm text-label-sm text-tertiary-container font-semibold">
+              #CF-1024
+            </span>
+</div>
+<div class="flex flex-wrap items-center gap-x-space-md gap-y-1.5 mt-space-xs font-body-md text-body-md text-on-surface-variant">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px] text-primary">person</span>
+<span>Male • 28 years</span>
+</div>
+<span class="text-outline-variant">•</span>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px] text-primary">schedule</span>
+<span>Last intake: Today, 09:24 AM</span>
+</div>
+<span class="text-outline-variant">•</span>
+<div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-mint-subtle">
+<span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+<span class="font-label-md text-label-md text-on-secondary-container font-semibold">Ready for review</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Action Buttons -->
+<div class="flex items-center gap-space-sm flex-wrap sm:flex-nowrap">
+<button class="h-11 px-6 rounded-full bg-primary-container text-on-primary font-label-md text-label-md font-semibold flex items-center gap-2 hover:bg-primary shadow-sm hover:shadow transition-all group cursor-pointer" type="button" onclick="CareFlow.navigate(6)">
+<span>Start review</span>
+<span class="font-body-sm-bilingual text-body-sm-bilingual font-normal opacity-90">(समीक्षा शुरू करें)</span>
+<span class="material-symbols-outlined text-[18px] group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
+</button>
+<div class="relative">
+<button class="h-11 px-4 rounded-full bg-surface-card text-on-surface font-label-md text-label-md font-semibold flex items-center gap-1.5 shadow-sm hover:bg-surface-container-low transition-colors" id="moreMenuBtn" type="button">
+<span>More</span>
+<span class="material-symbols-outlined text-[18px]">expand_more</span>
+</button>
+</div>
+</div>
+</header>
+<!-- 3. Main 2-Column Clinical Grid (7:5 ratio) -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-lg items-start">
+<!-- LEFT COLUMN (7 Cols) -->
+<div class="lg:col-span-7 flex flex-col gap-space-lg">
+<!-- Patient Overview Card -->
+<section class="bg-surface-card rounded-2xl p-space-lg shadow-[0_2px_8px_-2px_rgba(13,110,110,0.04),0_1px_4px_-1px_rgba(15,30,54,0.03)]">
+<div class="flex items-center justify-between pb-space-sm mb-space-md">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-xl bg-surface-mint-subtle flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined text-[20px]">badge</span>
+</div>
+<div class="flex items-center gap-2">
+<h2 class="font-title-md text-title-md text-on-surface font-bold">Patient overview</h2>
+<span class="font-body-sm-bilingual text-body-sm-bilingual text-on-surface-variant">मरीज का विवरण</span>
+</div>
+</div>
+<button class="text-primary-container hover:text-primary font-label-sm text-label-sm font-semibold flex items-center gap-1" type="button">
+<span class="material-symbols-outlined text-[16px]">edit</span>
+<span>Edit</span>
+</button>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-y-space-md gap-x-space-lg">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant font-medium">Full Name</span>
+<span class="font-body-lg text-body-lg text-on-surface font-semibold mt-0.5">Aarav Sharma</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant font-medium">Patient ID</span>
+<span class="font-body-lg text-body-lg text-on-surface font-semibold mt-0.5">CF-1024</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant font-medium">Date of Birth</span>
+<span class="font-body-lg text-body-lg text-on-surface font-semibold mt-0.5">12 March 1998 (28y)</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant font-medium">Gender</span>
+<span class="font-body-lg text-body-lg text-on-surface font-semibold mt-0.5">Male (पुरुष)</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant font-medium">Phone Number</span>
+<div class="flex items-center gap-2 mt-0.5">
+<span class="font-body-lg text-body-lg text-on-surface font-semibold">+91 98765 •••••</span>
+<span class="material-symbols-outlined text-outline-variant text-[16px]" title="Masked for privacy">lock</span>
+</div>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant font-medium">Preferred Language</span>
+<span class="font-body-lg text-body-lg text-on-surface font-semibold mt-0.5">English (अंग्रेज़ी)</span>
+</div>
+<div class="sm:col-span-2 flex flex-col pt-space-xs">
+<span class="font-label-sm text-label-sm text-on-surface-variant font-medium">Emergency Contact</span>
+<div class="flex items-center gap-2 mt-0.5">
+<span class="font-body-lg text-body-lg text-on-surface font-semibold">Sunita Sharma</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container font-label-sm text-label-sm text-on-surface-variant">Mother</span>
+<span class="font-body-md text-body-md text-on-surface-variant">+91 98200 •••••</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Current Concern Card -->
+<section class="bg-surface-card rounded-2xl p-space-lg shadow-[0_2px_8px_-2px_rgba(13,110,110,0.04),0_1px_4px_-1px_rgba(15,30,54,0.03)]">
+<div class="flex items-center justify-between pb-space-sm mb-space-md">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-xl bg-surface-mint-subtle flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined text-[20px]">stethoscope</span>
+</div>
+<div class="flex items-center gap-2">
+<h2 class="font-title-md text-title-md text-on-surface font-bold">Current concern</h2>
+<span class="font-body-sm-bilingual text-body-sm-bilingual text-on-surface-variant">वर्तमान समस्या</span>
+</div>
+</div>
+<span class="font-label-sm text-label-sm px-2.5 py-1 rounded-full bg-surface-mint font-semibold text-on-secondary-container">
+              Self-Intake Verified
+            </span>
+</div>
+<div class="bg-surface-container-low rounded-xl p-space-md flex flex-col gap-1 mb-space-md">
+<div class="flex items-center justify-between">
+<span class="font-headline-md text-headline-md font-bold text-on-surface tracking-tight">Fever &amp; cough (3 days)</span>
+<span class="font-label-sm text-label-sm font-semibold text-primary-container bg-surface-card px-2.5 py-1 rounded-full shadow-sm">Acute episode</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant">
+              Reported during today's mobile patient self-intake at 09:24 AM via CareFlow Mobile Assistant.
+            </p>
+</div>
+<!-- Structured Clinical Chips -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-space-sm">
+<div class="p-space-sm rounded-xl bg-surface-container-lowest flex items-start gap-space-sm shadow-sm">
+<span class="material-symbols-outlined text-primary text-[20px] mt-0.5">sentiment_dissatisfied</span>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Severity</span>
+<span class="font-body-md text-body-md font-semibold text-on-surface">Moderate (Face Scale 4/10)</span>
+</div>
+</div>
+<div class="p-space-sm rounded-xl bg-surface-container-lowest flex items-start gap-space-sm shadow-sm">
+<span class="material-symbols-outlined text-primary text-[20px] mt-0.5">timelapse</span>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Duration</span>
+<span class="font-body-md text-body-md font-semibold text-on-surface">3 days (Ongoing)</span>
+</div>
+</div>
+<div class="p-space-sm rounded-xl bg-surface-container-lowest flex items-start gap-space-sm shadow-sm">
+<span class="material-symbols-outlined text-primary text-[20px] mt-0.5">trending_up</span>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Onset</span>
+<span class="font-body-md text-body-md font-semibold text-on-surface">Gradual progression</span>
+</div>
+</div>
+<div class="p-space-sm rounded-xl bg-surface-container-lowest flex items-start gap-space-sm shadow-sm">
+<span class="material-symbols-outlined text-primary text-[20px] mt-0.5">grain</span>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Associated symptoms</span>
+<span class="font-body-md text-body-md font-semibold text-on-surface">Mild throat irritation, Body aches</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Important Information Attention Banner -->
+<section class="bg-amber-50/90 rounded-2xl p-space-md flex gap-space-md items-start shadow-sm">
+<div class="w-10 h-10 rounded-xl bg-amber-100 flex-shrink-0 flex items-center justify-center text-amber-800">
+<span class="material-symbols-outlined text-[24px]">warning</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<h3 class="font-label-md text-label-md font-bold text-amber-950 uppercase tracking-wider">Important information</h3>
+<span class="font-body-sm-bilingual text-body-sm-bilingual text-amber-800">महत्वपूर्ण जानकारी</span>
+</div>
+<p class="font-body-md text-body-md text-amber-900 mt-1 leading-relaxed">
+              Patient reported persistent fever for 3 days with temperature peaking at <strong>101.4°F</strong>. Guarding checked negative on mobile intake. Review temperature chart and chest auscultation before consultation.
+            </p>
+</div>
+</section>
+<!-- Recent Intake Summary Card -->
+<section class="bg-surface-card rounded-2xl p-space-lg shadow-[0_2px_8px_-2px_rgba(13,110,110,0.04),0_1px_4px_-1px_rgba(15,30,54,0.03)]">
+<div class="flex items-center justify-between pb-space-sm mb-space-md">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-xl bg-surface-mint-subtle flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined text-[20px]">assignment_turned_in</span>
+</div>
+<div class="flex items-center gap-2">
+<h2 class="font-title-md text-title-md text-on-surface font-bold">Recent intake</h2>
+<span class="font-body-sm-bilingual text-body-sm-bilingual text-on-surface-variant">हाल का इनटेक</span>
+</div>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Ref: IN-2024-889</span>
+</div>
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-space-md py-space-xs">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant font-medium">Chief Complaint</span>
+<span class="font-body-md text-body-md text-on-surface font-semibold mt-1">Fever &amp; cough</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant font-medium">Duration</span>
+<span class="font-body-md text-body-md text-on-surface font-semibold mt-1">3 days</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant font-medium">Pain / Severity</span>
+<span class="font-body-md text-body-md text-on-surface font-semibold mt-1">Moderate (Score 4)</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant font-medium">Documents</span>
+<span class="font-body-md text-body-md text-on-surface font-semibold mt-1">2 uploaded</span>
+</div>
+</div>
+<!-- Audio Voice Playback Widget Preview -->
+<div class="mt-space-md p-space-md rounded-xl bg-surface-container-low flex flex-col sm:flex-row items-center justify-between gap-space-md">
+<div class="flex items-center gap-3 w-full sm:w-auto">
+<button class="w-10 h-10 rounded-full bg-primary-container text-on-primary flex items-center justify-center shadow hover:bg-primary transition-colors flex-shrink-0" id="playVoiceBtn" type="button">
+<span class="material-symbols-outlined text-[22px]">play_arrow</span>
+</button>
+<div class="flex flex-col min-w-0">
+<span class="font-label-md text-label-md font-semibold text-on-surface truncate">Voice note: Symptom description</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Recorded in English • 0:42 duration</span>
+</div>
+</div>
+<!-- Waveform SVG visual -->
+<div class="flex items-center gap-1 w-full sm:w-48 h-8 px-2 bg-surface-card rounded-lg shadow-inner">
+<div class="w-1 h-3 rounded-full bg-primary-container"></div>
+<div class="w-1 h-5 rounded-full bg-primary-container"></div>
+<div class="w-1 h-2 rounded-full bg-primary-container"></div>
+<div class="w-1 h-6 rounded-full bg-secondary"></div>
+<div class="w-1 h-4 rounded-full bg-primary-container"></div>
+<div class="w-1 h-7 rounded-full bg-primary-container"></div>
+<div class="w-1 h-3 rounded-full bg-secondary"></div>
+<div class="w-1 h-5 rounded-full bg-primary-container"></div>
+<div class="w-1 h-2 rounded-full bg-outline-variant"></div>
+<div class="w-1 h-4 rounded-full bg-outline-variant"></div>
+<div class="w-1 h-6 rounded-full bg-outline-variant"></div>
+<div class="w-1 h-3 rounded-full bg-outline-variant"></div>
+<div class="w-1 h-1 rounded-full bg-outline-variant"></div>
+</div>
+</div>
+<!-- Card Footer Action -->
+<div class="mt-space-md pt-space-sm flex justify-end">
+<a class="inline-flex items-center gap-1 font-label-md text-label-md font-semibold text-primary-container hover:text-primary transition-colors group" href="#">
+<span>View full intake</span>
+<span class="font-body-sm-bilingual text-body-sm-bilingual font-normal">(पूरा इनटेक देखें)</span>
+<span class="material-symbols-outlined text-[18px] group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
+</a>
+</div>
+</section>
+</div>
+<!-- RIGHT COLUMN (5 Cols) -->
+<div class="lg:col-span-5 flex flex-col gap-space-lg">
+<!-- Intake Status Card -->
+<section class="bg-surface-card rounded-2xl p-space-lg shadow-[0_2px_8px_-2px_rgba(13,110,110,0.04),0_1px_4px_-1px_rgba(15,30,54,0.03)]">
+<div class="flex items-center justify-between pb-space-sm mb-space-md">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-xl bg-surface-mint-subtle flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined text-[20px]">fact_check</span>
+</div>
+<div class="flex items-center gap-2">
+<h2 class="font-title-md text-title-md text-on-surface font-bold">Intake status</h2>
+<span class="font-body-sm-bilingual text-body-sm-bilingual text-on-surface-variant">इनटेक स्थिति</span>
+</div>
+</div>
+<span class="font-label-sm text-label-sm font-semibold text-secondary">Step 4 of 4</span>
+</div>
+<!-- Step progress checklist -->
+<div class="flex flex-col gap-space-sm">
+<!-- Step 1 -->
+<div class="flex items-center justify-between p-space-sm rounded-xl bg-surface-container-low">
+<div class="flex items-center gap-3">
+<div class="w-7 h-7 rounded-full bg-surface-mint flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[18px]">check</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-semibold">1. Identity</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">ABHA OTP Verified</span>
+</div>
+</div>
+<span class="font-label-sm text-label-sm text-secondary font-semibold">Complete</span>
+</div>
+<!-- Step 2 -->
+<div class="flex items-center justify-between p-space-sm rounded-xl bg-surface-container-low">
+<div class="flex items-center gap-3">
+<div class="w-7 h-7 rounded-full bg-surface-mint flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[18px]">check</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-semibold">2. Questions</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Symptom &amp; Duration</span>
+</div>
+</div>
+<span class="font-label-sm text-label-sm text-secondary font-semibold">Complete</span>
+</div>
+<!-- Step 3 -->
+<div class="flex items-center justify-between p-space-sm rounded-xl bg-surface-container-low">
+<div class="flex items-center gap-3">
+<div class="w-7 h-7 rounded-full bg-surface-mint flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[18px]">check</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-semibold">3. Documents</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Prescription &amp; Lab OCR</span>
+</div>
+</div>
+<span class="font-label-sm text-label-sm text-secondary font-semibold">Complete</span>
+</div>
+<!-- Step 4 -->
+<div class="flex items-center justify-between p-space-sm rounded-xl bg-surface-mint-subtle">
+<div class="flex items-center gap-3">
+<div class="w-7 h-7 rounded-full bg-primary-container flex items-center justify-center text-on-primary">
+<span class="w-2.5 h-2.5 rounded-full bg-on-primary"></span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-primary-container font-bold">4. Review</span>
+<span class="font-label-sm text-label-sm text-on-secondary-container">Care team triage</span>
+</div>
+</div>
+<span class="font-label-sm text-label-sm px-2.5 py-0.5 rounded-full bg-surface-card text-primary-container font-semibold shadow-sm">
+                Ready for review
+              </span>
+</div>
+</div>
+</section>
+<!-- Documents Card -->
+<section class="bg-surface-card rounded-2xl p-space-lg shadow-[0_2px_8px_-2px_rgba(13,110,110,0.04),0_1px_4px_-1px_rgba(15,30,54,0.03)]">
+<div class="flex items-center justify-between pb-space-sm mb-space-md">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-xl bg-surface-mint-subtle flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined text-[20px]">description</span>
+</div>
+<div class="flex items-center gap-2">
+<h2 class="font-title-md text-title-md text-on-surface font-bold">Documents</h2>
+<span class="font-body-sm-bilingual text-body-sm-bilingual text-on-surface-variant">दस्तावेज़</span>
+</div>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">2 files</span>
+</div>
+<div class="flex flex-col gap-space-sm">
+<!-- Doc 1: Lab Report -->
+<div class="p-space-sm rounded-xl bg-surface-container-low hover:bg-surface-container transition-colors flex items-center justify-between">
+<div class="flex items-center gap-3 min-w-0">
+<div class="w-10 h-10 rounded-lg bg-surface-card flex items-center justify-center text-primary-container shadow-sm flex-shrink-0">
+<span class="material-symbols-outlined text-[22px]">biotech</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-md text-label-md text-on-surface font-semibold truncate">Lab Report — Aarav Sharma</span>
+<div class="flex items-center gap-1.5 font-label-sm text-label-sm text-on-surface-variant">
+<span>2 pages</span>
+<span>•</span>
+<span class="text-secondary font-medium">Processed (Digitized OCR)</span>
+</div>
+</div>
+</div>
+<button class="w-8 h-8 rounded-full hover:bg-surface-card flex items-center justify-center text-on-surface-variant hover:text-primary-container transition-colors" title="View document" type="button">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+</div>
+<!-- Doc 2: Prescription -->
+<div class="p-space-sm rounded-xl bg-surface-container-low hover:bg-surface-container transition-colors flex items-center justify-between">
+<div class="flex items-center gap-3 min-w-0">
+<div class="w-10 h-10 rounded-lg bg-surface-card flex items-center justify-center text-primary-container shadow-sm flex-shrink-0">
+<span class="material-symbols-outlined text-[22px]">prescriptions</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-md text-label-md text-on-surface font-semibold truncate">Prescription — Aarav Sharma</span>
+<div class="flex items-center gap-1.5 font-label-sm text-label-sm text-on-surface-variant">
+<span>1 page</span>
+<span>•</span>
+<span class="text-primary font-medium">Ready for review</span>
+</div>
+</div>
+</div>
+<button class="w-8 h-8 rounded-full hover:bg-surface-card flex items-center justify-center text-on-surface-variant hover:text-primary-container transition-colors" title="View document" type="button">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+</div>
+</div>
+<div class="mt-space-md pt-space-xs flex justify-end">
+<a class="inline-flex items-center gap-1 font-label-md text-label-md font-semibold text-primary-container hover:text-primary transition-colors group" href="#">
+<span>View all documents</span>
+<span class="material-symbols-outlined text-[18px] group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
+</a>
+</div>
+</section>
+<!-- Care Summary Card -->
+<section class="bg-surface-card rounded-2xl p-space-lg shadow-[0_2px_8px_-2px_rgba(13,110,110,0.04),0_1px_4px_-1px_rgba(15,30,54,0.03)]">
+<div class="flex items-center justify-between pb-space-sm mb-space-md">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-xl bg-surface-mint-subtle flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined text-[20px]">summarize</span>
+</div>
+<div class="flex items-center gap-2">
+<h2 class="font-title-md text-title-md text-on-surface font-bold">Care summary</h2>
+<span class="font-body-sm-bilingual text-body-sm-bilingual text-on-surface-variant">केयर सारांश</span>
+</div>
+</div>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-surface-container text-tertiary-container font-semibold">AI Generated Draft</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface leading-relaxed">
+            28-year-old male presenting with acute 3-day history of low-to-moderate grade fever and non-productive cough. No reported breathing difficulty or chest tightness. Routine antipyretics taken yesterday with temporary relief.
+          </p>
+<div class="mt-space-md pt-space-xs flex justify-end">
+<a class="inline-flex items-center gap-1 font-label-md text-label-md font-semibold text-primary-container hover:text-primary transition-colors group" href="#">
+<span>View full summary</span>
+<span class="material-symbols-outlined text-[18px] group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
+</a>
+</div>
+</section>
+<!-- Recent Activity Timeline -->
+<section class="bg-surface-card rounded-2xl p-space-lg shadow-[0_2px_8px_-2px_rgba(13,110,110,0.04),0_1px_4px_-1px_rgba(15,30,54,0.03)]">
+<div class="flex items-center justify-between pb-space-sm mb-space-md">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-xl bg-surface-mint-subtle flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined text-[20px]">history</span>
+</div>
+<div class="flex items-center gap-2">
+<h2 class="font-title-md text-title-md text-on-surface font-bold">Recent activity</h2>
+<span class="font-body-sm-bilingual text-body-sm-bilingual text-on-surface-variant">हाल की गतिविधि</span>
+</div>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Today</span>
+</div>
+<!-- Vertical Timeline with Teal Node Dots -->
+<div class="relative pl-6 flex flex-col gap-space-md before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-surface-mint">
+<div class="relative flex flex-col">
+<span class="absolute -left-[27px] top-1.5 w-3 h-3 rounded-full bg-primary-container ring-4 ring-surface-card"></span>
+<span class="font-label-sm text-label-sm font-semibold text-on-surface-variant">09:35 AM</span>
+<span class="font-body-md text-body-md font-medium text-on-surface">Dossier assigned to Desk 4 (Dr. Ananya Iyer)</span>
+</div>
+<div class="relative flex flex-col">
+<span class="absolute -left-[27px] top-1.5 w-3 h-3 rounded-full bg-secondary ring-4 ring-surface-card"></span>
+<span class="font-label-sm text-label-sm font-semibold text-on-surface-variant">09:31 AM</span>
+<span class="font-body-md text-body-md font-medium text-on-surface">OCR extraction &amp; validation finished</span>
+</div>
+<div class="relative flex flex-col">
+<span class="absolute -left-[27px] top-1.5 w-3 h-3 rounded-full bg-secondary ring-4 ring-surface-card"></span>
+<span class="font-label-sm text-label-sm font-semibold text-on-surface-variant">09:28 AM</span>
+<span class="font-body-md text-body-md font-medium text-on-surface">2 documents uploaded &amp; scanned</span>
+</div>
+<div class="relative flex flex-col">
+<span class="absolute -left-[27px] top-1.5 w-3 h-3 rounded-full bg-secondary ring-4 ring-surface-card"></span>
+<span class="font-label-sm text-label-sm font-semibold text-on-surface-variant">09:24 AM</span>
+<span class="font-body-md text-body-md font-medium text-on-surface">Patient intake completed via Mobile Self-Intake</span>
+</div>
+</div>
+</section>
+<!-- Care Team Card -->
+<section class="bg-surface-card rounded-2xl p-space-lg shadow-[0_2px_8px_-2px_rgba(13,110,110,0.04),0_1px_4px_-1px_rgba(15,30,54,0.03)]">
+<div class="flex items-center justify-between pb-space-sm mb-space-md">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-xl bg-surface-mint-subtle flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined text-[20px]">group</span>
+</div>
+<div class="flex items-center gap-2">
+<h2 class="font-title-md text-title-md text-on-surface font-bold">Care team</h2>
+<span class="font-body-sm-bilingual text-body-sm-bilingual text-on-surface-variant">केयर टीम</span>
+</div>
+</div>
+<span class="font-label-sm text-label-sm text-secondary font-semibold">2 Active</span>
+</div>
+<div class="flex flex-col gap-space-sm">
+<!-- Member 1 -->
+<div class="p-space-sm rounded-xl bg-surface-container-low flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-on-primary font-semibold text-sm">
+                  PS
+                </div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-bold">Dr. Priya Sharma</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Primary care physician</span>
+</div>
+</div>
+<span class="w-2.5 h-2.5 rounded-full bg-secondary" title="Online"></span>
+</div>
+<!-- Member 2 -->
+<div class="p-space-sm rounded-xl bg-surface-container-low flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-tertiary-container flex items-center justify-center text-on-tertiary font-semibold text-sm">
+                  NA
+                </div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-bold">Nurse Ananya</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Care coordinator</span>
+</div>
+</div>
+<span class="w-2.5 h-2.5 rounded-full bg-secondary" title="Online"></span>
+</div>
+</div>
+<div class="mt-space-md pt-space-xs flex justify-end">
+<a class="inline-flex items-center gap-1 font-label-md text-label-md font-semibold text-primary-container hover:text-primary transition-colors group cursor-pointer" onclick="CareFlow.navigate(14)" href="javascript:void(0)">
+<span>View care team</span>
+<span class="material-symbols-outlined text-[18px] group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
+</a>
+</div>
+</section>
+</div>
+</div>
+<!-- 4. Patient Bottom Quick Actions Bar -->
+<div class="w-full bg-surface-card rounded-2xl p-space-md shadow-[0_2px_8px_-2px_rgba(13,110,110,0.04),0_1px_4px_-1px_rgba(15,30,54,0.03)] flex flex-wrap items-center justify-between gap-space-md mt-space-sm">
+<div class="flex items-center gap-space-sm">
+<span class="w-3 h-3 rounded-full bg-secondary"></span>
+<span class="font-label-md text-label-md text-on-surface font-semibold">Triage Desk Actions</span>
+<span class="hidden sm:inline text-outline-variant">•</span>
+<span class="hidden sm:inline font-body-sm-bilingual text-body-sm-bilingual text-on-surface-variant">रोगी संबंधित त्वरित कार्रवाई</span>
+</div>
+<div class="flex items-center gap-space-sm flex-wrap">
+<button class="h-10 px-5 rounded-full bg-surface-card text-primary-container border border-border-teal font-label-md text-label-md font-semibold hover:bg-surface-mint-subtle transition-colors flex items-center gap-1.5 shadow-sm cursor-pointer" type="button" onclick="CareFlow.navigate(6)">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+<span>View intake</span>
+</button>
+<button class="h-10 px-5 rounded-full bg-surface-card text-primary-container border border-border-teal font-label-md text-label-md font-semibold hover:bg-surface-mint-subtle transition-colors flex items-center gap-1.5 shadow-sm cursor-pointer" type="button" onclick="CareFlow.navigate(9)">
+<span class="material-symbols-outlined text-[18px]">folder_shared</span>
+<span>View documents</span>
+</button>
+<button class="h-10 px-5 rounded-full bg-surface-card text-primary-container border border-border-teal font-label-md text-label-md font-semibold hover:bg-surface-mint-subtle transition-colors flex items-center gap-1.5 shadow-sm cursor-pointer" type="button" onclick="CareFlow.showToast('Clinical note added to Aarav Sharma records', 'success')">
+<span class="material-symbols-outlined text-[18px]">note_add</span>
+<span>+ Add clinical note</span>
+</button>
+<button class="h-10 px-6 rounded-full bg-primary-container text-on-primary font-label-md text-label-md font-semibold hover:bg-primary shadow-sm hover:shadow transition-all flex items-center gap-1.5 group cursor-pointer" type="button" onclick="CareFlow.navigate(6)">
+<span>Start review</span>
+<span class="material-symbols-outlined text-[18px] group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- 5. Privacy & Compliance Assurance Banner -->
+<div class="w-full py-space-sm flex items-center justify-center text-center">
+<div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-secondary text-[16px]">lock</span>
+<span>Patient information is protected</span>
+<span class="text-outline-variant">•</span>
+<span class="font-medium text-primary-container">ABDM M1/M2/M3 Compliant</span>
+<span class="text-outline-variant">•</span>
+<span class="font-body-sm-bilingual text-body-sm-bilingual">मरीजों की जानकारी सुरक्षित है</span>
+</div>
+</div>
+</div>
+</div>
+<script>
+  (function() {
+    const playBtn = document.getElementById('playVoiceBtn');
+    let isPlaying = false;
+    if (playBtn) {
+      playBtn.addEventListener('click', function() {
+        isPlaying = !isPlaying;
+        const icon = playBtn.querySelector('.material-symbols-outlined');
+        if (icon) {
+          icon.textContent = isPlaying ? 'pause' : 'play_arrow';
+        }
+      });
+    }
+
+    const moreBtn = document.getElementById('moreMenuBtn');
+    if (moreBtn) {
+      moreBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        alert('More actions: Print Dossier, Export FHIR / ABDM Bundle, Transfer to Specialist');
+      });
+    }
+  })();
+</script></main><footer class="w-full bg-surface-card py-space-md shadow-[0_-1px_8px_rgba(0,0,0,0.02)]"><div class="w-full px-gutter-desktop flex flex-col md:flex-row items-center justify-between gap-space-xs font-label-sm text-label-sm text-on-surface-variant"><div class="flex items-center gap-space-xs"><span class="material-symbols-outlined text-secondary text-[16px]">verified_user</span><span class="font-semibold text-on-surface">CareFlow Clinical Security</span><span class="hidden sm:inline">•</span><span class="hidden sm:inline">Patient information is protected</span><span class="hidden sm:inline">•</span><span class="hidden sm:inline font-medium text-primary-container">ABDM M1/M2/M3 Compliant</span></div><div class="font-body-sm-bilingual text-body-sm-bilingual text-on-surface-variant">मरीजों की जानकारी सुरक्षित एवं गोपनीय है</div></div></footer></div><div id="snapdom-sandbox" data-snapdom-sandbox="true" aria-hidden="true" style="position: absolute; left: -9999px; top: -9999px; width: 0px; height: 0px; overflow: hidden;"></div></body></html>

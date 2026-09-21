@@ -1,0 +1,25 @@
+id: koshtha
+label: Koshtha (bowel tendency)
+framework: custom
+description: >
+  The patient's own report of their usual bowel tendency. The Vaidya grades Koshtha (Mridu,
+  Madhyama, Krura) in Dashavidha Pariksha; this answer is shown beside it as reference only.
+source: >
+  Engineer-authored patient-reportable item. PENDING_EXPERT_REVIEW.
+triggers:
+  - koshtha
+  - bowel tendency
+  - कोष्ठ
+
+slots:
+  - id: koshtha_tendency
+    type: enum
+    required: true
+    input: [voice, chips]
+    prompt:
+      en: Over the years, what has your bowel tendency usually been?
+      hi: सालों से आपका पेट साफ़ होना आमतौर पर कैसा रहा है?
+    options:
+      - { value: loose, icon: water_drop, label: { en: "Loose, passes easily", hi: "ढीला, आसानी से हो जाता है" } }
+      - { value: normal, icon: check_circle, label: { en: "Normal, regular", hi: "सामान्य, नियमित" } }
+      - { value: hard, icon: deblur, label: { en: "Hard, often constipated", hi: "सख़्त, अक्सर कब्ज़" } }

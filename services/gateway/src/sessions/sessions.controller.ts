@@ -15,6 +15,8 @@ import { ZodValidationPipe } from "../common/zod-validation.pipe";
 import {
   type AnswerSubmissionDto,
   AnswerSubmissionSchema,
+  type CreateSessionDto,
+  CreateSessionSchema,
   type ConsentBodyDto,
   ConsentBodySchema,
   LanguageBodySchema,
@@ -33,9 +35,10 @@ export class SessionsController {
 
   @Post()
   @HttpCode(201)
-  create() {
+  create(@Body(new ZodValidationPipe(CreateSessionSchema)) body: CreateSessionDto) {
     return this.sessions.create(
       this.config.get("PUBLIC_WEB_URL", { infer: true }),
+      body.department,
     );
   }
 

@@ -1,0 +1,78 @@
+id: vihara
+label: Vihara (lifestyle)
+framework: custom
+description: >
+  Daily routine as the patient reports it: night sleep, daytime sleep, kind of work, exercise and
+  stress. Reported facts only — no assessment.
+source: >
+  Engineer-authored patient-reportable items (Ahara–Vihara block, docs/07-ayush-terminology.md).
+  PENDING_EXPERT_REVIEW.
+triggers:
+  - vihara
+  - lifestyle
+  - विहार
+  - दिनचर्या
+
+slots:
+  - id: vihara_sleep
+    type: enum
+    required: true
+    input: [voice, chips]
+    prompt:
+      en: How many hours do you sleep at night?
+      hi: आप रात में कितने घंटे सोते हैं?
+    options:
+      - { value: under_5, icon: bedtime_off, label: { en: "Less than 5 hours", hi: "5 घंटे से कम" } }
+      - { value: five_to_seven, icon: bedtime, label: { en: "5 to 7 hours", hi: "5 से 7 घंटे" } }
+      - { value: seven_to_nine, icon: hotel, label: { en: "7 to 9 hours", hi: "7 से 9 घंटे" } }
+      - { value: over_9, icon: night_sight_auto, label: { en: "More than 9 hours", hi: "9 घंटे से ज़्यादा" } }
+
+  - id: vihara_day_sleep
+    type: enum
+    required: true
+    input: [voice, chips]
+    prompt:
+      en: Do you sleep during the daytime?
+      hi: क्या आप दिन में सोते हैं?
+    options:
+      - { value: never, icon: wb_sunny, label: { en: "No", hi: "नहीं" } }
+      - { value: sometimes, icon: sentiment_neutral, label: { en: "Sometimes", hi: "कभी-कभी" } }
+      - { value: daily, icon: airline_seat_flat, label: { en: "Every day", hi: "रोज़" } }
+
+  - id: vihara_work_type
+    type: enum
+    required: true
+    input: [voice, chips]
+    prompt:
+      en: What kind of work do you do?
+      hi: आप किस तरह का काम करते हैं?
+    options:
+      - { value: desk, icon: computer, label: { en: "Desk or sitting work", hi: "बैठकर काम" } }
+      - { value: standing, icon: accessibility_new, label: { en: "Mostly standing or walking", hi: "ज़्यादातर खड़े रहकर या चलकर" } }
+      - { value: physical, icon: engineering, label: { en: "Heavy physical labour", hi: "भारी शारीरिक श्रम" } }
+      - { value: home, icon: home, label: { en: "Household work", hi: "घर का काम" } }
+      - { value: not_working, icon: weekend, label: { en: "Not working", hi: "काम नहीं करता/करती" } }
+
+  - id: vihara_exercise
+    type: enum
+    required: true
+    input: [voice, chips]
+    prompt:
+      en: How often do you exercise or walk for exercise?
+      hi: आप कितनी बार व्यायाम या टहलने जाते हैं?
+    options:
+      - { value: never, icon: block, label: { en: "Never", hi: "कभी नहीं" } }
+      - { value: weekly, icon: calendar_view_week, label: { en: "1 to 3 days a week", hi: "हफ़्ते में 1 से 3 दिन" } }
+      - { value: most_days, icon: directions_walk, label: { en: "Most days", hi: "ज़्यादातर दिन" } }
+
+  - id: vihara_stress
+    type: enum
+    required: true
+    input: [voice, chips]
+    prompt:
+      en: How stressed have you been feeling lately?
+      hi: हाल में आप कितना तनाव महसूस कर रहे हैं?
+    options:
+      - { value: none, icon: sentiment_very_satisfied, label: { en: "Not stressed", hi: "तनाव नहीं" } }
+      - { value: some, icon: sentiment_neutral, label: { en: "Some stress", hi: "थोड़ा तनाव" } }
+      - { value: high, icon: sentiment_very_dissatisfied, label: { en: "A lot of stress", hi: "बहुत तनाव" } }

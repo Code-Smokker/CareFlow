@@ -1,0 +1,37 @@
+id: ahara_shakti
+label: Ahara Shakti (capacity to eat)
+framework: custom
+description: >
+  How much the patient eats and how hungry they feel. Shown to the Vaidya beside the Abhyavarana
+  Shakti grading as reference only; the Pravara / Madhyama / Avara grading is the Vaidya's.
+source: >
+  Engineer-authored patient-reportable items. PENDING_EXPERT_REVIEW.
+triggers:
+  - ahara shakti
+  - capacity to eat
+  - आहार शक्ति
+
+slots:
+  - id: ahara_shakti_quantity
+    type: enum
+    required: true
+    input: [voice, chips]
+    prompt:
+      en: How much do you eat at a main meal?
+      hi: मुख्य भोजन में आप कितना खाते हैं?
+    options:
+      - { value: small, icon: rice_bowl, label: { en: "Small — a few mouthfuls, then full", hi: "कम — थोड़ा खाते ही पेट भर जाता है" } }
+      - { value: usual, icon: restaurant, label: { en: "A normal amount", hi: "सामान्य मात्रा" } }
+      - { value: large, icon: lunch_dining, label: { en: "Large — I can eat a lot", hi: "ज़्यादा — बहुत खा लेता/लेती हूँ" } }
+
+  - id: ahara_shakti_hunger
+    type: enum
+    required: true
+    input: [voice, chips]
+    prompt:
+      en: How often do you feel properly hungry?
+      hi: आपको सही मायने में भूख कितनी बार लगती है?
+    options:
+      - { value: rarely, icon: hourglass_bottom, label: { en: "Rarely", hi: "बहुत कम" } }
+      - { value: at_mealtimes, icon: schedule, label: { en: "At mealtimes", hi: "खाने के समय पर" } }
+      - { value: often, icon: notifications_active, label: { en: "Often, between meals too", hi: "अक्सर, बीच में भी" } }

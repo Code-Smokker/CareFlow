@@ -1,0 +1,635 @@
+<!DOCTYPE html><html lang="en" class="h-full scroll-smooth"><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0" name="viewport"><title>Patients List - CareFlow Clinical</title><script src="../careflow-nav.js" defer></script><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"><link href="https://fonts.googleapis.com" rel="preconnect"><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"text-muted":"#3E4948","status-error":"#BA1A1A","on-primary-fixed":"#002020","surface-bright":"#f9f9ff","secondary-container":"#9cefdf","secondary-fixed-dim":"#83d5c6","on-surface-variant":"#3e4948","surface-container-lowest":"#ffffff","surface":"#f9f9ff","tertiary":"#015362","on-primary-fixed-variant":"#004f50","on-error-container":"#93000a","background":"#f9f9ff","primary-fixed":"#a0f0f0","surface-container-highest":"#d7e3ff","on-tertiary-fixed":"#001f26","inverse-primary":"#84d4d3","canvas-bg":"#FAF8FF","on-background":"#0c1b33","tertiary-fixed-dim":"#92d0e2","on-primary-container":"#9dedec","primary":"#005454","on-secondary-fixed-variant":"#005047","navy-dark":"#0B192C","tertiary-container":"#296b7a","surface-mint":"#D1F2E8","inverse-surface":"#223149","secondary":"#006b5f","on-tertiary-container":"#abe9fb","surface-card":"#FFFFFF","border-subtle":"#E2E8F0","outline":"#6e7979","border-teal":"#D6E4E2","inverse-on-surface":"#ecf0ff","surface-dim":"#ccdafa","surface-tint":"#016a6a","primary-fixed-dim":"#84d4d3","on-surface":"#0c1b33","surface-variant":"#d7e3ff","on-primary":"#ffffff","error-container":"#ffdad6","surface-container":"#e8eeff","on-secondary-fixed":"#00201c","on-tertiary-fixed-variant":"#004e5c","on-tertiary":"#ffffff","status-error-bg":"#FFDAD6","on-error":"#ffffff","tertiary-fixed":"#aeecfe","secondary-fixed":"#9ff2e2","surface-container-high":"#dfe8ff","primary-container":"#0d6e6e","error":"#ba1a1a","on-secondary":"#ffffff","surface-container-low":"#f1f3ff","surface-mint-subtle":"#E6F7F2","on-secondary-container":"#0b6f63","outline-variant":"#bec9c8"},"borderRadius":{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},"spacing":{"space-lg":"1.5rem","gutter-mobile":"1rem","space-md":"1rem","sidebar-width":"260px","container-max":"1320px","padding-card":"1.5rem","space-sm":"0.5rem","space-xs":"0.25rem","space-xl":"2rem","space-2xl":"3rem","gutter-desktop":"1.5rem"},"fontFamily":{"headline-md":["Plus Jakarta Sans"],"label-md":["Inter"],"label-sm":["Inter"],"headline-lg-mobile":["Plus Jakarta Sans"],"display-lg-mobile":["Plus Jakarta Sans"],"title-md":["Plus Jakarta Sans"],"body-sm-bilingual":["Plus Jakarta Sans"],"headline-lg":["Plus Jakarta Sans"],"body-md":["Plus Jakarta Sans"],"body-lg":["Plus Jakarta Sans"],"display-lg":["Plus Jakarta Sans"]},"fontSize":{"headline-md":["22px",{"lineHeight":"30px","letterSpacing":"-0.01em","fontWeight":"600"}],"label-md":["13px",{"lineHeight":"18px","letterSpacing":"0.01em","fontWeight":"600"}],"label-sm":["11px",{"lineHeight":"16px","letterSpacing":"0.03em","fontWeight":"600"}],"headline-lg-mobile":["24px",{"lineHeight":"32px","letterSpacing":"-0.01em","fontWeight":"600"}],"display-lg-mobile":["34px",{"lineHeight":"42px","letterSpacing":"-0.02em","fontWeight":"700"}],"title-md":["18px",{"lineHeight":"26px","fontWeight":"600"}],"body-sm-bilingual":["12px",{"lineHeight":"18px","fontWeight":"400"}],"headline-lg":["32px",{"lineHeight":"40px","letterSpacing":"-0.015em","fontWeight":"600"}],"body-md":["14px",{"lineHeight":"22px","fontWeight":"400"}],"body-lg":["16px",{"lineHeight":"26px","fontWeight":"400"}],"display-lg":["48px",{"lineHeight":"56px","letterSpacing":"-0.02em","fontWeight":"700"}]}}}}</script></head><body class="bg-background font-body-md text-on-surface antialiased"><aside class="hidden lg:flex fixed left-0 top-0 h-full w-[260px] bg-surface-card border-r border-border-subtle z-50 flex-col justify-between p-space-md"><div class="flex flex-col gap-space-md"><div class="flex items-center gap-space-sm px-space-sm py-space-xs"><div class="w-9 h-9 rounded-xl bg-surface-mint-subtle flex items-center justify-center text-primary-container"><span class="material-symbols-outlined text-[24px]">favorite</span></div><div class="flex flex-col"><span class="font-headline-md text-title-md text-navy-dark leading-none tracking-tight">CareFlow</span><span class="font-label-sm text-label-sm text-text-muted leading-none mt-1">Clinical Care Team</span></div></div><nav class="flex flex-col gap-1" data-active-classes="bg-surface-mint-subtle text-primary-container font-semibold rounded-xl"><a aria-current="page" class="flex items-center gap-space-sm px-space-md py-2.5 transition-all bg-surface-mint-subtle text-primary-container font-semibold rounded-xl" data-path="dashboard" href="#"><span class="material-symbols-outlined text-[20px]">grid_view</span><span class="font-body-md text-body-md">Dashboard</span></a><a class="flex items-center gap-space-sm px-space-md py-2.5 rounded-xl text-on-surface-variant hover:bg-surface-mint-subtle hover:text-primary-container transition-all" data-path="patients" href="#"><span class="material-symbols-outlined text-[20px]">personal_injury</span><span class="font-body-md text-body-md">Patients</span></a><a class="flex items-center gap-space-sm px-space-md py-2.5 rounded-xl text-on-surface-variant hover:bg-surface-mint-subtle hover:text-primary-container transition-all" data-path="appointments" href="#"><span class="material-symbols-outlined text-[20px]">calendar_today</span><span class="font-body-md text-body-md">Appointments</span></a><a class="flex items-center gap-space-sm px-space-md py-2.5 rounded-xl text-on-surface-variant hover:bg-surface-mint-subtle hover:text-primary-container transition-all" data-path="documents" href="#"><span class="material-symbols-outlined text-[20px]">clinical_notes</span><span class="font-body-md text-body-md">Documents</span></a><a class="flex items-center gap-space-sm px-space-md py-2.5 rounded-xl text-on-surface-variant hover:bg-surface-mint-subtle hover:text-primary-container transition-all" data-path="care-summaries" href="#"><span class="material-symbols-outlined text-[20px]">receipt_long</span><span class="font-body-md text-body-md">Care Summaries</span></a><a class="flex items-center justify-between px-space-md py-2.5 rounded-xl text-on-surface-variant hover:bg-surface-mint-subtle hover:text-primary-container transition-all" data-path="alerts" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[20px]">emergency</span><span class="font-body-md text-body-md">Alerts</span></div><span class="w-2 h-2 rounded-full bg-status-error"></span></a><a class="flex items-center gap-space-sm px-space-md py-2.5 rounded-xl text-on-surface-variant hover:bg-surface-mint-subtle hover:text-primary-container transition-all" data-path="analytics" href="#"><span class="material-symbols-outlined text-[20px]">monitoring</span><span class="font-body-md text-body-md">Analytics</span></a></nav></div><div class="flex flex-col gap-space-md pt-space-md border-t border-border-subtle"><nav class="flex flex-col gap-1" data-active-classes="bg-surface-mint-subtle text-primary-container font-semibold rounded-xl"><a class="flex items-center gap-space-sm px-space-md py-2 rounded-xl text-on-surface-variant hover:bg-surface-mint-subtle hover:text-primary-container transition-all" data-path="settings" href="#"><span class="material-symbols-outlined text-[20px]">settings</span><span class="font-body-md text-body-md">Settings</span></a><a class="flex items-center gap-space-sm px-space-md py-2 rounded-xl text-on-surface-variant hover:bg-surface-mint-subtle hover:text-primary-container transition-all" data-path="help-support" href="#"><span class="material-symbols-outlined text-[20px]">contact_support</span><span class="font-body-md text-body-md">Help &amp; Support</span></a></nav><div class="p-space-sm rounded-xl bg-canvas-bg border border-border-subtle flex items-center gap-space-sm"><div class="w-9 h-9 rounded-full bg-primary-container text-on-primary flex items-center justify-center flex-shrink-0 font-label-md text-label-md">AI</div><div class="flex flex-col min-w-0 flex-1"><span class="font-headline-md text-label-md text-navy-dark truncate leading-snug">Dr. Ananya Iyer</span><div class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-secondary-container"></span><span class="font-label-sm text-label-sm text-text-muted truncate">Desk 4 • OPD Session</span></div></div></div></div></aside><div class="lg:pl-[260px]"><header class="fixed top-0 right-0 left-0 lg:left-[260px] h-16 bg-surface-card/90 backdrop-blur-md border-b border-border-subtle z-40 px-space-md lg:px-space-xl flex items-center justify-between gap-space-md"><div class="flex items-center gap-space-sm"><button class="lg:hidden text-navy-dark hover:text-primary p-1.5 rounded-lg hover:bg-surface-mint-subtle" type="button"><span class="material-symbols-outlined text-[24px]">menu</span></button><div class="flex flex-col"><h1 class="font-headline-md text-title-md text-navy-dark leading-tight">Good morning, Care Team</h1><p class="hidden sm:block font-body-sm-bilingual text-body-sm-bilingual text-text-muted leading-none mt-0.5">Here's what needs your attention today.</p></div></div><div class="flex items-center gap-space-sm"><div class="relative hidden md:flex items-center"><span class="material-symbols-outlined absolute left-3 text-text-muted text-[18px]">search</span><input class="h-10 pl-9 pr-12 rounded-full border border-border-subtle bg-canvas-bg font-body-md text-body-md text-navy-dark placeholder:text-text-muted focus:outline-none focus:border-primary-container focus:ring-2 focus:ring-primary-container/20 w-64 lg:w-72 transition-all" placeholder="Search patients, UHID..." type="text"><kbd class="absolute right-3 px-1.5 py-0.5 text-[10px] font-label-sm text-text-muted bg-surface-card border border-border-subtle rounded-md">⌘K</kbd></div><button class="relative p-2 rounded-full hover:bg-surface-mint-subtle text-text-muted hover:text-navy-dark transition-colors" type="button"><span class="material-symbols-outlined text-[20px]">notifications</span><span class="absolute top-1.5 right-1.5 w-2 h-2 bg-status-error rounded-full ring-2 ring-surface-card"></span></button><div class="flex items-center bg-surface-mint-subtle rounded-full p-1 border border-border-teal"><button class="px-2.5 py-0.5 rounded-full font-label-sm text-label-sm font-semibold bg-surface-card text-navy-dark shadow-sm" type="button">English</button><button class="px-2 py-0.5 rounded-full font-label-sm text-label-sm text-secondary hover:text-navy-dark transition-colors" type="button">हिन्दी</button></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></header><main class="w-full pt-16 bg-background min-h-screen"><div class="flex flex-col w-full">lex-col w-full">
+<div class="w-full max-w-[1240px] mx-auto px-space-md lg:px-space-xl py-space-lg flex flex-col gap-space-lg">
+<!-- 1. PAGE HEADER -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-space-md">
+<div class="flex flex-col gap-1.5">
+<div class="inline-flex items-center gap-1.5 w-fit px-3 py-0.5 rounded-full bg-surface-mint text-primary font-label-sm text-label-sm font-semibold tracking-wide uppercase">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+<span>PATIENTS • मरीज</span>
+</div>
+<div class="flex items-baseline gap-2.5">
+<h1 class="font-headline-lg text-headline-lg text-navy-dark tracking-tight">Patients</h1>
+<span class="font-headline-md text-title-md text-text-muted font-normal">मरीज</span>
+</div>
+<p class="font-body-md text-body-md text-text-muted">
+          View and manage patient information and care intake records. <span class="text-text-muted/80">• मरीजों की जानकारी और केयर इनटेक रिकॉर्ड देखें और प्रबंधित करें।</span>
+</p>
+</div>
+<div class="flex items-center gap-space-sm flex-shrink-0">
+<button class="h-11 px-6 rounded-full bg-primary-container hover:bg-primary text-on-primary font-label-md text-label-md flex items-center justify-center gap-2 shadow-sm transition-all hover:shadow-md active:scale-95 cursor-pointer" type="button" onclick="CareFlow.openAddPatientModal()">
+<span class="material-symbols-outlined text-[20px]">person_add</span>
+<span>+ Add patient (+ नया मरीज)</span>
+</button>
+</div>
+</div>
+<!-- 2. SEARCH + FILTER CONTROL BAR -->
+<div class="bg-surface-card rounded-2xl p-4 shadow-sm flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+<div class="relative w-full lg:w-80">
+<span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-text-muted text-[19px]">search</span>
+<input class="w-full h-10 pl-10 pr-4 rounded-xl bg-surface-container-low font-body-md text-body-md text-navy-dark placeholder:text-text-muted/70 focus:bg-surface-card focus:outline-none transition-all" id="patient-search-input" placeholder="Search by name, ID or phone (मरीज खोजें)..." type="text">
+</div>
+<div class="flex items-center gap-2.5 flex-wrap flex-1 lg:justify-start">
+<!-- Status Filter Dropdown -->
+<div class="relative">
+<button class="h-9 px-3.5 rounded-xl bg-surface-container-low hover:bg-surface-mint-subtle text-navy-dark font-label-md text-label-md flex items-center gap-1.5 transition-colors" type="button">
+<span class="text-text-muted font-normal">Status:</span>
+<span class="font-semibold">All (स्थिति)</span>
+<span class="material-symbols-outlined text-[16px] text-text-muted">expand_more</span>
+</button>
+</div>
+<!-- Care Team Filter Dropdown -->
+<div class="relative">
+<button class="h-9 px-3.5 rounded-xl bg-surface-container-low hover:bg-surface-mint-subtle text-navy-dark font-label-md text-label-md flex items-center gap-1.5 transition-colors" type="button">
+<span class="text-text-muted font-normal">Care team:</span>
+<span class="font-semibold">All (केयर टीम)</span>
+<span class="material-symbols-outlined text-[16px] text-text-muted">expand_more</span>
+</button>
+</div>
+<!-- Date Filter Dropdown -->
+<div class="relative">
+<button class="h-9 px-3.5 rounded-xl bg-surface-container-low hover:bg-surface-mint-subtle text-navy-dark font-label-md text-label-md flex items-center gap-1.5 transition-colors" type="button">
+<span class="text-text-muted font-normal">Date:</span>
+<span class="font-semibold">Today (आज)</span>
+<span class="material-symbols-outlined text-[16px] text-text-muted">expand_more</span>
+</button>
+</div>
+<!-- Clear filters button -->
+<button class="text-primary hover:text-primary-container font-label-md text-label-md font-semibold hover:underline ml-auto py-1 px-2 transition-colors" type="button">
+          Clear filters (फ़िल्टर हटाएं)
+        </button>
+</div>
+</div>
+<!-- 3. PATIENT SUMMARY STATS -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-space-md">
+<!-- Card 1: Total Patients -->
+<div class="bg-surface-card rounded-2xl p-5 shadow-sm flex items-start justify-between">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-text-muted">Total patients (कुल मरीज)</span>
+<span class="font-headline-lg text-headline-lg text-navy-dark font-bold mt-1 leading-none">1,248</span>
+<span class="font-body-sm-bilingual text-body-sm-bilingual text-text-muted mt-2">Registered in OPD</span>
+</div>
+<div class="w-11 h-11 rounded-2xl bg-surface-mint text-primary-container flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[24px]">group</span>
+</div>
+</div>
+<!-- Card 2: Today's intake -->
+<div class="bg-surface-card rounded-2xl p-5 shadow-sm flex items-start justify-between">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-text-muted">Today's intake (आज का इनटेक)</span>
+<span class="font-headline-lg text-headline-lg text-navy-dark font-bold mt-1 leading-none">24</span>
+<div class="flex items-center gap-1 mt-2 text-primary font-label-sm text-label-sm font-semibold">
+<span class="material-symbols-outlined text-[15px]">trending_up</span>
+<span>8% from yesterday</span>
+</div>
+</div>
+<div class="w-11 h-11 rounded-2xl bg-surface-mint-subtle text-primary flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[24px]">assignment_turned_in</span>
+</div>
+</div>
+<!-- Card 3: Needs attention -->
+<div class="bg-surface-card rounded-2xl p-5 shadow-sm flex items-start justify-between">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-text-muted">Needs attention (ध्यान देने योग्य)</span>
+<span class="font-headline-lg text-headline-lg text-status-error font-bold mt-1 leading-none">08</span>
+<span class="font-body-sm-bilingual text-body-sm-bilingual text-status-error mt-2 font-medium">Urgent triage / red flags</span>
+</div>
+<div class="w-11 h-11 rounded-2xl bg-status-error-bg text-status-error flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[24px]">warning</span>
+</div>
+</div>
+<!-- Card 4: Completed -->
+<div class="bg-surface-card rounded-2xl p-5 shadow-sm flex items-start justify-between">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-text-muted">Completed (पूर्ण)</span>
+<span class="font-headline-lg text-headline-lg text-navy-dark font-bold mt-1 leading-none">16</span>
+<span class="font-body-sm-bilingual text-body-sm-bilingual text-text-muted mt-2">Handed over to clinician</span>
+</div>
+<div class="w-11 h-11 rounded-2xl bg-surface-mint text-secondary flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[24px]">task_alt</span>
+</div>
+</div>
+</div>
+<!-- 4. MAIN PATIENT LIST CONTAINER -->
+<div class="bg-surface-card rounded-2xl shadow-sm overflow-hidden flex flex-col">
+<!-- Container Header -->
+<div class="px-6 py-4 flex items-center justify-between bg-surface-card">
+<div class="flex items-center gap-3">
+<span class="font-title-md text-title-md text-navy-dark font-bold">All patients (सभी मरीज)</span>
+<span class="hidden sm:inline-block w-1.5 h-1.5 rounded-full bg-text-muted/30"></span>
+<span class="hidden sm:inline-block font-body-sm-bilingual text-body-sm-bilingual text-text-muted">Active Triage Queue</span>
+</div>
+<span class="px-3 py-1 rounded-full bg-surface-container text-tertiary font-label-sm text-label-sm font-semibold">
+          Showing 24 patients today
+        </span>
+</div>
+<!-- DESKTOP TABLE -->
+<div class="hidden md:block overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low text-text-muted font-label-sm text-label-sm uppercase tracking-wider">
+<th class="py-3 px-6 font-semibold" scope="col">PATIENT (मरीज)</th>
+<th class="py-3 px-6 font-semibold" scope="col">CHIEF REASON / SYMPTOMS (लक्षण)</th>
+<th class="py-3 px-6 font-semibold" scope="col">LAST INTAKE</th>
+<th class="py-3 px-6 font-semibold" scope="col">STATUS</th>
+<th class="py-3 px-6 font-semibold" scope="col">CARE TEAM</th>
+<th class="py-3 px-6 font-semibold text-right" scope="col">ACTION</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container-low">
+<!-- Row 1: Aarav Sharma -->
+<tr class="hover:bg-surface-mint-subtle/40 transition-colors cursor-pointer" onclick="CareFlow.navigate(5)">
+<td class="py-4 px-6 min-w-[220px]">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-mint text-primary-container font-label-md text-label-md font-bold flex items-center justify-center flex-shrink-0">
+                    AS
+                  </div>
+<div class="flex flex-col min-w-0">
+<span class="font-title-md text-body-lg font-bold text-navy-dark truncate">Aarav Sharma</span>
+<div class="flex items-center gap-1.5 text-text-muted font-label-sm text-label-sm">
+<span class="font-mono text-primary font-semibold">#CF-1024</span>
+<span>•</span>
+<span>32 Y, Male</span>
+</div>
+</div>
+</div>
+</td>
+<td class="py-4 px-6 max-w-xs">
+<div class="flex flex-col">
+<span class="font-body-md text-body-md text-navy-dark font-medium">Fever &amp; cough (3 days)</span>
+<span class="font-body-sm-bilingual text-body-sm-bilingual text-text-muted flex items-center gap-1 mt-0.5">
+<span class="material-symbols-outlined text-[13px] text-primary">smartphone</span>
+                    Mobile Self-Intake
+                  </span>
+</div>
+</td>
+<td class="py-4 px-6 whitespace-nowrap">
+<div class="flex flex-col">
+<span class="font-body-md text-body-md text-navy-dark font-medium">Today, 09:24 AM</span>
+<span class="font-label-sm text-label-sm text-text-muted">Wait: 22 mins</span>
+</div>
+</td>
+<td class="py-4 px-6 whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-mint-subtle text-primary font-label-sm text-label-sm font-semibold">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+                  Ready for review
+                </span>
+</td>
+<td class="py-4 px-6 whitespace-nowrap">
+<div class="flex flex-col">
+<span class="font-body-md text-body-md text-navy-dark font-medium">Desk 4</span>
+<span class="font-body-sm-bilingual text-body-sm-bilingual text-text-muted">Dr. Ananya Iyer</span>
+</div>
+</td>
+<td class="py-4 px-6 text-right whitespace-nowrap">
+<button class="px-4 py-1.5 rounded-full text-primary-container font-label-md text-label-md font-semibold hover:bg-surface-mint-subtle transition-all cursor-pointer" type="button" onclick="event.stopPropagation(); CareFlow.navigate(5)">
+                  View → (देखें)
+                </button>
+</td>
+</tr>
+<!-- Row 2: Meera Patel -->
+<tr class="hover:bg-surface-mint-subtle/40 transition-colors cursor-pointer" onclick="CareFlow.navigate(5)">
+<td class="py-4 px-6 min-w-[220px]">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-container text-tertiary font-label-md text-label-md font-bold flex items-center justify-center flex-shrink-0">
+                    MP
+                  </div>
+<div class="flex flex-col min-w-0">
+<span class="font-title-md text-body-lg font-bold text-navy-dark truncate">Meera Patel</span>
+<div class="flex items-center gap-1.5 text-text-muted font-label-sm text-label-sm">
+<span class="font-mono text-primary font-semibold">#CF-1025</span>
+<span>•</span>
+<span>54 Y, Female</span>
+</div>
+</div>
+</div>
+</td>
+<td class="py-4 px-6 max-w-xs">
+<div class="flex flex-col">
+<span class="font-body-md text-body-md text-navy-dark font-medium">Routine Diabetes Follow-up</span>
+<span class="font-body-sm-bilingual text-body-sm-bilingual text-text-muted mt-0.5">HbA1c: 7.8% • Fasting review</span>
+</div>
+</td>
+<td class="py-4 px-6 whitespace-nowrap">
+<div class="flex flex-col">
+<span class="font-body-md text-body-md text-navy-dark font-medium">Today, 10:02 AM</span>
+<span class="font-label-sm text-label-sm text-text-muted">Wait: 14 mins</span>
+</div>
+</td>
+<td class="py-4 px-6 whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container text-tertiary font-label-sm text-label-sm font-semibold">
+<span class="w-2 h-2 rounded-full bg-tertiary-container animate-pulse"></span>
+                  In progress
+                </span>
+</td>
+<td class="py-4 px-6 whitespace-nowrap">
+<div class="flex flex-col">
+<span class="font-body-md text-body-md text-navy-dark font-medium">Teleconsult Bay</span>
+<span class="font-body-sm-bilingual text-body-sm-bilingual text-text-muted">Nurse Preeti</span>
+</div>
+</td>
+<td class="py-4 px-6 text-right whitespace-nowrap">
+<button class="px-4 py-1.5 rounded-full text-primary-container font-label-md text-label-md font-semibold hover:bg-surface-mint-subtle transition-all cursor-pointer" type="button" onclick="event.stopPropagation(); CareFlow.navigate(5)">
+                  View → (देखें)
+                </button>
+</td>
+</tr>
+<!-- Row 3: Rohan Kumar -->
+<tr class="bg-status-error-bg/20 hover:bg-status-error-bg/30 transition-colors cursor-pointer" onclick="CareFlow.navigate(13)">
+<td class="py-4 px-6 min-w-[220px]">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-status-error-bg text-status-error font-label-md text-label-md font-bold flex items-center justify-center flex-shrink-0">
+                    RK
+                  </div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-2">
+<span class="font-title-md text-body-lg font-bold text-navy-dark truncate">Rohan Kumar</span>
+<span class="w-2 h-2 rounded-full bg-status-error animate-ping"></span>
+</div>
+<div class="flex items-center gap-1.5 text-text-muted font-label-sm text-label-sm">
+<span class="font-mono text-primary font-semibold">#CF-1026</span>
+<span>•</span>
+<span>45 Y, Male</span>
+</div>
+</div>
+</div>
+</td>
+<td class="py-4 px-6 max-w-xs">
+<div class="flex flex-col">
+<span class="font-body-md text-body-md text-status-error font-bold">Acute Abdominal pain</span>
+<span class="font-body-sm-bilingual text-body-sm-bilingual text-text-muted mt-0.5">Face scale: 6/10 • Guarding observed</span>
+</div>
+</td>
+<td class="py-4 px-6 whitespace-nowrap">
+<div class="flex flex-col">
+<span class="font-body-md text-body-md text-navy-dark font-medium">Today, 10:18 AM</span>
+<span class="font-label-sm text-label-sm text-status-error font-semibold">Priority Triage</span>
+</div>
+</td>
+<td class="py-4 px-6 whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-status-error-bg text-status-error font-label-sm text-label-sm font-semibold">
+<span class="material-symbols-outlined text-[14px]">report</span>
+                  Needs attention
+                </span>
+</td>
+<td class="py-4 px-6 whitespace-nowrap">
+<div class="flex flex-col">
+<span class="font-body-md text-body-md text-navy-dark font-medium">Urgent Bay</span>
+<span class="font-body-sm-bilingual text-body-sm-bilingual text-status-error font-semibold">Dr. Mehra (Triage)</span>
+</div>
+</td>
+<td class="py-4 px-6 text-right whitespace-nowrap">
+<button class="px-4 py-1.5 rounded-full text-status-error font-label-md text-label-md font-semibold hover:bg-status-error-bg/60 transition-all cursor-pointer" type="button" onclick="event.stopPropagation(); CareFlow.navigate(13)">
+                  View → (देखें)
+                </button>
+</td>
+</tr>
+<!-- Row 4: Ananya Singh -->
+<tr class="hover:bg-surface-mint-subtle/40 transition-colors cursor-pointer" onclick="CareFlow.navigate(5)">
+<td class="py-4 px-6 min-w-[220px]">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-container-low text-text-muted font-label-md text-label-md font-bold flex items-center justify-center flex-shrink-0">
+                    AS
+                  </div>
+<div class="flex flex-col min-w-0">
+<span class="font-title-md text-body-lg font-bold text-navy-dark truncate">Ananya Singh</span>
+<div class="flex items-center gap-1.5 text-text-muted font-label-sm text-label-sm">
+<span class="font-mono text-primary font-semibold">#CF-1027</span>
+<span>•</span>
+<span>28 Y, Female</span>
+</div>
+</div>
+</div>
+</td>
+<td class="py-4 px-6 max-w-xs">
+<div class="flex flex-col">
+<span class="font-body-md text-body-md text-navy-dark font-medium">Headache &amp; Document Review</span>
+<span class="font-body-sm-bilingual text-body-sm-bilingual text-text-muted mt-0.5">Discharge Summary cross-checked</span>
+</div>
+</td>
+<td class="py-4 px-6 whitespace-nowrap">
+<div class="flex flex-col">
+<span class="font-body-md text-body-md text-navy-dark font-medium">Yesterday, 04:15 PM</span>
+<span class="font-label-sm text-label-sm text-text-muted">Discharged</span>
+</div>
+</td>
+<td class="py-4 px-6 whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container text-text-muted font-label-sm text-label-sm font-semibold">
+<span class="material-symbols-outlined text-[14px]">done_all</span>
+                  Completed
+                </span>
+</td>
+<td class="py-4 px-6 whitespace-nowrap">
+<div class="flex flex-col">
+<span class="font-body-md text-body-md text-navy-dark font-medium">Primary Care</span>
+<span class="font-body-sm-bilingual text-body-sm-bilingual text-text-muted">Dr. Sharma</span>
+</div>
+</td>
+<td class="py-4 px-6 text-right whitespace-nowrap">
+<button class="px-4 py-1.5 rounded-full text-primary-container font-label-md text-label-md font-semibold hover:bg-surface-mint-subtle transition-all cursor-pointer" type="button" onclick="event.stopPropagation(); CareFlow.navigate(5)">
+                  View → (देखें)
+                </button>
+</td>
+</tr>
+<!-- Row 5: Vikram Rao -->
+<tr class="bg-status-error-bg/20 hover:bg-status-error-bg/30 transition-colors cursor-pointer" onclick="CareFlow.navigate(13)">
+<td class="py-4 px-6 min-w-[220px]">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-status-error-bg text-status-error font-label-md text-label-md font-bold flex items-center justify-center flex-shrink-0">
+                    VR
+                  </div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-2">
+<span class="font-title-md text-body-lg font-bold text-navy-dark truncate">Vikram Rao</span>
+<span class="w-2 h-2 rounded-full bg-status-error"></span>
+</div>
+<div class="flex items-center gap-1.5 text-text-muted font-label-sm text-label-sm">
+<span class="font-mono text-primary font-semibold">#CF-1028</span>
+<span>•</span>
+<span>61 Y, Male</span>
+</div>
+</div>
+</div>
+</td>
+<td class="py-4 px-6 max-w-xs">
+<div class="flex flex-col">
+<span class="font-body-md text-body-md text-status-error font-bold">Shortness of breath on exertion</span>
+<span class="font-body-sm-bilingual text-body-sm-bilingual text-text-muted mt-0.5">SpO2: 93% on room air</span>
+</div>
+</td>
+<td class="py-4 px-6 whitespace-nowrap">
+<div class="flex flex-col">
+<span class="font-body-md text-body-md text-navy-dark font-medium">Today, 11:05 AM</span>
+<span class="font-label-sm text-label-sm text-status-error font-semibold">Needs ECG</span>
+</div>
+</td>
+<td class="py-4 px-6 whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-status-error-bg text-status-error font-label-sm text-label-sm font-semibold">
+<span class="material-symbols-outlined text-[14px]">warning</span>
+                  Important
+                </span>
+</td>
+<td class="py-4 px-6 whitespace-nowrap">
+<div class="flex flex-col">
+<span class="font-body-md text-body-md text-navy-dark font-medium">Desk 2</span>
+<span class="font-body-sm-bilingual text-body-sm-bilingual text-status-error font-semibold">Dr. Sen (Cardio)</span>
+</div>
+</td>
+<td class="py-4 px-6 text-right whitespace-nowrap">
+<button class="px-4 py-1.5 rounded-full text-status-error font-label-md text-label-md font-semibold hover:bg-status-error-bg/60 transition-all cursor-pointer" type="button" onclick="event.stopPropagation(); CareFlow.navigate(13)">
+                  View → (देखें)
+                </button>
+</td>
+</tr>
+<!-- Row 6: Priya Nair -->
+<tr class="hover:bg-surface-mint-subtle/40 transition-colors cursor-pointer" onclick="CareFlow.navigate(5)">
+<td class="py-4 px-6 min-w-[220px]">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-mint text-primary-container font-label-md text-label-md font-bold flex items-center justify-center flex-shrink-0">
+                    PN
+                  </div>
+<div class="flex flex-col min-w-0">
+<span class="font-title-md text-body-lg font-bold text-navy-dark truncate">Priya Nair</span>
+<div class="flex items-center gap-1.5 text-text-muted font-label-sm text-label-sm">
+<span class="font-mono text-primary font-semibold">#CF-1029</span>
+<span>•</span>
+<span>39 Y, Female</span>
+</div>
+</div>
+</div>
+</td>
+<td class="py-4 px-6 max-w-xs">
+<div class="flex flex-col">
+<span class="font-body-md text-body-md text-navy-dark font-medium">Hypertension Review</span>
+<span class="font-body-sm-bilingual text-body-sm-bilingual text-text-muted mt-0.5">BP: 138/88 mmHg • Medication titration</span>
+</div>
+</td>
+<td class="py-4 px-6 whitespace-nowrap">
+<div class="flex flex-col">
+<span class="font-body-md text-body-md text-navy-dark font-medium">Today, 11:30 AM</span>
+<span class="font-label-sm text-label-sm text-text-muted">Wait: 6 mins</span>
+</div>
+</td>
+<td class="py-4 px-6 whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-mint-subtle text-primary font-label-sm text-label-sm font-semibold">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+                  Ready for review
+                </span>
+</td>
+<td class="py-4 px-6 whitespace-nowrap">
+<div class="flex flex-col">
+<span class="font-body-md text-body-md text-navy-dark font-medium">Desk 4</span>
+<span class="font-body-sm-bilingual text-body-sm-bilingual text-text-muted">Dr. Ananya Iyer</span>
+</div>
+</td>
+<td class="py-4 px-6 text-right whitespace-nowrap">
+<button class="px-4 py-1.5 rounded-full text-primary-container font-label-md text-label-md font-semibold hover:bg-surface-mint-subtle transition-all cursor-pointer" type="button" onclick="event.stopPropagation(); CareFlow.navigate(5)">
+                  View → (देखें)
+                </button>
+</td>
+</tr>
+<!-- Row 7: Rajesh Kumar -->
+<tr class="hover:bg-surface-mint-subtle/40 transition-colors cursor-pointer" onclick="CareFlow.navigate(5)">
+<td class="py-4 px-6 min-w-[220px]">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-mint text-primary-container font-label-md text-label-md font-bold flex items-center justify-center flex-shrink-0">
+                    RK
+                  </div>
+<div class="flex flex-col min-w-0">
+<span class="font-title-md text-body-lg font-bold text-navy-dark truncate">Rajesh Kumar</span>
+<div class="flex items-center gap-1.5 text-text-muted font-label-sm text-label-sm">
+<span class="font-mono text-primary font-semibold">#CF-1030</span>
+<span>•</span>
+<span>48 Y, Male</span>
+</div>
+</div>
+</div>
+</td>
+<td class="py-4 px-6 max-w-xs">
+<div class="flex flex-col">
+<span class="font-body-md text-body-md text-navy-dark font-medium">Chest discomfort &amp; palpitations</span>
+<span class="font-body-sm-bilingual text-body-sm-bilingual text-text-muted mt-0.5">Vitals logged via Triage kiosk</span>
+</div>
+</td>
+<td class="py-4 px-6 whitespace-nowrap">
+<div class="flex flex-col">
+<span class="font-body-md text-body-md text-navy-dark font-medium">Today, 11:45 AM</span>
+<span class="font-label-sm text-label-sm text-text-muted">Wait: Just arrived</span>
+</div>
+</td>
+<td class="py-4 px-6 whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-mint-subtle text-primary font-label-sm text-label-sm font-semibold">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+                  Ready for review
+                </span>
+</td>
+<td class="py-4 px-6 whitespace-nowrap">
+<div class="flex flex-col">
+<span class="font-body-md text-body-md text-navy-dark font-medium">Desk 1</span>
+<span class="font-body-sm-bilingual text-body-sm-bilingual text-text-muted">Dr. Rastogi</span>
+</div>
+</td>
+<td class="py-4 px-6 text-right whitespace-nowrap">
+<button class="px-4 py-1.5 rounded-full text-primary-container font-label-md text-label-md font-semibold hover:bg-surface-mint-subtle transition-all cursor-pointer" type="button" onclick="event.stopPropagation(); CareFlow.navigate(5)">
+                  View → (देखें)
+                </button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- MOBILE PATIENT CARDS (Visible only on mobile/tablet) -->
+<div class="block md:hidden p-4 space-y-3 bg-surface-card">
+<!-- Mobile Card 1: Aarav Sharma -->
+<div class="p-4 rounded-xl bg-surface-container-low flex flex-col gap-3">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-mint text-primary-container font-label-md text-label-md font-bold flex items-center justify-center flex-shrink-0">
+                AS
+              </div>
+<div class="flex flex-col">
+<span class="font-title-md text-title-md font-bold text-navy-dark leading-snug">Aarav Sharma</span>
+<span class="font-label-sm text-label-sm text-text-muted">#CF-1024 • 32 Y, Male</span>
+</div>
+</div>
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-surface-mint text-primary font-label-sm text-label-sm font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+              Ready
+            </span>
+</div>
+<div class="flex flex-col gap-0.5">
+<span class="font-body-md text-body-md text-navy-dark font-medium">Fever &amp; cough (3 days)</span>
+<span class="font-body-sm-bilingual text-body-sm-bilingual text-text-muted">Desk 4 (Dr. Iyer) • Today, 09:24 AM</span>
+</div>
+<button class="w-full py-2 rounded-xl bg-surface-card text-primary-container font-label-md text-label-md font-semibold text-center hover:bg-surface-mint-subtle transition-colors" type="button">
+            View patient → (मरीज देखें)
+          </button>
+</div>
+<!-- Mobile Card 2: Meera Patel -->
+<div class="p-4 rounded-xl bg-surface-container-low flex flex-col gap-3">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-container text-tertiary font-label-md text-label-md font-bold flex items-center justify-center flex-shrink-0">
+                MP
+              </div>
+<div class="flex flex-col">
+<span class="font-title-md text-title-md font-bold text-navy-dark leading-snug">Meera Patel</span>
+<span class="font-label-sm text-label-sm text-text-muted">#CF-1025 • 54 Y, Female</span>
+</div>
+</div>
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-surface-container text-tertiary font-label-sm text-label-sm font-semibold">
+              In progress
+            </span>
+</div>
+<div class="flex flex-col gap-0.5">
+<span class="font-body-md text-body-md text-navy-dark font-medium">Routine Diabetes Follow-up • HbA1c 7.8</span>
+<span class="font-body-sm-bilingual text-body-sm-bilingual text-text-muted">Teleconsult Bay • Today, 10:02 AM</span>
+</div>
+<button class="w-full py-2 rounded-xl bg-surface-card text-primary-container font-label-md text-label-md font-semibold text-center hover:bg-surface-mint-subtle transition-colors" type="button">
+            View patient → (मरीज देखें)
+          </button>
+</div>
+<!-- Mobile Card 3: Rohan Kumar (Priority) -->
+<div class="p-4 rounded-xl bg-status-error-bg/30 flex flex-col gap-3">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-status-error-bg text-status-error font-label-md text-label-md font-bold flex items-center justify-center flex-shrink-0">
+                RK
+              </div>
+<div class="flex flex-col">
+<span class="font-title-md text-title-md font-bold text-navy-dark leading-snug">Rohan Kumar</span>
+<span class="font-label-sm text-label-sm text-status-error font-semibold">#CF-1026 • 45 Y, Male</span>
+</div>
+</div>
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-status-error-bg text-status-error font-label-sm text-label-sm font-bold">
+              Urgent Triage
+            </span>
+</div>
+<div class="flex flex-col gap-0.5">
+<span class="font-body-md text-body-md text-status-error font-bold">Acute Abdominal pain (Face scale 6/10)</span>
+<span class="font-body-sm-bilingual text-body-sm-bilingual text-text-muted">Urgent Bay (Dr. Mehra) • Today, 10:18 AM</span>
+</div>
+<button class="w-full py-2 rounded-xl bg-status-error text-white font-label-md text-label-md font-semibold text-center hover:bg-status-error/90 transition-colors cursor-pointer" type="button" onclick="CareFlow.navigate(5)">
+            View patient → (मरीज देखें)
+          </button>
+</div>
+</div>
+<!-- PAGINATION FOOTER -->
+<div class="px-6 py-4 bg-surface-card flex flex-col sm:flex-row justify-between items-center gap-4">
+<span class="font-body-sm-bilingual text-body-sm-bilingual text-text-muted">
+          Showing <span class="font-semibold text-navy-dark">1–7</span> of <span class="font-semibold text-navy-dark">1,248</span> patients (1–7 कुल 1,248 मरीज)
+        </span>
+<div class="flex items-center gap-1.5">
+<button class="h-8 px-3 rounded-full text-text-muted hover:bg-surface-mint-subtle hover:text-navy-dark font-label-sm text-label-sm font-semibold transition-colors flex items-center gap-1" type="button">
+<span class="material-symbols-outlined text-[16px]">chevron_left</span>
+            Previous
+          </button>
+<button class="w-8 h-8 rounded-full bg-primary-container text-on-primary font-label-sm text-label-sm font-bold flex items-center justify-center shadow-xs" type="button">
+            1
+          </button>
+<button class="w-8 h-8 rounded-full text-text-muted hover:bg-surface-mint-subtle hover:text-navy-dark font-label-sm text-label-sm font-semibold flex items-center justify-center transition-colors" type="button">
+            2
+          </button>
+<button class="w-8 h-8 rounded-full text-text-muted hover:bg-surface-mint-subtle hover:text-navy-dark font-label-sm text-label-sm font-semibold flex items-center justify-center transition-colors" type="button">
+            3
+          </button>
+<span class="px-1 text-text-muted font-label-sm text-label-sm">...</span>
+<button class="w-8 h-8 rounded-full text-text-muted hover:bg-surface-mint-subtle hover:text-navy-dark font-label-sm text-label-sm font-semibold flex items-center justify-center transition-colors" type="button">
+            125
+          </button>
+<button class="h-8 px-3 rounded-full text-text-muted hover:bg-surface-mint-subtle hover:text-navy-dark font-label-sm text-label-sm font-semibold transition-colors flex items-center gap-1" type="button">
+            Next
+            <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- 5. SECURITY ASSURANCE FOOTNOTE -->
+<div class="text-center py-2 flex flex-col items-center justify-center gap-1">
+<div class="flex items-center gap-2 text-text-muted font-body-sm-bilingual text-body-sm-bilingual">
+<span class="material-symbols-outlined text-[16px] text-primary">verified_user</span>
+<span>CareFlow Clinical Security • Patient information is protected • ABDM M1/M2/M3 Compliant</span>
+</div>
+<span class="text-[11px] text-text-muted/70 font-body-sm-bilingual">मरीजों की जानकारी सुरक्षित एवं गोपनीय है • आयुष्मान भारत डिजिटल मिशन प्रमाणित</span>
+</div>
+</div>
+</div>
+<script>
+  (function() {
+    // Sync sidebar active state to 'Patients' tab as requested
+    const navLinks = document.querySelectorAll('aside nav a');
+    navLinks.forEach(link => {
+      const path = link.getAttribute('data-path');
+      if (path === 'patients') {
+        link.className = 'flex items-center gap-space-sm px-space-md py-2.5 rounded-xl bg-surface-mint-subtle text-primary-container font-semibold transition-all';
+        const icon = link.querySelector('.material-symbols-outlined');
+        if (icon) {
+          icon.style.fontVariationSettings = "'FILL' 1";
+        }
+      } else if (path === 'dashboard') {
+        link.className = 'flex items-center gap-space-sm px-space-md py-2.5 rounded-xl text-on-surface-variant hover:bg-surface-mint-subtle hover:text-primary-container transition-all';
+        const icon = link.querySelector('.material-symbols-outlined');
+        if (icon) {
+          icon.style.fontVariationSettings = "'FILL' 0";
+        }
+      }
+    });
+
+    // Client-side quick filter on search input
+    const searchInput = document.getElementById('patient-search-input');
+    if (searchInput) {
+      searchInput.addEventListener('input', function(e) {
+        const query = e.target.value.toLowerCase().trim();
+        const rows = document.querySelectorAll('tbody tr');
+        rows.forEach(row => {
+          const text = row.textContent.toLowerCase();
+          if (text.includes(query)) {
+            row.style.display = '';
+          } else {
+            row.style.display = 'none';
+          }
+        });
+      });
+    }
+  })();
+</script></main></div><div id="snapdom-sandbox" data-snapdom-sandbox="true" aria-hidden="true" style="position: absolute; left: -9999px; top: -9999px; width: 0px; height: 0px; overflow: hidden;"></div></body></html>

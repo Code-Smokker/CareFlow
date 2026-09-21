@@ -1,0 +1,49 @@
+id: vyayama_shakti
+label: Vyayama Shakti (capacity for exertion)
+framework: custom
+description: >
+  What exertion the patient says they can manage: walking 1 km, climbing stairs, lifting loads.
+  Shown to the Vaidya beside the Vyayama Shakti grading as reference only.
+source: >
+  Engineer-authored patient-reportable items. PENDING_EXPERT_REVIEW.
+triggers:
+  - vyayama shakti
+  - exertion capacity
+  - व्यायाम शक्ति
+
+slots:
+  - id: vyayama_walk
+    type: enum
+    required: true
+    input: [voice, chips]
+    prompt:
+      en: Can you walk 1 kilometre?
+      hi: क्या आप 1 किलोमीटर चल सकते हैं?
+    options:
+      - { value: easily, icon: directions_walk, label: { en: "Yes, easily", hi: "हाँ, आराम से" } }
+      - { value: with_rests, icon: airline_seat_recline_normal, label: { en: "Yes, with rests", hi: "हाँ, बीच में रुककर" } }
+      - { value: cannot, icon: accessible, label: { en: "No, I cannot", hi: "नहीं, नहीं चल सकता/सकती" } }
+
+  - id: vyayama_stairs
+    type: enum
+    required: true
+    input: [voice, chips]
+    prompt:
+      en: Can you climb stairs?
+      hi: क्या आप सीढ़ियाँ चढ़ सकते हैं?
+    options:
+      - { value: easily, icon: stairs, label: { en: "Yes, two floors easily", hi: "हाँ, दो मंज़िल आराम से" } }
+      - { value: with_rests, icon: airline_seat_recline_normal, label: { en: "Yes, but I get breathless or tired", hi: "हाँ, पर साँस फूलती या थकान होती है" } }
+      - { value: cannot, icon: block, label: { en: "No, I cannot", hi: "नहीं, नहीं चढ़ सकता/सकती" } }
+
+  - id: vyayama_load
+    type: enum
+    required: true
+    input: [voice, chips]
+    prompt:
+      en: Can you lift or carry a heavy load, like a 10 kg bag?
+      hi: क्या आप 10 किलो के थैले जैसा भारी सामान उठा सकते हैं?
+    options:
+      - { value: easily, icon: fitness_center, label: { en: "Yes, easily", hi: "हाँ, आराम से" } }
+      - { value: with_effort, icon: sentiment_neutral, label: { en: "Yes, with effort", hi: "हाँ, मुश्किल से" } }
+      - { value: cannot, icon: block, label: { en: "No, I cannot", hi: "नहीं, नहीं उठा सकता/सकती" } }

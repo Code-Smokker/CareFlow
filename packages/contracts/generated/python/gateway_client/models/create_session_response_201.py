@@ -16,11 +16,15 @@ class CreateSessionResponse201:
         session_id (str): Opaque session identifier.
         resume_token (str):
         qr_url (str):
+        department (str):
+        ayush_mode (bool):
     """
 
     session_id: str
     resume_token: str
     qr_url: str
+    department: str
+    ayush_mode: bool
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
@@ -30,6 +34,10 @@ class CreateSessionResponse201:
 
         qr_url = self.qr_url
 
+        department = self.department
+
+        ayush_mode = self.ayush_mode
+
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
@@ -37,6 +45,8 @@ class CreateSessionResponse201:
                 "session_id": session_id,
                 "resume_token": resume_token,
                 "qr_url": qr_url,
+                "department": department,
+                "ayush_mode": ayush_mode,
             }
         )
 
@@ -51,10 +61,16 @@ class CreateSessionResponse201:
 
         qr_url = d.pop("qr_url")
 
+        department = d.pop("department")
+
+        ayush_mode = d.pop("ayush_mode")
+
         create_session_response_201 = cls(
             session_id=session_id,
             resume_token=resume_token,
             qr_url=qr_url,
+            department=department,
+            ayush_mode=ayush_mode,
         )
 
         create_session_response_201.additional_properties = d

@@ -1,0 +1,63 @@
+id: mutra
+label: Mutra (urine)
+framework: custom
+description: >
+  What the patient can report about urine: frequency, colour, burning and waking at night. Colour
+  and burning are offered to the Vaidya as a pre-fill in Ashtavidha Pariksha ("Patient reported"),
+  to be confirmed or overridden. Whether urine is Prakrita or Vikrita is the Vaidya's call.
+source: >
+  Engineer-authored patient-reportable items. PENDING_EXPERT_REVIEW.
+triggers:
+  - mutra
+  - urine
+  - मूत्र
+  - पेशाब
+
+slots:
+  - id: mutra_frequency
+    type: enum
+    required: true
+    input: [voice, chips]
+    prompt:
+      en: How many times do you pass urine in the daytime?
+      hi: दिन में आप कितनी बार पेशाब जाते हैं?
+    options:
+      - { value: less, icon: hourglass_bottom, label: { en: "Fewer than 3 times", hi: "3 बार से कम" } }
+      - { value: normal, icon: check_circle, label: { en: "3 to 6 times", hi: "3 से 6 बार" } }
+      - { value: frequent, icon: repeat, label: { en: "More than 6 times", hi: "6 बार से ज़्यादा" } }
+
+  - id: mutra_colour
+    type: enum
+    required: true
+    input: [voice, chips]
+    prompt:
+      en: What colour is your urine usually?
+      hi: आपके पेशाब का रंग आमतौर पर कैसा होता है?
+    options:
+      - { value: pale_yellow, icon: water_drop, label: { en: "Pale yellow, like straw", hi: "हल्का पीला" } }
+      - { value: deep_yellow, icon: opacity, label: { en: "Deep yellow", hi: "गहरा पीला" } }
+      - { value: reddish, icon: bloodtype, label: { en: "Reddish", hi: "लालिमा लिए" } }
+      - { value: dark, icon: contrast, label: { en: "Dark brown", hi: "गहरा भूरा" } }
+
+  - id: mutra_burning
+    type: enum
+    required: true
+    input: [voice, chips]
+    prompt:
+      en: Do you feel burning while passing urine?
+      hi: क्या पेशाब करते समय जलन होती है?
+    options:
+      - { value: "no", icon: thumb_up, label: { en: "No burning", hi: "जलन नहीं" } }
+      - { value: "yes", icon: local_fire_department, label: { en: "Yes, burning", hi: "हाँ, जलन होती है" } }
+
+  - id: mutra_night_waking
+    type: enum
+    required: true
+    input: [voice, chips]
+    prompt:
+      en: Do you wake up at night to pass urine?
+      hi: क्या रात में पेशाब के लिए उठना पड़ता है?
+    options:
+      - { value: never, icon: bedtime, label: { en: "No", hi: "नहीं" } }
+      - { value: once, icon: looks_one, label: { en: "Once", hi: "एक बार" } }
+      - { value: twice_or_more, icon: looks_two, label: { en: "Two or more times", hi: "दो या अधिक बार" } }

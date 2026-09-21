@@ -1,0 +1,630 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0" name="viewport"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet"><link href="https://fonts.googleapis.com" rel="preconnect"><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<!-- Shared CareFlow Universal Navigation & Utilities -->
+<script src="../shared_nav.js"></script>
+<style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"on-background":"#0c1b33","surface-tint":"#016a6a","on-primary-fixed":"#002020","on-secondary-container":"#0b6f63","on-secondary-fixed-variant":"#005047","status-error-bg":"#FFDAD6","secondary-fixed":"#9ff2e2","tertiary":"#015362","primary-fixed":"#a0f0f0","on-error":"#ffffff","navy-dark":"#0B192C","on-tertiary-container":"#abe9fb","surface-card":"#FFFFFF","surface-container":"#e8eeff","surface-variant":"#d7e3ff","outline-variant":"#bec9c8","on-error-container":"#93000a","secondary-fixed-dim":"#83d5c6","tertiary-fixed":"#aeecfe","surface-container-highest":"#d7e3ff","on-tertiary":"#ffffff","secondary-container":"#9cefdf","tertiary-container":"#296b7a","primary":"#005454","on-secondary":"#ffffff","on-tertiary-fixed-variant":"#004e5c","on-surface-variant":"#3e4948","on-primary-fixed-variant":"#004f50","primary-fixed-dim":"#84d4d3","secondary":"#006b5f","on-secondary-fixed":"#00201c","surface-mint":"#D1F2E8","background":"#f9f9ff","status-error":"#BA1A1A","surface-bright":"#f9f9ff","surface-container-high":"#dfe8ff","canvas-bg":"#FAF8FF","on-surface":"#0c1b33","primary-container":"#0d6e6e","inverse-on-surface":"#ecf0ff","inverse-primary":"#84d4d3","surface-dim":"#ccdafa","border-teal":"#D6E4E2","outline":"#6e7979","error-container":"#ffdad6","surface":"#f9f9ff","on-primary":"#ffffff","surface-container-lowest":"#ffffff","border-subtle":"#E2E8F0","on-primary-container":"#9dedec","text-muted":"#3E4948","inverse-surface":"#223149","surface-container-low":"#f1f3ff","surface-mint-subtle":"#E6F7F2","tertiary-fixed-dim":"#92d0e2","error":"#ba1a1a","on-tertiary-fixed":"#001f26"},borderRadius:{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},spacing:{"sidebar-width":"260px","padding-card":"1.5rem","space-xl":"2rem","space-sm":"0.5rem","gutter-mobile":"1rem","gutter-desktop":"1.5rem","space-xs":"0.25rem","space-2xl":"3rem","space-lg":"1.5rem","space-md":"1rem","container-max":"1320px"},fontFamily:{"headline-md":["Plus Jakarta Sans"],"title-md":["Plus Jakarta Sans"],"display-lg-mobile":["Plus Jakarta Sans"],"label-sm":["Inter"],"headline-lg-mobile":["Plus Jakarta Sans"],"label-md":["Inter"],"headline-lg":["Plus Jakarta Sans"],"body-md":["Plus Jakarta Sans"],"body-lg":["Plus Jakarta Sans"],"display-lg":["Plus Jakarta Sans"],"body-sm-bilingual":["Plus Jakarta Sans"]},fontSize:{"headline-md":["22px",{lineHeight:"30px",letterSpacing:"-0.01em",fontWeight:"600"}],"title-md":["18px",{lineHeight:"26px",fontWeight:"600"}],"display-lg-mobile":["34px",{lineHeight:"42px",letterSpacing:"-0.02em",fontWeight:"700"}],"label-sm":["11px",{lineHeight:"16px",letterSpacing:"0.03em",fontWeight:"600"}],"headline-lg-mobile":["24px",{lineHeight:"32px",letterSpacing:"-0.01em",fontWeight:"600"}],"label-md":["13px",{lineHeight:"18px",letterSpacing:"0.01em",fontWeight:"600"}],"headline-lg":["32px",{lineHeight:"40px",letterSpacing:"-0.015em",fontWeight:"600"}],"body-md":["14px",{lineHeight:"22px",fontWeight:"400"}],"body-lg":["16px",{lineHeight:"26px",fontWeight:"400"}],"display-lg":["48px",{lineHeight:"56px",letterSpacing:"-0.02em",fontWeight:"700"}],"body-sm-bilingual":["12px",{lineHeight:"18px",fontWeight:"400"}]}}}};</script></head><body class="bg-canvas-bg font-body-md text-on-surface"><main class="w-full bg-canvas-bg min-h-screen"><div class="flex flex-col w-full">
+<!-- INLINE NOTIFICATION INTERACTIONS SCRIPT -->
+<script>
+    function markAllAsRead() {
+      const unreadDots = document.querySelectorAll('.unread-dot');
+      const unreadCards = document.querySelectorAll('.notification-unread');
+      const unreadCountElements = document.querySelectorAll('.unread-counter-text');
+      
+      unreadDots.forEach(el => el.classList.add('hidden'));
+      unreadCards.forEach(card => {
+        card.classList.remove('bg-surface-card', 'shadow-md');
+        card.classList.add('bg-surface-container-lowest', 'opacity-90');
+      });
+      unreadCountElements.forEach(counter => {
+        counter.textContent = '0 unread notifications • 0 अपठित सूचनाएँ';
+      });
+
+      const markBtn = document.getElementById('mark-all-btn');
+      if (markBtn) {
+        markBtn.innerHTML = `<span class="material-symbols-outlined text-[18px] text-secondary">done_all</span><span>All read • सभी पढ़े गए</span>`;
+        markBtn.classList.add('text-secondary', 'pointer-events-none');
+      }
+      CareFlow.showToast('All notifications marked as read', 'success');
+    }
+
+    function filterNotifications(category, btnElement) {
+      const buttons = document.querySelectorAll('.filter-pill-btn');
+      buttons.forEach(b => {
+        b.classList.remove('bg-primary-container', 'text-on-primary', 'shadow-sm');
+        b.classList.add('bg-surface-card', 'text-on-surface-variant');
+      });
+      btnElement.classList.add('bg-primary-container', 'text-on-primary', 'shadow-sm');
+      btnElement.classList.remove('bg-surface-card', 'text-on-surface-variant');
+
+      const items = document.querySelectorAll('.notification-row-item');
+      items.forEach(item => {
+        const itemCat = item.getAttribute('data-category');
+        if (category === 'all' || itemCat === category) {
+          item.classList.remove('hidden');
+        } else {
+          item.classList.add('hidden');
+        }
+      });
+    }
+
+    function dismissItem(elementId) {
+      const el = document.getElementById(elementId);
+      if (el) {
+        el.style.transition = "all 0.3s ease-out";
+        el.style.opacity = '0';
+        el.style.transform = 'scale(0.98)';
+        setTimeout(() => {
+          el.remove();
+          CareFlow.showToast('Notification dismissed', 'info');
+        }, 300);
+      }
+    }
+  </script>
+<!-- PATIENT WEB TOP STICKY APPLICATION BAR -->
+<div class="sticky top-0 z-40 w-full bg-surface-card shadow-[0_1px_8px_rgba(0,0,0,0.03)]">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-4">
+<!-- Left Brand & Context -->
+<div class="flex items-center gap-3.5 shrink-0">
+<a class="flex items-center gap-2.5" href="../careflow_patient_web_p03_patient_dashboard/code.html">
+<div class="w-10 h-10 rounded-xl bg-primary-container flex items-center justify-center text-on-primary shadow-sm shadow-primary-container/20">
+<span class="material-symbols-outlined text-[22px]">volunteer_activism</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="font-headline-md text-headline-md font-bold tracking-tight text-on-surface">CareFlow</span>
+<span class="px-2.5 py-0.5 rounded-full bg-surface-mint-subtle text-primary-container font-label-sm text-label-sm font-semibold tracking-wide">Patient Portal</span>
+</div>
+<span class="font-body-sm-bilingual text-body-sm-bilingual text-on-surface-variant tracking-wider uppercase">Patient Care • मरीज पोर्टल</span>
+</div>
+</a>
+</div>
+<!-- Center Desktop Navigation Links -->
+<nav class="hidden xl:flex items-center gap-1">
+<a class="px-3.5 py-2 rounded-xl text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low transition-colors font-label-md text-label-md flex flex-col items-center leading-tight" href="../careflow_patient_web_p03_patient_dashboard/code.html">
+<span class="">Home</span>
+<span class="text-[11px] text-outline font-normal">गृह</span>
+</a>
+<a class="px-3.5 py-2 rounded-xl text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low transition-colors font-label-md text-label-md flex flex-col items-center leading-tight" href="../careflow_patient_web_p05_my_health_overview/code.html">
+<span class="">My Health</span>
+<span class="text-[11px] text-outline font-normal">स्वास्थ्य</span>
+</a>
+<a class="px-3.5 py-2 rounded-xl text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low transition-colors font-label-md text-label-md flex flex-col items-center leading-tight" href="../careflow_patient_web_p11_my_appointments/code.html">
+<span class="">Appointments</span>
+<span class="text-[11px] text-outline font-normal">अपॉइंटमेंट</span>
+</a>
+<a class="px-3.5 py-2 rounded-xl text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low transition-colors font-label-md text-label-md flex flex-col items-center leading-tight" href="../careflow_patient_web_p08_my_documents/code.html">
+<span class="">Documents</span>
+<span class="text-[11px] text-outline font-normal">दस्तावेज़</span>
+</a>
+<a class="px-3.5 py-2 rounded-xl text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low transition-colors font-label-md text-label-md flex flex-col items-center leading-tight" href="../careflow_patient_web_p09_my_care_summary/code.html">
+<span class="">Care Summary</span>
+<span class="text-[11px] text-outline font-normal">सारांश</span>
+</a>
+</nav>
+<!-- Right Patient Identity & Utilities -->
+<div class="flex items-center gap-2 sm:gap-3">
+<!-- Language Switcher Pill -->
+<div class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-surface-container-low text-on-surface-variant font-label-md text-label-md">
+<span class="text-primary-container font-semibold">English</span>
+<span class="text-outline-variant">|</span>
+<span class="hover:text-primary-container cursor-pointer transition-colors">हिन्दी</span>
+</div>
+<!-- Active Notification Bell -->
+<button class="relative w-10 h-10 rounded-full bg-surface-mint text-primary-container flex items-center justify-center transition-transform hover:scale-105" title="Notifications">
+<span class="material-symbols-outlined text-[20px]">notifications_active</span>
+<span class="absolute top-1.5 right-1.5 w-2.5 h-2.5 rounded-full bg-status-error ring-2 ring-surface-card"></span>
+</button>
+<!-- User Identity Capsule -->
+<a href="../careflow_patient_web_p04_my_profile/code.html" class="flex items-center gap-2 pl-1 pr-3 py-1 rounded-full bg-surface-container-low hover:bg-surface-container transition-colors cursor-pointer">
+<div class="relative w-8 h-8 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center font-bold text-label-md">
+<span class="">AS</span>
+<span class="absolute bottom-0 right-0 w-2 h-2 rounded-full bg-secondary ring-2 ring-surface-card"></span>
+</div>
+<div class="hidden md:flex flex-col text-left leading-tight pr-1">
+<span class="font-label-md text-label-md text-on-surface font-semibold">Aarav Sharma</span>
+<span class="font-body-sm-bilingual text-[10px] text-on-surface-variant tracking-tight">ABHA: 91-8472-3021-9920</span>
+</div>
+<span class="material-symbols-outlined text-outline text-[18px]">expand_more</span>
+</a>
+</div>
+</div>
+</div>
+<!-- CONTEXT SUB-HEADER & BREADCRUMB -->
+<div class="w-full bg-gradient-to-b from-surface-card to-canvas-bg pt-6 pb-4">
+<div class="max-w-7xl mx-auto px-4 sm:px-6">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div class="space-y-2">
+<!-- Back navigation & ABDM Security Eyebrow -->
+<div class="flex flex-wrap items-center gap-3">
+<a class="inline-flex items-center gap-1.5 font-label-md text-label-md text-primary-container hover:text-primary transition-colors py-1" href="../careflow_patient_web_p03_patient_dashboard/code.html">
+<span class="material-symbols-outlined text-[16px]">arrow_back</span>
+<span class="">Back • वापस</span>
+</a>
+<span class="text-outline-variant font-light">•</span>
+<div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-surface-container text-primary-container font-label-sm text-label-sm font-medium">
+<span class="material-symbols-outlined text-[14px]">lock</span>
+<span class="">ABDM Verified Alerts • Encrypted Notifications</span>
+</div>
+</div>
+<!-- Page Title & Bilingual Subtitle -->
+<div class="flex flex-col">
+<div class="flex items-center gap-3">
+<h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">Notifications • सूचनाएँ</h1>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mt-0.5">
+              Stay up to date with your care and appointments. • अपनी देखभाल और अपॉइंटमेंट से जुड़े अपडेट पाते रहें।
+            </p>
+</div>
+</div>
+<!-- Notification Timestamp Metadata -->
+<div class="flex items-center gap-2 self-start md:self-auto py-1 px-3 rounded-xl bg-surface-card shadow-sm text-on-surface-variant font-label-sm text-label-sm">
+<span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+<span class="">Live ABDM Stream • Last synced 2m ago</span>
+</div>
+</div>
+</div>
+</div>
+<!-- CONTROL & FILTER STRIP -->
+<div class="w-full max-w-7xl mx-auto px-4 sm:px-6 pt-2 pb-6">
+<div class="p-4 rounded-2xl bg-surface-card shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+<!-- Status Badge & Quick Mark Action -->
+<div class="flex items-center gap-3 flex-wrap">
+<div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface-mint text-primary-container font-label-md text-label-md font-semibold">
+<span class="w-2 h-2 rounded-full bg-primary-container"></span>
+<span class="unread-counter-text">3 unread notifications • 3 अपठित सूचनाएँ</span>
+</div>
+<button class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full hover:bg-surface-container-low text-primary-container font-label-md text-label-md transition-colors" id="mark-all-btn" onclick="markAllAsRead()">
+<span class="material-symbols-outlined text-[18px]">done_all</span>
+<span class="">Mark all as read • सभी को पढ़ा हुआ चिन्हित करें</span>
+</button>
+</div>
+<!-- Filter Categories -->
+<div class="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0 scrollbar-none">
+<button class="filter-pill-btn px-3.5 py-1.5 rounded-full bg-primary-container text-on-primary font-label-md text-label-md whitespace-nowrap transition-all shadow-sm" onclick="filterNotifications('all', this)">
+          All (सभी) • 7
+        </button>
+<button class="filter-pill-btn px-3.5 py-1.5 rounded-full bg-surface-card text-on-surface-variant hover:bg-surface-container-low font-label-md text-label-md whitespace-nowrap transition-all" onclick="filterNotifications('appointments', this)">
+          Appointments (अपॉइंटमेंट) • 2
+        </button>
+<button class="filter-pill-btn px-3.5 py-1.5 rounded-full bg-surface-card text-on-surface-variant hover:bg-surface-container-low font-label-md text-label-md whitespace-nowrap transition-all" onclick="filterNotifications('health_records', this)">
+          Health Records (स्वास्थ्य रिकॉर्ड) • 2
+        </button>
+<button class="filter-pill-btn px-3.5 py-1.5 rounded-full bg-surface-card text-on-surface-variant hover:bg-surface-container-low font-label-md text-label-md whitespace-nowrap transition-all" onclick="filterNotifications('care_team', this)">
+          Care Team (केयर टीम) • 2
+        </button>
+<button class="filter-pill-btn px-3.5 py-1.5 rounded-full bg-surface-card text-on-surface-variant hover:bg-surface-container-low font-label-md text-label-md whitespace-nowrap transition-all" onclick="filterNotifications('account', this)">
+          Account (खाता) • 1
+        </button>
+</div>
+</div>
+</div>
+<!-- MAIN TWO-COLUMN CONTENT GRID -->
+<div class="w-full max-w-7xl mx-auto px-4 sm:px-6 pb-20">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+<!-- PRIMARY NOTIFICATION STREAM (Grouped chronologically ~68%) -->
+<div class="lg:col-span-8 flex flex-col space-y-8">
+<!-- GROUP A: TODAY (आज) -->
+<section class="space-y-3.5">
+<div class="flex items-center justify-between px-1">
+<div class="flex items-center gap-2">
+<span class="font-title-md text-title-md font-bold text-on-surface tracking-tight">Today</span>
+<span class="font-body-sm-bilingual text-body-sm-bilingual text-on-surface-variant font-medium">(आज)</span>
+</div>
+<span class="font-label-sm text-label-sm text-primary-container bg-surface-mint-subtle px-2.5 py-0.5 rounded-full">3 updates</span>
+</div>
+<!-- Item 1: Unread Appointment -->
+<div class="notification-row-item notification-unread p-5 rounded-2xl bg-surface-card shadow-sm hover:shadow-md transition-all duration-200" data-category="appointments" id="notif-item-1">
+<div class="flex items-start gap-4">
+<!-- Soft mint icon container -->
+<div class="w-12 h-12 rounded-2xl bg-surface-mint text-primary-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[24px]">event_available</span>
+</div>
+<!-- Content Body -->
+<div class="flex-1 min-w-0 space-y-1.5">
+<div class="flex items-center justify-between gap-2">
+<div class="flex items-center gap-2.5 min-w-0">
+<span class="unread-dot w-2 h-2 rounded-full bg-primary-container shrink-0"></span>
+<h2 class="font-title-md text-title-md text-on-surface font-semibold truncate">
+                      Appointment tomorrow • कल आपका अपॉइंटमेंट है
+                    </h2>
+</div>
+<span class="font-label-sm text-labe<!-- Action Strip -->
+<div class="pt-2.5 flex flex-wrap items-center gap-4">
+<a class="inline-flex items-center gap-1 text-primary-container font-label-md text-label-md hover:underline" href="../careflow_patient_web_p12_appointment_details/code.html">
+<span class="">View appointment details → (अपॉइंटमेंट देखें)</span>
+</a>
+<button class="font-label-md text-label-md text-on-surface-variant hover:text-on-surface" onclick="dismissItem('notif-item-1')">
+Mark as read
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Item 2: Unread Lab Report -->
+<div class="notification-row-item notification-unread p-5 rounded-2xl bg-surface-card shadow-sm hover:shadow-md transition-all duration-200" data-category="health_records" id="notif-item-2">
+<div class="flex items-start gap-4">
+<!-- Sky/mint lab flask icon -->
+<div class="w-12 h-12 rounded-2xl bg-surface-container text-tertiary-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[24px]">science</span>
+</div>
+<!-- Content Body -->
+<div class="flex-1 min-w-0 space-y-1.5">
+<div class="flex items-center justify-between gap-2">
+<div class="flex items-center gap-2.5 min-w-0">
+<span class="unread-dot w-2 h-2 rounded-full bg-primary-container shrink-0"></span>
+<h2 class="font-title-md text-title-md text-on-surface font-semibold truncate">
+New lab report available • नई लैब रिपोर्ट उपलब्ध है
+</h2>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant whitespace-nowrap shrink-0">Today · 11:15 AM</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+<strong class="text-on-surface font-medium">Metropolis Healthcare</strong> has uploaded your Complete Blood Count (CBC) &amp; CRP Quantitative report. Diagnostic verification code: <code class="px-1.5 py-0.5 rounded bg-surface-container-low font-mono text-[11px] text-tertiary">#REP-8831-CBC</code>. Verified and synced to your ABDM vault.
+</p>
+<!-- Actions -->
+<div class="pt-2.5 flex flex-wrap items-center gap-4">
+<a class="inline-flex items-center gap-1 text-primary-container font-label-md text-label-md hover:underline" href="../careflow_patient_web_p14_prescriptions_lab_reports/code.html">
+<span class="">View report → (रिपोर्ट देखें)</span>
+</a>
+<button onclick="CareFlow.showToast('Lab report #REP-8831-CBC downloaded to vault', 'success')" class="inline-flex items-center gap-1 text-on-surface-variant hover:text-on-surface font-label-md text-label-md" type="button">
+<span class="material-symbols-outlined text-[16px]">download</span>
+<span class="">Download PDF</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Item 3: Unread Questionnaire Reminder -->
+<div class="notification-row-item notification-unread p-5 rounded-2xl bg-surface-card shadow-sm hover:shadow-md transition-all duration-200" data-category="appointments" id="notif-item-3">
+<div class="flex items-start gap-4">
+<!-- Clipboard icon -->
+<div class="w-12 h-12 rounded-2xl bg-surface-mint-subtle text-secondary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[24px]">assignment_turned_in</span>
+</div>
+<!-- Content Body -->
+<div class="flex-1 min-w-0 space-y-1.5">
+<div class="flex items-center justify-between gap-2">
+<div class="flex items-center gap-2.5 min-w-0">
+<span class="unread-dot w-2 h-2 rounded-full bg-primary-container shrink-0"></span>
+<h2 class="font-title-md text-title-md text-on-surface font-semibold truncate">
+Pre-consultation questionnaire reminder • स्वास्थ्य प्रश्नावली रिमाइंडर
+</h2>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant whitespace-nowrap shrink-0">Today · 2:30 PM</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+Please complete your 4 remaining lifestyle &amp; symptoms questions before your visit tomorrow. This saves 8-10 minutes during your physical consultation with the physician.
+</p>
+<!-- Actions -->
+<div class="pt-2.5 flex flex-wrap items-center gap-4">
+<a class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-primary-container text-on-primary font-label-md text-label-md hover:bg-primary transition-colors" href="../careflow_patient_web_p07_my_health_questionnaire/code.html">
+<span class="">Open questionnaire → (प्रश्नावली खोलें)</span>
+</a>
+<button class="font-label-md text-label-md text-on-surface-variant hover:text-on-surface" onclick="dismissItem('notif-item-3')">
+Remind later
+</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- GROUP B: YESTERDAY (कल) -->
+<section class="space-y-3.5 pt-2">
+<div class="flex items-center justify-between px-1">
+<div class="flex items-center gap-2">
+<span class="font-title-md text-title-md font-bold text-on-surface tracking-tight">Yesterday</span>
+<span class="font-body-sm-bilingual text-body-sm-bilingual text-on-surface-variant font-medium">(कल)</span>
+</div>
+<span class="font-label-sm text-label-sm text-outline">2 updates</span>
+</div>
+<!-- Item 4: Read Prescription Issued -->
+<div class="notification-row-item p-5 rounded-2xl bg-surface-card/80 hover:bg-surface-card shadow-sm transition-all duration-200" data-category="health_records">
+<div class="flex items-start gap-4">
+<div class="w-12 h-12 rounded-2xl bg-surface-container-low text-on-surface-variant flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[24px]">prescriptions</span>
+</div>
+<div class="flex-1 min-w-0 space-y-1.5">
+<div class="flex items-center justify-between gap-2">
+<div class="flex items-center gap-2 min-w-0">
+<h2 class="font-title-md text-title-md text-on-surface font-semibold truncate">
+Prescription issued • नया प्रिस्क्रिप्शन जोड़ा गया
+</h2>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-low text-outline font-label-sm text-label-sm">Read</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant whitespace-nowrap shrink-0">Yesterday · 4:45 PM</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+Dr. Priya Sharma added <strong class="text-on-surface font-medium">Augmentin 625 Duo</strong> and <strong class="text-on-surface font-medium">Dolo 650mg</strong> to your active medications list following your remote check-in review.
+</p>
+<div class="pt-2 flex items-center gap-4">
+<a class="text-primary-container font-label-md text-label-md hover:underline" href="../careflow_patient_web_p14_prescriptions_lab_reports/code.html">
+View prescription (प्रिस्क्रिप्शन देखें)
+</a>
+</div>
+</div>
+</div>
+</div>
+<!-- Item 5: Read Care Summary Updated -->
+<div class="notification-row-item p-5 rounded-2xl bg-surface-card/80 hover:bg-surface-card shadow-sm transition-all duration-200" data-category="care_team">
+<div class="flex items-start gap-4">
+<div class="w-12 h-12 rounded-2xl bg-surface-container-low text-on-surface-variant flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[24px]">stethoscope</span>
+</div>
+<div class="flex-1 min-w-0 space-y-1.5">
+<div class="flex items-center justify-between gap-2">
+<div class="flex items-center gap-2 min-w-0">
+<h2 class="font-title-md text-title-md text-on-surface font-semibold truncate">
+Care summary updated • देखभाल सारांश अपडेट हुआ
+</h2>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-low text-outline font-label-sm text-label-sm">Read</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant whitespace-nowrap shrink-0">Yesterday · 5:20 PM</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+Your clinical encounter note for Encounter <span class="font-mono text-xs font-semibold text-tertiary">#ENC-2026-0982</span> has been finalized and digitally signed by the primary attending physician.
+</p>
+<div class="pt-2 flex items-center gap-4">
+<a class="text-primary-container font-label-md text-label-md hover:underline" href="../careflow_patient_web_p09_my_care_summary/code.html">
+View care summary (सारांश देखें)
+</a>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- GROUP C: EARLIER (पहले) -->
+<section class="space-y-3.5 pt-2">
+<div class="flex items-center justify-between px-1">
+<div class="flex items-center gap-2">
+<span class="font-title-md text-title-md font-bold text-on-surface tracking-tight">Earlier</span>
+<span class="font-body-sm-bilingual text-body-sm-bilingual text-on-surface-variant font-medium">(पहले)</span>
+</div>
+<span class="font-label-sm text-label-sm text-outline">2 records</span>
+</div>
+<!-- Item 6: Read Account Security Sync -->
+<div class="notification-row-item p-5 rounded-2xl bg-surface-card/80 hover:bg-surface-card shadow-sm transition-all duration-200" data-category="account">
+<div class="flex items-start gap-4">
+<div class="w-12 h-12 rounded-2xl bg-surface-container-low text-secondary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[24px]">verified_user</span>
+</div>
+<div class="flex-1 min-w-0 space-y-1.5">
+<div class="flex items-center justify-between gap-2">
+<div class="flex items-center gap-2 min-w-0">
+<h2 class="font-title-md text-title-md text-on-surface font-semibold truncate">
+Profile &amp; ABHA sync verified • प्रोफ़ाइल और ABHA सिंक सत्यापित
+</h2>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-low text-outline font-label-sm text-label-sm">Read</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant whitespace-nowrap shrink-0">Sep 3, 2026</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+Your ABHA address (<span class="font-mono text-xs text-primary-container font-medium">aaravsharma@abdm</span>) was verified with Aadhaar OTP authentication and permanently locked to your 256-bit patient vault.
+</p>
+<div class="pt-2 flex items-center gap-4">
+<a class="text-primary-container font-label-md text-label-md hover:underline" href="../careflow_patient_web_p04_my_profile/code.html">
+Manage profile (प्रोफ़ाइल देखें)
+</a>
+</div>
+</div>
+</div>
+</div>
+<!-- Item 7: Read Health Document Stored -->
+<div class="notification-row-item p-5 rounded-2xl bg-surface-card/80 hover:bg-surface-card shadow-sm transition-all duration-200" data-category="health_records">
+<div class="flex items-start gap-4">
+<div class="w-12 h-12 rounded-2xl bg-surface-container-low text-on-surface-variant flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[24px]">folder_shared</span>
+</div>
+<div class="flex-1 min-w-0 space-y-1.5">
+<div class="flex items-center justify-between gap-2">
+<div class="flex items-center gap-2 min-w-0">
+<h2 class="font-title-md text-title-md text-on-surface font-semibold truncate">
+Immunization record stored • टीकाकरण रिकॉर्ड सहेजा गया
+</h2>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-low text-outline font-label-sm text-label-sm">Read</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant whitespace-nowrap shrink-0">Aug 28, 2026</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+Adult booster vaccination record (Hepatitis B &amp; Tdap) successfully encrypted and stored in your national ABDM Health Locker.
+</p>
+<div class="pt-2 flex items-center gap-4">
+<a class="text-primary-container font-label-md text-label-md hover:underline" href="../careflow_patient_web_p08_my_documents/code.html">
+View document (दस्तावेज़ देखें)
+</a>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- SECONDARY HELPER & CONTEXT COLUMN (~32%) -->
+<div class="lg:col-span-4 flex flex-col space-y-6">
+<!-- 1. UPCOMING REMINDER HIGHLIGHT CARD -->
+<div class="p-6 rounded-2xl bg-gradient-to-br from-surface-mint-subtle via-surface-card to-surface-card shadow-sm">
+<div class="flex items-center justify-between gap-2 pb-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container text-[20px]">alarm</span>
+<span class="font-label-sm text-label-sm font-bold uppercase tracking-wider text-primary-container">Next Event</span>
+</div>
+<span class="px-2.5 py-1 rounded-full bg-surface-mint text-secondary font-label-sm text-label-sm font-semibold">In 20 hours</span>
+</div>
+<h3 class="font-title-md text-title-md text-on-surface font-bold">Consultation Tomorrow</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">
+Dr. Priya Sharma • Indiranagar Clinic Desk 4
+</p>
+<div class="mt-4 p-3 rounded-xl bg-surface-card flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-mint text-primary-container flex items-center justify-center font-bold text-sm">
+10:30
+</div>
+<div class="flex flex-col text-left">
+<span class="font-label-md text-label-md text-on-surface font-semibold">10:30 AM — 11:00 AM</span>
+<span class="text-xs text-on-surface-variant">General Medicine Follow-up</span>
+</div>
+</div>
+<!-- Add to Calendar Action Buttons -->
+<div class="mt-4 pt-3 flex flex-col gap-2">
+<button onclick="CareFlow.showToast('Appointment synced with system calendar', 'success')" class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-full bg-primary-container text-on-primary font-label-md text-label-md hover:bg-primary transition-colors shadow-sm" type="button">
+<span class="material-symbols-outlined text-[18px]">calendar_add_on</span>
+<span class="">Add to Google / Apple Calendar</span>
+</button>
+<button onclick="CareFlow.openModal('<div class=\'p-4 text-center\'><h4 class=\'text-lg font-bold text-navy-dark mb-2\'>Indiranagar Clinic Location</h4><p class=\'text-sm text-text-muted mb-4\'>12th Main Road, HAL 2nd Stage, Indiranagar, Bengaluru, Karnataka 560038</p><div class=\'p-4 bg-canvas-bg rounded-xl border border-teal text-sm text-primary mb-4\'><span class=\'material-symbols-outlined align-middle mr-1\'>location_on</span>Desk 4, First Floor (Elevator available)</div><button onclick=\'CareFlow.closeModal()\' class=\'px-5 py-2 rounded-full bg-primary-container text-on-primary font-semibold text-sm\'>Got it</button></div>', 'Clinic Directions')" class="w-full inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-full bg-surface-card hover:bg-surface-mint-subtle text-primary-container font-label-md text-label-md transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">directions</span>
+<span class="">Directions to Clinic</span>
+</button>
+</div>
+</div>
+<!-- 2. NOTIFICATION PREFERENCES CARD -->
+<div class="p-6 rounded-2xl bg-surface-card shadow-sm space-y-4">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[22px]">tune</span>
+<h3 class="font-title-md text-title-md font-bold text-on-surface">Notification Preferences</h3>
+</div>
+</div>
+<p class="font-body-sm-bilingual text-body-sm-bilingual text-on-surface-variant">
+सूचना प्राथमिकताएं • Choose how you receive critical health reports and alerts.
+</p>
+<!-- Preference Status List -->
+<div class="space-y-3 pt-1">
+<div class="flex items-center justify-between p-3 rounded-xl bg-surface-container-low">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-on-surface-variant text-[20px]">sms</span>
+<div class="flex flex-col leading-tight">
+<span class="font-label-md text-label-md text-on-surface font-medium">SMS Updates</span>
+<span class="text-[11px] text-on-surface-variant">+91 98••• ••210</span>
+</div>
+</div>
+<span class="px-2.5 py-0.5 rounded-full bg-surface-mint text-secondary font-label-sm text-label-sm font-semibold">Active</span>
+</div>
+<div class="flex items-center justify-between p-3 rounded-xl bg-surface-container-low">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary text-[20px]">chat</span>
+<div class="flex flex-col leading-tight">
+<span class="font-label-md text-label-md text-on-surface font-medium">WhatsApp Alerts</span>
+<span class="text-[11px] text-on-surface-variant">Instant PDF Reports</span>
+</div>
+</div>
+<span class="px-2.5 py-0.5 rounded-full bg-surface-mint text-secondary font-label-sm text-label-sm font-semibold">Active</span>
+</div>
+<div class="flex items-center justify-between p-3 rounded-xl bg-surface-container-low">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-on-surface-variant text-[20px]">mail</span>
+<div class="flex flex-col leading-tight">
+<span class="font-label-md text-label-md text-on-surface font-medium">Email Summaries</span>
+<span class="text-[11px] text-on-surface-variant">Monthly health digest</span>
+</div>
+</div>
+<span class="px-2.5 py-0.5 rounded-full bg-surface-container text-tertiary-container font-label-sm text-label-sm font-medium">Monthly</span>
+</div>
+</div>
+<div class="pt-2">
+<a class="inline-flex items-center gap-1.5 text-primary-container font-label-md text-label-md hover:underline" href="../careflow_patient_web_p19_my_settings/code.html">
+<span class="">Manage in Settings → (सेटिंग्स में बदलें)</span>
+</a>
+</div>
+</div>
+<!-- 3. HEALTHCARE PRIVACY & PEACE OF MIND NOTE -->
+<div class="p-6 rounded-2xl bg-surface-card shadow-sm space-y-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container text-[20px]">verified</span>
+<span class="font-label-md text-label-md text-on-surface font-semibold">Patient Privacy Guarantee</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+Notifications are private, encrypted, and never shared. We only notify you about clinically relevant updates, appointments, and verified test results.
+</p>
+<div class="pt-2 flex flex-wrap items-center gap-2">
+<div class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-secondary text-[14px]">shield</span>
+<span class="">DISHA Compliant</span>
+</div>
+<div class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-primary text-[14px]">lock</span>
+<span class="">ABDM Consent Artifact</span>
+</div>
+</div>
+</div>
+<!-- 4. HELPLINE SUPPORT CARD -->
+<div class="p-6 rounded-2xl bg-surface-card shadow-sm space-y-3">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-surface-mint-subtle text-primary-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[22px]">support_agent</span>
+</div>
+<div>
+<h4 class="font-title-md text-title-md text-on-surface font-semibold leading-tight">Need assistance?</h4>
+<p class="text-xs text-on-surface-variant">सहायता के लिए संपर्क करें</p>
+</div>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant">
+Have questions about an alert, lab value, or visit rescheduling? Speak with your care coordinator.
+</p>
+<div class="pt-1">
+<a class="inline-flex items-center gap-2 font-headline-md text-headline-md text-primary-container hover:text-primary transition-colors font-bold tracking-tight" href="tel:+918049201100">
+<span class="material-symbols-outlined text-[20px]">call</span>
+<span class="">+91 80 4920 1100</span>
+</a>
+<p class="text-[11px] text-outline mt-0.5">Available Mon-Sat 7:00 AM – 9:00 PM IST</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- FULL STANDARDIZED CAREFLOW PATIENT WEB FOOTER -->
+<footer class="w-full bg-surface-card shadow-[0_-1px_12px_rgba(0,0,0,0.02)]">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 pt-12 pb-8">
+<!-- Regulatory & Compliance Strip -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6 pb-10">
+<div class="flex items-start gap-3">
+<div class="w-8 h-8 rounded-lg bg-surface-mint text-primary-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[18px]">verified_user</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-semibold">ABDM M1, M2 &amp; M3</span>
+<span class="text-xs text-on-surface-variant">Certified Health Information Provider &amp; User (HIP/HIU)</span>
+</div>
+</div>
+<div class="flex items-start gap-3">
+<div class="w-8 h-8 rounded-lg bg-surface-mint text-primary-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[18px]">lock</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-semibold">256-bit AES Patient Vault</span>
+<span class="text-xs text-on-surface-variant">Zero-knowledge storage architecture</span>
+</div>
+</div>
+<div class="flex items-start gap-3">
+<div class="w-8 h-8 rounded-lg bg-surface-mint text-primary-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[18px]">health_and_safety</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-semibold">DISHA &amp; HIPAA Compliant</span>
+<span class="text-xs text-on-surface-variant">Strict patient privacy controls</span>
+</div>
+</div>
+<div class="flex items-start gap-3">
+<div class="w-8 h-8 rounded-lg bg-surface-mint text-primary-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[18px]">language</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-semibold">Dual Language Ready</span>
+<span class="text-xs text-on-surface-variant">English and हिन्दी clinical support</span>
+</div>
+</div>
+</div>
+<!-- Footer Bottom Legal & Links -->
+<div class="pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+<div class="flex flex-wrap items-center gap-3 text-xs text-on-surface-variant">
+<span class="">© 2026 CareFlow Health Technologies Pvt. Ltd. All rights reserved.</span>
+<span class="text-outline-variant">•</span>
+<span class="">ABHA Registered: 91-8472-3021-9920</span>
+</div>
+<div class="flex items-center gap-6 text-xs text-on-surface-variant">
+<a class="hover:text-on-surface transition-colors" href="../careflow_patient_web_p18_privacy_consent/code.html">Privacy Policy (गोपनीयता नीति)</a>
+<a class="hover:text-on-surface transition-colors" href="#">Terms of Use (उपयोग की शर्तें)</a>
+<a class="hover:text-on-surface transition-colors" href="../careflow_patient_web_p18_privacy_consent/code.html">ABDM Consent Matrix</a>
+<a class="hover:text-on-surface transition-colors" href="../careflow_patient_web_p20_help_support/code.html">Help Center (सहायता केंद्र)</a>
+</div>
+</div>
+</div>
+</footer>
+</div></main>
+</body></html>

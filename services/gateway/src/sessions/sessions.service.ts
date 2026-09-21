@@ -31,6 +31,7 @@ import {
   INTERVIEW_PHASE,
   READY_TO_COMPLETE_PHASE,
   type SessionState,
+  complaintModuleId,
   initialSessionState,
   parseSessionState,
 } from "./session-state";
@@ -77,7 +78,7 @@ export class SessionsService {
     private readonly aiService: AiServiceClient,
     private readonly visits: VisitsService,
     private readonly deid: DeidService,
-    config: ConfigService<Env, true>,
+    private readonly config: ConfigService<Env, true>,
   ) {
     this.cipher = new FieldCipher(config.get("FIELD_ENCRYPTION_KEY", { infer: true }));
   }
@@ -116,13 +117,22 @@ export class SessionsService {
     };
   }
 
-  async create(publicWebUrl: string) {
+  /** AYUSH mode is a property of the department (visit config: AYUSH_DEPARTMENTS), never of the
+   * patient — a patient cannot switch it on or off from the intake app. */
+  private isAyushDepartment(department: string): boolean {
+    const configured = this.config.get("AYUSH_DEPARTMENTS", { infer: true }) as string[] | undefined;
+    return (configured ?? []).includes(department);
+  }
+
+  async create(publicWebUrl: string, requestedDepartment?: string) {
     const patient = await this.prisma.patient.create({ data: {} });
-    // No registration/department-selection flow exists yet (ADR 0007) — every visit lands in
-    // one placeholder department so the queue is genuinely usable today rather than empty.
-    // Token numbering has a known benign race under concurrent creates (read-then-write, no
-    // lock) — acceptable at demo scale, not for the department to actually run on.
-    const department = "general";
+    // No registration flow exists yet (ADR 0007). The department comes from whoever configured
+    // the check-in screen (the URL a desk or kiosk opens) and defaults to the one placeholder
+    // department, so the queue is usable either way. Token numbering has a known benign race
+    // under concurrent creates (read-then-write, no lock) — acceptable at demo scale, not for
+    // the department to actually run on.
+    const department = requestedDepartment ?? "general";
+    const ayushMode = this.isAyushDepartment(department);
     const startOfToday = new Date();
     startOfToday.setHours(0, 0, 0, 0);
     const todaysCount = await this.prisma.visit.count({
@@ -137,15 +147,17 @@ export class SessionsService {
       data: {
         visitId: visit.id,
         resumeTokenHash: hashResumeToken(rawToken),
-        state: initialSessionState() as never,
+        state: initialSessionState(ayushMode) as never,
         progress: this.chiefComplaintProgress() as never,
         expiresAt: new Date(Date.now() + SESSION_TTL_MS),
       },
     });
-    sessionLogger(session.id).info({ visit_id: visit.id }, "session created");
+    sessionLogger(session.id).info({ visit_id: visit.id, department, ayush_mode: ayushMode }, "session created");
     return {
       session_id: session.id,
       resume_token: rawToken,
+      department,
+      ayush_mode: ayushMode,
       // Matches apps/intake's actual route (src/app/s/[id]/page.tsx) — this used to point at
       // /intake/{id}?rt=, a placeholder written before that app was scaffolded and never
       // updated afterward. A QR built from the old shape 404'd on scan; nothing caught it
@@ -335,15 +347,17 @@ export class SessionsService {
 
     const nextState = this.advanceState(state, slot.id, body.value);
 
-    const existingRedFlags = nextState.module_id
+    // Red flags belong to the complaint module; `filled` spans every module of the interview.
+    const flagModuleId = complaintModuleId(nextState);
+    const existingRedFlags = flagModuleId
       ? await this.prisma.redFlag.findMany({
           where: { sessionId },
           select: { ruleId: true },
         })
       : [];
     const existingRuleIds = new Set(existingRedFlags.map((f) => f.ruleId));
-    const fired = nextState.module_id
-      ? await this.evaluateRedFlagsPreferringAiService(sessionId, nextState.module_id, nextState.filled)
+    const fired = flagModuleId
+      ? await this.evaluateRedFlagsPreferringAiService(sessionId, flagModuleId, nextState.filled)
       : [];
     const newlyFired = fired.filter((f) => !existingRuleIds.has(f.rule_id));
 
@@ -361,11 +375,11 @@ export class SessionsService {
         : [];
 
     const progress = nextState.module_id
-      ? this.ontology.progress(nextState.module_id, nextState.filled)
+      ? this.ontology.progressAcross(nextState.module_order ?? [nextState.module_id], nextState.filled)
       : null;
     const progressPayload: ProgressPayload = progress
       ? {
-          module_id: nextState.module_id!,
+          module_id: flagModuleId!,
           completed_slots: progress.completed,
           total_slots: progress.total,
           percent:
@@ -447,7 +461,12 @@ export class SessionsService {
     // redacted before it crosses the process boundary to the ai service, which may be a
     // hosted model call depending on that service's own LLM_PROVIDER — the gateway can't see
     // inside that boundary, so it strips unconditionally as defense in depth.
-    const summariseAnswers: SummariseAnswer[] = answerRows.map((a) => ({
+    // AYUSH Prashna answers are not part of the HPI: they are composed live into the Ayurvedic
+    // case record from the `answer` table (AyurvedaService), so the summary snapshot carries only
+    // the complaint module's answers and the chief complaint.
+    const hpiRows = answerRows.filter((a) => !this.ontology.isAyushSlot(a.slotId));
+    const complaintModule = complaintModuleId(state);
+    const summariseAnswers: SummariseAnswer[] = hpiRows.map((a) => ({
       slot_id: a.slotId,
       value: typeof a.value === "string" ? this.deid.redact(sessionId, identifiers, a.value) : a.value,
       input_mode: a.inputMode,
@@ -460,7 +479,7 @@ export class SessionsService {
     let renderedEn: string;
     let renderedLocal: string | null;
     try {
-      const result = await this.aiService.summarise(sessionId, state.module_id, session.language, summariseAnswers);
+      const result = await this.aiService.summarise(sessionId, complaintModule, session.language, summariseAnswers);
       structured = this.restoreStructured(sessionId, result.structured);
       renderedEn = this.deid.restore(sessionId, result.rendered_en);
       renderedLocal = result.rendered_local ? this.deid.restore(sessionId, result.rendered_local) : result.rendered_local;
@@ -473,7 +492,7 @@ export class SessionsService {
       );
       // Same leaf shape the ai service would have produced (services/ai/app/summary/build.py)
       // — GET/PATCH/sign downstream don't need to know which path built this.
-      structured = this.buildFallbackStructured(state.module_id, answerRows);
+      structured = this.buildFallbackStructured(complaintModule, hpiRows);
       renderedEn = "Draft summary — ai service unavailable, generated locally.";
       renderedLocal = null;
     }
@@ -613,22 +632,31 @@ export class SessionsService {
   ): SessionState {
     if (state.phase === CHIEF_COMPLAINT_PHASE) {
       const moduleId = String(value);
-      this.ontology.getModule(moduleId); // throws AppException-worthy error if unknown below
-      const first = this.ontology.nextSlot(moduleId, {});
+      // The order is fixed here, once, from the department's mode — code decides (rule 1).
+      const order = this.ontology.moduleOrder(moduleId, state.ayush_mode ?? false);
+      const first = this.ontology.nextInOrder(order, 0, {});
       return {
         phase: first ? INTERVIEW_PHASE : READY_TO_COMPLETE_PHASE,
-        module_id: moduleId,
-        current_slot_id: first?.id ?? null,
+        module_id: first?.moduleId ?? moduleId,
+        current_slot_id: first?.slot.id ?? null,
         filled: {},
+        ...(state.ayush_mode ? { ayush_mode: true } : {}),
+        module_order: order,
+        module_index: first?.moduleIndex ?? 0,
       };
     }
     const filled = { ...state.filled, [answeredSlotId]: value };
-    const next = this.ontology.nextSlot(state.module_id!, filled);
+    const order = state.module_order ?? [state.module_id!];
+    const index = state.module_index ?? 0;
+    const next = this.ontology.nextInOrder(order, index, filled);
     return {
       phase: next ? INTERVIEW_PHASE : READY_TO_COMPLETE_PHASE,
-      module_id: state.module_id,
-      current_slot_id: next?.id ?? null,
+      module_id: next?.moduleId ?? state.module_id,
+      current_slot_id: next?.slot.id ?? null,
       filled,
+      ...(state.ayush_mode ? { ayush_mode: true } : {}),
+      module_order: order,
+      module_index: next?.moduleIndex ?? index,
     };
   }
 

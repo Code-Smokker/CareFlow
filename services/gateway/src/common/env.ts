@@ -19,6 +19,17 @@ export const envSchema = z.object({
   TERMINOLOGY_SERVICE_URL: z.url().default("http://localhost:8003"),
   FHIR_SERVER_URL: z.url().default("http://localhost:8090/fhir"),
   HIS_PUSH_URL: z.union([z.url(), z.literal("")]).default(""),
+  // Comma-separated departments that run in AYUSH mode (the Prashna modules after the complaint
+  // module). Set per OPD/department here — in visit config — never by the patient.
+  AYUSH_DEPARTMENTS: z
+    .string()
+    .default("ayurveda")
+    .transform((v) =>
+      v
+        .split(",")
+        .map((d) => d.trim().toLowerCase())
+        .filter(Boolean),
+    ),
   DEID_ENABLED: z
     .string()
     .default("false")

@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Shared CareFlow Universal Navigation & Utilities -->
+<script src="../shared_nav.js"></script>
+<style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"text-muted":"#3E4948","status-error":"#BA1A1A","on-primary-fixed":"#002020","surface-bright":"#f9f9ff","secondary-container":"#9cefdf","secondary-fixed-dim":"#83d5c6","on-surface-variant":"#3e4948","surface-container-lowest":"#ffffff","surface":"#f9f9ff","tertiary":"#015362","on-primary-fixed-variant":"#004f50","on-error-container":"#93000a","background":"#f9f9ff","primary-fixed":"#a0f0f0","surface-container-highest":"#d7e3ff","on-tertiary-fixed":"#001f26","inverse-primary":"#84d4d3","canvas-bg":"#FAF8FF","on-background":"#0c1b33","tertiary-fixed-dim":"#92d0e2","on-primary-container":"#9dedec","primary":"#005454","on-secondary-fixed-variant":"#005047","navy-dark":"#0B192C","tertiary-container":"#296b7a","surface-mint":"#D1F2E8","inverse-surface":"#223149","secondary":"#006b5f","on-tertiary-container":"#abe9fb","surface-card":"#FFFFFF","border-subtle":"#E2E8F0","outline":"#6e7979","border-teal":"#D6E4E2","inverse-on-surface":"#ecf0ff","surface-dim":"#ccdafa","surface-tint":"#016a6a","primary-fixed-dim":"#84d4d3","on-surface":"#0c1b33","surface-variant":"#d7e3ff","on-primary":"#ffffff","error-container":"#ffdad6","surface-container":"#e8eeff","on-secondary-fixed":"#00201c","on-tertiary-fixed-variant":"#004e5c","on-tertiary":"#ffffff","status-error-bg":"#FFDAD6","on-error":"#ffffff","tertiary-fixed":"#aeecfe","secondary-fixed":"#9ff2e2","surface-container-high":"#dfe8ff","primary-container":"#0d6e6e","error":"#ba1a1a","on-secondary":"#ffffff","surface-container-low":"#f1f3ff","surface-mint-subtle":"#E6F7F2","on-secondary-container":"#0b6f63","outline-variant":"#bec9c8"},"borderRadius":{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},"spacing":{"space-lg":"1.5rem","gutter-mobile":"1rem","space-md":"1rem","sidebar-width":"260px","container-max":"1320px","padding-card":"1.5rem","space-sm":"0.5rem","space-xs":"0.25rem","space-xl":"2rem","space-2xl":"3rem","gutter-desktop":"1.5rem"},"fontFamily":{"headline-md":["Plus Jakarta Sans"],"label-md":["Inter"],"label-sm":["Inter"],"headline-lg-mobile":["Plus Jakarta Sans"],"display-lg-mobile":["Plus Jakarta Sans"],"title-md":["Plus Jakarta Sans"],"body-sm-bilingual":["Plus Jakarta Sans"],"headline-lg":["Plus Jakarta Sans"],"body-md":["Plus Jakarta Sans"],"body-lg":["Plus Jakarta Sans"],"display-lg":["Plus Jakarta Sans"]},"fontSize":{"headline-md":["22px",{"lineHeight":"30px","letterSpacing":"-0.01em","fontWeight":"600"}],"label-md":["13px",{"lineHeight":"18px","letterSpacing":"0.01em","fontWeight":"600"}],"label-sm":["11px",{"lineHeight":"16px","letterSpacing":"0.03em","fontWeight":"600"}],"headline-lg-mobile":["24px",{"lineHeight":"32px","letterSpacing":"-0.01em","fontWeight":"600"}],"display-lg-mobile":["34px",{"lineHeight":"42px","letterSpacing":"-0.02em","fontWeight":"700"}],"title-md":["18px",{"lineHeight":"26px","fontWeight":"600"}],"body-sm-bilingual":["12px",{"lineHeight":"18px","fontWeight":"400"}],"headline-lg":["32px",{"lineHeight":"40px","letterSpacing":"-0.015em","fontWeight":"600"}],"body-md":["14px",{"lineHeight":"22px","fontWeight":"400"}],"body-lg":["16px",{"lineHeight":"26px","fontWeight":"400"}],"display-lg":["48px",{"lineHeight":"56px","letterSpacing":"-0.02em","fontWeight":"700"}]}}}}</script></head><body class="bg-background font-body-md text-on-surface antialiased"><div class=""><main class="w-full bg-background min-h-screen"><div class="flex flex-col w-full">
+<!-- Sticky Patient Web Navigation Shell (P03-P14 locked specification) -->
+<header class="sticky top-0 z-50 w-full bg-surface-card shadow-sm">
+<div class="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+<!-- Brand & Badge -->
+<div class="flex items-center gap-3 flex-shrink-0">
+<div class="w-10 h-10 rounded-xl bg-primary-container flex items-center justify-center text-on-primary shadow-sm">
+<span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 1;">favorite</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="font-headline-md text-title-md text-navy-dark tracking-tight leading-none">CareFlow</span>
+<span class="px-2.5 py-0.5 rounded-full bg-surface-mint-subtle text-primary-container font-label-sm text-label-sm font-semibold">Patient Portal</span>
+</div>
+<span class="font-body-sm-bilingual text-[11px] text-text-muted mt-0.5 leading-none">PATIENT CARE • मरीज पोर्टल</span>
+</div>
+</div>
+<!-- Horizontal Navigation (Patient Portal Only) -->
+<nav class="hidden md:flex items-center gap-1.5">
+<a class="px-3.5 py-2 rounded-xl text-on-surface-variant hover:bg-surface-mint-subtle hover:text-primary transition-all font-body-md text-body-md flex items-center gap-1.5" href="#">
+<span>Home</span>
+<span class="text-text-muted font-body-sm-bilingual text-body-sm-bilingual">गृह</span>
+</a>
+<a class="px-3.5 py-2 rounded-xl bg-surface-mint-subtle text-primary-container font-semibold transition-all font-body-md text-body-md flex items-center gap-2 shadow-xs" href="#">
+<span class="w-1.5 h-1.5 rounded-full bg-primary-container"></span>
+<span>My Health</span>
+<span class="text-secondary font-body-sm-bilingual text-body-sm-bilingual">स्वास्थ्य</span>
+</a>
+<a class="px-3.5 py-2 rounded-xl text-on-surface-variant hover:bg-surface-mint-subtle hover:text-primary transition-all font-body-md text-body-md flex items-center gap-1.5" href="#">
+<span>Appointments</span>
+<span class="text-text-muted font-body-sm-bilingual text-body-sm-bilingual">अपॉइंटमेंट</span>
+</a>
+<a class="px-3.5 py-2 rounded-xl text-on-surface-variant hover:bg-surface-mint-subtle hover:text-primary transition-all font-body-md text-body-md flex items-center gap-1.5" href="#">
+<span>Documents</span>
+<span class="text-text-muted font-body-sm-bilingual text-body-sm-bilingual">दस्तावेज़</span>
+</a>
+<a class="px-3.5 py-2 rounded-xl text-on-surface-variant hover:bg-surface-mint-subtle hover:text-primary transition-all font-body-md text-body-md flex items-center gap-1.5" href="#">
+<span>Care Summary</span>
+<span class="text-text-muted font-body-sm-bilingual text-body-sm-bilingual">सारांश</span>
+</a>
+</nav>
+<!-- Right Utilities -->
+<div class="flex items-center gap-3">
+<!-- Language Switcher -->
+<div class="flex items-center bg-surface-mint-subtle rounded-full p-1 border-none shadow-inner">
+<button class="px-2.5 py-0.5 rounded-full font-label-sm text-label-sm font-semibold bg-surface-card text-navy-dark shadow-sm" type="button">English</button>
+<button class="px-2.5 py-0.5 rounded-full font-label-sm text-label-sm text-secondary hover:text-navy-dark transition-colors" type="button">हिन्दी</button>
+</div>
+<!-- Notification Bell -->
+<button class="relative p-2 rounded-full hover:bg-surface-mint-subtle text-text-muted hover:text-navy-dark transition-colors" type="button">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 bg-status-error rounded-full ring-2 ring-surface-card"></span>
+</button>
+<!-- Profile Pill with ABHA -->
+<div class="hidden sm:flex items-center gap-2.5 pl-2 pr-3 py-1.5 rounded-full bg-surface-container-low shadow-sm">
+<div class="w-7 h-7 rounded-full bg-primary-container text-on-primary flex items-center justify-center font-label-sm text-label-sm font-bold">
+            AS
+          </div>
+<div class="flex flex-col text-left">
+<span class="font-headline-md text-label-md text-navy-dark leading-tight">Aarav Sharma</span>
+<span class="font-label-sm text-[10px] text-text-muted tracking-tight leading-none">ABHA: 91-8472-3021-9920</span>
+</div>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Container -->
+<div class="w-full max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col gap-6">
+<!-- 1. Top Back Navigation Link -->
+<div>
+<a class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-secondary hover:text-primary hover:bg-surface-mint-subtle transition-colors group" href="../careflow_patient_web_p05_my_health_overview/code.html">
+<span class="material-symbols-outlined text-[18px] group-hover:-translate-x-0.5 transition-transform">arrow_back</span>
+<span class="font-body-md text-body-md font-semibold">Back to my health</span>
+<span class="text-text-muted font-body-sm-bilingual text-body-sm-bilingual">• मेरी स्वास्थ्य जानकारी पर वापस जाएँ</span>
+</a>
+</div>
+<!-- 2. Header Strip -->
+<div class="bg-surface-card rounded-2xl p-6 lg:p-8 shadow-sm flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative overflow-hidden">
+<div class="absolute -right-16 -top-16 w-56 h-56 bg-surface-mint-subtle rounded-full blur-3xl pointer-events-none"></div>
+<div class="flex flex-col gap-2 max-w-3xl relative z-10">
+<div class="flex flex-wrap items-center gap-2.5">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-secondary font-bold">MY HEALTH • मेरा स्वास्थ्य</span>
+<span class="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-surface-mint-subtle text-secondary font-label-sm text-label-sm font-medium">
+<span class="material-symbols-outlined text-[14px]">verified_user</span>
+            ABDM Verified Health Timeline • 256-bit AES Vault
+          </span>
+</div>
+<h1 class="font-display-lg text-display-lg-mobile sm:text-headline-lg text-navy-dark tracking-tight">
+          Health Timeline <span class="text-secondary font-headline-md text-headline-md font-normal">• स्वास्थ्य टाइमलाइन</span>
+</h1>
+<p class="font-body-lg text-body-md sm:text-body-lg text-text-muted leading-relaxed">
+          See your visits, records, and health information organized by date.
+          <span class="block font-body-sm-bilingual text-body-sm-bilingual text-on-surface-variant mt-0.5">अपनी मुलाकातों, रिकॉर्ड और स्वास्थ्य जानकारी को तारीख के अनुसार देखें।</span>
+</p>
+</div>
+<!-- Action Button -->
+<div class="flex flex-wrap sm:flex-nowrap items-center gap-3 relative z-10 flex-shrink-0">
+<button onclick="handleRequestABDMRecords()" class="h-11 px-5 rounded-full bg-primary-container text-on-primary font-label-md text-label-md flex items-center justify-center gap-2 hover:bg-primary shadow-sm transition-all hover:scale-[1.01]" type="button">
+<span class="material-symbols-outlined text-[20px]">sync</span>
+<span>+ Request records from ABDM</span>
+<span class="text-on-primary-container font-body-sm-bilingual text-body-sm-bilingual hidden sm:inline">/ डॉक्टर से रिकॉर्ड मंगाएं</span>
+</button>
+<button onclick="downloadTimelinePDF()" class="h-11 px-4 rounded-full bg-surface-container-low text-primary-container font-label-md text-label-md flex items-center justify-center gap-1.5 hover:bg-surface-mint-subtle transition-colors shadow-xs" title="Download timeline PDF" type="button">
+<span class="material-symbols-outlined text-[18px]">download</span>
+<span class="hidden md:inline">Download PDF</span>
+</button>
+</div>
+</div>
+<!-- 3. Top Quick Metric / Count Strip (Pure counts, strictly no analytical scores) -->
+<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5">
+<!-- Metric 1 -->
+<div class="bg-surface-card rounded-xl p-4 shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between mb-2">
+<span class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined text-[18px]">timeline</span>
+</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-mint-subtle text-secondary font-label-sm text-[11px] font-semibold">Active Vault</span>
+</div>
+<div>
+<span class="font-display-lg text-headline-lg text-navy-dark leading-none font-bold">14</span>
+<p class="font-headline-md text-label-md text-navy-dark mt-1">Total Events</p>
+<p class="font-body-sm-bilingual text-body-sm-bilingual text-text-muted leading-tight">कुल घटनाएं</p>
+</div>
+</div>
+<!-- Metric 2 -->
+<div class="bg-surface-card rounded-xl p-4 shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between mb-2">
+<span class="w-8 h-8 rounded-lg bg-surface-mint-subtle flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[18px]">check_circle</span>
+</span>
+<span class="text-text-muted font-label-sm text-[11px]">OPD &amp; Clinic</span>
+</div>
+<div>
+<span class="font-display-lg text-headline-lg text-navy-dark leading-none font-bold">4</span>
+<p class="font-headline-md text-label-md text-navy-dark mt-1">Completed Visits</p>
+<p class="font-body-sm-bilingual text-body-sm-bilingual text-text-muted leading-tight">पूरी हुई मुलाकातें</p>
+</div>
+</div>
+<!-- Metric 3 -->
+<div class="bg-surface-card rounded-xl p-4 shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between mb-2">
+<span class="w-8 h-8 rounded-lg bg-secondary-container/40 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[18px]">medication</span>
+</span>
+<span class="text-text-muted font-label-sm text-[11px]">e-Rx Signed</span>
+</div>
+<div>
+<span class="font-display-lg text-headline-lg text-navy-dark leading-none font-bold">5</span>
+<p class="font-headline-md text-label-md text-navy-dark mt-1">Prescriptions</p>
+<p class="font-body-sm-bilingual text-body-sm-bilingual text-text-muted leading-tight">प्रिस्क्रिप्शन</p>
+</div>
+</div>
+<!-- Metric 4 -->
+<div class="bg-surface-card rounded-xl p-4 shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between mb-2">
+<span class="w-8 h-8 rounded-lg bg-tertiary-fixed/30 flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined text-[18px]">biotech</span>
+</span>
+<span class="text-text-muted font-label-sm text-[11px]">Pathology</span>
+</div>
+<div>
+<span class="font-display-lg text-headline-lg text-navy-dark leading-none font-bold">3</span>
+<p class="font-headline-md text-label-md text-navy-dark mt-1">Lab Reports</p>
+<p class="font-body-sm-bilingual text-body-sm-bilingual text-text-muted leading-tight">लैब रिपोर्ट</p>
+</div>
+</div>
+<!-- Metric 5 -->
+<div class="col-span-2 sm:col-span-1 bg-surface-card rounded-xl p-4 shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between mb-2">
+<span class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined text-[18px]">folder_shared</span>
+</span>
+<span class="text-text-muted font-label-sm text-[11px]">Intake &amp; Vault</span>
+</div>
+<div>
+<span class="font-display-lg text-headline-lg text-navy-dark leading-none font-bold">2</span>
+<p class="font-headline-md text-label-md text-navy-dark mt-1">Docs &amp; Forms</p>
+<p class="font-body-sm-bilingual text-body-sm-bilingual text-text-muted leading-tight">दस्तावेज़ और प्रश्नावली</p>
+</div>
+</div>
+</div>
+<!-- 4. Search & Filter Bar -->
+<div class="bg-surface-card rounded-xl p-3 sm:p-4 shadow-sm flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3">
+<!-- Search Input -->
+<div class="relative flex-1">
+<span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-text-muted text-[20px]">search</span>
+<input id="timeline-search-input" oninput="filterTimeline()" class="w-full h-11 pl-11 pr-4 rounded-xl bg-canvas-bg font-body-md text-body-md text-navy-dark placeholder:text-text-muted focus:outline-none focus:bg-surface-card transition-all" placeholder="Search your health history, doctor, medicine, or test... (अपना स्वास्थ्य इतिहास खोजें)" type="text"/>
+</div>
+<!-- Filter Chips & Sort -->
+<div class="flex flex-wrap items-center gap-2">
+<div class="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0" id="filter-chips-container">
+<button onclick="setTimelineFilter(this, 'all')" class="timeline-filter-btn h-9 px-3.5 rounded-full bg-primary-container text-on-primary font-label-sm text-label-sm font-semibold flex items-center gap-1.5 shadow-xs whitespace-nowrap" type="button">
+<span>All (सभी)</span>
+<span class="w-4 h-4 rounded-full bg-on-primary-container/20 text-on-primary text-[10px] flex items-center justify-center">14</span>
+</button>
+<button onclick="setTimelineFilter(this, 'visit')" class="timeline-filter-btn h-9 px-3 rounded-full bg-canvas-bg text-on-surface-variant hover:bg-surface-mint-subtle hover:text-primary-container font-label-sm text-label-sm transition-colors flex items-center gap-1.5 whitespace-nowrap" type="button">
+<span>Visits (मुलाकातें)</span>
+<span class="w-4 h-4 rounded-full bg-surface-container text-text-muted text-[10px] flex items-center justify-center">4</span>
+</button>
+<button onclick="setTimelineFilter(this, 'prescription')" class="timeline-filter-btn h-9 px-3 rounded-full bg-canvas-bg text-on-surface-variant hover:bg-surface-mint-subtle hover:text-primary-container font-label-sm text-label-sm transition-colors flex items-center gap-1.5 whitespace-nowrap" type="button">
+<span>Prescriptions (प्रिस्क्रिप्शन)</span>
+<span class="w-4 h-4 rounded-full bg-surface-container text-text-muted text-[10px] flex items-center justify-center">5</span>
+</button>
+<button onclick="setTimelineFilter(this, 'lab')" class="timeline-filter-btn h-9 px-3 rounded-full bg-canvas-bg text-on-surface-variant hover:bg-surface-mint-subtle hover:text-primary-container font-label-sm text-label-sm transition-colors flex items-center gap-1.5 whitespace-nowrap" type="button">
+<span>Lab Reports (लैब रिपोर्ट)</span>
+<span class="w-4 h-4 rounded-full bg-surface-container text-text-muted text-[10px] flex items-center justify-center">3</span>
+</button>
+<button onclick="setTimelineFilter(this, 'doc')" class="timeline-filter-btn h-9 px-3 rounded-full bg-canvas-bg text-on-surface-variant hover:bg-surface-mint-subtle hover:text-primary-container font-label-sm text-label-sm transition-colors flex items-center gap-1.5 whitespace-nowrap" type="button">
+<span>Docs (दस्तावेज़)</span>
+<span class="w-4 h-4 rounded-full bg-surface-container text-text-muted text-[10px] flex items-center justify-center">2</span>
+</button>
+</div>
+<!-- Sort Select Pill -->
+<div class="flex items-center gap-1.5 pl-2">
+<span class="material-symbols-outlined text-text-muted text-[18px]">swap_vert</span>
+<select id="timeline-sort-select" onchange="sortTimeline()" class="h-9 px-2.5 rounded-lg bg-canvas-bg text-navy-dark font-label-sm text-label-sm focus:outline-none cursor-pointer">
+<option value="newest">Sort: Newest first (नवीनतम पहले)</option>
+<option value="oldest">Sort: Oldest first (पुराने पहले)</option>
+</select>
+</div>
+</div>
+</div>
+<!-- 5. Two-Column Layout (Main ~68%, Secondary ~32%) -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+<!-- ================= MAIN TIMELINE COLUMN (8 of 12 cols = 66.6%) ================= -->
+<div class="lg:col-span-8 flex flex-col gap-8" id="timeline-events-wrapper">
+<!-- ================= MONTH GROUP: SEPTEMBER 2026 ================= -->
+<div class="flex flex-col gap-4 timeline-month-group" id="month-sep-2026" data-timestamp="2026-09">
+<!-- Month Divider Banner -->
+<div class="flex items-center gap-3">
+<div class="px-4 py-1.5 rounded-full bg-navy-dark text-on-primary font-headline-md text-label-md flex items-center gap-2 shadow-sm">
+<span class="material-symbols-outlined text-[16px]">calendar_month</span>
+<span>SEPTEMBER 2026</span>
+<span class="font-body-sm-bilingual text-[11px] text-surface-container-highest">सितंबर 2026</span>
+</div>
+<div class="flex-1 h-px bg-surface-container-highest"></div>
+<span class="font-label-sm text-label-sm text-text-muted month-count-label">3 events recorded</span>
+</div>
+<!-- Timeline Items Container with continuous vertical guideline -->
+<div class="relative pl-6 sm:pl-8 flex flex-col gap-6">
+<!-- Vertical guide line -->
+<div class="absolute left-2.5 sm:left-3.5 top-3 bottom-3 w-0.5 bg-surface-container-high rounded-full"></div>
+<!-- EVENT 1: September 5, 2026 · 04:45 PM -->
+<div class="timeline-event relative flex flex-col gap-2" data-category="prescription" data-search="augmentin 625 duo symptomatic dolo 650 dr priya sharma headache fever internal medicine prescription">
+<!-- Connector Node -->
+<div class="absolute -left-6 sm:-left-8 top-1.5 w-6 h-6 rounded-full bg-surface-card flex items-center justify-center shadow-xs">
+<span class="w-3 h-3 rounded-full bg-primary-container"></span>
+</div>
+<!-- Card Content -->
+<div class="bg-surface-card rounded-2xl p-5 sm:p-6 shadow-sm hover:shadow-md transition-all border border-transparent hover:border-surface-mint-subtle">
+<div class="flex flex-wrap items-center justify-between gap-2 pb-3 mb-3 border-b border-canvas-bg">
+<div class="flex items-center gap-2">
+<span class="w-8 h-8 rounded-lg bg-surface-mint-subtle text-primary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">medication</span>
+</span>
+<span class="px-2.5 py-0.5 rounded-full bg-surface-mint-subtle text-secondary font-label-sm text-label-sm font-semibold">
+Prescriptions Added • प्रिस्क्रिप्शन जारी
+</span>
+</div>
+<div class="flex items-center gap-1.5 font-label-sm text-label-sm text-text-muted">
+<span class="material-symbols-outlined text-[16px]">schedule</span>
+<span>September 5, 2026 · 04:45 PM</span>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<div class="flex items-baseline justify-between gap-4">
+<h3 class="font-headline-md text-title-md text-navy-dark">Augmentin 625 Duo &amp; Symptomatic Care</h3>
+<span class="font-label-sm text-[11px] text-secondary bg-surface-container-low px-2 py-0.5 rounded-md">e-Signed Rx</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant">
+2 medications prescribed by <span class="font-semibold text-navy-dark">Dr. Priya Sharma</span> (Internal Medicine) for acute headache and fever review.
+</p>
+<!-- Prescription items chips -->
+<div class="flex flex-wrap gap-2 pt-2">
+<div class="px-3 py-1.5 rounded-xl bg-canvas-bg flex items-center gap-2 text-navy-dark">
+<span class="w-2 h-2 rounded-full bg-primary-container"></span>
+<span class="font-body-md text-body-md font-medium">Augmentin 625 Duo</span>
+<span class="font-body-sm-bilingual text-body-sm-bilingual text-text-muted">1 tab · Twice daily · 5 days</span>
+</div>
+<div class="px-3 py-1.5 rounded-xl bg-canvas-bg flex items-center gap-2 text-navy-dark">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span class="font-body-md text-body-md font-medium">Dolo 650mg</span>
+<span class="font-body-sm-bilingual text-body-sm-bilingual text-text-muted">SOS (When needed) · 3 days</span>
+</div>
+</div>
+<!-- Metadata strip & Action buttons -->
+<div class="mt-4 pt-3 flex flex-wrap items-center justify-between gap-3 bg-surface-container-low/60 p-3 rounded-xl">
+<div class="flex items-center gap-2 text-text-muted font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[16px]">link</span>
+<span>Linked Encounter: <strong class="text-navy-dark font-medium">OPD Encounter #ENC-2026-0982</strong></span>
+</div>
+<div class="flex items-center gap-2">
+<button onclick="viewPrescriptionDetail('Augmentin 625 Duo & Dolo 650', 'Dr. Priya Sharma')" class="px-3.5 py-1.5 rounded-full bg-surface-card text-primary-container font-label-sm text-label-sm font-semibold hover:bg-surface-mint-subtle shadow-xs transition-colors flex items-center gap-1.5" type="button">
+<span class="material-symbols-outlined text-[16px]">visibility</span>
+<span>View Prescription (प्रिस्क्रिप्शन देखें)</span>
+</button>
+<button onclick="CareFlow.showToast('Prescription PDF downloaded to vault', 'success')" class="w-8 h-8 rounded-full bg-surface-card text-text-muted hover:text-navy-dark flex items-center justify-center shadow-xs transition-colors" title="Download PDF" type="button">
+<span class="material-symbols-outlined text-[16px]">download</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- EVENT 2: September 5, 2026 · 04:15 PM -->
+<div class="timeline-event relative flex flex-col gap-2" data-category="visit" data-search="general medicine consultation in-person visit dr priya sharma indiranagar clinic vitals bp spo2 pulse">
+<div class="absolute -left-6 sm:-left-8 top-1.5 w-6 h-6 rounded-full bg-surface-card flex items-center justify-center shadow-xs">
+<span class="w-3 h-3 rounded-full bg-secondary"></span>
+</div>
+<div class="bg-surface-card rounded-2xl p-5 sm:p-6 shadow-sm hover:shadow-md transition-all border border-transparent hover:border-surface-mint-subtle">
+<div class="flex flex-wrap items-center justify-between gap-2 pb-3 mb-3 border-b border-canvas-bg">
+<div class="flex items-center gap-2">
+<span class="w-8 h-8 rounded-lg bg-surface-mint text-primary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">stethoscope</span>
+</span>
+<span class="px-2.5 py-0.5 rounded-full bg-surface-mint text-primary font-label-sm text-label-sm font-semibold">
+Completed In-Person Visit • परामर्श संपन्न
+</span>
+</div>
+<div class="flex items-center gap-1.5 font-label-sm text-label-sm text-text-muted">
+<span class="material-symbols-outlined text-[16px]">schedule</span>
+<span>September 5, 2026 · 04:15 PM</span>
+</div>
+</div>
+<div class="flex flex-col gap-2.5">
+<div class="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1">
+<h3 class="font-headline-md text-title-md text-navy-dark">General Medicine Consultation — In-Person Visit</h3>
+<span class="font-label-sm text-label-sm text-text-muted">CareFlow Indiranagar Desk 4</span>
+</div>
+<div class="flex items-center gap-2 text-text-muted font-body-sm-bilingual text-body-sm-bilingual">
+<span class="material-symbols-outlined text-[16px] text-primary">person</span>
+<span>Provider: <strong class="text-navy-dark font-medium">Dr. Priya Sharma, MD</strong> (Senior Physician)</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant">
+Routine physical exam, comprehensive vitals check (BP 118/76 mmHg, SpO2 99%, Pulse 74 bpm), and clinical evaluation of headache symptoms and sleep patterns.
+</p>
+<!-- Vitals quick card -->
+<div class="grid grid-cols-3 gap-2 py-1">
+<div class="p-2.5 rounded-xl bg-canvas-bg flex flex-col">
+<span class="font-label-sm text-[11px] text-text-muted">Blood Pressure</span>
+<span class="font-headline-md text-label-md text-navy-dark font-bold mt-0.5">118/76 <span class="font-normal text-[11px] text-text-muted">mmHg</span></span>
+</div>
+<div class="p-2.5 rounded-xl bg-canvas-bg flex flex-col">
+<span class="font-label-sm text-[11px] text-text-muted">Oxygen (SpO2)</span>
+<span class="font-headline-md text-label-md text-navy-dark font-bold mt-0.5">99% <span class="font-normal text-[11px] text-secondary font-medium">Optimal</span></span>
+</div>
+<div class="p-2.5 rounded-xl bg-canvas-bg flex flex-col">
+<span class="font-label-sm text-[11px] text-text-muted">Pulse Rate</span>
+<span class="font-headline-md text-label-md text-navy-dark font-bold mt-0.5">74 <span class="font-normal text-[11px] text-text-muted">bpm</span></span>
+</div>
+</div>
+<div class="flex items-center gap-2 mt-1">
+<span class="material-symbols-outlined text-secondary text-[18px]">verified</span>
+<span class="font-body-sm-bilingual text-body-sm-bilingual text-secondary font-medium">ENC-2026-0982 Summary generated, verified &amp; signed digitally</span>
+</div>
+<!-- Actions -->
+<div class="mt-3 pt-3 flex flex-wrap items-center justify-between gap-3 border-t border-canvas-bg">
+<div class="flex items-center gap-2">
+<a href="../careflow_patient_web_p09_my_care_summary/code.html" class="h-9 px-4 rounded-full bg-primary-container text-on-primary font-label-sm text-label-sm font-semibold hover:bg-primary transition-colors flex items-center gap-1.5 shadow-xs">
+<span class="material-symbols-outlined text-[16px]">receipt_long</span>
+<span>View Care Summary (देखभाल सारांश देखें)</span>
+</a>
+<a href="../careflow_patient_web_p12_appointment_details/code.html" class="h-9 px-3 rounded-full bg-surface-container-low text-on-surface-variant hover:bg-surface-mint-subtle font-label-sm text-label-sm transition-colors flex items-center">
+View Appointment Details
+</a>
+</div>
+<span class="font-label-sm text-[11px] text-text-muted">Duration: 28 mins</span>
+</div>
+</div>
+</div>
+</div>
+<!-- EVENT 3: September 3, 2026 · 10:45 AM -->
+<div class="timeline-event relative flex flex-col gap-2" data-category="lab" data-search="complete blood count cbc crp quantitative metropolis healthcare pathology lab report hemoglobin platelets">
+<div class="absolute -left-6 sm:-left-8 top-1.5 w-6 h-6 rounded-full bg-surface-card flex items-center justify-center shadow-xs">
+<span class="w-3 h-3 rounded-full bg-tertiary"></span>
+</div>
+<div class="bg-surface-card rounded-2xl p-5 sm:p-6 shadow-sm hover:shadow-md transition-all border border-transparent hover:border-surface-mint-subtle">
+<div class="flex flex-wrap items-center justify-between gap-2 pb-3 mb-3 border-b border-canvas-bg">
+<div class="flex items-center gap-2">
+<span class="w-8 h-8 rounded-lg bg-tertiary-fixed/40 text-tertiary flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">biotech</span>
+</span>
+<span class="px-2.5 py-0.5 rounded-full bg-tertiary-fixed/30 text-tertiary font-label-sm text-label-sm font-semibold">
+Diagnostic Lab Report Synced • लैब रिपोर्ट उपलब्ध
+</span>
+</div>
+<div class="flex items-center gap-1.5 font-label-sm text-label-sm text-text-muted">
+<span class="material-symbols-outlined text-[16px]">schedule</span>
+<span>September 3, 2026 · 10:45 AM</span>
+</div>
+</div>
+<div class="flex flex-col gap-2.5">
+<div class="flex items-baseline justify-between gap-4">
+<h3 class="font-headline-md text-title-md text-navy-dark">Complete Blood Count (CBC) &amp; CRP Quantitative</h3>
+<span class="px-2 py-0.5 rounded-full bg-surface-mint-subtle text-secondary font-label-sm text-[11px] font-semibold flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Normal Ranges
+</span>
+</div>
+<p class="font-body-md text-body-md text-text-muted">
+Diagnostic Lab: <strong class="text-navy-dark">Metropolis Healthcare / CareFlow Labs</strong> · ABDM Health Locker Synced
+</p>
+<!-- Laboratory Metrics Mini-Display -->
+<div class="p-3 rounded-xl bg-canvas-bg flex flex-col gap-2">
+<span class="font-label-sm text-label-sm text-text-muted uppercase tracking-wider">Key Parameters Verified</span>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-1">
+<div class="flex items-center justify-between p-2 rounded-lg bg-surface-card">
+<span class="font-body-sm-bilingual text-body-sm-bilingual text-text-muted">Hemoglobin</span>
+<span class="font-headline-md text-label-md text-navy-dark font-semibold">14.2 <span class="text-[11px] font-normal text-text-muted">g/dL</span></span>
+</div>
+<div class="flex items-center justify-between p-2 rounded-lg bg-surface-card">
+<span class="font-body-sm-bilingual text-body-sm-bilingual text-text-muted">Platelets</span>
+<span class="font-headline-md text-label-md text-navy-dark font-semibold">210,000 <span class="text-[11px] font-normal text-text-muted">/mcL</span></span>
+</div>
+<div class="flex items-center justify-between p-2 rounded-lg bg-surface-card">
+<span class="font-body-sm-bilingual text-body-sm-bilingual text-text-muted">CRP Quantitative</span>
+<span class="font-headline-md text-label-md text-navy-dark font-semibold">2.1 <span class="text-[11px] font-normal text-text-muted">mg/L</span></span>
+</div>
+</div>
+</div>
+<!-- Actions -->
+<div class="mt-3 pt-3 flex flex-wrap items-center justify-between gap-3 border-t border-canvas-bg">
+<div class="flex items-center gap-2">
+<button onclick="viewLabReportDetail('Complete Blood Count (CBC) & CRP', 'Normal Ranges')" class="h-9 px-4 rounded-full bg-surface-card text-primary-container font-label-sm text-label-sm font-semibold hover:bg-surface-mint-subtle shadow-xs transition-colors flex items-center gap-1.5" type="button">
+<span class="material-symbols-outlined text-[16px]">science</span>
+<span>View Lab Report (रिपोर्ट देखें)</span>
+</button>
+<button onclick="CareFlow.showToast('Lab report PDF downloaded to vault', 'success')" class="h-9 px-3 rounded-full bg-surface-card text-text-muted hover:text-navy-dark font-label-sm text-label-sm shadow-xs transition-colors flex items-center gap-1" type="button">
+<span class="material-symbols-outlined text-[16px]">download</span>
+<span>Download PDF</span>
+</button>
+</div>
+<span class="font-label-sm text-[11px] text-text-muted">Report ID: #LAB-2026-8819</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- ================= MONTH GROUP: AUGUST 2026 ================= -->
+<div class="flex flex-col gap-4 timeline-month-group" id="month-aug-2026" data-timestamp="2026-08">
+<div class="flex items-center gap-3">
+<div class="px-4 py-1.5 rounded-full bg-navy-dark text-on-primary font-headline-md text-label-md flex items-center gap-2 shadow-sm">
+<span class="material-symbols-outlined text-[16px]">calendar_month</span>
+<span>AUGUST 2026</span>
+<span class="font-body-sm-bilingual text-[11px] text-surface-container-highest">अगस्त 2026</span>
+</div>
+<div class="flex-1 h-px bg-surface-container-highest"></div>
+<span class="font-label-sm text-label-sm text-text-muted month-count-label">3 events recorded</span>
+</div>
+<div class="relative pl-6 sm:pl-8 flex flex-col gap-6">
+<div class="absolute left-2.5 sm:left-3.5 top-3 bottom-3 w-0.5 bg-surface-container-high rounded-full"></div>
+<!-- EVENT 4: August 22, 2026 · 11:30 AM -->
+<div class="timeline-event relative flex flex-col gap-2" data-category="visit" data-search="opd follow-up consultation general medicine dr priya sharma desk 4 allergic rhinitis">
+<div class="absolute -left-6 sm:-left-8 top-1.5 w-6 h-6 rounded-full bg-surface-card flex items-center justify-center shadow-xs">
+<span class="w-3 h-3 rounded-full bg-secondary"></span>
+</div>
+<div class="bg-surface-card rounded-2xl p-5 sm:p-6 shadow-sm hover:shadow-md transition-all border border-transparent hover:border-surface-mint-subtle">
+<div class="flex flex-wrap items-center justify-between gap-2 pb-3 mb-3 border-b border-canvas-bg">
+<div class="flex items-center gap-2">
+<span class="w-8 h-8 rounded-lg bg-surface-mint-subtle text-primary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">medical_services</span>
+</span>
+<span class="px-2.5 py-0.5 rounded-full bg-surface-mint-subtle text-secondary font-label-sm text-label-sm font-semibold">
+Completed Consultation • परामर्श
+</span>
+</div>
+<div class="flex items-center gap-1.5 font-label-sm text-label-sm text-text-muted">
+<span class="material-symbols-outlined text-[16px]">schedule</span>
+<span>August 22, 2026 · 11:30 AM</span>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<h3 class="font-headline-md text-title-md text-navy-dark">OPD Follow-up Consultation — General Medicine</h3>
+<div class="flex items-center gap-2 text-text-muted font-body-sm-bilingual text-body-sm-bilingual">
+<span class="material-symbols-outlined text-[16px] text-primary">person</span>
+<span>Provider: <strong class="text-navy-dark">Dr. Priya Sharma</strong> · Desk 4</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant">
+Detailed review of previous seasonal allergic rhinitis symptoms and preventative vitals checkup. Patient reported resolved congestion.
+</p>
+<div class="mt-3 pt-3 flex items-center justify-between border-t border-canvas-bg">
+<a href="../careflow_patient_web_p09_my_care_summary/code.html" class="h-9 px-4 rounded-full bg-surface-container-low text-primary-container font-label-sm text-label-sm font-semibold hover:bg-surface-mint-subtle transition-colors flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px]">receipt_long</span>
+<span>View Care Summary</span>
+</a>
+<span class="font-label-sm text-[11px] text-text-muted">Encounter #ENC-2026-0744</span>
+</div>
+</div>
+</div>
+</div>
+<!-- EVENT 5: August 20, 2026 · 09:15 AM -->
+<div class="timeline-event relative flex flex-col gap-2" data-category="doc" data-search="pre-consultation health lifestyle intake questionnaire medical history allergy triggers questions">
+<div class="absolute -left-6 sm:-left-8 top-1.5 w-6 h-6 rounded-full bg-surface-card flex items-center justify-center shadow-xs">
+<span class="w-3 h-3 rounded-full bg-primary-container"></span>
+</div>
+<div class="bg-surface-card rounded-2xl p-5 sm:p-6 shadow-sm hover:shadow-md transition-all border border-transparent hover:border-surface-mint-subtle">
+<div class="flex flex-wrap items-center justify-between gap-2 pb-3 mb-3 border-b border-canvas-bg">
+<div class="flex items-center gap-2">
+<span class="w-8 h-8 rounded-lg bg-surface-container-high text-primary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">assignment_turned_in</span>
+</span>
+<span class="px-2.5 py-0.5 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-label-sm font-semibold">
+Health Questionnaire Completed • स्वास्थ्य प्रश्नावली
+</span>
+</div>
+<div class="flex items-center gap-1.5 font-label-sm text-label-sm text-text-muted">
+<span class="material-symbols-outlined text-[16px]">schedule</span>
+<span>August 20, 2026 · 09:15 AM</span>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<h3 class="font-headline-md text-title-md text-navy-dark">Pre-Consultation Health &amp; Lifestyle Intake</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">
+12 questions answered covering medical history, current ongoing symptoms, allergy triggers, and lifestyle patterns prior to doctor consultation.
+</p>
+<div class="mt-3 pt-3 flex items-center justify-between border-t border-canvas-bg">
+<a href="../careflow_patient_web_p07_my_health_questionnaire/code.html" class="h-9 px-4 rounded-full bg-surface-card text-primary-container font-label-sm text-label-sm font-semibold hover:bg-surface-mint-subtle shadow-xs transition-colors flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px]">checklist</span>
+<span>View Questionnaire Responses (प्रश्नावली देखें)</span>
+</a>
+<span class="font-label-sm text-[11px] text-text-muted">Digital Intake #IN-8821</span>
+</div>
+</div>
+</div>
+</div>
+<!-- EVENT 6: August 10, 2026 · 02:00 PM -->
+<div class="timeline-event relative flex flex-col gap-2" data-category="lab" data-search="chest x-ray pa view digital radiology imaging normal heart size dicom">
+<div class="absolute -left-6 sm:-left-8 top-1.5 w-6 h-6 rounded-full bg-surface-card flex items-center justify-center shadow-xs">
+<span class="w-3 h-3 rounded-full bg-tertiary"></span>
+</div>
+<div class="bg-surface-card rounded-2xl p-5 sm:p-6 shadow-sm hover:shadow-md transition-all border border-transparent hover:border-surface-mint-subtle">
+<div class="flex flex-wrap items-center justify-between gap-2 pb-3 mb-3 border-b border-canvas-bg">
+<div class="flex items-center gap-2">
+<span class="w-8 h-8 rounded-lg bg-tertiary-fixed/30 text-tertiary flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">radiology</span>
+</span>
+<span class="px-2.5 py-0.5 rounded-full bg-tertiary-fixed/20 text-tertiary font-label-sm text-label-sm font-semibold">
+Diagnostic Imaging • रेडियोलॉजी रिपोर्ट
+</span>
+</div>
+<div class="flex items-center gap-1.5 font-label-sm text-label-sm text-text-muted">
+<span class="material-symbols-outlined text-[16px]">schedule</span>
+<span>August 10, 2026 · 02:00 PM</span>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<h3 class="font-headline-md text-title-md text-navy-dark">Chest X-Ray (PA View) Digital Radiology</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">
+CareFlow Imaging Center · Radiologist Impression: Normal heart size, normal bronchovascular markings, no acute focal consolidation or pleural effusion.
+</p>
+<div class="mt-3 pt-3 flex items-center justify-between border-t border-canvas-bg">
+<button onclick="viewChestXRay()" class="h-9 px-4 rounded-full bg-surface-card text-primary-container font-label-sm text-label-sm font-semibold hover:bg-surface-mint-subtle shadow-xs transition-colors flex items-center gap-1.5" type="button">
+<span class="material-symbols-outlined text-[16px]">image</span>
+<span>View Imaging Report</span>
+</button>
+<span class="font-label-sm text-[11px] text-text-muted">DICOM Ref: #XR-7721</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- ================= MONTH GROUP: JULY 2026 ================= -->
+<div class="flex flex-col gap-4 timeline-month-group" id="month-jul-2026" data-timestamp="2026-07">
+<div class="flex items-center gap-3">
+<div class="px-4 py-1.5 rounded-full bg-navy-dark text-on-primary font-headline-md text-label-md flex items-center gap-2 shadow-sm">
+<span class="material-symbols-outlined text-[16px]">calendar_month</span>
+<span>JULY 2026</span>
+<span class="font-body-sm-bilingual text-[11px] text-surface-container-highest">जुलाई 2026</span>
+</div>
+<div class="flex-1 h-px bg-surface-container-highest"></div>
+<span class="font-label-sm text-label-sm text-text-muted month-count-label">1 event recorded</span>
+</div>
+<div class="relative pl-6 sm:pl-8 flex flex-col gap-6">
+<div class="absolute left-2.5 sm:left-3.5 top-3 bottom-3 w-0.5 bg-surface-container-high rounded-full"></div>
+<!-- EVENT 7: July 14, 2026 · 10:00 AM -->
+<div class="timeline-event relative flex flex-col gap-2" data-category="doc" data-search="immunization vaccination adult booster health document upload">
+<div class="absolute -left-6 sm:-left-8 top-1.5 w-6 h-6 rounded-full bg-surface-card flex items-center justify-center shadow-xs">
+<span class="w-3 h-3 rounded-full bg-navy-dark"></span>
+</div>
+<div class="bg-surface-card rounded-2xl p-5 sm:p-6 shadow-sm hover:shadow-md transition-all border border-transparent hover:border-surface-mint-subtle">
+<div class="flex flex-wrap items-center justify-between gap-2 pb-3 mb-3 border-b border-canvas-bg">
+<div class="flex items-center gap-2">
+<span class="w-8 h-8 rounded-lg bg-surface-container text-navy-dark flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">folder</span>
+</span>
+<span class="px-2.5 py-0.5 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-label-sm font-semibold">
+Health Document Uploaded • अपलोड किया गया दस्तावेज़
+</span>
+</div>
+<div class="flex items-center gap-1.5 font-label-sm text-label-sm text-text-muted">
+<span class="material-symbols-outlined text-[16px]">schedule</span>
+<span>July 14, 2026 · 10:00 AM</span>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<h3 class="font-headline-md text-title-md text-navy-dark">Previous Immunization &amp; Vaccination Record</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">
+Uploaded by Patient · Verified &amp; encrypted in CareFlow 256-bit AES Patient Vault. Includes adult booster vaccination history.
+</p>
+<div class="mt-3 pt-3 flex items-center justify-between border-t border-canvas-bg">
+<a href="../careflow_patient_web_p08_my_documents/code.html" class="h-9 px-4 rounded-full bg-surface-card text-primary-container font-label-sm text-label-sm font-semibold hover:bg-surface-mint-subtle shadow-xs transition-colors flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px]">description</span>
+<span>View Document</span>
+</a>
+<span class="font-label-sm text-[11px] text-text-muted">PDF • 1.4 MB</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Load More Archives Indicator -->
+<div class="flex justify-center pt-2">
+<button onclick="loadOlderArchives()" class="px-6 py-2.5 rounded-full bg-surface-card text-primary-container font-label-md text-label-md font-semibold hover:bg-surface-mint-subtle shadow-sm transition-all flex items-center gap-2" type="button">
+<span class="material-symbols-outlined text-[18px]">history</span>
+<span>Load Older Timeline Records (पुराने रिकॉर्ड लोड करें)</span>
+</button>
+</div>
+</div>
+<!-- ================= SECONDARY COLUMN (4 of 12 cols = 33.3%) ================= -->
+<div class="lg:col-span-4 flex flex-col gap-5 sticky top-20">
+<!-- CARD 1: Timeline Quick Filters & Jump -->
+<div class="bg-surface-card rounded-2xl p-5 shadow-sm flex flex-col gap-4">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-7 h-7 rounded-lg bg-surface-mint-subtle flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined text-[16px]">calendar_view_month</span>
+</span>
+<h3 class="font-headline-md text-label-md text-navy-dark font-bold">Timeline Jump</h3>
+</div>
+<span class="font-body-sm-bilingual text-[11px] text-text-muted">महीने के अनुसार</span>
+</div>
+<div class="flex flex-col gap-1.5">
+<a class="flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-surface-mint-subtle text-primary-container font-semibold transition-colors cursor-pointer" onclick="scrollToMonth('month-sep-2026')">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary-container"></span>
+<span class="font-body-md text-body-md">September 2026</span>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-surface-card font-label-sm text-[11px] font-bold">3</span>
+</a>
+<a class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-on-surface-variant hover:bg-canvas-bg transition-colors cursor-pointer" onclick="scrollToMonth('month-aug-2026')">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-surface-container-high"></span>
+<span class="font-body-md text-body-md">August 2026</span>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-canvas-bg font-label-sm text-[11px] text-text-muted">3</span>
+</a>
+<a class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-on-surface-variant hover:bg-canvas-bg transition-colors cursor-pointer" onclick="scrollToMonth('month-jul-2026')">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-surface-container-high"></span>
+<span class="font-body-md text-body-md">July 2026</span>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-canvas-bg font-label-sm text-[11px] text-text-muted">1</span>
+</a>
+<a class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-text-muted hover:bg-canvas-bg transition-colors cursor-pointer" onclick="loadOlderArchives()">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-surface-container"></span>
+<span class="font-body-md text-body-md">Older Archives (2025)</span>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-canvas-bg font-label-sm text-[11px] text-text-muted">7</span>
+</a>
+</div>
+</div>
+<!-- CARD 2: Related Health Sections (Fast navigation cards) -->
+<div class="bg-surface-card rounded-2xl p-5 shadow-sm flex flex-col gap-3.5">
+<div class="flex items-center justify-between">
+<h3 class="font-headline-md text-label-md text-navy-dark font-bold">Related Health Sections</h3>
+<span class="font-body-sm-bilingual text-[11px] text-text-muted">संबंधित अनुभाग</span>
+</div>
+<div class="grid grid-cols-1 gap-2">
+<!-- Link to P09 My Care Summary -->
+<a class="p-3 rounded-xl bg-canvas-bg hover:bg-surface-mint-subtle/50 transition-all flex items-center justify-between group" href="../careflow_patient_web_p09_my_care_summary/code.html">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-xl bg-surface-mint-subtle text-primary-container flex items-center justify-center group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-[20px]">receipt_long</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-md text-label-md text-navy-dark group-hover:text-primary transition-colors">My Care Summary</span>
+<span class="font-body-sm-bilingual text-[11px] text-text-muted">P09 • डॉक्टर परामर्श सारांश देखें</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-text-muted group-hover:text-primary-container text-[18px] group-hover:translate-x-0.5 transition-all">chevron_right</span>
+</a>
+<!-- Link to P14 Prescriptions & Lab Reports -->
+<a class="p-3 rounded-xl bg-canvas-bg hover:bg-surface-mint-subtle/50 transition-all flex items-center justify-between group" href="../careflow_patient_web_p14_prescriptions_lab_reports/code.html">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-xl bg-secondary-container/30 text-secondary flex items-center justify-center group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-[20px]">prescriptions</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-md text-label-md text-navy-dark group-hover:text-primary transition-colors">Prescriptions &amp; Labs</span>
+<span class="font-body-sm-bilingual text-[11px] text-text-muted">P14 • दवाइयां व लैब रिपोर्ट</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-text-muted group-hover:text-primary-container text-[18px] group-hover:translate-x-0.5 transition-all">chevron_right</span>
+</a>
+<!-- Link to P12 Appointment Details -->
+<a class="p-3 rounded-xl bg-canvas-bg hover:bg-surface-mint-subtle/50 transition-all flex items-center justify-between group" href="../careflow_patient_web_p12_appointment_details/code.html">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-xl bg-surface-container text-navy-dark flex items-center justify-center group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-[20px]">calendar_today</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-md text-label-md text-navy-dark group-hover:text-primary transition-colors">Appointment Details</span>
+<span class="font-body-sm-bilingual text-[11px] text-text-muted">P12 • आगामी व पूर्व अपॉइंटमेंट</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-text-muted group-hover:text-primary-container text-[18px] group-hover:translate-x-0.5 transition-all">chevron_right</span>
+</a>
+<!-- Link to P08 My Documents -->
+<a class="p-3 rounded-xl bg-canvas-bg hover:bg-surface-mint-subtle/50 transition-all flex items-center justify-between group" href="../careflow_patient_web_p08_my_documents/code.html">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-xl bg-tertiary-fixed/30 text-tertiary flex items-center justify-center group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-[20px]">folder_shared</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-md text-label-md text-navy-dark group-hover:text-primary transition-colors">My Documents</span>
+<span class="font-body-sm-bilingual text-[11px] text-text-muted">P08 • स्वास्थ्य रिकॉर्ड व वॉल्ट</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-text-muted group-hover:text-primary-container text-[18px] group-hover:translate-x-0.5 transition-all">chevron_right</span>
+</a>
+</div>
+</div>
+<!-- CARD 3: ABDM Health Records Sync & Privacy -->
+<div class="bg-surface-card rounded-2xl p-5 shadow-sm flex flex-col gap-3.5">
+<div class="flex items-center gap-2">
+<span class="w-7 h-7 rounded-lg bg-surface-mint flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[18px]">lock</span>
+</span>
+<div class="flex flex-col">
+<h3 class="font-headline-md text-label-md text-navy-dark font-bold leading-tight">ABDM Sync &amp; Privacy</h3>
+<span class="font-body-sm-bilingual text-[10px] text-text-muted">गोपनीयता एवं सुरक्षा</span>
+</div>
+</div>
+<div class="flex flex-col gap-2.5 pt-1">
+<div class="flex items-start gap-2.5">
+<span class="material-symbols-outlined text-secondary text-[16px] mt-0.5">verified</span>
+<span class="font-body-sm-bilingual text-body-sm-bilingual text-navy-dark">256-bit AES Patient Vault Encryption</span>
+</div>
+<div class="flex items-start gap-2.5">
+<span class="material-symbols-outlined text-secondary text-[16px] mt-0.5">verified</span>
+<span class="font-body-sm-bilingual text-body-sm-bilingual text-navy-dark">ABDM M1 / M2 / M3 Compliant Architecture</span>
+</div>
+<div class="flex items-start gap-2.5">
+<span class="material-symbols-outlined text-secondary text-[16px] mt-0.5">verified</span>
+<span class="font-body-sm-bilingual text-body-sm-bilingual text-navy-dark">Explicit Patient Consent Required for Sharing</span>
+</div>
+</div>
+<div class="p-3 rounded-xl bg-surface-container-low text-text-muted font-body-sm-bilingual text-[12px] leading-relaxed">
+"Your health timeline records are encrypted and synced directly with your ABHA ID. You retain full ownership and control over data sharing."
+</div>
+<button onclick="window.location.href='../careflow_patient_web_p18_privacy_consent/code.html'" class="w-full h-9 rounded-full bg-canvas-bg text-primary-container font-label-sm text-label-sm font-semibold hover:bg-surface-mint-subtle transition-colors flex items-center justify-center gap-1.5" type="button">
+<span class="material-symbols-outlined text-[16px]">security</span>
+<span>Manage ABDM Consent</span>
+</button>
+</div>
+<!-- CARD 4: Need assistance? -->
+<div class="bg-surface-card rounded-2xl p-5 shadow-sm flex flex-col gap-3">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-7 h-7 rounded-lg bg-surface-mint-subtle flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined text-[16px]">support_agent</span>
+</span>
+<h3 class="font-headline-md text-label-md text-navy-dark font-bold">Need assistance?</h3>
+</div>
+<span class="font-body-sm-bilingual text-[11px] text-text-muted">सहायता चाहिए?</span>
+</div>
+<p class="font-body-sm-bilingual text-body-sm-bilingual text-text-muted">
+Have a question about a past consultation, missing test result, or need help updating records?
+</p>
+<div class="p-3 rounded-xl bg-canvas-bg flex items-center justify-between">
+<div class="flex flex-col">
+<span class="font-label-sm text-[11px] text-text-muted">Care Coordinator Helpline</span>
+<span class="font-headline-md text-body-md text-navy-dark font-bold">+91 80 4920 1100</span>
+</div>
+<a class="w-8 h-8 rounded-full bg-primary-container text-on-primary flex items-center justify-center hover:bg-primary transition-colors" href="tel:+918049201100">
+<span class="material-symbols-outlined text-[16px]">call</span>
+</a>
+</div>
+<a class="text-center font-label-sm text-label-sm text-primary hover:underline mt-1" href="../careflow_patient_web_p20_help_support/code.html">
+Visit Help &amp; Support Center (P20) →
+</a>
+</div>
+</div>
+</div>
+<!-- 6. Footer (CareFlow Regulatory & ABDM standard footer) -->
+<footer class="mt-8 pt-8 pb-12 border-t border-surface-container-highest flex flex-col gap-6">
+<div class="flex flex-wrap items-center justify-between gap-4">
+<!-- Trust badges -->
+<div class="flex flex-wrap items-center gap-3">
+<div class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-card shadow-xs text-text-muted font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[16px] text-secondary">verified_user</span>
+<span>ABDM M1/M2/M3 Compliant</span>
+</div>
+<div class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-card shadow-xs text-text-muted font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[16px] text-primary">lock</span>
+<span>256-bit AES Patient Vault</span>
+</div>
+<div class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-card shadow-xs text-text-muted font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[16px] text-secondary">health_and_safety</span>
+<span>HIPAA &amp; DISHA Healthcare Standard</span>
+</div>
+</div>
+<!-- Language toggle in footer -->
+<span class="font-body-sm-bilingual text-body-sm-bilingual text-text-muted">
+CareFlow Health Networks Pvt. Ltd. © 2026. All rights reserved.
+</span>
+</div>
+<div class="flex flex-wrap items-center justify-between gap-4 text-text-muted font-body-sm-bilingual text-body-sm-bilingual">
+<div class="flex flex-wrap items-center gap-4">
+<a class="hover:text-navy-dark transition-colors" href="#">Privacy Policy • गोपनीयता नीति</a>
+<span>•</span>
+<a class="hover:text-navy-dark transition-colors" href="#">Terms of Care • सेवा की शर्तें</a>
+<span>•</span>
+<a class="hover:text-navy-dark transition-colors" href="#">Patient Charter • मरीज अधिकार</a>
+<span>•</span>
+<a class="hover:text-navy-dark transition-colors" href="#">ABHA Consent Framework</a>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span>All Health Records Synchronized &amp; Active</span>
+</div>
+</div>
+</footer>
+</div>
+</div></main></div>
+
+<!-- Interactive Client-side Script for P15 Health Timeline -->
+<script>
+let currentCategory = 'all';
+
+function filterTimeline() {
+  const query = (document.getElementById('timeline-search-input')?.value || '').toLowerCase().trim();
+  const events = document.querySelectorAll('.timeline-event');
+  
+  events.forEach(event => {
+    const category = event.getAttribute('data-category');
+    const searchData = (event.getAttribute('data-search') || '').toLowerCase();
+    const matchesCategory = (currentCategory === 'all' || category === currentCategory);
+    const matchesSearch = !query || searchData.includes(query);
+    
+    if (matchesCategory && matchesSearch) {
+      event.classList.remove('hidden');
+    } else {
+      event.classList.add('hidden');
+    }
+  });
+
+  // Update month groups visibility & count
+  document.querySelectorAll('.timeline-month-group').forEach(group => {
+    const visibleEvents = group.querySelectorAll('.timeline-event:not(.hidden)');
+    const countLabel = group.querySelector('.month-count-label');
+    if (countLabel) {
+      countLabel.textContent = `${visibleEvents.length} event${visibleEvents.length === 1 ? '' : 's'} recorded`;
+    }
+    if (visibleEvents.length === 0) {
+      group.classList.add('hidden');
+    } else {
+      group.classList.remove('hidden');
+    }
+  });
+}
+
+function setTimelineFilter(btn, category) {
+  currentCategory = category;
+  document.querySelectorAll('.timeline-filter-btn').forEach(b => {
+    b.className = 'timeline-filter-btn h-9 px-3 rounded-full bg-canvas-bg text-on-surface-variant hover:bg-surface-mint-subtle hover:text-primary-container font-label-sm text-label-sm transition-colors flex items-center gap-1.5 whitespace-nowrap';
+  });
+  btn.className = 'timeline-filter-btn h-9 px-3.5 rounded-full bg-primary-container text-on-primary font-label-sm text-label-sm font-semibold flex items-center gap-1.5 shadow-xs whitespace-nowrap';
+  filterTimeline();
+}
+
+function sortTimeline() {
+  const sortVal = document.getElementById('timeline-sort-select').value;
+  const wrapper = document.getElementById('timeline-events-wrapper');
+  const monthGroups = Array.from(document.querySelectorAll('.timeline-month-group'));
+  
+  monthGroups.sort((a, b) => {
+    const timeA = a.getAttribute('data-timestamp') || '';
+    const timeB = b.getAttribute('data-timestamp') || '';
+    return sortVal === 'newest' ? timeB.localeCompare(timeA) : timeA.localeCompare(timeB);
+  });
+  
+  monthGroups.forEach(g => wrapper.appendChild(g));
+  CareFlow.showToast(`Timeline sorted: ${sortVal === 'newest' ? 'Newest first' : 'Oldest first'}`, 'info');
+}
+
+function scrollToMonth(monthId) {
+  const el = document.getElementById(monthId);
+  if (el) {
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    el.classList.add('ring-2', 'ring-primary-container', 'rounded-2xl', 'p-2');
+    setTimeout(() => {
+      el.classList.remove('ring-2', 'ring-primary-container', 'rounded-2xl', 'p-2');
+    }, 2000);
+  }
+}
+
+function viewPrescriptionDetail(title, doctor) {
+  const modalHtml = `
+    <div class="flex flex-col gap-4 text-left">
+      <div class="flex items-center justify-between border-b pb-3">
+        <div>
+          <h3 class="font-headline-md text-title-md text-navy-dark font-bold">${title}</h3>
+          <p class="text-sm text-text-muted">Prescribed by ${doctor} • Signed digitally</p>
+        </div>
+        <span class="px-3 py-1 bg-surface-mint-subtle text-secondary rounded-full text-xs font-semibold">Active Rx</span>
+      </div>
+      <div class="space-y-3">
+        <div class="p-3 bg-canvas-bg rounded-xl">
+          <div class="font-semibold text-navy-dark text-sm">1. Augmentin 625 Duo (Amoxicillin & Clavulanate)</div>
+          <div class="text-xs text-text-muted mt-1">Dosage: 1 tablet twice daily with meals for 5 days. Oral.</div>
+        </div>
+        <div class="p-3 bg-canvas-bg rounded-xl">
+          <div class="font-semibold text-navy-dark text-sm">2. Dolo 650mg (Paracetamol)</div>
+          <div class="text-xs text-text-muted mt-1">Dosage: 1 tablet SOS (when temperature > 99.5°F). Max 3 tabs/day.</div>
+        </div>
+      </div>
+      <div class="p-3 bg-surface-container-low rounded-xl text-xs text-text-muted">
+        <strong>Special Instructions:</strong> Drink plenty of warm fluids. Complete entire antibiotic course even if feeling better.
+      </div>
+      <div class="flex justify-end gap-3 pt-2">
+        <button onclick="CareFlow.showToast('Prescription PDF downloaded', 'success'); CareFlow.closeModal();" class="px-4 py-2 rounded-full border border-teal text-primary-container font-semibold text-sm hover:bg-surface-mint-subtle">Download PDF</button>
+        <button onclick="CareFlow.closeModal()" class="px-5 py-2 rounded-full bg-primary-container text-on-primary font-semibold text-sm">Done</button>
+      </div>
+    </div>
+  `;
+  CareFlow.openModal(modalHtml, 'Prescription Encounter');
+}
+
+function viewLabReportDetail(testName, status) {
+  const modalHtml = `
+    <div class="flex flex-col gap-4 text-left">
+      <div class="flex items-center justify-between border-b pb-3">
+        <div>
+          <h3 class="font-headline-md text-title-md text-navy-dark font-bold">${testName}</h3>
+          <p class="text-sm text-text-muted">Metropolis Healthcare • ABDM Verified</p>
+        </div>
+        <span class="px-3 py-1 bg-surface-mint-subtle text-secondary rounded-full text-xs font-semibold">${status}</span>
+      </div>
+      <div class="space-y-2 text-sm">
+        <div class="flex justify-between p-2.5 bg-canvas-bg rounded-lg">
+          <span class="text-text-muted">Hemoglobin</span>
+          <span class="font-bold text-navy-dark">14.2 g/dL <span class="font-normal text-xs text-secondary">(Normal: 13.0 - 17.0)</span></span>
+        </div>
+        <div class="flex justify-between p-2.5 bg-canvas-bg rounded-lg">
+          <span class="text-text-muted">Platelets Count</span>
+          <span class="font-bold text-navy-dark">210,000 /mcL <span class="font-normal text-xs text-secondary">(Normal: 150k - 450k)</span></span>
+        </div>
+        <div class="flex justify-between p-2.5 bg-canvas-bg rounded-lg">
+          <span class="text-text-muted">CRP Quantitative</span>
+          <span class="font-bold text-navy-dark">2.1 mg/L <span class="font-normal text-xs text-secondary">(Normal: &lt; 5.0)</span></span>
+        </div>
+      </div>
+      <div class="flex justify-end gap-3 pt-2">
+        <button onclick="CareFlow.showToast('Lab report PDF downloaded', 'success'); CareFlow.closeModal();" class="px-4 py-2 rounded-full border border-teal text-primary-container font-semibold text-sm hover:bg-surface-mint-subtle">Download Official Report</button>
+        <button onclick="CareFlow.closeModal()" class="px-5 py-2 rounded-full bg-primary-container text-on-primary font-semibold text-sm">Close</button>
+      </div>
+    </div>
+  `;
+  CareFlow.openModal(modalHtml, 'Diagnostic Lab Findings');
+}
+
+function viewChestXRay() {
+  const modalHtml = `
+    <div class="flex flex-col gap-4 text-left">
+      <div class="flex items-center justify-between border-b pb-3">
+        <div>
+          <h3 class="font-headline-md text-title-md text-navy-dark font-bold">Chest X-Ray (PA View) Digital Radiology</h3>
+          <p class="text-sm text-text-muted">CareFlow Imaging Center • Ref: #XR-7721</p>
+        </div>
+        <span class="px-3 py-1 bg-surface-mint-subtle text-secondary rounded-full text-xs font-semibold">Normal</span>
+      </div>
+      <div class="p-6 rounded-2xl bg-canvas-bg border border-dashed border-teal flex flex-col items-center justify-center text-center">
+        <span class="material-symbols-outlined text-5xl text-primary mb-2">radiology</span>
+        <p class="font-semibold text-navy-dark text-sm">DICOM High-Resolution Image Verified</p>
+        <p class="text-xs text-text-muted mt-1">Normal heart size, normal bronchovascular markings, no acute consolidation.</p>
+      </div>
+      <div class="flex justify-end gap-3 pt-2">
+        <button onclick="CareFlow.showToast('Radiology DICOM report downloaded', 'success'); CareFlow.closeModal();" class="px-4 py-2 rounded-full border border-teal text-primary-container font-semibold text-sm hover:bg-surface-mint-subtle">Download Report</button>
+        <button onclick="CareFlow.closeModal()" class="px-5 py-2 rounded-full bg-primary-container text-on-primary font-semibold text-sm">Close</button>
+      </div>
+    </div>
+  `;
+  CareFlow.openModal(modalHtml, 'Diagnostic Imaging Viewer');
+}
+
+function handleRequestABDMRecords() {
+  const modalHtml = `
+    <div class="flex flex-col gap-4 text-left">
+      <div class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-primary text-2xl">sync</span>
+        <div>
+          <h3 class="font-headline-md text-title-md text-navy-dark font-bold">Request Health Records via ABDM</h3>
+          <p class="text-xs text-text-muted">Ayushman Bharat Digital Mission (ABDM) Gateway</p>
+        </div>
+      </div>
+      <p class="text-sm text-on-surface-variant">Fetch your diagnostic test reports, OPD summaries, or vaccination records from other ABDM-registered healthcare providers linked to ABHA: <strong>91-8472-3021-9920</strong>.</p>
+      <div class="space-y-3">
+        <div>
+          <label class="text-xs font-semibold text-navy-dark">Select Health Facility / Hospital</label>
+          <select class="w-full mt-1 h-10 px-3 rounded-xl border border-border-subtle bg-canvas-bg text-sm">
+            <option>Apollo Hospital (Bannerghatta)</option>
+            <option>Fortis Healthcare (Cunningham Rd)</option>
+            <option>Manipal Hospital (Old Airport Rd)</option>
+            <option>Metropolis Diagnostic Network</option>
+          </select>
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-navy-dark">Record Types to Request</label>
+          <div class="grid grid-cols-2 gap-2 mt-1 text-xs">
+            <label class="flex items-center gap-2 p-2 bg-canvas-bg rounded-lg cursor-pointer"><input type="checkbox" checked class="accent-primary"/> Prescriptions (Rx)</label>
+            <label class="flex items-center gap-2 p-2 bg-canvas-bg rounded-lg cursor-pointer"><input type="checkbox" checked class="accent-primary"/> Diagnostic Reports</label>
+            <label class="flex items-center gap-2 p-2 bg-canvas-bg rounded-lg cursor-pointer"><input type="checkbox" checked class="accent-primary"/> Discharge Summaries</label>
+            <label class="flex items-center gap-2 p-2 bg-canvas-bg rounded-lg cursor-pointer"><input type="checkbox" class="accent-primary"/> Immunization Records</label>
+          </div>
+        </div>
+      </div>
+      <div class="flex justify-end gap-3 pt-3 border-t">
+        <button onclick="CareFlow.closeModal()" class="px-4 py-2 rounded-full border border-teal text-text-muted text-sm font-semibold hover:bg-canvas-bg">Cancel</button>
+        <button onclick="CareFlow.showToast('ABDM records fetch initiated. 2 new records synced.', 'success'); CareFlow.closeModal();" class="px-5 py-2 rounded-full bg-primary-container text-on-primary text-sm font-semibold hover:bg-primary">Send ABDM Request</button>
+      </div>
+    </div>
+  `;
+  CareFlow.openModal(modalHtml, 'ABDM Records Gateway');
+}
+
+function downloadTimelinePDF() {
+  CareFlow.showToast('Downloading consolidated Health Timeline PDF...', 'info');
+  setTimeout(() => {
+    CareFlow.showToast('Health Timeline PDF saved to downloads', 'success');
+  }, 900);
+}
+
+function loadOlderArchives() {
+  CareFlow.showToast('Fetching archived records from ABDM repository (2024-2025)...', 'info');
+  setTimeout(() => {
+    CareFlow.showToast('7 historical records loaded into timeline view', 'success');
+  }, 1000);
+}
+</script>
+</body></html>

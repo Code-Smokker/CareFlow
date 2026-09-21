@@ -1,5 +1,11 @@
 import { z } from "zod";
 
+/** POST /v1/sessions — the body is optional; `department` is staff-configured, not patient-chosen. */
+export const CreateSessionSchema = z
+  .object({ department: z.string().regex(/^[a-z][a-z0-9_-]{0,31}$/).optional() })
+  .default({});
+export type CreateSessionDto = z.infer<typeof CreateSessionSchema>;
+
 /** Mirrors packages/contracts/openapi/gateway.yaml — AnswerSubmission. */
 export const AnswerSubmissionSchema = z.object({
   slot_id: z.string().min(1),

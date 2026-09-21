@@ -1,0 +1,334 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"><title>CareFlow</title><link href="https://fonts.googleapis.com" rel="preconnect"><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&amp;display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"><script src="../shared_careflow.js"></script><style>@layer base{html,body{width:100%;margin:0;padding:0;min-height:100%;background-color:#faf8ff;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "tertiary-container": "#006c7f", "on-secondary-fixed": "#00201c", "on-background": "#131b2e", "primary-container": "#0d6e6e", "on-error": "#ffffff", "on-surface-variant": "#3e4948", "surface-container": "#eaedff", "tertiary-fixed-dim": "#4cd7f6", "secondary-fixed-dim": "#4fdbc8", "surface-container-highest": "#dae2fd", "on-primary": "#ffffff", "secondary": "#006b5f", "surface-bright": "#faf8ff", "surface": "#faf8ff", "inverse-on-surface": "#eef0ff", "surface-container-high": "#e2e7ff", "tertiary": "#005261", "surface-container-lowest": "#ffffff", "tertiary-fixed": "#acedff", "primary": "#005454", "background": "#faf8ff", "on-primary-fixed-variant": "#004f50", "on-tertiary": "#ffffff", "on-surface": "#131b2e", "on-primary-fixed": "#002020", "surface-dim": "#d2d9f4", "primary-fixed": "#a0f0f0", "outline": "#6e7979", "on-error-container": "#93000a", "surface-variant": "#dae2fd", "primary-fixed-dim": "#84d4d3", "on-primary-container": "#9dedec", "inverse-primary": "#84d4d3", "error": "#ba1a1a", "on-tertiary-fixed-variant": "#004e5c", "secondary-container": "#6df5e1", "secondary-fixed": "#71f8e4", "error-container": "#ffdad6", "on-tertiary-container": "#9eeaff", "surface-container-low": "#f2f3ff", "outline-variant": "#bec9c8", "on-secondary": "#ffffff", "surface-tint": "#016a6a", "on-secondary-container": "#006f64", "on-tertiary-fixed": "#001f26", "inverse-surface": "#283044", "on-secondary-fixed-variant": "#005048" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "margin-mobile": "1.25rem", "space-2xl": "3rem", "space-md": "1rem", "space-lg": "1.5rem", "space-xl": "2rem", "space-xxs": "0.25rem", "space-xs": "0.5rem", "gutter-desktop": "1.5rem", "space-3xl": "4rem", "margin-desktop": "2.5rem", "gutter-mobile": "1rem", "space-sm": "0.75rem" }, "fontFamily": { "title-md": ["Plus Jakarta Sans"], "display-lg": ["Plus Jakarta Sans"], "headline-md": ["Plus Jakarta Sans"], "headline-lg-mobile": ["Plus Jakarta Sans"], "headline-lg": ["Plus Jakarta Sans"], "body-lg": ["Plus Jakarta Sans"], "label-md": ["Plus Jakarta Sans"], "headline-sm": ["Plus Jakarta Sans"], "display-lg-mobile": ["Plus Jakarta Sans"], "body-md": ["Plus Jakarta Sans"], "label-sm": ["Plus Jakarta Sans"] }, "fontSize": { "title-md": ["18px", { "lineHeight": "24px", "fontWeight": "600" }], "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }], "headline-lg-mobile": ["26px", { "lineHeight": "34px", "letterSpacing": "-0.01em", "fontWeight": "600" }], "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.015em", "fontWeight": "600" }], "body-lg": ["16px", { "lineHeight": "26px", "fontWeight": "400" }], "label-md": ["13px", { "lineHeight": "18px", "letterSpacing": "0.01em", "fontWeight": "600" }], "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }], "display-lg-mobile": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "body-md": ["14px", { "lineHeight": "22px", "fontWeight": "400" }], "label-sm": ["11px", { "lineHeight": "16px", "letterSpacing": "0.04em", "fontWeight": "600" }] } } } }</script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
+
+<link rel="preload" href="../material-symbols-outlined.woff2" as="font" type="font/woff2" crossorigin>
+<style id="careflow-material-symbols-core">
+  @font-face {
+    font-family: "Material Symbols Outlined";
+    font-style: normal;
+    font-weight: 100 700;
+    font-display: block;
+    src: url("../material-symbols-outlined.woff2") format("woff2"),
+         url("/material-symbols-outlined.woff2") format("woff2"),
+         url("https://fonts.gstatic.com/s/materialsymbolsoutlined/v373/kJEhBvYX7BgnkSrUwT8OhrdQw4oELdPIeeII9v6oFsLjBuVY.woff2") format("woff2");
+  }
+  .material-symbols-outlined {
+    font-family: "Material Symbols Outlined" !important;
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -webkit-font-feature-settings: "liga";
+    -moz-font-feature-settings: "liga";
+    font-feature-settings: "liga";
+    -webkit-font-smoothing: antialiased;
+    vertical-align: middle;
+  }
+</style>
+</head><body class="bg-surface text-on-surface font-body-md min-h-screen relative flex flex-col selection:bg-secondary-container selection:text-on-secondary-container"><div class="fixed inset-0 pointer-events-none z-0 overflow-hidden"><div class="absolute -top-32 -right-24 w-96 h-96 rounded-full bg-secondary-fixed-dim/20 blur-3xl"></div><div class="absolute top-1/4 -left-32 w-80 h-80 rounded-full bg-primary-fixed-dim/15 blur-3xl"></div><div class="absolute bottom-10 right-0 w-80 h-80 rounded-full bg-tertiary-fixed-dim/15 blur-3xl"></div></div><header class="fixed top-0 inset-x-0 z-50 pt-safe bg-surface/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(13,110,110,0.04)]"><div class="h-16 px-margin-mobile flex items-center justify-between"><div class="flex items-center gap-space-xs"><button id="qr-back-btn" class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-on-surface hover:bg-surface-container-high active:scale-95 transition-all shadow-sm" type="button" aria-label="Go Back"><span class="material-symbols-outlined text-[20px]">arrow_back</span></button><div class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center shadow-[0_2px_8px_-2px_rgba(13,110,110,0.25)]"><span class="material-symbols-outlined text-on-primary text-[22px]">volunteer_activism</span></div><div class="flex flex-col"><span class="font-title-md text-title-md text-primary tracking-tight">CareFlow</span></div></div><div class="flex items-center gap-space-xs"><button class="h-11 px-space-sm rounded-full bg-surface-container-low text-on-surface-variant font-label-md text-label-md flex items-center gap-space-xxs hover:bg-surface-container transition-colors" type="button"><span class="material-symbols-outlined text-[18px] text-primary">language</span><span id="qr-lang-label">English</span><span class="material-symbols-outlined text-[16px]">arrow_drop_down</span></button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="relative z-10 flex flex-col flex-1 w-full pt-16 pb-safe bg-surface"><div class="flex flex-col w-full">
+<div class="relative w-full overflow-hidden px-margin-mobile pt-space-xs pb-space-lg flex flex-col gap-space-lg">
+<!-- Gentle Indian Modern Clinic Landscape Accent (Soft Architectural Curves & Plant Shapes) -->
+<div class="absolute -top-10 right-0 w-64 h-64 pointer-events-none opacity-40 z-0">
+<svg class="w-full h-full text-secondary-fixed" fill="none" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+<path d="M40 180C40 120 90 90 150 90C170 90 190 95 200 100V200H40V180Z" fill="currentColor" fill-opacity="0.25"></path>
+<path d="M120 70C120 40 150 20 190 20V120C150 120 120 100 120 70Z" fill="currentColor" fill-opacity="0.3"></path>
+<circle cx="170" cy="45" fill="#14b8a6" fill-opacity="0.2" r="18"></circle>
+<path d="M80 160C85 140 105 130 125 135C130 150 115 170 95 170C85 170 80 165 80 160Z" fill="#0d6e6e" fill-opacity="0.12"></path>
+</svg>
+</div>
+<!-- 1. TOP / MAIN HERO -->
+<section class="relative z-10 flex flex-col gap-space-xxs pr-space-md">
+<div class="inline-flex items-center gap-space-xxs px-space-xs py-1 rounded-full bg-surface-container-low w-fit mb-space-xxs">
+<span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+<span class="font-label-sm text-label-sm text-secondary">Hospital Check-in</span>
+</div>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface tracking-tight">
+        Your care journey<br>
+<span class="text-primary">starts here.</span>
+</h1>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-[320px] mt-space-xxs">
+        Scan the QR code provided at your healthcare centre to begin.
+      </p>
+</section>
+<!<!-- 2. QR SCANNER AREA -->
+<section class="relative z-10 w-full">
+<div class="w-full bg-surface-container-lowest rounded-xl shadow-md p-space-md flex flex-col items-center">
+<!-- Viewfinder Outer Box -->
+<div class="relative w-[210px] h-[210px] rounded-xl bg-surface-container-low overflow-hidden flex items-center justify-center" id="viewfinder">
+<!-- Live Video Element for Camera -->
+<video id="qr-video" class="absolute inset-0 w-full h-full object-cover hidden rounded-xl z-10" playsinline autoplay muted></video>
+<!-- Subtle aqua glow vignette -->
+<div class="absolute inset-0 bg-gradient-to-br from-secondary-fixed/20 via-transparent to-primary-fixed-dim/20 pointer-events-none z-20"></div>
+<!-- 4 Curving Tealer Corner Brackets -->
+<div class="absolute top-3 left-3 w-6 h-6 border-t-4 border-l-4 border-primary rounded-tl-lg pointer-events-none z-30"></div>
+<div class="absolute top-3 right-3 w-6 h-6 border-t-4 border-r-4 border-primary rounded-tr-lg pointer-events-none z-30"></div>
+<div class="absolute bottom-3 left-3 w-6 h-6 border-b-4 border-l-4 border-primary rounded-bl-lg pointer-events-none z-30"></div>
+<div class="absolute bottom-3 right-3 w-6 h-6 border-b-4 border-r-4 border-primary rounded-br-lg pointer-events-none z-30"></div>
+<!-- Animated Scanning Laser Beam -->
+<div class="absolute left-2 right-2 h-[3px] rounded-full bg-gradient-to-r from-transparent via-secondary-container to-transparent shadow-[0_0_12px_#6df5e1] z-30 pointer-events-none transition-transform duration-75" id="scanner-line" style="transform: translateY(24.4px);"></div>
+<!-- High-Fidelity Vector QR Code Placeholder with Medical Cross Badge -->
+<div id="qr-placeholder-svg" class="relative w-[150px] h-[150px] p-2 bg-surface-container-lowest rounded-lg flex items-center justify-center shadow-sm">
+<svg class="w-full h-full text-on-surface" fill="currentColor" viewBox="0 0 100 100">
+<!-- Corner Finder 1 (Top Left) -->
+<rect fill="none" height="28" rx="4" stroke="currentColor" stroke-width="4" width="28" x="2" y="2"></rect>
+<rect fill="currentColor" height="16" rx="2" width="16" x="8" y="8"></rect>
+<!-- Corner Finder 2 (Top Right) -->
+<rect fill="none" height="28" rx="4" stroke="currentColor" stroke-width="4" width="28" x="70" y="2"></rect>
+<rect fill="currentColor" height="16" rx="2" width="16" x="76" y="8"></rect>
+<!-- Corner Finder 3 (Bottom Left) -->
+<rect fill="none" height="28" rx="4" stroke="currentColor" stroke-width="4" width="28" x="2" y="70"></rect>
+<rect fill="currentColor" height="16" rx="2" width="16" x="8" y="76"></rect>
+<!-- Data Blocks Pattern (CareFlow Unique Sync) -->
+<rect height="6" rx="1" width="6" x="36" y="6"></rect>
+<rect height="6" rx="1" width="6" x="48" y="6"></rect>
+<rect height="6" rx="1" width="6" x="58" y="14"></rect>
+<rect height="8" rx="1" width="8" x="36" y="20"></rect>
+<rect height="6" rx="1" width="6" x="48" y="24"></rect>
+<rect height="8" rx="1" width="6" x="6" y="38"></rect>
+<rect height="6" rx="1" width="8" x="18" y="44"></rect>
+<rect height="6" rx="1" width="6" x="6" y="54"></rect>
+<rect height="8" rx="1" width="6" x="20" y="56"></rect>
+<rect height="6" rx="1" width="8" x="74" y="38"></rect>
+<rect height="8" rx="1" width="8" x="86" y="44"></rect>
+<rect height="6" rx="1" width="6" x="72" y="54"></rect>
+<rect height="6" rx="1" width="8" x="84" y="58"></rect>
+<rect height="8" rx="1" width="8" x="36" y="72"></rect>
+<rect height="6" rx="1" width="6" x="50" y="72"></rect>
+<rect height="6" rx="1" width="6" x="60" y="78"></rect>
+<rect height="8" rx="1" width="6" x="42" y="86"></rect>
+<rect height="8" rx="1" width="8" x="54" y="86"></rect>
+<rect height="8" rx="1" width="8" x="74" y="80"></rect>
+<rect height="6" rx="1" width="8" x="86" y="74"></rect>
+</svg>
+<!-- Center Reassuring Medical Emblem -->
+<div class="absolute inset-0 m-auto w-9 h-9 rounded-full bg-surface-container-lowest shadow-sm flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">medical_services</span>
+</div>
+</div>
+</div>
+<!-- Frame Helper Note -->
+<p class="font-body-md text-body-md font-medium text-on-surface-variant mt-space-sm">
+          Align the QR code inside the frame
+        </p>
+<!-- Quick QR Options: File upload & Simulate -->
+<div class="flex items-center gap-2 mt-2">
+  <input type="file" id="qr-file-input" accept="image/*" class="hidden">
+  <button id="upload-qr-btn" type="button" class="px-3 py-1 rounded-full bg-surface-container text-xs font-semibold text-primary hover:bg-surface-container-high flex items-center gap-1 transition-colors">
+    <span class="material-symbols-outlined text-[15px]">upload_file</span>
+    <span>Upload QR Image</span>
+  </button>
+  <button id="test-qr-btn" type="button" class="px-3 py-1 rounded-full bg-surface-mint text-xs font-semibold text-primary-container hover:bg-surface-mint-subtle flex items-center gap-1 transition-colors">
+    <span class="material-symbols-outlined text-[15px]">auto_awesome</span>
+    <span>Simulate Scan</span>
+  </button>
+</div>
+</div>
+<!-- 3. QR CONTEXT NOTE -->
+<div class="flex items-center justify-center gap-space-xs mt-space-xs px-space-xs text-center">
+<span class="material-symbols-outlined text-[18px] text-secondary">qr_code_scanner</span>
+<span class="font-label-md text-label-md text-on-surface-variant">
+          Scan the QR code on your CareFlow token or hospital desk.
+        </span>
+</div>
+</section>
+<!-- 4. PRIMARY ACTION BUTTON -->
+<section class="relative z-10 w-full flex flex-col gap-space-sm">
+<button class="w-full h-14 rounded-full bg-primary text-on-primary font-title-md text-title-md flex items-center justify-center gap-space-xs shadow-md shadow-primary/20 active:scale-[0.98] transition-all hover:bg-primary-container" id="start-scan-btn" type="button">
+<span>Start Live Scan</span>
+<span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+</button>
+<!-- 5. ALTERNATIVE ACTION -->
+<div class="relative flex py-space-xs items-center justify-center">
+<div class="w-full h-[1px] bg-surface-container-high"></div>
+<span class="shrink-0 px-space-sm font-label-sm text-label-sm text-outline uppercase tracking-wider bg-surface">OR</span>
+<div class="w-full h-[1px] bg-surface-container-high"></div>
+</div>
+<!-- Manual Token Input Action Card -->
+<button class="w-full py-space-sm px-space-md rounded-xl bg-surface-container-lowest text-on-surface flex items-center justify-between shadow-sm active:bg-surface-container-low transition-colors text-left" id="enter-token-btn" type="button">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center text-primary shrink-0">
+<span class="material-symbols-outlined text-[20px]">pin</span>
+</div>
+<div class="flex flex-col truncate">
+<span class="font-title-md text-title-md text-on-surface truncate">Enter token number instead</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant truncate">Printed 6-digit hospital slip code</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline text-[20px] shrink-0 ml-space-xs">chevron_right</span>
+</button>
+</section>
+<!-- 6. RESUME SESSION & SECURITY -->
+<footer class="relative z-10 w-full flex flex-col items-center gap-space-sm pt-space-xs">
+<button class="inline-flex items-center gap-1 font-label-md text-label-md text-secondary hover:underline active:opacity-80 py-space-xxs" type="button">
+<span>Already started a visit? Resume session</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</button>
+<div class="inline-flex items-center gap-space-xxs text-outline font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[16px] text-secondary">verified_user</span>
+<span>Your information is private and secure.</span>
+</div>
+</footer>
+</div>
+</div>
+<script>
+  // Dynamic smooth laser beam sweeping inside the viewfinder frame
+  (function initScannerBeam() {
+    const beam = document.getElementById('scanner-line');
+    if (!beam) return;
+
+    let pos = 14;
+    let direction = 1.3;
+    const minPos = 14;
+    const maxPos = 186;
+
+    function animateBeam() {
+      pos += direction;
+      if (pos >= maxPos || pos <= minPos) {
+        direction = -direction;
+      }
+      beam.style.transform = `translateY(${pos}px)`;
+      requestAnimationFrame(animateBeam);
+    }
+    requestAnimationFrame(animateBeam);
+  })();
+
+  // Initialize UI with state
+  const state = CareFlow.getState();
+  const langLabel = document.getElementById('qr-lang-label');
+  if (langLabel && state.language) {
+    langLabel.textContent = state.language.charAt(0).toUpperCase() + state.language.slice(1);
+  }
+
+  // Back button
+  const backBtn = document.getElementById('qr-back-btn');
+  if (backBtn) {
+    backBtn.addEventListener('click', () => {
+      CareFlow.navigate('../careflow_language_selection/code.html');
+    });
+  }
+
+  const scanBtn = document.getElementById('start-scan-btn');
+  const videoEl = document.getElementById('qr-video');
+  const placeholderSvg = document.getElementById('qr-placeholder-svg');
+  const fileInput = document.getElementById('qr-file-input');
+  const uploadBtn = document.getElementById('upload-qr-btn');
+  const testQrBtn = document.getElementById('test-qr-btn');
+  let activeScanner = null;
+  let isNavigating = false;
+
+  async function onQrDetected(rawPayload) {
+    if (isNavigating) return;
+    isNavigating = true;
+
+    if (scanBtn) {
+      scanBtn.innerHTML = '<span class="material-symbols-outlined animate-spin text-[20px]">progress_activity</span><span>Connecting to Hospital...</span>';
+    }
+
+    CareFlow.showToast('QR Code Verified! ✓');
+    CareFlow.speak('Hospital check-in verified. Welcome to CareFlow.');
+
+    // Create real session on backend gateway
+    try {
+      const session = await CareFlow.api.createSession('general');
+      const token = session.token_no || ('TK-' + Math.floor(1000 + Math.random() * 9000));
+      CareFlow.saveState({ tokenNumber: token, qrRaw: rawPayload, scannedAt: new Date().toLocaleTimeString() });
+      CareFlow.showToast(`Active Session: ${token} ✓`);
+    } catch(e) {
+      console.warn('Backend session creation error', e);
+    }
+
+    if (activeScanner) activeScanner.stop();
+
+    setTimeout(() => {
+      CareFlow.navigate('../careflow_patient_consent/code.html');
+    }, 700);
+  }
+
+  // Auto-start camera if supported
+  if (CareFlow.qrScanner && CareFlow.qrScanner.isSupported() && videoEl) {
+    CareFlow.qrScanner.startScanner({
+      videoElement: videoEl,
+      onDecode: onQrDetected,
+      onError: (err) => {
+        console.log('Camera not active / permission needed:', err);
+      }
+    }).then(scanner => {
+      if (scanner) {
+        activeScanner = scanner;
+        videoEl.classList.remove('hidden');
+        if (placeholderSvg) placeholderSvg.classList.add('opacity-10');
+      }
+    });
+  }
+
+  // Start live scan button
+  if (scanBtn) {
+    scanBtn.addEventListener('click', function() {
+      if (!activeScanner && CareFlow.qrScanner && videoEl) {
+        CareFlow.qrScanner.startScanner({
+          videoElement: videoEl,
+          onDecode: onQrDetected,
+          onError: () => onQrDetected('CAREFLOW-DEMO-TOKEN')
+        }).then(scanner => {
+          if (scanner) {
+            activeScanner = scanner;
+            videoEl.classList.remove('hidden');
+            if (placeholderSvg) placeholderSvg.classList.add('opacity-10');
+          } else {
+            onQrDetected('CAREFLOW-DEMO-TOKEN');
+          }
+        });
+      } else {
+        onQrDetected('CAREFLOW-DEMO-TOKEN');
+      }
+    });
+  }
+
+  // Upload QR Image
+  if (uploadBtn && fileInput) {
+    uploadBtn.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (file) {
+        CareFlow.showToast('Processing QR Image...');
+        CareFlow.qrScanner.scanImageFile(file, onQrDetected, () => onQrDetected('CAREFLOW-IMAGE-TOKEN'));
+      }
+    });
+  }
+
+  // Test / Simulate QR
+  if (testQrBtn) {
+    testQrBtn.addEventListener('click', () => onQrDetected('CAREFLOW-SIMULATED-TOKEN'));
+  }
+
+  // Enter token button
+  const enterTokenBtn = document.getElementById('enter-token-btn');
+  if (enterTokenBtn) {
+    enterTokenBtn.addEventListener('click', async function() {
+      const code = prompt('Enter your 6-digit hospital token slip code:', 'TK-7429');
+      if (code) {
+        await CareFlow.api.createSession('general');
+        CareFlow.saveState({ tokenNumber: code });
+        CareFlow.showToast(`Token ${code} verified!`);
+        CareFlow.navigate('../careflow_patient_consent/code.html');
+      }
+    });
+  }
+
+  // Resume session button
+  const resumeBtn = document.querySelector('footer button');
+  if (resumeBtn) {
+    resumeBtn.addEventListener('click', () => {
+      CareFlow.showToast('Resuming active clinical intake...');
+      CareFlow.navigate('../careflow_patient_consent/code.html');
+    });
+  }
+</script></main></body></html>
+l>

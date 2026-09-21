@@ -1,0 +1,384 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"><title>CareFlow - Duration</title><link href="https://fonts.googleapis.com" rel="preconnect"><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&amp;display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"><style>@layer base{html,body{width:100%;margin:0;padding:0;min-height:100%;background-color:#faf8ff;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script src="../shared_careflow.js"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "tertiary-container": "#006c7f", "on-secondary-fixed": "#00201c", "on-background": "#131b2e", "primary-container": "#0d6e6e", "on-error": "#ffffff", "on-surface-variant": "#3e4948", "surface-container": "#eaedff", "tertiary-fixed-dim": "#4cd7f6", "secondary-fixed-dim": "#4fdbc8", "surface-container-highest": "#dae2fd", "on-primary": "#ffffff", "secondary": "#006b5f", "surface-bright": "#faf8ff", "surface": "#faf8ff", "inverse-on-surface": "#eef0ff", "surface-container-high": "#e2e7ff", "tertiary": "#005261", "surface-container-lowest": "#ffffff", "tertiary-fixed": "#acedff", "primary": "#005454", "background": "#faf8ff", "on-primary-fixed-variant": "#004f50", "on-tertiary": "#ffffff", "on-surface": "#131b2e", "on-primary-fixed": "#002020", "surface-dim": "#d2d9f4", "primary-fixed": "#a0f0f0", "outline": "#6e7979", "on-error-container": "#93000a", "surface-variant": "#dae2fd", "primary-fixed-dim": "#84d4d3", "on-primary-container": "#9dedec", "inverse-primary": "#84d4d3", "error": "#ba1a1a", "on-tertiary-fixed-variant": "#004e5c", "secondary-container": "#6df5e1", "secondary-fixed": "#71f8e4", "error-container": "#ffdad6", "on-tertiary-container": "#9eeaff", "surface-container-low": "#f2f3ff", "outline-variant": "#bec9c8", "on-secondary": "#ffffff", "surface-tint": "#016a6a", "on-secondary-container": "#006f64", "on-tertiary-fixed": "#001f26", "inverse-surface": "#283044", "on-secondary-fixed-variant": "#005048" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "margin-mobile": "1.25rem", "space-2xl": "3rem", "space-md": "1rem", "space-lg": "1.5rem", "space-xl": "2rem", "space-xxs": "0.25rem", "space-xs": "0.5rem", "gutter-desktop": "1.5rem", "space-3xl": "4rem", "margin-desktop": "2.5rem", "gutter-mobile": "1rem", "space-sm": "0.75rem" }, "fontFamily": { "title-md": ["Plus Jakarta Sans"], "display-lg": ["Plus Jakarta Sans"], "headline-md": ["Plus Jakarta Sans"], "headline-lg-mobile": ["Plus Jakarta Sans"], "headline-lg": ["Plus Jakarta Sans"], "body-lg": ["Plus Jakarta Sans"], "label-md": ["Plus Jakarta Sans"], "headline-sm": ["Plus Jakarta Sans"], "display-lg-mobile": ["Plus Jakarta Sans"], "body-md": ["Plus Jakarta Sans"], "label-sm": ["Plus Jakarta Sans"] }, "fontSize": { "title-md": ["18px", { "lineHeight": "24px", "fontWeight": "600" }], "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }], "headline-lg-mobile": ["26px", { "lineHeight": "34px", "letterSpacing": "-0.01em", "fontWeight": "600" }], "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.015em", "fontWeight": "600" }], "body-lg": ["16px", { "lineHeight": "26px", "fontWeight": "400" }], "label-md": ["13px", { "lineHeight": "18px", "letterSpacing": "0.01em", "fontWeight": "600" }], "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }], "display-lg-mobile": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "body-md": ["14px", { "lineHeight": "22px", "fontWeight": "400" }], "label-sm": ["11px", { "lineHeight": "16px", "letterSpacing": "0.04em", "fontWeight": "600" }] } } } }</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
+
+<link rel="preload" href="../material-symbols-outlined.woff2" as="font" type="font/woff2" crossorigin>
+<style id="careflow-material-symbols-core">
+  @font-face {
+    font-family: "Material Symbols Outlined";
+    font-style: normal;
+    font-weight: 100 700;
+    font-display: block;
+    src: url("../material-symbols-outlined.woff2") format("woff2"),
+         url("/material-symbols-outlined.woff2") format("woff2"),
+         url("https://fonts.gstatic.com/s/materialsymbolsoutlined/v373/kJEhBvYX7BgnkSrUwT8OhrdQw4oELdPIeeII9v6oFsLjBuVY.woff2") format("woff2");
+  }
+  .material-symbols-outlined {
+    font-family: "Material Symbols Outlined" !important;
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -webkit-font-feature-settings: "liga";
+    -moz-font-feature-settings: "liga";
+    font-feature-settings: "liga";
+    -webkit-font-smoothing: antialiased;
+    vertical-align: middle;
+  }
+</style>
+</head><body class="bg-surface text-on-surface font-body-md min-h-screen relative flex flex-col selection:bg-secondary-container selection:text-on-secondary-container"><div class="fixed inset-0 pointer-events-none z-0 overflow-hidden"><div class="absolute -top-32 -right-24 w-96 h-96 rounded-full bg-secondary-fixed-dim/20 blur-3xl"></div><div class="absolute top-1/4 -left-32 w-80 h-80 rounded-full bg-primary-fixed-dim/15 blur-3xl"></div><div class="absolute bottom-10 right-0 w-80 h-80 rounded-full bg-tertiary-fixed-dim/15 blur-3xl"></div></div><header class="fixed top-0 inset-x-0 z-50 pt-safe bg-surface/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(13,110,110,0.04)]"><div class="h-16 px-margin-mobile flex items-center justify-between"><div class="flex items-center gap-space-xs"><button id="q13-back-btn" class="w-10 h-10 rounded-xl bg-surface-container-low hover:bg-surface-container flex items-center justify-center text-primary transition-colors" type="button" aria-label="Go back"><span class="material-symbols-outlined text-[20px]">arrow_back</span></button><div class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center shadow-[0_2px_8px_-2px_rgba(13,110,110,0.25)]"><span class="material-symbols-outlined text-on-primary text-[22px]">volunteer_activism</span></div><div class="flex flex-col"><span class="font-title-md text-title-md text-primary tracking-tight">CareFlow</span></div></div><div class="flex items-center gap-space-xs"><button class="h-11 px-space-sm rounded-full bg-surface-container-low text-on-surface-variant font-label-md text-label-md flex items-center gap-space-xxs hover:bg-surface-container transition-colors" type="button"><span class="material-symbols-outlined text-[18px] text-primary">language</span><span>English</span><span class="material-symbols-outlined text-[16px]">arrow_drop_down</span></button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="relative z-10 flex flex-col flex-1 w-full pt-16 pb-safe bg-surface"><div class="flex flex-col w-full max-w-md mx-auto px-margin-mobile pb-space-2xl">
+<!-- Progress Stepper Block -->
+<div class="flex flex-col gap-space-xs mt-space-sm mb-space-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xxs">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+<span class="font-label-md text-label-md text-primary font-semibold">Step 2 of 5 · Health Questions</span>
+</div>
+<span class="bg-secondary-container text-on-secondary-container px-space-xs py-0.5 rounded-full font-label-sm text-label-sm font-bold shadow-sm">
+        60% Complete
+      </span>
+</div>
+<!-- Progress Track & Fill -->
+<div class="w-full h-1.5 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full transition-all duration-500 ease-out" style="width: 60%"></div>
+</div>
+<!-- Step Breadcrumb Indicators -->
+<div class="flex items-center justify-between pt-space-xxs">
+<div class="flex items-center gap-1 text-primary">
+<span class="material-symbols-outlined text-[15px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="font-label-sm text-label-sm font-semibold">Basics</span>
+</div>
+<div class="flex items-center gap-1 text-primary">
+<span class="material-symbols-outlined text-[15px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="font-label-sm text-label-sm font-semibold">Questions</span>
+</div>
+<div class="flex items-center gap-1 text-primary-container">
+<span class="w-2 h-2 rounded-full bg-primary-container"></span>
+<span class="font-label-sm text-label-sm font-bold tracking-tight">Symptoms</span>
+</div>
+<div class="flex items-center gap-1 text-outline">
+<span class="w-1.5 h-1.5 rounded-full bg-outline-variant"></span>
+<span class="font-label-sm text-label-sm font-medium">Review</span>
+</div>
+</div>
+</div>
+<!-- Question Header Section -->
+<div class="flex flex-col gap-space-xxs mb-space-md">
+<div class="flex items-center gap-space-xs flex-wrap">
+<span class="bg-surface-container text-primary font-label-sm text-label-sm px-space-xs py-0.5 rounded-md font-bold uppercase tracking-wider">
+        QUESTION 4 · DURATION
+      </span>
+<span class="inline-flex items-center gap-1 bg-secondary-fixed/30 text-on-secondary-fixed-variant font-label-sm text-label-sm px-space-xs py-0.5 rounded-md font-medium">
+<span class="material-symbols-outlined text-[13px]">verified_user</span>
+        Care triage
+      </span>
+</div>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface font-bold mt-space-xxs tracking-tight leading-snug">
+      How long have you had this?
+    </h1>
+<p class="font-title-md text-title-md text-primary font-semibold -mt-1 tracking-normal">
+      आपको यह कब से है?
+    </p>
+<p class="font-body-md text-body-md text-on-surface-variant mt-0.5 leading-relaxed">
+      Choose the option that best matches when your symptoms started.
+    </p>
+</div>
+<!-- Interactive Duration Options List -->
+<div aria-label="Symptom Duration Options" class="flex flex-col gap-space-xs mb-space-md" id="durationGroup" role="radiogroup">
+<!-- Option 1: Today -->
+<button aria-checked="false" class="duration-card text-left w-full p-space-sm rounded-xl bg-surface-container-lowest shadow-[0_2px_8px_-2px_rgba(13,110,110,0.04)] hover:bg-surface-container-low transition-all duration-200 flex items-center justify-between group" onclick="selectOption(this, 'Today · आज')" role="radio" type="button">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="w-10 h-10 rounded-xl bg-surface-container-low text-primary flex items-center justify-center flex-shrink-0 group-hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-[22px]">wb_twilight</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-baseline gap-space-xs">
+<span class="font-title-md text-title-md text-on-surface font-semibold truncate">Today</span>
+<span class="font-body-md text-body-md text-outline font-medium">आज</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant truncate">
+            Started within last few hours · पिछले कुछ घंटों में
+          </span>
+</div>
+</div>
+<div class="radio-indicator w-6 h-6 rounded-full bg-surface-container-high flex items-center justify-center flex-shrink-0 ml-space-xs">
+<div class="dot w-2 h-2 rounded-full bg-transparent"></div>
+</div>
+</button>
+<!-- Option 2: 2–3 days (DEFAULT SELECTED STATE) -->
+<button aria-checked="true" class="duration-card selected text-left w-full p-space-sm rounded-xl bg-secondary-fixed/20 shadow-[0_4px_16px_-4px_rgba(13,110,110,0.12)] transition-all duration-200 flex items-center justify-between relative overflow-hidden" onclick="selectOption(this, '2–3 days · 2–3 दिन')" role="radio" type="button">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="w-10 h-10 rounded-xl bg-primary text-on-primary flex items-center justify-center flex-shrink-0 shadow-sm">
+<span class="material-symbols-outlined text-[22px]">calendar_today</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-space-xs">
+<span class="font-title-md text-title-md text-primary font-bold">2–3 days</span>
+<span class="font-body-md text-body-md text-secondary font-semibold">2–3 दिन</span>
+<span class="bg-primary text-on-primary text-[10px] font-bold tracking-wider uppercase px-1.5 py-0.5 rounded-full">
+              COMMON
+            </span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-medium">
+            Recent onset · हाल ही में शुरू हुआ
+          </span>
+</div>
+</div>
+<div class="radio-indicator w-6 h-6 rounded-full bg-primary text-on-primary flex items-center justify-center flex-shrink-0 ml-space-xs shadow-sm">
+<span class="material-symbols-outlined text-[16px] font-bold">check</span>
+</div>
+</button>
+<!-- Option 3: 4–7 days -->
+<button aria-checked="false" class="duration-card text-left w-full p-space-sm rounded-xl bg-surface-container-lowest shadow-[0_2px_8px_-2px_rgba(13,110,110,0.04)] hover:bg-surface-container-low transition-all duration-200 flex items-center justify-between group" onclick="selectOption(this, '4–7 days · 4–7 दिन')" role="radio" type="button">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="w-10 h-10 rounded-xl bg-surface-container-low text-primary flex items-center justify-center flex-shrink-0 group-hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-[22px]">date_range</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-baseline gap-space-xs">
+<span class="font-title-md text-title-md text-on-surface font-semibold truncate">4–7 days</span>
+<span class="font-body-md text-body-md text-outline font-medium">4–7 दिन</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant truncate">
+            About a week · लगभग एक सप्ताह
+          </span>
+</div>
+</div>
+<div class="radio-indicator w-6 h-6 rounded-full bg-surface-container-high flex items-center justify-center flex-shrink-0 ml-space-xs">
+<div class="dot w-2 h-2 rounded-full bg-transparent"></div>
+</div>
+</button>
+<!-- Option 4: 1–2 weeks -->
+<button aria-checked="false" class="duration-card text-left w-full p-space-sm rounded-xl bg-surface-container-lowest shadow-[0_2px_8px_-2px_rgba(13,110,110,0.04)] hover:bg-surface-container-low transition-all duration-200 flex items-center justify-between group" onclick="selectOption(this, '1–2 weeks · 1–2 हफ्ते')" role="radio" type="button">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="w-10 h-10 rounded-xl bg-surface-container-low text-primary flex items-center justify-center flex-shrink-0 group-hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-[22px]">event_repeat</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-baseline gap-space-xs">
+<span class="font-title-md text-title-md text-on-surface font-semibold truncate">1–2 weeks</span>
+<span class="font-body-md text-body-md text-outline font-medium">1–2 हफ्ते</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant truncate">
+            Persistent symptoms · लगातार बना हुआ
+          </span>
+</div>
+</div>
+<div class="radio-indicator w-6 h-6 rounded-full bg-surface-container-high flex items-center justify-center flex-shrink-0 ml-space-xs">
+<div class="dot w-2 h-2 rounded-full bg-transparent"></div>
+</div>
+</button>
+<!-- Option 5: More than 2 weeks -->
+<button aria-checked="false" class="duration-card text-left w-full p-space-sm rounded-xl bg-surface-container-lowest shadow-[0_2px_8px_-2px_rgba(13,110,110,0.04)] hover:bg-surface-container-low transition-all duration-200 flex items-center justify-between group" onclick="selectOption(this, 'More than 2 weeks · 2 हफ्तों से ज्यादा')" role="radio" type="button">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="w-10 h-10 rounded-xl bg-surface-container-low text-primary flex items-center justify-center flex-shrink-0 group-hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-[22px]">update</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-baseline gap-space-xs">
+<span class="font-title-md text-title-md text-on-surface font-semibold truncate">More than 2 weeks</span>
+<span class="font-body-md text-body-md text-outline font-medium">2 हफ्तों से ज्यादा</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant truncate">
+            Over fortnight · 14 दिनों से अधिक
+          </span>
+</div>
+</div>
+<div class="radio-indicator w-6 h-6 rounded-full bg-surface-container-high flex items-center justify-center flex-shrink-0 ml-space-xs">
+<div class="dot w-2 h-2 rounded-full bg-transparent"></div>
+</div>
+</button>
+<!-- Option 6: More than a month -->
+<button aria-checked="false" class="duration-card text-left w-full p-space-sm rounded-xl bg-surface-container-lowest shadow-[0_2px_8px_-2px_rgba(13,110,110,0.04)] hover:bg-surface-container-low transition-all duration-200 flex items-center justify-between group" onclick="selectOption(this, 'More than a month · 1 महीने से ज्यादा')" role="radio" type="button">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="w-10 h-10 rounded-xl bg-surface-container-low text-primary flex items-center justify-center flex-shrink-0 group-hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-[22px]">calendar_month</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-baseline gap-space-xs">
+<span class="font-title-md text-title-md text-on-surface font-semibold truncate">More than a month</span>
+<span class="font-body-md text-body-md text-outline font-medium">1 महीने से ज्यादा</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant truncate">
+            Long-term/chronic · लंबे समय से
+          </span>
+</div>
+</div>
+<div class="radio-indicator w-6 h-6 rounded-full bg-surface-container-high flex items-center justify-center flex-shrink-0 ml-space-xs">
+<div class="dot w-2 h-2 rounded-full bg-transparent"></div>
+</div>
+</button>
+</div>
+<!-- Voice Fallback Card -->
+<div class="w-full bg-surface-container-low rounded-xl p-space-sm flex items-center justify-between gap-space-xs shadow-sm mb-space-xs">
+<div class="flex items-center gap-space-xs min-w-0">
+<div class="w-9 h-9 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[20px]">graphic_eq</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-md text-label-md text-on-surface font-semibold truncate">
+          Prefer to tell us? · बोलकर बताएं
+        </span>
+<span class="font-label-sm text-label-sm text-on-surface-variant truncate">
+          Speak your duration aloud
+        </span>
+</div>
+</div>
+<button class="flex-shrink-0 bg-surface-container-lowest text-primary px-space-sm py-1.5 rounded-full font-label-md text-label-md font-bold flex items-center gap-1 shadow-sm hover:bg-surface transition-colors active:scale-95" onclick="triggerSpeechSim()" type="button">
+<span class="material-symbols-outlined text-[16px] text-primary">mic</span>
+<span>Speak</span>
+</button>
+</div>
+<!-- Reassurance Card -->
+<div class="w-full bg-surface-container rounded-xl p-space-sm flex items-start gap-space-xs mb-space-lg shadow-sm">
+<span class="material-symbols-outlined text-primary text-[20px] flex-shrink-0 mt-0.5" style="font-variation-settings: 'FILL' 1;">health_and_safety</span>
+<p class="font-label-sm text-label-sm text-on-surface-variant leading-relaxed">
+      Your answers help us understand your symptoms better. · आपके जवाब हमें आपके लक्षणों को बेहतर समझने में मदद करते हैं।
+    </p>
+</div>
+<!-- Sticky Bottom Container for Primary Action & Compliance Badge -->
+<div class="sticky bottom-2 z-20 flex flex-col gap-space-xs pt-space-xs bg-surface/90 backdrop-blur-md">
+<button class="w-full h-12 rounded-full bg-primary hover:bg-primary-container text-on-primary font-title-md text-title-md font-bold flex items-center justify-center gap-space-xs shadow-md active:scale-[0.98] transition-all" id="submitBtn" type="button">
+<span id="btnText">Continue (2–3 days Selected)</span>
+<span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+</button>
+<div class="flex items-center justify-center gap-1.5 pb-1 text-center">
+<span class="material-symbols-outlined text-secondary text-[14px]">lock</span>
+<span class="font-label-sm text-label-sm text-outline font-medium tracking-tight">
+        Private &amp; Secure · ABDM Compliant · आपके उत्तर सुरक्षित हैं
+      </span>
+</div>
+</div>
+</div>
+<script>
+  let selectedDuration = '2–3 days';
+
+  function selectOption(targetEl, durationLabel) {
+    selectedDuration = durationLabel;
+    const cards = document.querySelectorAll('.duration-card');
+    cards.forEach(card => {
+      card.setAttribute('aria-checked', 'false');
+      card.className = 'duration-card text-left w-full p-space-sm rounded-xl bg-surface-container-lowest shadow-[0_2px_8px_-2px_rgba(13,110,110,0.04)] hover:bg-surface-container-low transition-all duration-200 flex items-center justify-between group';
+      
+      // Reset icon holder
+      const iconWrap = card.querySelector('.w-10');
+      if (iconWrap) {
+        iconWrap.className = 'w-10 h-10 rounded-xl bg-surface-container-low text-primary flex items-center justify-center flex-shrink-0 group-hover:bg-surface-container transition-colors';
+      }
+      
+      // Reset indicator
+      const radio = card.querySelector('.radio-indicator');
+      if (radio) {
+        radio.className = 'radio-indicator w-6 h-6 rounded-full bg-surface-container-high flex items-center justify-center flex-shrink-0 ml-space-xs';
+        radio.innerHTML = '<div class="dot w-2 h-2 rounded-full bg-transparent"></div>';
+      }
+    });
+
+    // Mark current selected
+    targetEl.setAttribute('aria-checked', 'true');
+    targetEl.className = 'duration-card selected text-left w-full p-space-sm rounded-xl bg-secondary-fixed/20 shadow-[0_4px_16px_-4px_rgba(13,110,110,0.12)] transition-all duration-200 flex items-center justify-between relative overflow-hidden';
+    
+    const activeIconWrap = targetEl.querySelector('.w-10');
+    if (activeIconWrap) {
+      activeIconWrap.className = 'w-10 h-10 rounded-xl bg-primary text-on-primary flex items-center justify-center flex-shrink-0 shadow-sm';
+    }
+
+    const activeRadio = targetEl.querySelector('.radio-indicator');
+    if (activeRadio) {
+      activeRadio.className = 'radio-indicator w-6 h-6 rounded-full bg-primary text-on-primary flex items-center justify-center flex-shrink-0 ml-space-xs shadow-sm';
+      activeRadio.innerHTML = '<span class="material-symbols-outlined text-[16px] font-bold">check</span>';
+    }
+
+    // Update CTA text
+    const cleanLabel = durationLabel.split('·')[0].trim();
+    document.getElementById('btnText').innerText = `Continue (${cleanLabel} Selected)`;
+  }
+
+  function triggerSpeechSim() {
+    CareFlow.speak("How long have you had this? You can say today, 2 to 3 days, or more than a week.");
+    const btnText = document.getElementById('btnText');
+    const original = btnText.innerText;
+    btnText.innerText = 'Listening... बोलिए';
+    
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+      const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+      const rec = new SpeechRec();
+      rec.lang = 'en-IN';
+      rec.start();
+      rec.onresult = (evt) => {
+        const text = evt.results[0][0].transcript.toLowerCase();
+        let matched = false;
+        document.querySelectorAll('.duration-card').forEach(card => {
+          const cardText = card.textContent.toLowerCase();
+          if (text.includes('today') && cardText.includes('today')) {
+            card.click();
+            matched = true;
+          } else if ((text.includes('2') || text.includes('3') || text.includes('few')) && cardText.includes('2–3')) {
+            card.click();
+            matched = true;
+          } else if ((text.includes('week') || text.includes('seven')) && cardText.includes('4–7')) {
+            card.click();
+            matched = true;
+          } else if (text.includes('month') && cardText.includes('month')) {
+            card.click();
+            matched = true;
+          }
+        });
+        if (!matched) {
+          CareFlow.showToast(`Heard: "${text}"`);
+        }
+        btnText.innerText = original;
+      };
+      rec.onerror = () => {
+        btnText.innerText = original;
+      };
+    } else {
+      setTimeout(() => {
+        btnText.innerText = original;
+      }, 1600);
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const state = CareFlow.getState();
+    if (state.duration) {
+      const cleanSaved = state.duration.split('·')[0].trim().toLowerCase();
+      document.querySelectorAll('.duration-card').forEach(card => {
+        if (card.textContent.toLowerCase().includes(cleanSaved)) {
+          card.click();
+        }
+      });
+    }
+
+    // Back Button
+    const backBtn = document.getElementById('q13-back-btn');
+    if (backBtn) {
+      backBtn.addEventListener('click', () => {
+        CareFlow.navigate('../careflow_question_12_face_scale_pain_severity/code.html');
+      });
+    }
+
+    // Submit Button
+    const submitBtn = document.getElementById('submitBtn');
+    if (submitBtn) {
+      submitBtn.addEventListener('click', () => {
+        CareFlow.saveState({ duration: selectedDuration });
+        CareFlow.showToast(`Duration saved: ${selectedDuration.split('·')[0].trim()}`);
+        setTimeout(() => {
+          CareFlow.navigate('../careflow_ayush_dashavidha_pariksha/code.html');
+        }, 200);
+      });
+    }
+  });
+</script></main></body></html>

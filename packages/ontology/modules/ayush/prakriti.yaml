@@ -1,0 +1,77 @@
+id: prakriti
+label: Prakriti questionnaire
+framework: custom
+description: >
+  Picture-based questionnaire on body frame, skin, hunger, sleep and temperament. Each answer is
+  tagged to a dosha in pariksha-vocabulary.yaml (`prakriti_scoring`); the gateway counts them for
+  the Vaidya as REFERENCE only. CareFlow never names a dominant dosha or asserts a constitution —
+  the Vaidya decides in Dashavidha Pariksha.
+source: >
+  A condensed, demo-scope proxy over the classical tridosha characteristic domains — five
+  domains, one item each. It is NOT the validated CCRAS Prakriti Assessment Scale (PAS: 91
+  predictors across 30 domains; Singh & Ota, AYU journal) and MUST be replaced with the real
+  instrument before it is presented as a validated assessment. PENDING_EXPERT_REVIEW.
+triggers:
+  - prakriti questionnaire
+  - प्रकृति
+
+slots:
+  - id: prakriti_body_frame
+    type: enum
+    required: true
+    input: [voice, chips]
+    prompt:
+      en: Which body frame has described you for most of your life?
+      hi: पूरी ज़िंदगी में आपका शरीर कैसा रहा है?
+    options:
+      - { value: thin, icon: accessibility_new, label: { en: "Thin, light frame", hi: "पतला, हल्का शरीर" } }
+      - { value: medium, icon: person, label: { en: "Medium, well-proportioned", hi: "मध्यम, संतुलित शरीर" } }
+      - { value: heavy, icon: monitor_weight, label: { en: "Broad, heavier frame", hi: "चौड़ा, भारी शरीर" } }
+
+  - id: prakriti_skin
+    type: enum
+    required: true
+    input: [voice, chips]
+    prompt:
+      en: How is your skin usually?
+      hi: आपकी त्वचा आमतौर पर कैसी रहती है?
+    options:
+      - { value: dry_rough, icon: air, label: { en: "Dry, rough, cracks easily", hi: "रूखी, खुरदरी, जल्दी फटती है" } }
+      - { value: warm_oily_sensitive, icon: local_fire_department, label: { en: "Warm, sensitive, reddens or breaks out", hi: "गर्म, संवेदनशील, लाल पड़ती है" } }
+      - { value: cool_smooth_moist, icon: water_drop, label: { en: "Cool, smooth, moist", hi: "ठंडी, चिकनी, नम" } }
+
+  - id: prakriti_hunger
+    type: enum
+    required: true
+    input: [voice, chips]
+    prompt:
+      en: How would you describe your hunger through the day?
+      hi: दिन भर आपकी भूख कैसी रहती है?
+    options:
+      - { value: irregular, icon: shuffle, label: { en: "Comes and goes, irregular", hi: "कभी लगती है कभी नहीं, अनियमित" } }
+      - { value: sharp_intense, icon: restaurant, label: { en: "Strong — I get irritable if I miss a meal", hi: "तेज़ — खाना छूटे तो चिड़चिड़ापन" } }
+      - { value: slow_mild, icon: hourglass_bottom, label: { en: "Mild — I can skip meals easily", hi: "हल्की — खाना छोड़ना आसान" } }
+
+  - id: prakriti_sleep
+    type: enum
+    required: true
+    input: [voice, chips]
+    prompt:
+      en: How do you usually sleep?
+      hi: आपकी नींद आमतौर पर कैसी रहती है?
+    options:
+      - { value: light_broken, icon: bedtime, label: { en: "Light, easily disturbed", hi: "हल्की, जल्दी टूट जाती है" } }
+      - { value: moderate_sound, icon: hotel, label: { en: "Moderate, fairly sound", hi: "मध्यम, ठीक-ठाक गहरी" } }
+      - { value: deep_long, icon: night_sight_auto, label: { en: "Deep and long, hard to wake", hi: "गहरी और लंबी, उठना मुश्किल" } }
+
+  - id: prakriti_temperament
+    type: enum
+    required: true
+    input: [voice, chips]
+    prompt:
+      en: Which describes your temperament best?
+      hi: आपका स्वभाव कैसा है?
+    options:
+      - { value: anxious_restless, icon: psychology_alt, label: { en: "Quick, restless, worries easily", hi: "फुर्तीला, बेचैन, जल्दी चिंता" } }
+      - { value: irritable_intense, icon: mood_bad, label: { en: "Determined, intense, quick to anger", hi: "दृढ़, तीव्र, जल्दी गुस्सा" } }
+      - { value: calm_steady, icon: self_improvement, label: { en: "Calm, steady, slow to anger", hi: "शांत, स्थिर, देर से गुस्सा" } }

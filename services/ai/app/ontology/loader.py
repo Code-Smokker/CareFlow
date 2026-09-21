@@ -27,6 +27,10 @@ def _load_all() -> dict[str, OntologyModule]:
     # **/*.yaml (recursive) so modules/ayush/*.yaml is picked up too, matching
     # packages/ontology/scripts/validate.py's own glob.
     for path in sorted(directory.glob("**/*.yaml")) + sorted(directory.glob("**/*.yml")):
+        # `*-vocabulary.yaml` (modules/ayush/pariksha-vocabulary.yaml) is the clinician-side
+        # examination vocabulary served by the gateway, not an interview module.
+        if path.stem.endswith("-vocabulary"):
+            continue
         raw = yaml.safe_load(path.read_text(encoding="utf-8"))
         try:
             module = OntologyModule.model_validate(raw)

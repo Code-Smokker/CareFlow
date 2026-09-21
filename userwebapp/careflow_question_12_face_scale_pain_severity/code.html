@@ -1,0 +1,541 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
+<title>CareFlow Question 12: Pain Severity Scale</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<script src="../shared_careflow.js"></script>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          },
+          colors: {
+            careflow: {
+              teal: '#0D6E6E',
+              'teal-dark': '#094E4E',
+              'teal-light': '#E6F4F1',
+              'teal-surface': '#F0FDFA',
+              'teal-border': '#99F6E4',
+              navy: '#0F1E36',
+              'navy-muted': '#53647E',
+              'navy-subtle': '#8897AE',
+              bg: '#FAF8FC',
+            }
+          },
+          boxShadow: {
+            'card-subtle': '0 2px 8px -2px rgba(15, 30, 54, 0.05), 0 1px 3px -1px rgba(15, 30, 54, 0.03)',
+            'card-selected': '0 4px 14px -3px rgba(13, 110, 110, 0.16), 0 2px 6px -2px rgba(13, 110, 110, 0.08)',
+            'cta': '0 4px 16px -2px rgba(13, 110, 110, 0.35)',
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    body {
+      background-color: #F8FAFC;
+      color: #0F1E36;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .custom-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
+
+<link rel="preload" href="../material-symbols-outlined.woff2" as="font" type="font/woff2" crossorigin>
+<style id="careflow-material-symbols-core">
+  @font-face {
+    font-family: "Material Symbols Outlined";
+    font-style: normal;
+    font-weight: 100 700;
+    font-display: block;
+    src: url("../material-symbols-outlined.woff2") format("woff2"),
+         url("/material-symbols-outlined.woff2") format("woff2"),
+         url("https://fonts.gstatic.com/s/materialsymbolsoutlined/v373/kJEhBvYX7BgnkSrUwT8OhrdQw4oELdPIeeII9v6oFsLjBuVY.woff2") format("woff2");
+  }
+  .material-symbols-outlined {
+    font-family: "Material Symbols Outlined" !important;
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -webkit-font-feature-settings: "liga";
+    -moz-font-feature-settings: "liga";
+    font-feature-settings: "liga";
+    -webkit-font-smoothing: antialiased;
+    vertical-align: middle;
+  }
+</style>
+</head>
+<body class="min-h-screen flex justify-center items-start bg-[#FAF8FF] antialiased selection:bg-teal-100 selection:text-teal-900">
+<!-- Responsive App Container -->
+<div class="w-full max-w-xl md:max-w-2xl min-h-screen flex flex-col bg-[#FAF8FF] relative overflow-hidden">
+<!-- iOS Status Bar -->
+<div class="pt-3 px-6 pb-1.5 flex justify-between items-center text-xs font-semibold text-careflow-navy select-none">
+<span class="tracking-tight font-bold">9:41</span>
+<div class="flex items-center space-x-1.5">
+<span class="inline-block w-2.5 h-2.5 rounded-full bg-careflow-navy"></span>
+<span class="inline-block w-2.5 h-2.5 rounded-full bg-careflow-navy"></span>
+<span class="inline-block w-2.5 h-2.5 rounded-full bg-careflow-navy"></span>
+</div>
+</div>
+<!-- CareFlow Standard Header -->
+<header class="px-4 py-2 flex items-center justify-between">
+<!-- Back Button -->
+<button id="q12-back-btn" aria-label="Go back" class="w-9 h-9 rounded-xl bg-white border border-slate-200/80 flex items-center justify-center text-careflow-navy hover:bg-slate-50 transition-colors shadow-xs" type="button">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M15 19l-7-7 7-7" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</button>
+<!-- Brand Badge -->
+<div class="flex items-center space-x-2">
+<div class="w-8 h-8 rounded-xl bg-careflow-teal flex items-center justify-center shadow-xs text-white">
+<svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" viewBox="0 0 24 24">
+<path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
+<path d="M12 7v6"></path>
+<path d="M9 10h6"></path>
+</svg>
+</div>
+<span class="text-lg font-bold tracking-tight text-careflow-teal">CareFlow</span>
+</div>
+<!-- Language Dropdown & Avatar -->
+<div class="flex items-center space-x-2">
+<button class="flex items-center space-x-1 px-2.5 py-1 bg-white border border-slate-200/80 rounded-full text-xs font-semibold text-careflow-navy hover:bg-slate-50 transition-colors shadow-xs" type="button">
+<span class="text-xs">🌐</span>
+<span>English</span>
+<svg class="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+<path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</button>
+<button class="w-8 h-8 rounded-full bg-[#0F1E36] text-white flex items-center justify-center font-bold text-xs shadow-xs" type="button">
+          AS
+        </button>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="flex-1 px-4 pt-2 pb-24 overflow-y-auto custom-scrollbar">
+<!-- Exact Progress System (Health Questions) -->
+<div class="mb-3.5 bg-white rounded-2xl p-3 border border-slate-200/70 shadow-card-subtle">
+<div class="flex items-center justify-between mb-2">
+<div class="flex items-center space-x-1.5">
+<span class="w-2 h-2 rounded-full bg-careflow-teal"></span>
+<span class="text-xs font-bold text-careflow-navy">Step 4 of 5</span>
+<span class="text-xs text-slate-300">·</span>
+<span class="text-xs font-medium text-careflow-navy-muted">Health Questions</span>
+</div>
+<span class="text-[11px] font-bold text-careflow-teal bg-careflow-teal-light px-2 py-0.5 rounded-full">
+            60% Complete
+          </span>
+</div>
+<!-- Progress Bar (60%) -->
+<div class="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden mb-2">
+<div class="h-full bg-careflow-teal rounded-full transition-all duration-500" style="width: 60%"></div>
+</div>
+<!-- Sub-step Navigation Row -->
+<div class="flex items-center justify-between text-[11px] font-medium pt-0.5">
+<span class="text-careflow-teal flex items-center gap-1 font-semibold">
+<span class="text-[10px] font-bold">✓</span> Basics
+          </span>
+<span class="text-careflow-teal flex items-center gap-1 font-semibold">
+<span class="text-[10px] font-bold">✓</span> Symptoms
+          </span>
+<span class="text-careflow-teal font-bold bg-careflow-teal-light/80 px-2 py-0.5 rounded-md flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-careflow-teal"></span> Pain Scale
+          </span>
+<span class="text-slate-400">Review</span>
+</div>
+</div>
+<!-- Context Triage Badges -->
+<div class="flex items-center justify-between mb-2">
+<div class="inline-flex items-center space-x-1.5 px-2.5 py-0.5 bg-careflow-teal-light text-careflow-teal rounded-full text-[10px] font-bold uppercase tracking-wider">
+<span>QUESTION 3</span>
+<span>·</span>
+<span>PAIN SEVERITY</span>
+</div>
+<span class="text-[10px] font-semibold text-careflow-navy-muted bg-slate-100 px-2 py-0.5 rounded-full">
+          Care triage
+        </span>
+</div>
+<!-- Question Heading & Voice Access Button -->
+<div class="mb-3.5 flex items-start justify-between gap-2">
+<div>
+<h1 class="text-xl font-bold tracking-tight text-careflow-navy leading-tight">
+            How bad is the pain?
+          </h1>
+<p class="text-sm font-semibold text-careflow-teal mt-0.5">
+            दर्द कितना तेज़ है?
+          </p>
+<p class="text-[11px] text-careflow-navy-muted mt-1 leading-snug">
+            Choose a number from 0 to 10. <span class="text-slate-400">(0 से 10 के बीच चुनें)</span>
+</p>
+</div>
+<!-- Voice Access Pill Button -->
+<button class="flex-shrink-0 inline-flex items-center space-x-1 text-[11px] font-semibold text-careflow-teal bg-careflow-teal-light hover:bg-[#D9EFEA] px-2.5 py-1.5 rounded-full border border-careflow-teal/20 transition-colors shadow-2xs" type="button">
+<span>🔊</span>
+<span>Hear Question</span>
+</button>
+</div>
+<!-- PAIN SCALE CARD (Wong-Baker Standard) -->
+<div class="bg-white rounded-2xl p-3.5 border border-slate-200/80 shadow-card-subtle mb-3">
+<!-- Card Header -->
+<div class="flex items-center justify-between pb-2.5 mb-2.5 border-b border-slate-100">
+<span class="text-[10px] font-extrabold text-careflow-navy uppercase tracking-wider">PAIN SEVERITY SCALE</span>
+<span class="text-[10px] font-medium text-careflow-navy-muted">Wong-Baker Standard</span>
+</div>
+<!-- 6 Faces Grid (3x2 mobile responsive grid) -->
+<div class="grid grid-cols-3 gap-2" id="faces-grid">
+<!-- 0: No pain -->
+<div class="pain-card flex flex-col items-center justify-center p-2 rounded-xl border border-slate-200/80 bg-white hover:border-careflow-teal/40 transition-all cursor-pointer" data-level="0" data-label="No pain" data-hindi="कोई नहीं" data-desc="Patient feels perfectly normal without discomfort. (मरीज़ बिल्कुल स्वस्थ और बिना किसी दर्द के महसूस करता है)">
+<div class="w-10 h-10 mb-1 rounded-full bg-emerald-50 flex items-center justify-center">
+<svg class="w-9 h-9" fill="none" viewBox="0 0 36 36">
+<circle cx="18" cy="18" fill="#D1FAE5" r="16" stroke="#10B981" stroke-width="1.5"></circle>
+<circle cx="13" cy="14" fill="#047857" r="1.75"></circle>
+<circle cx="23" cy="14" fill="#047857" r="1.75"></circle>
+<path d="M12 21C13.5 24.5 22.5 24.5 24 21" stroke="#047857" stroke-linecap="round" stroke-width="1.8"></path>
+</svg>
+</div>
+<span class="text-sm font-extrabold text-careflow-navy leading-tight">0</span>
+<span class="text-[10px] font-semibold text-emerald-700">No pain</span>
+<span class="text-[9px] text-slate-400">कोई नहीं</span>
+</div>
+<!-- 2: Mild -->
+<div class="pain-card flex flex-col items-center justify-center p-2 rounded-xl border border-slate-200/80 bg-white hover:border-careflow-teal/40 transition-all cursor-pointer" data-level="2" data-label="Mild" data-hindi="हल्का" data-desc="Noticeable discomfort but does not interfere with daily activities. (हल्का दर्द लेकिन रोज़मर्रा के काम में रुकावट नहीं)">
+<div class="w-10 h-10 mb-1 rounded-full bg-teal-50 flex items-center justify-center">
+<svg class="w-9 h-9" fill="none" viewBox="0 0 36 36">
+<circle cx="18" cy="18" fill="#CCFBF1" r="16" stroke="#14B8A6" stroke-width="1.5"></circle>
+<circle cx="13" cy="14" fill="#0F766E" r="1.75"></circle>
+<circle cx="23" cy="14" fill="#0F766E" r="1.75"></circle>
+<path d="M13 22C15 24 21 24 23 22" stroke="#0F766E" stroke-linecap="round" stroke-width="1.8"></path>
+</svg>
+</div>
+<span class="text-sm font-extrabold text-careflow-navy leading-tight">2</span>
+<span class="text-[10px] font-semibold text-teal-700">Mild</span>
+<span class="text-[9px] text-slate-400">हल्का</span>
+</div>
+<!-- 4: Moderate -->
+<div class="pain-card flex flex-col items-center justify-center p-2 rounded-xl border border-slate-200/80 bg-white hover:border-careflow-teal/40 transition-all cursor-pointer" data-level="4" data-label="Moderate" data-hindi="मध्यम" data-desc="Distracting pain, interferes with some tasks. (ध्यान भटकाने वाला दर्द, कुछ कार्यों में बाधा डालता है)">
+<div class="w-10 h-10 mb-1 rounded-full bg-amber-50 flex items-center justify-center">
+<svg class="w-9 h-9" fill="none" viewBox="0 0 36 36">
+<circle cx="18" cy="18" fill="#FEF3C7" r="16" stroke="#F59E0B" stroke-width="1.5"></circle>
+<circle cx="13" cy="14" fill="#B45309" r="1.75"></circle>
+<circle cx="23" cy="14" fill="#B45309" r="1.75"></circle>
+<line stroke="#B45309" stroke-linecap="round" stroke-width="1.8" x1="13" x2="23" y1="22" y2="22"></line>
+</svg>
+</div>
+<span class="text-sm font-extrabold text-careflow-navy leading-tight">4</span>
+<span class="text-[10px] font-semibold text-amber-700">Moderate</span>
+<span class="text-[9px] text-slate-400">मध्यम</span>
+</div>
+<!-- 6: Severe (SELECTED DEFAULT) -->
+<div class="pain-card flex flex-col items-center justify-center p-2 rounded-xl border-2 border-careflow-teal bg-[#EBF8F6] shadow-card-selected relative cursor-pointer ring-2 ring-careflow-teal/20" data-level="6" data-label="Severe" data-hindi="तेज़ दर्द" data-desc="Pain makes normal activities difficult. (दर्द के कारण सामान्य काम करने में कठिनाई होती है)">
+<!-- Active Selected Checkmark -->
+<div class="check-badge absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-careflow-teal text-white flex items-center justify-center shadow-xs">
+<svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+<path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+<div class="w-10 h-10 mb-1 rounded-full bg-orange-50 flex items-center justify-center">
+<svg class="w-9 h-9" fill="none" viewBox="0 0 36 36">
+<circle cx="18" cy="18" fill="#FFEDD5" r="16" stroke="#FB923C" stroke-width="1.5"></circle>
+<path d="M11 13L14 15" stroke="#C2410C" stroke-linecap="round" stroke-width="1.6"></path>
+<path d="M25 13L22 15" stroke="#C2410C" stroke-linecap="round" stroke-width="1.6"></path>
+<circle cx="13" cy="16" fill="#C2410C" r="1.6"></circle>
+<circle cx="23" cy="16" fill="#C2410C" r="1.6"></circle>
+<path d="M13 23C15 20.5 21 20.5 23 23" stroke="#C2410C" stroke-linecap="round" stroke-width="1.8"></path>
+</svg>
+</div>
+<span class="text-sm font-extrabold text-careflow-teal leading-tight">6</span>
+<span class="text-[10px] font-bold text-careflow-teal">Severe</span>
+<span class="text-[9px] font-semibold text-careflow-teal">तेज़ दर्द</span>
+</div>
+<!-- 8: Very severe -->
+<div class="pain-card flex flex-col items-center justify-center p-2 rounded-xl border border-slate-200/80 bg-white hover:border-careflow-teal/40 transition-all cursor-pointer" data-level="8" data-label="Very severe" data-hindi="बहुत तेज़" data-desc="Severe pain, dominates senses and limits basic movement. (अत्यधिक दर्द, हिलने-डुलने और ध्यान केंद्रित करने में बहुत परेशानी)">
+<div class="w-10 h-10 mb-1 rounded-full bg-orange-100 flex items-center justify-center">
+<svg class="w-9 h-9" fill="none" viewBox="0 0 36 36">
+<circle cx="18" cy="18" fill="#FEE2E2" r="16" stroke="#F87171" stroke-width="1.5"></circle>
+<path d="M11 16L14 14" stroke="#B91C1C" stroke-linecap="round" stroke-width="1.8"></path>
+<path d="M25 16L22 14" stroke="#B91C1C" stroke-linecap="round" stroke-width="1.8"></path>
+<path d="M13 24C14.5 21 21.5 21 23 24" stroke="#B91C1C" stroke-linecap="round" stroke-width="1.8"></path>
+<path d="M25 21C25 22.5 24 23 24 23" stroke="#38BDF8" stroke-linecap="round" stroke-width="1.5"></path>
+</svg>
+</div>
+<span class="text-sm font-extrabold text-careflow-navy leading-tight">8</span>
+<span class="text-[10px] font-semibold text-red-700">Very severe</span>
+<span class="text-[9px] text-slate-400">बहुत तेज़</span>
+</div>
+<!-- 10: Worst -->
+<div class="pain-card flex flex-col items-center justify-center p-2 rounded-xl border border-slate-200/80 bg-white hover:border-careflow-teal/40 transition-all cursor-pointer" data-level="10" data-label="Worst possible" data-hindi="असहनीय" data-desc="Unbearable, excruciating pain requiring immediate medical relief. (असहनीय दर्द, तत्काल चिकित्सकीय राहत की आवश्यकता)">
+<div class="w-10 h-10 mb-1 rounded-full bg-red-100 flex items-center justify-center">
+<svg class="w-9 h-9" fill="none" viewBox="0 0 36 36">
+<circle cx="18" cy="18" fill="#FEE2E2" r="16" stroke="#EF4444" stroke-width="1.5"></circle>
+<path d="M11 14L15 16M11 16L15 14" stroke="#991B1B" stroke-linecap="round" stroke-width="1.5"></path>
+<path d="M21 14L25 16M21 16L25 14" stroke="#991B1B" stroke-linecap="round" stroke-width="1.5"></path>
+<path d="M13 25C15 22 21 22 23 25" stroke="#991B1B" stroke-linecap="round" stroke-width="2"></path>
+<ellipse cx="11" cy="20" fill="#38BDF8" rx="1" ry="2"></ellipse>
+<ellipse cx="25" cy="20" fill="#38BDF8" rx="1" ry="2"></ellipse>
+</svg>
+</div>
+<span class="text-sm font-extrabold text-careflow-navy leading-tight">10</span>
+<span class="text-[10px] font-semibold text-red-800">Worst</span>
+<span class="text-[9px] text-slate-400">असहनीय</span>
+</div>
+</div>
+<!-- SCALE INDICATOR (0-10 continuous slider) -->
+<div class="mt-4 pt-3 border-t border-slate-100">
+<div class="flex justify-between items-center text-[10px] font-semibold text-careflow-navy-muted mb-1.5">
+<span>0 (None)</span>
+<span id="active-level-label" class="text-careflow-teal font-extrabold bg-careflow-teal-light px-2 py-0.5 rounded">Active Level: 6</span>
+<span>10 (Worst)</span>
+</div>
+<!-- Continuous Slider Track with Thumb at 6 (60%) -->
+<div class="relative w-full h-3 flex items-center">
+<div class="w-full h-2 rounded-full bg-gradient-to-r from-[#10B981] via-[#F59E0B] to-[#EF4444] opacity-90"></div>
+<!-- Slider Thumb positioned at 60% -->
+<div id="slider-thumb" class="absolute left-[60%] -translate-x-1/2 w-5 h-5 rounded-full bg-white border-2 border-careflow-teal shadow-md flex items-center justify-center cursor-pointer ring-2 ring-careflow-teal/20 transition-all duration-300">
+<span class="w-1.5 h-1.5 rounded-full bg-careflow-teal"></span>
+</div>
+</div>
+<!-- Number ticks -->
+<div class="flex justify-between text-[9px] font-semibold text-careflow-navy-muted px-0.5 mt-1" id="slider-ticks">
+<span class="cursor-pointer" onclick="selectPainLevel(0)">0</span>
+<span class="cursor-pointer" onclick="selectPainLevel(1)">1</span>
+<span class="cursor-pointer" onclick="selectPainLevel(2)">2</span>
+<span class="cursor-pointer" onclick="selectPainLevel(3)">3</span>
+<span class="cursor-pointer" onclick="selectPainLevel(4)">4</span>
+<span class="cursor-pointer" onclick="selectPainLevel(5)">5</span>
+<span class="cursor-pointer font-bold text-careflow-teal" id="tick-6" onclick="selectPainLevel(6)">6</span>
+<span class="cursor-pointer" onclick="selectPainLevel(7)">7</span>
+<span class="cursor-pointer" onclick="selectPainLevel(8)">8</span>
+<span class="cursor-pointer" onclick="selectPainLevel(9)">9</span>
+<span class="cursor-pointer" onclick="selectPainLevel(10)">10</span>
+</div>
+</div>
+</div>
+<!-- SELECTED PAIN INFORMATION CARD -->
+<div class="mb-3 bg-[#F0FDFA] rounded-2xl p-3 border border-[#99F6E4] shadow-card-subtle flex items-start space-x-2.5">
+<div id="summary-score-badge" class="w-8 h-8 rounded-full bg-careflow-teal text-white flex items-center justify-center flex-shrink-0 font-extrabold text-sm shadow-xs mt-0.5">
+6
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between">
+<div class="flex items-center space-x-1.5">
+<span id="summary-title" class="text-xs font-bold text-careflow-navy">6 / 10 • Severe</span>
+<span id="summary-hindi" class="text-xs font-bold text-careflow-teal">दर्द तेज़ है</span>
+</div>
+<button class="text-xs font-bold text-careflow-teal hover:underline flex-shrink-0" type="button" onclick="window.scrollTo({top: 150, behavior: 'smooth'})">
+Change
+</button>
+</div>
+<p id="summary-desc" class="text-[11px] text-careflow-navy font-medium mt-0.5 leading-snug">
+Pain makes normal activities difficult. <span class="text-careflow-navy-muted">(दर्द के कारण सामान्य काम करने में कठिनाई होती है)</span>
+</p>
+</div>
+</div>
+<!-- VOICE FALLBACK ROW -->
+<div class="bg-white rounded-2xl p-2.5 px-3 border border-slate-200/80 shadow-card-subtle flex items-center justify-between mb-3">
+<div class="flex items-center space-x-2.5">
+<div class="w-7 h-7 rounded-full bg-careflow-teal-light text-careflow-teal flex items-center justify-center flex-shrink-0">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M12 18.75a6 6 0 006-6v-1.5m-6 7.5a6 6 0 01-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 1.5a3 3 0 00-3 3v4.5a3 3 0 006 0V4.5a3 3 0 00-3-3z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+<div>
+<p class="text-xs font-bold text-careflow-navy leading-tight">
+Prefer to speak? <span class="font-medium text-careflow-navy-muted">· बोलकर बताएं</span>
+</p>
+<p class="text-[10px] text-careflow-navy-muted">
+Say your pain level (0 to 10)
+</p>
+</div>
+</div>
+<button id="pain-speak-btn" class="px-2.5 py-1 bg-careflow-teal-light hover:bg-[#D9EFEA] text-careflow-teal font-bold text-xs rounded-full border border-careflow-teal/20 transition-colors flex items-center space-x-1 shadow-2xs" type="button">
+<span>🎙️ Speak</span>
+<svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+<path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</button>
+</div>
+<!-- Helper Guidance -->
+<div class="flex items-center justify-center space-x-1 text-center text-[11px] text-careflow-navy-muted pb-1">
+<span>ⓘ</span>
+<span>Not sure? Choose the number that feels closest.</span>
+</div>
+</main>
+<!-- Sticky Bottom CTA & Compliance -->
+<footer class="sticky bottom-0 left-0 right-0 px-4 pt-2 pb-4 bg-white/95 backdrop-blur-md border-t border-slate-200/80">
+<!-- Full-width Dark Teal Continue Button -->
+<button id="q12-continue-btn" class="w-full py-3 px-5 rounded-full bg-careflow-teal hover:bg-careflow-teal-dark text-white font-bold text-sm shadow-cta flex items-center justify-center space-x-1.5 transition-all transform active:scale-[0.99]" type="button">
+<span id="continue-label">Continue (Level 6 Selected)</span>
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</button>
+<!-- Privacy & Compliance Footnote -->
+<div class="flex items-center justify-center space-x-1.5 text-[10px] text-careflow-navy-muted mt-2 select-none">
+<svg class="w-3 h-3 text-careflow-teal flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<rect height="11" rx="2" ry="2" width="18" x="3" y="11"></rect>
+<path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+</svg>
+<span>Private &amp; Secure • ABDM Compliant • आपके उत्तर सुरक्षित हैं</span>
+</div>
+</footer>
+</div>
+
+<script>
+let currentPainLevel = 6;
+let currentPainLabel = 'Severe';
+
+const painDetails = {
+  0: { label: 'No pain', hindi: 'कोई दर्द नहीं', desc: 'No pain or discomfort felt. (कोई दर्द या बेचैनी नहीं है)' },
+  1: { label: 'Very mild', hindi: 'बहुत हल्का', desc: 'Barely noticeable pain. (ना के बराबर दर्द महसूस हो रहा है)' },
+  2: { label: 'Mild', hindi: 'हल्का', desc: 'Noticeable discomfort but daily tasks unaffected. (हल्का दर्द लेकिन सामान्य काम में परेशानी नहीं)' },
+  3: { label: 'Mild to moderate', hindi: 'हल्का से मध्यम', desc: 'Can be tolerated, occasionally distracting. (सहन करने योग्य, ध्यान भटकाता है)' },
+  4: { label: 'Moderate', hindi: 'मध्यम', desc: 'Distracting pain, interferes with some activities. (मध्यम दर्द, कुछ काम करने में बाधा डालता है)' },
+  5: { label: 'Moderate strong', hindi: 'मध्यम तेज़', desc: 'Can focus on tasks only with effort. (काम पर ध्यान लगाने के लिए प्रयास करना पड़ता है)' },
+  6: { label: 'Severe', hindi: 'तेज़ दर्द', desc: 'Pain makes normal activities difficult. (दर्द के कारण सामान्य काम करने में कठिनाई होती है)' },
+  7: { label: 'Severe persistent', hindi: 'काफी तेज़ दर्द', desc: 'Dominates senses, hard to concentrate. (ध्यान केंद्रित करना बहुत मुश्किल है)' },
+  8: { label: 'Very severe', hindi: 'बहुत तेज़ दर्द', desc: 'Very severe pain, limits basic movement. (अत्यधिक दर्द, उठना-बैठना कठिन)' },
+  9: { label: 'Extremely severe', hindi: 'अत्यंत गंभीर', desc: 'Nearly unbearable pain, requires immediate care. (अत्यंत गंभीर दर्द, तुरंत देखभाल चाहिए)' },
+  10: { label: 'Worst possible', hindi: 'असहनीय', desc: 'Worst pain imaginable, emergency relief needed. (असहनीय दर्द, तत्काल आपातकालीन राहत की आवश्यकता)' }
+};
+
+function selectPainLevel(level) {
+  currentPainLevel = parseInt(level, 10);
+  const info = painDetails[currentPainLevel] || painDetails[6];
+  currentPainLabel = info.label;
+
+  // Update slider UI
+  const sliderThumb = document.getElementById('slider-thumb');
+  if (sliderThumb) {
+    sliderThumb.style.left = `${currentPainLevel * 10}%`;
+  }
+  const levelLabel = document.getElementById('active-level-label');
+  if (levelLabel) {
+    levelLabel.textContent = `Active Level: ${currentPainLevel}`;
+  }
+
+  // Highlight active tick if present
+  document.querySelectorAll('#slider-ticks span').forEach(el => {
+    el.classList.remove('font-bold', 'text-careflow-teal');
+  });
+  const activeTick = document.querySelector(`#slider-ticks span:nth-child(${currentPainLevel + 1})`);
+  if (activeTick) {
+    activeTick.classList.add('font-bold', 'text-careflow-teal');
+  }
+
+  // Update face cards
+  document.querySelectorAll('.pain-card').forEach(card => {
+    const cardLevel = parseInt(card.dataset.level, 10);
+    const checkBadge = card.querySelector('.check-badge');
+    if (checkBadge) checkBadge.remove();
+
+    if (cardLevel === currentPainLevel || (Math.abs(cardLevel - currentPainLevel) === 1 && ![0,2,4,6,8,10].includes(currentPainLevel) && cardLevel === Math.round(currentPainLevel / 2) * 2)) {
+      card.className = 'pain-card flex flex-col items-center justify-center p-2 rounded-xl border-2 border-careflow-teal bg-[#EBF8F6] shadow-card-selected relative cursor-pointer ring-2 ring-careflow-teal/20';
+      const badge = document.createElement('div');
+      badge.className = 'check-badge absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-careflow-teal text-white flex items-center justify-center shadow-xs';
+      badge.innerHTML = '<svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"></path></svg>';
+      card.appendChild(badge);
+    } else {
+      card.className = 'pain-card flex flex-col items-center justify-center p-2 rounded-xl border border-slate-200/80 bg-white hover:border-careflow-teal/40 transition-all cursor-pointer';
+    }
+  });
+
+  // Update summary card
+  const scoreBadge = document.getElementById('summary-score-badge');
+  if (scoreBadge) scoreBadge.textContent = currentPainLevel;
+  const title = document.getElementById('summary-title');
+  if (title) title.textContent = `${currentPainLevel} / 10 • ${info.label}`;
+  const hindi = document.getElementById('summary-hindi');
+  if (hindi) hindi.textContent = info.hindi;
+  const desc = document.getElementById('summary-desc');
+  if (desc) desc.innerHTML = `${info.desc.split('(')[0]} <span class="text-careflow-navy-muted">(${info.desc.split('(')[1] || ''}</span>`;
+
+  // Update continue CTA
+  const continueLabel = document.getElementById('continue-label');
+  if (continueLabel) continueLabel.textContent = `Continue (Level ${currentPainLevel} Selected)`;
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const state = CareFlow.getState();
+  if (state.painScale && state.painScale.score !== undefined) {
+    selectPainLevel(state.painScale.score);
+  }
+
+  // Face card click listeners
+  document.querySelectorAll('.pain-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const lvl = card.getAttribute('data-level');
+      if (lvl !== null) selectPainLevel(lvl);
+    });
+  });
+
+  // Back button
+  const backBtn = document.getElementById('q12-back-btn');
+  if (backBtn) {
+    backBtn.addEventListener('click', () => {
+      CareFlow.navigate('../careflow_question_11_body_map/code.html');
+    });
+  }
+
+  // Voice speak button
+  const speakBtn = document.getElementById('pain-speak-btn');
+  if (speakBtn) {
+    speakBtn.addEventListener('click', () => {
+      CareFlow.speak(`Please tell your pain level on a scale from 0 to 10.`);
+      if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+        const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+        const rec = new SpeechRec();
+        rec.lang = 'en-IN';
+        rec.start();
+        rec.onresult = (evt) => {
+          const text = evt.results[0][0].transcript.toLowerCase();
+          const match = text.match(/\d+/);
+          if (match) {
+            const num = Math.min(10, Math.max(0, parseInt(match[0], 10)));
+            selectPainLevel(num);
+            CareFlow.showToast(`Pain level ${num} recorded!`);
+          } else {
+            CareFlow.showToast(`Recognized: "${text}". Selected closest score.`);
+          }
+        };
+      }
+    });
+  }
+
+  // Continue button
+  const continueBtn = document.getElementById('q12-continue-btn');
+  if (continueBtn) {
+    continueBtn.addEventListener('click', () => {
+      CareFlow.saveState({
+        painScale: {
+          score: currentPainLevel,
+          label: currentPainLabel
+        }
+      });
+      CareFlow.showToast(`Pain level ${currentPainLevel} saved`);
+      setTimeout(() => {
+        CareFlow.navigate('../careflow_question_13_duration/code.html');
+      }, 250);
+    });
+  }
+});
+</script>
+</body></html>

@@ -1,0 +1,801 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0" name="viewport"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"><link href="https://fonts.googleapis.com" rel="preconnect"><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Shared CareFlow Universal Navigation & Utilities -->
+<script src="../shared_nav.js"></script>
+<style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"text-muted":"#3E4948","status-error":"#BA1A1A","on-primary-fixed":"#002020","surface-bright":"#f9f9ff","secondary-container":"#9cefdf","secondary-fixed-dim":"#83d5c6","on-surface-variant":"#3e4948","surface-container-lowest":"#ffffff","surface":"#f9f9ff","tertiary":"#015362","on-primary-fixed-variant":"#004f50","on-error-container":"#93000a","background":"#f9f9ff","primary-fixed":"#a0f0f0","surface-container-highest":"#d7e3ff","on-tertiary-fixed":"#001f26","inverse-primary":"#84d4d3","canvas-bg":"#FAF8FF","on-background":"#0c1b33","tertiary-fixed-dim":"#92d0e2","on-primary-container":"#9dedec","primary":"#005454","on-secondary-fixed-variant":"#005047","navy-dark":"#0B192C","tertiary-container":"#296b7a","surface-mint":"#D1F2E8","inverse-surface":"#223149","secondary":"#006b5f","on-tertiary-container":"#abe9fb","surface-card":"#FFFFFF","border-subtle":"#E2E8F0","outline":"#6e7979","border-teal":"#D6E4E2","inverse-on-surface":"#ecf0ff","surface-dim":"#ccdafa","surface-tint":"#016a6a","primary-fixed-dim":"#84d4d3","on-surface":"#0c1b33","surface-variant":"#d7e3ff","on-primary":"#ffffff","error-container":"#ffdad6","surface-container":"#e8eeff","on-secondary-fixed":"#00201c","on-tertiary-fixed-variant":"#004e5c","on-tertiary":"#ffffff","status-error-bg":"#FFDAD6","on-error":"#ffffff","tertiary-fixed":"#aeecfe","secondary-fixed":"#9ff2e2","surface-container-high":"#dfe8ff","primary-container":"#0d6e6e","error":"#ba1a1a","on-secondary":"#ffffff","surface-container-low":"#f1f3ff","surface-mint-subtle":"#E6F7F2","on-secondary-container":"#0b6f63","outline-variant":"#bec9c8"},"borderRadius":{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},"spacing":{"space-lg":"1.5rem","gutter-mobile":"1rem","space-md":"1rem","sidebar-width":"260px","container-max":"1320px","padding-card":"1.5rem","space-sm":"0.5rem","space-xs":"0.25rem","space-xl":"2rem","space-2xl":"3rem","gutter-desktop":"1.5rem"},"fontFamily":{"headline-md":["Plus Jakarta Sans"],"label-md":["Inter"],"label-sm":["Inter"],"headline-lg-mobile":["Plus Jakarta Sans"],"display-lg-mobile":["Plus Jakarta Sans"],"title-md":["Plus Jakarta Sans"],"body-sm-bilingual":["Plus Jakarta Sans"],"headline-lg":["Plus Jakarta Sans"],"body-md":["Plus Jakarta Sans"],"body-lg":["Plus Jakarta Sans"],"display-lg":["Plus Jakarta Sans"]},"fontSize":{"headline-md":["22px",{"lineHeight":"30px","letterSpacing":"-0.01em","fontWeight":"600"}],"label-md":["13px",{"lineHeight":"18px","letterSpacing":"0.01em","fontWeight":"600"}],"label-sm":["11px",{"lineHeight":"16px","letterSpacing":"0.03em","fontWeight":"600"}],"headline-lg-mobile":["24px",{"lineHeight":"32px","letterSpacing":"-0.01em","fontWeight":"600"}],"display-lg-mobile":["34px",{"lineHeight":"42px","letterSpacing":"-0.02em","fontWeight":"700"}],"title-md":["18px",{"lineHeight":"26px","fontWeight":"600"}],"body-sm-bilingual":["12px",{"lineHeight":"18px","fontWeight":"400"}],"headline-lg":["32px",{"lineHeight":"40px","letterSpacing":"-0.015em","fontWeight":"600"}],"body-md":["14px",{"lineHeight":"22px","fontWeight":"400"}],"body-lg":["16px",{"lineHeight":"26px","fontWeight":"400"}],"display-lg":["48px",{"lineHeight":"56px","letterSpacing":"-0.02em","fontWeight":"700"}]}}}}</script></head><body class="bg-background font-body-md text-on-surface antialiased"><div class=""><main class="w-full bg-background min-h-screen"><div class="flex flex-col w-full">
+<!-- Top Navigation (Patient Portal Bar) -->
+<header class="w-full bg-surface-card shadow-sm sticky top-0 z-40">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+<!-- Brand & Identity -->
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-2xl bg-primary flex items-center justify-center text-on-primary shadow-sm">
+<span class="material-symbols-outlined text-[22px]" style="font-variation-settings: 'FILL' 1;">favorite</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="font-headline-md text-title-md text-navy-dark leading-none tracking-tight">CareFlow</span>
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-surface-mint-subtle text-primary font-semibold">
+              Patient Portal
+            </span>
+</div>
+<span class="font-body-sm-bilingual text-body-sm-bilingual text-text-muted leading-tight mt-0.5">
+            PATIENT CARE • मरीज पोर्टल
+          </span>
+</div>
+</div>
+<!-- Navigation Links -->
+<nav class="hidden md:flex items-center gap-1">
+<a class="px-3.5 py-2 rounded-xl text-on-surface-variant hover:bg-surface-mint-subtle hover:text-primary transition-all flex items-center gap-1.5 font-body-md text-body-md" href="#">
+<span class="">Home</span>
+<span class="text-text-muted font-body-sm-bilingual text-[11px]">(गृह)</span>
+</a>
+<a class="px-3.5 py-2 rounded-xl text-on-surface-variant hover:bg-surface-mint-subtle hover:text-primary transition-all flex items-center gap-1.5 font-body-md text-body-md" href="#">
+<span class="">My Health</span>
+<span class="text-text-muted font-body-sm-bilingual text-[11px]">(स्वास्थ्य)</span>
+</a>
+<a class="px-3.5 py-2 rounded-xl bg-surface-mint-subtle text-primary font-semibold transition-all flex items-center gap-1.5 font-body-md text-body-md" href="#">
+<span class="">Appointments</span>
+<span class="text-primary font-body-sm-bilingual text-[11px]">(अपॉइंटमेंट)</span>
+</a>
+<a class="px-3.5 py-2 rounded-xl text-on-surface-variant hover:bg-surface-mint-subtle hover:text-primary transition-all flex items-center gap-1.5 font-body-md text-body-md" href="#">
+<span class="">Documents</span>
+<span class="text-text-muted font-body-sm-bilingual text-[11px]">(दस्तावेज़)</span>
+</a>
+<a class="px-3.5 py-2 rounded-xl text-on-surface-variant hover:bg-surface-mint-subtle hover:text-primary transition-all flex items-center gap-1.5 font-body-md text-body-md" href="#">
+<span class="">Care Summary</span>
+<span class="text-text-muted font-body-sm-bilingual text-[11px]">(सारांश)</span>
+</a>
+</nav>
+<!-- Right Utility Actions -->
+<div class="flex items-center gap-3">
+<!-- Language Switcher -->
+<div class="flex items-center bg-surface-mint-subtle rounded-full p-1 shadow-sm">
+<button class="px-2.5 py-1 rounded-full font-label-sm text-label-sm font-semibold bg-surface-card text-navy-dark shadow-sm" type="button">English</button>
+<button class="px-2.5 py-1 rounded-full font-label-sm text-label-sm text-secondary hover:text-navy-dark transition-colors" type="button">हिन्दी</button>
+</div>
+<!-- Alert Notification -->
+<button aria-label="Notifications" class="relative p-2 rounded-full hover:bg-surface-mint-subtle text-text-muted hover:text-navy-dark transition-colors" type="button">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 bg-status-error rounded-full ring-2 ring-surface-card"></span>
+</button>
+<!-- Profile Pill -->
+<div class="hidden sm:flex items-center gap-2.5 pl-2 pr-3 py-1.5 rounded-full bg-surface-container-lowest shadow-sm">
+<div class="w-8 h-8 rounded-full bg-primary-container text-on-primary flex items-center justify-center font-label-md text-label-md">
+            AS
+          </div>
+<div class="flex flex-col text-left">
+<div class="flex items-center gap-1.5">
+<span class="font-label-md text-label-md text-navy-dark leading-none">Aarav Sharma</span>
+<span class="w-2 h-2 rounded-full bg-secondary-container"></span>
+</div>
+<span class="font-label-sm text-[10px] text-text-muted leading-tight mt-0.5">ABHA: 91-8472-3021-9920</span>
+</div>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Container -->
+<div class="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8">
+<!-- Top Back Navigation & Page Header -->
+<div class="flex flex-col gap-4 mb-8">
+<a class="inline-flex items-center gap-2 font-label-md text-label-md text-primary hover:text-tertiary transition-colors w-fit" href="../careflow_patient_web_p11_my_appointments/code.html">
+<span class="material-symbols-outlined text-[18px]">arrow_back</span>
+<span class="">Back to appointments • अपॉइंटमेंट पर वापस जाएँ</span>
+</a>
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div>
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-secondary font-semibold">
+            APPOINTMENTS • अपॉइंटमेंट
+          </span>
+<h1 class="font-headline-lg text-headline-lg text-navy-dark mt-1">
+            Book an Appointment • अपॉइंटमेंट बुक करें
+          </h1>
+<p class="font-body-md text-body-md text-text-muted mt-1">
+            Choose a time that works for you. • अपने लिए सुविधाजनक समय चुनें।
+          </p>
+</div>
+<!-- Clinic Badge -->
+<div class="inline-flex items-center gap-2.5 px-3.5 py-2 rounded-2xl bg-surface-mint-subtle shadow-sm w-fit">
+<span class="material-symbols-outlined text-primary text-[20px]">local_hospital</span>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-navy-dark">CareFlow Primary Health &amp; Triage</span>
+<span class="font-body-sm-bilingual text-body-sm-bilingual text-text-muted">Indiranagar Center • Floor 2</span>
+</div>
+</div>
+</div>
+<!-- Step Indicator Ribbon -->
+<div class="w-full bg-surface-card rounded-2xl p-4 shadow-sm mt-2">
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+<!-- Step 1 -->
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-primary-container text-on-primary flex items-center justify-center font-label-md text-label-md flex-shrink-0">
+<span class="material-symbols-outlined text-[16px]">check</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-sm text-[11px] text-secondary font-semibold uppercase">Step 1</span>
+<span class="font-label-md text-label-md text-navy-dark truncate">Appointment Type</span>
+</div>
+</div>
+<!-- Step 2 -->
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-primary-container text-on-primary flex items-center justify-center font-label-md text-label-md flex-shrink-0">
+              2
+            </div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-sm text-[11px] text-primary font-semibold uppercase">Step 2</span>
+<span class="font-label-md text-label-md text-navy-dark truncate">Provider &amp; Visit</span>
+</div>
+</div>
+<!-- Step 3 -->
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-surface-mint text-primary flex items-center justify-center font-label-md text-label-md flex-shrink-0">
+              3
+            </div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-sm text-[11px] text-primary font-semibold uppercase">Step 3</span>
+<span class="font-label-md text-label-md text-navy-dark truncate">Date &amp; Time</span>
+</div>
+</div>
+<!-- Step 4 -->
+<div class="flex items-center gap-3 opacity-60">
+<div class="w-8 h-8 rounded-full bg-surface-container-low text-text-muted flex items-center justify-center font-label-md text-label-md flex-shrink-0">
+              4
+            </div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-sm text-[11px] text-text-muted font-semibold uppercase">Step 4</span>
+<span class="font-label-md text-label-md text-text-muted truncate">Review &amp; Confirm</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Layout Columns -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+<!-- Main Content (Booking Form) -->
+<main class="lg:col-span-8 flex flex-col gap-8">
+<!-- Section 1: Appointment Type -->
+<section class="bg-surface-card rounded-2xl p-6 shadow-sm flex flex-col gap-5">
+<div class="flex items-center justify-between pb-3 border-b-0">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-xl bg-surface-mint-subtle text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">medical_services</span>
+</div>
+<div>
+<h2 class="font-title-md text-title-md text-navy-dark">
+                  What do you need an appointment for?
+                </h2>
+<p class="font-body-sm-bilingual text-body-sm-bilingual text-text-muted">
+                  आपको किस लिए अपॉइंटमेंट चाहिए?
+                </p>
+</div>
+</div>
+<span class="hidden sm:inline-flex px-3 py-1 rounded-full text-label-sm font-label-sm bg-surface-mint-subtle text-primary font-medium">
+              1 of 3 Selected
+            </span>
+</div>
+<!-- 2x2 Grid Options -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4" id="appointment-type-selector">
+<!-- Option 1: General Consultation (Selected) -->
+<button id="type-opt-1" onclick="selectType('General Consultation', '30 Minutes • Desk 4', 1)" class="apt-type-btn relative text-left p-5 rounded-2xl bg-surface-mint-subtle shadow-sm ring-2 ring-primary-container flex flex-col justify-between gap-4 transition-all hover:shadow-md" type="button">
+<div class="flex items-start justify-between gap-2">
+<div class="w-10 h-10 rounded-xl bg-surface-card text-primary flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-[22px]">stethoscope</span>
+</div>
+<div class="indicator-check w-6 h-6 rounded-full bg-primary-container text-on-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[16px]">check</span>
+</div>
+</div>
+<div>
+<h3 class="font-title-md text-title-md text-navy-dark">General Consultation</h3>
+<p class="font-body-sm-bilingual text-body-sm-bilingual text-primary font-medium">सामान्य परामर्श</p>
+<p class="font-body-md text-body-md text-on-surface-variant mt-2">
+                  For common health symptoms, follow-ups, or routine check-ups.
+                </p>
+</div>
+</button>
+<!-- Option 2: Follow-up Consultation -->
+<button id="type-opt-2" onclick="selectType('Follow-up Consultation', '20 Minutes • Desk 4', 2)" class="apt-type-btn relative text-left p-5 rounded-2xl bg-surface-card shadow-sm flex flex-col justify-between gap-4 transition-all hover:bg-surface-mint-subtle/50 hover:shadow-md" type="button">
+<div class="flex items-start justify-between gap-2">
+<div class="w-10 h-10 rounded-xl bg-surface-container-low text-text-muted flex items-center justify-center">
+<span class="material-symbols-outlined text-[22px]">update</span>
+</div>
+<div class="indicator-check w-6 h-6 rounded-full bg-surface-container-low"></div>
+</div>
+<div>
+<h3 class="font-title-md text-title-md text-navy-dark">Follow-up Consultation</h3>
+<p class="font-body-sm-bilingual text-body-sm-bilingual text-text-muted">नियमित अनुवर्ती परामर्श</p>
+<p class="font-body-md text-body-md text-text-muted mt-2">
+                  Review prior diagnosis, lab reports, or recovery progress.
+                </p>
+</div>
+</button>
+<!-- Option 3: Annual Health Check-up -->
+<button id="type-opt-3" onclick="selectType('Annual Health Check-up', '60 Minutes • Comprehensive', 3)" class="apt-type-btn relative text-left p-5 rounded-2xl bg-surface-card shadow-sm flex flex-col justify-between gap-4 transition-all hover:bg-surface-mint-subtle/50 hover:shadow-md" type="button">
+<div class="flex items-start justify-between gap-2">
+<div class="w-10 h-10 rounded-xl bg-surface-container-low text-text-muted flex items-center justify-center">
+<span class="material-symbols-outlined text-[22px]">health_and_safety</span>
+</div>
+<div class="indicator-check w-6 h-6 rounded-full bg-surface-container-low"></div>
+</div>
+<div>
+<h3 class="font-title-md text-title-md text-navy-dark">Annual Health Check-up</h3>
+<p class="font-body-sm-bilingual text-body-sm-bilingual text-text-muted">वार्षिक स्वास्थ्य जांच</p>
+<p class="font-body-md text-body-md text-text-muted mt-2">
+                  Comprehensive health assessment and preventive screening package.
+                </p>
+</div>
+</button>
+<!-- Option 4: Specialist Referral -->
+<button id="type-opt-4" onclick="selectType('Specialist Referral', '45 Minutes • OPD Desk 6', 4)" class="apt-type-btn relative text-left p-5 rounded-2xl bg-surface-card shadow-sm flex flex-col justify-between gap-4 transition-all hover:bg-surface-mint-subtle/50 hover:shadow-md" type="button">
+<div class="flex items-start justify-between gap-2">
+<div class="w-10 h-10 rounded-xl bg-surface-container-low text-text-muted flex items-center justify-center">
+<span class="material-symbols-outlined text-[22px]">cardiology</span>
+</div>
+<div class="indicator-check w-6 h-6 rounded-full bg-surface-container-low"></div>
+</div>
+<div>
+<h3 class="font-title-md text-title-md text-navy-dark">Specialist Referral</h3>
+<p class="font-body-sm-bilingual text-body-sm-bilingual text-text-muted">विशेषज्ञ परामर्श</p>
+<p class="font-body-md text-body-md text-text-muted mt-2">
+                  Direct consultation with specialized clinical departments.
+                </p>
+</div>
+</button>
+</div>
+</section>
+<!-- Section 2: Provider & Visit Type -->
+<section class="bg-surface-card rounded-2xl p-6 shadow-sm flex flex-col gap-6">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-xl bg-surface-mint-subtle text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">person_check</span>
+</div>
+<div>
+<h2 class="font-title-md text-title-md text-navy-dark">
+                Choose your care provider &amp; visit type
+              </h2>
+<p class="font-body-sm-bilingual text-body-sm-bilingual text-text-muted">
+                देखभाल प्रदाता और मुलाकात का प्रकार
+              </p>
+</div>
+</div>
+<!-- Provider Select Cards -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<!-- Dr. Priya Sharma (Selected) -->
+<div id="provider-opt-1" onclick="selectProvider('Dr. Priya Sharma', 'Internal Medicine & General Care', 'PS', 1)" class="provider-card p-4 rounded-2xl bg-surface-mint-subtle ring-2 ring-primary-container shadow-sm flex flex-col justify-between gap-4 cursor-pointer transition-all">
+<div class="flex items-start gap-3">
+<div class="w-12 h-12 rounded-xl bg-primary-container text-on-primary flex items-center justify-center font-title-md text-title-md flex-shrink-0 shadow-sm">
+                  PS
+                </div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5 flex-wrap">
+<span class="font-title-md text-title-md text-navy-dark">Dr. Priya Sharma, MD</span>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-label-sm bg-surface-card text-primary font-semibold">
+<span class="material-symbols-outlined text-[12px]">verified</span> Verified Clinician
+                    </span>
+</div>
+<span class="font-body-md text-body-md text-secondary font-medium mt-0.5">
+                    Internal Medicine &amp; General Care
+                  </span>
+<span class="font-body-sm-bilingual text-body-sm-bilingual text-text-muted mt-0.5">
+                    OPD Desk 4 • 12+ Years Clinical Experience
+                  </span>
+</div>
+</div>
+<div class="flex items-center justify-between pt-3 bg-surface-card/60 rounded-xl px-3 py-2">
+<span class="font-label-sm text-label-sm text-text-muted flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-secondary-container"></span>
+                  Next available: Today / Tomorrow
+                </span>
+<span class="provider-status font-label-sm text-label-sm text-primary font-semibold flex items-center gap-1">
+                  Selected <span class="material-symbols-outlined text-[16px]">check_circle</span>
+</span>
+</div>
+</div>
+<!-- Any Available Provider -->
+<div id="provider-opt-2" onclick="selectProvider('Any Available Provider', 'First Available Clinician', 'AP', 2)" class="provider-card p-4 rounded-2xl bg-surface-container-low shadow-sm hover:bg-surface-mint-subtle/50 transition-all flex flex-col justify-between gap-4 cursor-pointer">
+<div class="flex items-start gap-3">
+<div class="w-12 h-12 rounded-xl bg-surface-card text-secondary flex items-center justify-center font-title-md text-title-md flex-shrink-0 shadow-sm">
+<span class="material-symbols-outlined text-[24px]">group</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5">
+<span class="font-title-md text-title-md text-navy-dark">Any Available Provider</span>
+</div>
+<span class="font-body-sm-bilingual text-body-sm-bilingual text-text-muted mt-0.5">
+                    कोई भी उपलब्ध प्रदाता
+                  </span>
+<p class="font-body-md text-body-md text-text-muted mt-1">
+                    Fastest consultation with next open clinician slot. Ideal for immediate primary care triage.
+                  </p>
+</div>
+</div>
+<div class="flex items-center justify-between pt-3 px-3 py-2 bg-surface-card/40 rounded-xl">
+<span class="font-label-sm text-label-sm text-text-muted">No specific doctor preference</span>
+<span class="provider-status font-label-sm text-label-sm text-secondary font-medium">Select Slot</span>
+</div>
+</div>
+</div>
+<!-- Visit Type Selector -->
+<div class="flex flex-col gap-3">
+<span class="font-label-md text-label-md text-navy-dark uppercase tracking-wide">
+              Visit Format • मुलाकात का माध्यम
+            </span>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<!-- In-Person (Selected) -->
+<button id="visit-format-1" onclick="selectVisitFormat('In-Person Clinic Visit', 'CareFlow Clinic Indiranagar, Floor 2', 1)" class="visit-btn p-4 rounded-2xl bg-surface-mint-subtle ring-2 ring-primary-container text-left flex items-center gap-3.5 shadow-sm transition-all" type="button">
+<div class="w-10 h-10 rounded-xl bg-surface-card text-primary flex items-center justify-center flex-shrink-0 shadow-sm">
+<span class="material-symbols-outlined text-[22px]">apartment</span>
+</div>
+<div class="flex flex-col min-w-0 flex-1">
+<span class="font-label-md text-title-md text-navy-dark">In-Person Clinic Visit</span>
+<span class="font-body-sm-bilingual text-body-sm-bilingual text-primary font-medium">क्लिनिक में प्रत्यक्ष मुलाकात</span>
+<span class="font-label-sm text-label-sm text-text-muted mt-1">CareFlow Clinic Indiranagar, Floor 2</span>
+</div>
+<span class="visit-radio material-symbols-outlined text-primary text-[20px]">radio_button_checked</span>
+</button>
+<!-- Video Appointment -->
+<button id="visit-format-2" onclick="selectVisitFormat('Video Appointment', 'Secure Virtual Consultation Room', 2)" class="visit-btn p-4 rounded-2xl bg-surface-card hover:bg-surface-mint-subtle/50 text-left flex items-center gap-3.5 shadow-sm transition-all" type="button">
+<div class="w-10 h-10 rounded-xl bg-surface-container-low text-text-muted flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[22px]">videocam</span>
+</div>
+<div class="flex flex-col min-w-0 flex-1">
+<span class="font-label-md text-title-md text-navy-dark">Video Appointment</span>
+<span class="font-body-sm-bilingual text-body-sm-bilingual text-text-muted">वीडियो अपॉइंटमेंट</span>
+<span class="font-label-sm text-label-sm text-text-muted mt-1">Connect via secure virtual consultation</span>
+</div>
+<span class="visit-radio material-symbols-outlined text-outline-variant text-[20px]">radio_button_unchecked</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Section 3: Date & Time -->
+<section class="bg-surface-card rounded-2xl p-6 shadow-sm flex flex-col gap-6">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-xl bg-surface-mint-subtle text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">calendar_month</span>
+</div>
+<div>
+<h2 class="font-title-md text-title-md text-navy-dark">
+                  Choose a date and time
+                </h2>
+<p class="font-body-sm-bilingual text-body-sm-bilingual text-text-muted">
+                  तारीख और समय चुनें (September 2026)
+                </p>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button aria-label="Previous week" class="w-8 h-8 rounded-full bg-surface-container-low flex items-center justify-center text-navy-dark hover:bg-surface-mint-subtle transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">chevron_left</span>
+</button>
+<button aria-label="Next week" class="w-8 h-8 rounded-full bg-surface-container-low flex items-center justify-center text-navy-dark hover:bg-surface-mint-subtle transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+</div>
+<!-- Date Selector Grid -->
+<div class="grid grid-cols-3 sm:grid-cols-6 gap-3" id="date-selector-grid">
+<!-- Sep 19 (Available) -->
+<button onclick="selectDate('Fri, Sep 19, 2026', this)" class="date-btn p-3 rounded-2xl bg-surface-card hover:bg-surface-mint-subtle transition-all flex flex-col items-center gap-1 shadow-sm text-center" type="button">
+<span class="font-label-sm text-label-sm text-text-muted uppercase">Fri</span>
+<span class="font-headline-md text-headline-md text-navy-dark">19</span>
+<span class="date-badge font-label-sm text-[10px] text-secondary font-medium">8 slots</span>
+</button>
+<!-- Sep 20 (Selected) -->
+<button onclick="selectDate('Sat, Sep 20, 2026', this)" class="date-btn p-3 rounded-2xl bg-primary text-on-primary shadow-md flex flex-col items-center gap-1 text-center relative" type="button">
+<span class="font-label-sm text-label-sm text-secondary-fixed uppercase font-semibold">Sat</span>
+<span class="font-headline-md text-headline-md text-on-primary font-bold">20</span>
+<span class="date-badge px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-fixed font-label-sm text-[10px] font-semibold">Selected</span>
+</button>
+<!-- Sep 21 (Unavailable) -->
+<button class="p-3 rounded-2xl bg-surface-container-low text-text-muted opacity-50 flex flex-col items-center gap-1 text-center cursor-not-allowed" disabled="" type="button">
+<span class="font-label-sm text-label-sm uppercase">Sun</span>
+<span class="font-headline-md text-headline-md">21</span>
+<span class="font-label-sm text-[10px]">Closed</span>
+</button>
+<!-- Sep 22 (Available) -->
+<button onclick="selectDate('Mon, Sep 22, 2026', this)" class="date-btn p-3 rounded-2xl bg-surface-card hover:bg-surface-mint-subtle transition-all flex flex-col items-center gap-1 shadow-sm text-center" type="button">
+<span class="font-label-sm text-label-sm text-text-muted uppercase">Mon</span>
+<span class="font-headline-md text-headline-md text-navy-dark">22</span>
+<span class="date-badge font-label-sm text-[10px] text-secondary font-medium">12 slots</span>
+</button>
+<!-- Sep 23 (Available) -->
+<button onclick="selectDate('Tue, Sep 23, 2026', this)" class="date-btn p-3 rounded-2xl bg-surface-card hover:bg-surface-mint-subtle transition-all flex flex-col items-center gap-1 shadow-sm text-center" type="button">
+<span class="font-label-sm text-label-sm text-text-muted uppercase">Tue</span>
+<span class="font-headline-md text-headline-md text-navy-dark">23</span>
+<span class="date-badge font-label-sm text-[10px] text-secondary font-medium">6 slots</span>
+</button>
+<!-- Sep 24 (Available) -->
+<button onclick="selectDate('Wed, Sep 24, 2026', this)" class="date-btn p-3 rounded-2xl bg-surface-card hover:bg-surface-mint-subtle transition-all flex flex-col items-center gap-1 shadow-sm text-center" type="button">
+<span class="font-label-sm text-label-sm text-text-muted uppercase">Wed</span>
+<span class="font-headline-md text-headline-md text-navy-dark">24</span>
+<span class="date-badge font-label-sm text-[10px] text-secondary font-medium">10 slots</span>
+</button>
+</div>
+<!-- Time Slots Container -->
+<div class="flex flex-col gap-5 pt-2">
+<!-- Morning Slots -->
+<div class="flex flex-col gap-3">
+<div class="flex items-center gap-2 text-text-muted font-label-md text-label-md">
+<span class="material-symbols-outlined text-[18px]">wb_sunny</span>
+<span class="">Morning • सुबह (4 available)</span>
+</div>
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-3" id="morning-slots">
+<button onclick="selectTime('10:00 AM IST (Morning Slot)', this)" class="time-btn py-3 px-4 rounded-xl bg-surface-card hover:bg-surface-mint-subtle text-navy-dark font-label-md text-label-md shadow-sm transition-all text-center" type="button">
+                  10:00 AM
+                </button>
+<button onclick="selectTime('10:30 AM IST (Morning Slot)', this)" class="time-btn py-3 px-4 rounded-xl bg-surface-mint-subtle ring-2 ring-primary-container text-primary font-semibold font-label-md text-label-md shadow-sm flex items-center justify-center gap-1 text-center" type="button">
+<span class="time-check material-symbols-outlined text-[16px]">check</span>
+                  10:30 AM
+                </button>
+<button onclick="selectTime('11:00 AM IST (Morning Slot)', this)" class="time-btn py-3 px-4 rounded-xl bg-surface-card hover:bg-surface-mint-subtle text-navy-dark font-label-md text-label-md shadow-sm transition-all text-center" type="button">
+                  11:00 AM
+                </button>
+<button onclick="selectTime('11:30 AM IST (Morning Slot)', this)" class="time-btn py-3 px-4 rounded-xl bg-surface-card hover:bg-surface-mint-subtle text-navy-dark font-label-md text-label-md shadow-sm transition-all text-center" type="button">
+                  11:30 AM
+                </button>
+</div>
+</div>
+<!-- Afternoon Slots -->
+<div class="flex flex-col gap-3">
+<div class="flex items-center gap-2 text-text-muted font-label-md text-label-md">
+<span class="material-symbols-outlined text-[18px]">wb_twilight</span>
+<span class="">Afternoon • दोपहर (2 available)</span>
+</div>
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-3" id="afternoon-slots">
+<button onclick="selectTime('02:00 PM IST (Afternoon Slot)', this)" class="time-btn py-3 px-4 rounded-xl bg-surface-card hover:bg-surface-mint-subtle text-navy-dark font-label-md text-label-md shadow-sm transition-all text-center" type="button">
+                  02:00 PM
+                </button>
+<button onclick="selectTime('02:30 PM IST (Afternoon Slot)', this)" class="time-btn py-3 px-4 rounded-xl bg-surface-card hover:bg-surface-mint-subtle text-navy-dark font-label-md text-label-md shadow-sm transition-all text-center" type="button">
+                  02:30 PM
+                </button>
+<button class="py-3 px-4 rounded-xl bg-surface-container-low text-text-muted/60 font-label-md text-label-md cursor-not-allowed text-center" disabled="" type="button">
+                  03:15 PM (Full)
+                </button>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 4: Note to Care Team -->
+<section class="bg-surface-card rounded-2xl p-6 shadow-sm flex flex-col gap-4">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-xl bg-surface-mint-subtle text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">edit_note</span>
+</div>
+<div>
+<h2 class="font-title-md text-title-md text-navy-dark">
+                Anything you would like your care team to know?
+              </h2>
+<p class="font-body-sm-bilingual text-body-sm-bilingual text-text-muted">
+                क्या आप अपनी देखभाल टीम के साथ कुछ साझा करना चाहते हैं? (Optional)
+              </p>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<textarea id="booking-notes" oninput="updateReason(this.value)" class="w-full p-4 rounded-2xl bg-canvas-bg font-body-md text-body-md text-navy-dark placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary-container shadow-inner" placeholder="e.g., Routine review for headaches and recent CBC test reports." rows="3">Routine review for mild recurring headaches and follow-up on recent CBC &amp; Lipid panel lab reports.</textarea>
+<div class="flex items-start gap-2 text-text-muted bg-surface-container-low p-3 rounded-xl mt-1">
+<span class="material-symbols-outlined text-[18px] text-secondary flex-shrink-0 mt-0.5">info</span>
+<p class="font-body-sm-bilingual text-body-sm-bilingual">
+                For urgent or emergency symptoms (chest pain, acute breathlessness, high trauma), please seek immediate hospital emergency care or call 112 / 108.
+              </p>
+</div>
+</div>
+</section>
+</main>
+<!-- Sticky Sidebar (Appointment Summary & Confirmation) -->
+<aside class="lg:col-span-4 lg:sticky lg:top-24 flex flex-col gap-4">
+<div class="bg-surface-card rounded-2xl p-6 shadow-md flex flex-col gap-5">
+<!-- Header -->
+<div class="flex items-center justify-between pb-4 border-b-0">
+<div>
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-secondary font-semibold">Summary • सारांश</span>
+<h3 class="font-title-md text-title-md text-navy-dark mt-0.5">Appointment Summary</h3>
+</div>
+<span class="px-2.5 py-1 rounded-full text-label-sm font-label-sm bg-surface-mint-subtle text-primary font-semibold">
+              Draft Booking
+            </span>
+</div>
+<!-- Specs List -->
+<div class="flex flex-col gap-4">
+<!-- Type -->
+<div class="flex items-start justify-between gap-3 p-3 rounded-xl bg-surface-container-low">
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary text-[20px] mt-0.5">stethoscope</span>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-text-muted">Appointment Type</span>
+<span id="summary-type-title" class="font-label-md text-label-md text-navy-dark font-semibold">General Consultation</span>
+<span id="summary-type-sub" class="font-body-sm-bilingual text-[11px] text-text-muted">30 Minutes • Desk 4</span>
+</div>
+</div>
+<button onclick="document.getElementById('appointment-type-selector').scrollIntoView({behavior: 'smooth'})" class="font-label-sm text-label-sm text-primary hover:underline font-semibold" type="button">Change</button>
+</div>
+<!-- Provider -->
+<div class="flex items-start justify-between gap-3 p-3 rounded-xl bg-surface-container-low">
+<div class="flex items-start gap-3">
+<div id="summary-provider-avatar" class="w-8 h-8 rounded-lg bg-primary-container text-on-primary flex items-center justify-center font-label-sm text-label-sm flex-shrink-0">
+                  PS
+                </div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-text-muted">Care Provider</span>
+<span id="summary-provider-name" class="font-label-md text-label-md text-navy-dark font-semibold">Dr. Priya Sharma</span>
+<span id="summary-provider-sub" class="font-body-sm-bilingual text-[11px] text-text-muted">Internal Medicine &amp; General Care</span>
+</div>
+</div>
+<button onclick="document.getElementById('provider-opt-1').scrollIntoView({behavior: 'smooth'})" class="font-label-sm text-label-sm text-primary hover:underline font-semibold" type="button">Change</button>
+</div>
+<!-- Date & Time -->
+<div class="flex items-start justify-between gap-3 p-3 rounded-xl bg-surface-container-low">
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary text-[20px] mt-0.5">event</span>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-text-muted">Date &amp; Time</span>
+<span id="summary-date-title" class="font-label-md text-label-md text-navy-dark font-semibold">Sat, Sep 20, 2026</span>
+<span id="summary-time-title" class="font-body-sm-bilingual text-[11px] text-primary font-medium">10:30 AM IST (Morning Slot)</span>
+</div>
+</div>
+<button onclick="document.getElementById('date-selector-grid').scrollIntoView({behavior: 'smooth'})" class="font-label-sm text-label-sm text-primary hover:underline font-semibold" type="button">Change</button>
+</div>
+<!-- Visit Type & Location -->
+<div class="flex items-start justify-between gap-3 p-3 rounded-xl bg-surface-container-low">
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary text-[20px] mt-0.5">pin_drop</span>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-text-muted">Visit Type &amp; Center</span>
+<span id="summary-visit-type" class="font-label-md text-label-md text-navy-dark font-semibold">In-Person Clinic Visit</span>
+<span id="summary-visit-loc" class="font-body-sm-bilingual text-[11px] text-text-muted">CareFlow Clinic, Indiranagar, Floor 2</span>
+</div>
+</div>
+<button onclick="document.getElementById('visit-format-1').scrollIntoView({behavior: 'smooth'})" class="font-label-sm text-label-sm text-primary hover:underline font-semibold" type="button">Change</button>
+</div>
+<!-- Reason Note -->
+<div class="flex items-start justify-between gap-3 p-3 rounded-xl bg-surface-container-low">
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary text-[20px] mt-0.5">notes</span>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-text-muted">Reason / Patient Note</span>
+<span id="summary-reason" class="font-label-md text-label-md text-navy-dark font-semibold truncate max-w-[180px]">Routine review for mild recurring headaches and follow-up on recent CBC &amp; Lipid panel lab reports.</span>
+</div>
+</div>
+<button onclick="document.getElementById('booking-notes').focus()" class="font-label-sm text-label-sm text-primary hover:underline font-semibold" type="button">Edit</button>
+</div>
+</div>
+<!-- Review Note -->
+<p class="font-body-sm-bilingual text-body-sm-bilingual text-text-muted text-center pt-2">
+            Please review your appointment details before confirming. • पुष्टि करने से पहले विवरण जांचें।
+          </p>
+<!-- CTAs -->
+<div class="flex flex-col gap-2.5">
+<button onclick="handleConfirmBooking()" class="w-full h-12 rounded-full bg-primary-container text-on-primary hover:bg-primary font-headline-md text-title-md shadow-md transition-all flex items-center justify-center gap-2" type="button">
+<span class="">Confirm Appointment</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+<button onclick="handleSaveDraft()" class="w-full py-2.5 rounded-full bg-transparent hover:bg-surface-mint-subtle text-navy-dark font-label-md text-label-md transition-all text-center" type="button">
+              Save draft / Cancel
+            </button>
+</div>
+<!-- Security Vault Guarantee -->
+<div class="pt-3 border-t-0 flex items-start gap-2.5 text-text-muted">
+<span class="material-symbols-outlined text-[18px] text-secondary flex-shrink-0 mt-0.5">lock</span>
+<span class="font-label-sm text-[11px] leading-tight">
+<strong>256-bit AES Patient Vault • ABDM Verified.</strong> Your appointment details are strictly confidential and automatically synchronized with your ABHA profile.
+            </span>
+</div>
+</div>
+<!-- Help Support Widget -->
+<div class="p-4 rounded-2xl bg-surface-mint-subtle shadow-sm flex items-center justify-between gap-3">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-surface-card text-primary flex items-center justify-center shadow-sm flex-shrink-0">
+<span class="material-symbols-outlined text-[20px]">headset_mic</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-navy-dark">Need assistance?</span>
+<span class="font-body-sm-bilingual text-body-sm-bilingual text-text-muted">Clinic Coordinator: +91 80 4920 1100</span>
+</div>
+</div>
+<a class="px-3 py-1.5 rounded-full bg-surface-card font-label-sm text-label-sm text-primary font-semibold shadow-sm hover:bg-white" href="tel:+918049201100">
+            Call
+          </a>
+</div>
+</aside>
+</div>
+</div>
+<!-- Regulatory Footer -->
+<footer class="w-full bg-surface-card mt-16 shadow-inner">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col md:flex-row items-center justify-between gap-4">
+<div class="flex flex-col sm:flex-row items-center gap-3 text-center sm:text-left">
+<div class="w-6 h-6 rounded-lg bg-surface-mint-subtle text-primary flex items-center justify-center font-bold text-xs">
+          CF
+        </div>
+<p class="font-label-sm text-label-sm text-text-muted">
+          ABDM M1/M2/M3 Compliant · 256-bit AES Patient Vault · HIPAA &amp; DISHA Healthcare Standard
+        </p>
+</div>
+<div class="flex flex-wrap items-center justify-center gap-4 text-center">
+<span class="font-label-sm text-label-sm text-text-muted">
+          © 2026 CareFlow Inc. All rights reserved.
+        </span>
+<span class="text-text-muted">•</span>
+<a class="font-label-sm text-label-sm text-primary hover:underline" href="#">Privacy Policy</a>
+<span class="text-text-muted">•</span>
+<a class="font-label-sm text-label-sm text-primary hover:underline" href="#">Terms of Use</a>
+</div>
+</div>
+</footer>
+</div></main></div>
+<script>
+let currentBooking = {
+  type: 'General Consultation',
+  typeSub: '30 Minutes • Desk 4',
+  provider: 'Dr. Priya Sharma',
+  providerSub: 'Internal Medicine & General Care',
+  avatar: 'PS',
+  visitType: 'In-Person Clinic Visit',
+  visitLocation: 'CareFlow Clinic, Indiranagar, Floor 2',
+  date: 'Sat, Sep 20, 2026',
+  time: '10:30 AM IST (Morning Slot)',
+  reason: 'Routine review for mild recurring headaches and follow-up on recent CBC & Lipid panel lab reports.'
+};
+
+function selectType(name, sub, id) {
+  currentBooking.type = name;
+  currentBooking.typeSub = sub;
+  document.getElementById('summary-type-title').textContent = name;
+  document.getElementById('summary-type-sub').textContent = sub;
+
+  document.querySelectorAll('.apt-type-btn').forEach(btn => {
+    btn.className = 'apt-type-btn relative text-left p-5 rounded-2xl bg-surface-card shadow-sm flex flex-col justify-between gap-4 transition-all hover:bg-surface-mint-subtle/50 hover:shadow-md';
+    const check = btn.querySelector('.indicator-check');
+    if (check) {
+      check.className = 'indicator-check w-6 h-6 rounded-full bg-surface-container-low';
+      check.innerHTML = '';
+    }
+  });
+
+  const activeBtn = document.getElementById('type-opt-' + id);
+  if (activeBtn) {
+    activeBtn.className = 'apt-type-btn relative text-left p-5 rounded-2xl bg-surface-mint-subtle shadow-sm ring-2 ring-primary-container flex flex-col justify-between gap-4 transition-all hover:shadow-md';
+    const check = activeBtn.querySelector('.indicator-check');
+    if (check) {
+      check.className = 'indicator-check w-6 h-6 rounded-full bg-primary-container text-on-primary flex items-center justify-center';
+      check.innerHTML = '<span class="material-symbols-outlined text-[16px]">check</span>';
+    }
+  }
+}
+
+function selectProvider(name, sub, avatar, id) {
+  currentBooking.provider = name;
+  currentBooking.providerSub = sub;
+  currentBooking.avatar = avatar;
+  document.getElementById('summary-provider-name').textContent = name;
+  document.getElementById('summary-provider-sub').textContent = sub;
+  document.getElementById('summary-provider-avatar').textContent = avatar;
+
+  document.querySelectorAll('.provider-card').forEach(c => {
+    c.className = 'provider-card p-4 rounded-2xl bg-surface-container-low shadow-sm hover:bg-surface-mint-subtle/50 transition-all flex flex-col justify-between gap-4 cursor-pointer';
+    const status = c.querySelector('.provider-status');
+    if (status) {
+      status.className = 'provider-status font-label-sm text-label-sm text-secondary font-medium';
+      status.textContent = 'Select Slot';
+    }
+  });
+
+  const activeCard = document.getElementById('provider-opt-' + id);
+  if (activeCard) {
+    activeCard.className = 'provider-card p-4 rounded-2xl bg-surface-mint-subtle ring-2 ring-primary-container shadow-sm flex flex-col justify-between gap-4 cursor-pointer transition-all';
+    const status = activeCard.querySelector('.provider-status');
+    if (status) {
+      status.className = 'provider-status font-label-sm text-label-sm text-primary font-semibold flex items-center gap-1';
+      status.innerHTML = 'Selected <span class="material-symbols-outlined text-[16px]">check_circle</span>';
+    }
+  }
+}
+
+function selectVisitFormat(format, location, id) {
+  currentBooking.visitType = format;
+  currentBooking.visitLocation = location;
+  document.getElementById('summary-visit-type').textContent = format;
+  document.getElementById('summary-visit-loc').textContent = location;
+
+  document.querySelectorAll('.visit-btn').forEach(btn => {
+    btn.className = 'visit-btn p-4 rounded-2xl bg-surface-card hover:bg-surface-mint-subtle/50 text-left flex items-center gap-3.5 shadow-sm transition-all';
+    const radio = btn.querySelector('.visit-radio');
+    if (radio) {
+      radio.className = 'visit-radio material-symbols-outlined text-outline-variant text-[20px]';
+      radio.textContent = 'radio_button_unchecked';
+    }
+  });
+
+  const activeBtn = document.getElementById('visit-format-' + id);
+  if (activeBtn) {
+    activeBtn.className = 'visit-btn p-4 rounded-2xl bg-surface-mint-subtle ring-2 ring-primary-container text-left flex items-center gap-3.5 shadow-sm transition-all';
+    const radio = activeBtn.querySelector('.visit-radio');
+    if (radio) {
+      radio.className = 'visit-radio material-symbols-outlined text-primary text-[20px]';
+      radio.textContent = 'radio_button_checked';
+    }
+  }
+}
+
+function selectDate(dateStr, el) {
+  currentBooking.date = dateStr;
+  document.getElementById('summary-date-title').textContent = dateStr;
+
+  document.querySelectorAll('.date-btn').forEach(btn => {
+    btn.className = 'date-btn p-3 rounded-2xl bg-surface-card hover:bg-surface-mint-subtle transition-all flex flex-col items-center gap-1 shadow-sm text-center';
+    const badge = btn.querySelector('.date-badge');
+    if (badge) {
+      badge.className = 'date-badge font-label-sm text-[10px] text-secondary font-medium';
+      if (badge.textContent.includes('Selected')) badge.textContent = 'Available';
+    }
+    const daySpan = btn.querySelector('.font-headline-md');
+    if (daySpan) daySpan.className = 'font-headline-md text-headline-md text-navy-dark';
+  });
+
+  el.className = 'date-btn p-3 rounded-2xl bg-primary text-on-primary shadow-md flex flex-col items-center gap-1 text-center relative';
+  const daySpan = el.querySelector('.font-headline-md');
+  if (daySpan) daySpan.className = 'font-headline-md text-headline-md text-on-primary font-bold';
+  const badge = el.querySelector('.date-badge');
+  if (badge) {
+    badge.className = 'date-badge px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-fixed font-label-sm text-[10px] font-semibold';
+    badge.textContent = 'Selected';
+  }
+}
+
+function selectTime(timeStr, el) {
+  currentBooking.time = timeStr;
+  document.getElementById('summary-time-title').textContent = timeStr;
+
+  document.querySelectorAll('.time-btn').forEach(btn => {
+    btn.className = 'time-btn py-3 px-4 rounded-xl bg-surface-card hover:bg-surface-mint-subtle text-navy-dark font-label-md text-label-md shadow-sm transition-all text-center';
+    const icon = btn.querySelector('.time-check');
+    if (icon) icon.remove();
+  });
+
+  el.className = 'time-btn py-3 px-4 rounded-xl bg-surface-mint-subtle ring-2 ring-primary-container text-primary font-semibold font-label-md text-label-md shadow-sm flex items-center justify-center gap-1 text-center';
+  const icon = document.createElement('span');
+  icon.className = 'time-check material-symbols-outlined text-[16px]';
+  icon.textContent = 'check';
+  el.prepend(icon);
+}
+
+function updateReason(val) {
+  currentBooking.reason = val || 'None specified';
+  document.getElementById('summary-reason').textContent = val || 'None specified';
+}
+
+function handleConfirmBooking() {
+  const ref = '#APT-2026-' + Math.floor(1000 + Math.random() * 9000);
+  CareFlow.openModal(`
+    <div class="space-y-4">
+      <div class="p-4 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-center gap-3">
+        <div class="w-10 h-10 rounded-full bg-emerald-500 text-white flex items-center justify-center flex-shrink-0">
+          <span class="material-symbols-outlined text-2xl">check_circle</span>
+        </div>
+        <div>
+          <h4 class="font-bold text-navy-dark text-base">Appointment Confirmed!</h4>
+          <p class="text-xs text-emerald-800">Booking Reference: <strong class="font-mono text-primary">${ref}</strong></p>
+        </div>
+      </div>
+      <div class="p-3 bg-canvas-bg rounded-xl border border-border-subtle text-xs space-y-2 text-navy-dark">
+        <div class="flex justify-between"><strong>Provider:</strong> <span>${currentBooking.provider}</span></div>
+        <div class="flex justify-between"><strong>Consultation:</strong> <span>${currentBooking.type}</span></div>
+        <div class="flex justify-between"><strong>Date & Time:</strong> <span>${currentBooking.date} • ${currentBooking.time}</span></div>
+        <div class="flex justify-between"><strong>Format:</strong> <span>${currentBooking.visitType}</span></div>
+      </div>
+      <p class="text-xs text-text-muted">SMS and WhatsApp confirmation dispatched to <strong>+91 98••• ••920</strong> and synced with your ABDM ABHA Vault.</p>
+      <div class="flex justify-end gap-2 pt-2 border-t border-border-subtle">
+        <button onclick="window.location.href='../careflow_patient_web_p11_my_appointments/code.html'" class="px-4 py-2 text-xs font-semibold text-text-muted hover:text-navy-dark">Back to Appointments</button>
+        <button onclick="window.location.href='../careflow_patient_web_p12_appointment_details/code.html'" class="px-5 py-2 text-xs font-bold bg-primary text-white rounded-full hover:bg-tertiary transition-all shadow-sm">View Appointment Details →</button>
+      </div>
+    </div>
+  `, 'Booking Confirmation • बुकिंग पुष्टि');
+}
+
+function handleSaveDraft() {
+  CareFlow.showToast('Appointment draft saved to your profile.', 'info');
+  setTimeout(() => {
+    window.location.href = '../careflow_patient_web_p11_my_appointments/code.html';
+  }, 1000);
+}
+</script>
+</body></html>

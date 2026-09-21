@@ -1,0 +1,751 @@
+<!DOCTYPE html><html lang="en" class="h-full scroll-smooth"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>CareFlow — W07 Symptoms / Chief Complaint</title>
+<script src="../careflow-nav.js" defer></script>
+<!-- Google Fonts: Plus Jakarta Sans -->
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<!-- Tailwind CSS v3 with Forms & Container Plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Custom Configuration -->
+<script data-purpose="tailwind-config">
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+          },
+          colors: {
+            careflow: {
+              teal: '#0D6E6E',
+              'teal-dark': '#0A5858',
+              'teal-light': '#128787',
+              mint: '#E6F7F2',
+              'mint-soft': '#F0FAF7',
+              navy: '#0F1E36',
+              slate: '#1E293B',
+              bg: '#F9F9FF',
+              border: '#E2E8F0',
+            }
+          }
+        }
+      }
+    };
+  </script>
+<!-- Custom Typography & Layout Styling -->
+<style data-purpose="typography">
+    body {
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+      background-color: #F9F9FF;
+      color: #0F1E36;
+    }
+  </style>
+<style data-purpose="custom-utilities">
+    /* Subtle scrollbar for clinical dense layouts */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+    .audio-bar {
+      animation: pulseBar 1.2s infinite ease-in-out;
+    }
+    @keyframes pulseBar {
+      0%, 100% { height: 6px; }
+      50% { height: 18px; }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col bg-[#F9F9FF] text-careflow-navy antialiased">
+<div class="flex flex-1 w-full min-h-screen">
+<!-- BEGIN: LeftSidebar -->
+<aside class="w-64 shrink-0 bg-white border-r border-careflow-border flex flex-col justify-between hidden lg:flex select-none z-20">
+<div class="p-5">
+<!-- Logo & Header -->
+<div class="flex items-center gap-3 mb-8">
+<div class="w-10 h-10 rounded-xl bg-careflow-teal flex items-center justify-center text-white shadow-sm">
+<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div>
+<span class="font-bold text-lg tracking-tight text-careflow-navy block leading-none">CareFlow</span>
+<span class="text-xs text-slate-500 font-medium">Clinical Care Team</span>
+</div>
+</div>
+<!-- Navigation Links -->
+<nav aria-label="Main Navigation" class="space-y-1.5">
+<a class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 font-medium text-sm transition-colors" href="#">
+<svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+            Dashboard
+          </a>
+<!-- Active Patients Link -->
+<a class="flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-careflow-mint text-careflow-teal font-semibold text-sm transition-colors shadow-xs" href="#">
+<div class="flex items-center gap-3">
+<svg class="w-5 h-5 text-careflow-teal" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span>Patients</span>
+</div>
+<span class="w-1.5 h-1.5 rounded-full bg-careflow-teal"></span>
+</a>
+<a class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 font-medium text-sm transition-colors" href="#">
+<svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+            Appointments
+          </a>
+<a class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 font-medium text-sm transition-colors" href="#">
+<svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+            Documents
+          </a>
+<a class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 font-medium text-sm transition-colors" href="#">
+<svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+            Care Summaries
+          </a>
+<a class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 font-medium text-sm transition-colors" href="#">
+<div class="flex items-center gap-3">
+<svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span>Alerts</span>
+</div>
+<span class="w-2 h-2 rounded-full bg-rose-500"></span>
+</a>
+<a class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 font-medium text-sm transition-colors" href="#">
+<svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+            Analytics
+          </a>
+</nav>
+</div>
+<!-- Bottom Utilities & User Profile -->
+<div class="p-4 border-t border-careflow-border space-y-3">
+<a class="flex items-center gap-3 px-3 py-2 rounded-xl text-slate-500 hover:bg-slate-50 text-xs font-medium transition-colors" href="#">
+<svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+<path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+          Settings
+        </a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-xl text-slate-500 hover:bg-slate-50 text-xs font-medium transition-colors" href="#">
+<svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+          Help &amp; Support
+        </a>
+<!-- Doctor Profile Badge -->
+<div class="pt-2">
+<div class="flex items-center gap-3 p-2 bg-slate-50 rounded-xl border border-slate-200/70">
+<div class="w-9 h-9 rounded-full bg-careflow-teal text-white font-bold flex items-center justify-center text-xs shadow-xs shrink-0">
+              AI
+            </div>
+<div class="min-w-0 flex-1">
+<div class="text-xs font-bold text-careflow-navy truncate">Dr. Ananya Iyer</div>
+<div class="flex items-center gap-1.5 text-[11px] text-slate-500">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+<span>Desk 4 • OPD Session</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</aside>
+<!-- END: LeftSidebar -->
+<!-- BEGIN: MainContentWrapper -->
+<div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+<!-- Top Header Bar -->
+<header class="h-16 bg-white border-b border-careflow-border px-6 flex items-center justify-between gap-4 sticky top-0 z-10">
+<!-- Global Search Field -->
+<div class="relative flex-1 max-w-md">
+<div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<input class="w-full pl-9 pr-8 py-2 bg-slate-50 border border-slate-200 rounded-full text-xs text-careflow-navy placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-careflow-teal/20 focus:border-careflow-teal transition-all" placeholder="Search patients, UHID... ⌘K" type="text">
+<kbd class="hidden sm:inline-block absolute right-3 top-2 px-1.5 py-0.5 text-[10px] font-semibold text-slate-400 bg-white border border-slate-200 rounded shadow-xs">⌘K</kbd>
+</div>
+<!-- Language, Notifications, Clinician Avatar -->
+<div class="flex items-center gap-3">
+<!-- Language Toggle Button -->
+<button class="flex items-center gap-1.5 px-3 py-1.5 bg-slate-50 hover:bg-slate-100 rounded-full text-xs font-semibold text-careflow-navy border border-slate-200 transition-colors" type="button">
+<svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span>English (हिन्दी)</span>
+<svg class="w-3 h-3 text-slate-400 ml-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</button>
+<!-- Notification Bell -->
+<button aria-label="Notifications" class="relative p-2 text-slate-500 hover:text-careflow-navy hover:bg-slate-50 rounded-full transition-colors" type="button">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-rose-500 ring-2 ring-white"></span>
+</button>
+<!-- Clinician Profile Avatar -->
+<div class="flex items-center gap-2 pl-2 border-l border-slate-200">
+<div class="w-8 h-8 rounded-full bg-careflow-teal text-white flex items-center justify-center text-xs font-bold ring-2 ring-careflow-mint">
+              AI
+            </div>
+</div>
+</div>
+</header>
+<!-- Scrollable Main Content Canvas -->
+<main class="flex-1 overflow-y-auto px-6 py-6 pb-28 max-w-7xl w-full mx-auto space-y-6">
+<!-- BEGIN: BreadcrumbNavigation -->
+<div class="flex flex-wrap items-center justify-between gap-3 text-xs">
+<div class="flex items-center gap-2 text-slate-500">
+<a class="inline-flex items-center gap-1 font-semibold text-careflow-teal hover:underline cursor-pointer" href="../careflow_website_w06_patient_intake_overview/code.html">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M10 19l-7-7m0 0l7-7m-7 7h18" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span>Patient Intake (मरीज इनटेक)</span>
+</a>
+<span class="text-slate-300">/</span>
+<span>Patients</span>
+<span class="text-slate-300">/</span>
+<span>Aarav Sharma</span>
+<span class="text-slate-300">/</span>
+<span>Intake</span>
+<span class="text-slate-300">/</span>
+<span class="text-careflow-navy font-semibold">Symptoms (लक्षण)</span>
+</div>
+<!-- ABHA Sync Badge -->
+<div class="inline-flex items-center gap-2 px-3 py-1 bg-white border border-careflow-border rounded-full text-[11px] text-slate-600 shadow-xs">
+<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+<span class="font-medium">ABHA Sync: Active</span>
+<span class="text-slate-300">•</span>
+<span class="font-mono text-slate-500">ABHA ID: 91-8472-3021-9920</span>
+</div>
+</div>
+<!-- END: BreadcrumbNavigation -->
+<!-- BEGIN: PageHeader -->
+<section class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div>
+<div class="flex items-center gap-2 mb-1">
+<span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold tracking-wider uppercase bg-careflow-mint text-careflow-teal">
+                SYMPTOMS • लक्षण
+              </span>
+<span class="text-xs text-slate-400 font-medium">ABDM Record</span>
+</div>
+<h1 class="text-2xl lg:text-3xl font-bold tracking-tight text-careflow-navy">
+              Chief complaint <span class="text-slate-500 font-normal text-xl lg:text-2xl">• मुख्य समस्या</span>
+</h1>
+<p class="text-xs lg:text-sm text-slate-600 mt-1 max-w-2xl">
+              Review the clinical symptoms and chief complaint reported during Aarav Sharma's mobile self-intake session.
+            </p>
+</div>
+<!-- Action Buttons -->
+<div class="flex items-center flex-wrap gap-2.5 shrink-0">
+<span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#E6F7F2] text-careflow-teal font-semibold text-xs border border-careflow-teal/20 shadow-xs">
+<svg class="w-3.5 h-3.5 text-careflow-teal" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></path>
+</svg>
+<span>Intake complete • इनटेक पूर्ण</span>
+</span>
+<button class="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 text-xs font-semibold shadow-xs transition-colors cursor-pointer" type="button" onclick="CareFlow.showToast('Response editor opened', 'info')">
+<span>✏️ Edit response (सुधारें)</span>
+</button>
+<button class="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-careflow-teal hover:bg-careflow-teal-dark text-white text-xs font-semibold shadow-xs transition-colors cursor-pointer" type="button" onclick="CareFlow.navigate(8)">
+<span>Continue to questions → (प्रश्नों पर जाएं)</span>
+</button>
+</div>
+</section>
+<!-- END: PageHeader -->
+<!-- BEGIN: PatientMiniHeaderCard -->
+<div class="bg-white rounded-2xl p-4 border border-careflow-border shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div class="flex items-center gap-3.5">
+<!-- Patient Initials Avatar -->
+<div class="w-12 h-12 rounded-2xl bg-careflow-mint text-careflow-teal font-bold flex items-center justify-center text-lg shadow-xs border border-careflow-teal/20 shrink-0">
+              AS
+            </div>
+<div>
+<div class="flex items-center flex-wrap gap-2">
+<h2 class="text-base font-bold text-careflow-navy">Aarav Sharma</h2>
+<span class="text-xs text-slate-500 font-medium">आरव शर्मा</span>
+<span class="px-2 py-0.5 bg-slate-100 border border-slate-200 text-slate-700 text-[11px] font-bold rounded-md">#CF-1024</span>
+<span class="px-2 py-0.5 bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-semibold rounded-full">28 Y / Male</span>
+</div>
+<div class="flex items-center flex-wrap gap-2 text-xs text-slate-500 mt-1">
+<span>📅 Today • 09:18 AM IST</span>
+<span class="text-slate-300">•</span>
+<span class="inline-flex items-center gap-1 font-mono text-slate-600">
+<svg class="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+                  ABHA: 91-8293-1029-44
+                </span>
+</div>
+</div>
+</div>
+<!-- Step Progress Badge -->
+<div class="flex items-center gap-3">
+<div class="text-right hidden sm:block">
+<span class="text-[11px] text-slate-400 uppercase font-bold tracking-wider block">Intake Workflow</span>
+<span class="text-xs font-semibold text-careflow-navy">Step 2 of 5 Clinical Sections</span>
+</div>
+<div class="px-3.5 py-1.5 bg-careflow-mint text-careflow-teal border border-careflow-teal/30 rounded-full font-bold text-xs flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-careflow-teal"></span>
+<span>Symptom Step 02/05 • Complete</span>
+</div>
+</div>
+</div>
+<!-- END: PatientMiniHeaderCard -->
+<!-- BEGIN: TwoColumnClinicalGrid -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+<!-- LEFT COLUMN: Primary Complaint, Location Map, Patient Description & Timeline -->
+<div class="lg:col-span-7 space-y-6">
+<!-- Primary Complaint Card -->
+<div class="bg-white rounded-2xl border border-careflow-border p-6 shadow-xs space-y-5">
+<div class="flex items-center justify-between border-b border-slate-100 pb-3">
+<div class="flex items-center gap-2">
+<div class="w-2.5 h-2.5 rounded-full bg-careflow-teal"></div>
+<h3 class="text-sm font-bold text-careflow-navy uppercase tracking-wider">Chief complaint (मुख्य समस्या)</h3>
+</div>
+<span class="text-[11px] font-semibold bg-emerald-50 text-emerald-700 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                  Reported by Patient
+                </span>
+</div>
+<!-- Complaint Title -->
+<div>
+<h4 class="text-2xl font-bold text-careflow-navy leading-tight">
+                  Fever &amp; cough (3 days) <span class="text-slate-500 font-normal text-lg block sm:inline">• बुखार और खांसी</span>
+</h4>
+<p class="text-xs text-slate-500 mt-1">
+                  Primary patient stated symptom reported during today's mobile self-intake session.
+                </p>
+</div>
+<!-- Metadata 4-Box Grid -->
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+<div class="bg-slate-50 rounded-xl p-3 border border-slate-100">
+<div class="text-[11px] text-slate-400 font-semibold uppercase">Duration</div>
+<div class="text-xs font-bold text-careflow-navy mt-0.5">3 days (ongoing)</div>
+<div class="text-[10px] text-slate-500">3 दिन</div>
+</div>
+<div class="bg-slate-50 rounded-xl p-3 border border-slate-100">
+<div class="text-[11px] text-slate-400 font-semibold uppercase">Severity</div>
+<div class="text-xs font-bold text-amber-600 mt-0.5">Moderate (4/10)</div>
+<div class="text-[10px] text-slate-500">मध्यम दर्द</div>
+</div>
+<div class="bg-slate-50 rounded-xl p-3 border border-slate-100">
+<div class="text-[11px] text-slate-400 font-semibold uppercase">Onset</div>
+<div class="text-xs font-bold text-careflow-navy mt-0.5">Gradual</div>
+<div class="text-[10px] text-slate-500">धीरे-धीरे शुरुआत</div>
+</div>
+<div class="bg-slate-50 rounded-xl p-3 border border-slate-100">
+<div class="text-[11px] text-slate-400 font-semibold uppercase">Reported</div>
+<div class="text-xs font-bold text-careflow-navy mt-0.5">09:18 AM Today</div>
+<div class="text-[10px] text-slate-500">Mobile App</div>
+</div>
+</div>
+<!-- Symptoms Reported Chips -->
+<div>
+<span class="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-2.5">
+                  Symptoms Reported • बताए गए लक्षण:
+                </span>
+<div class="flex flex-wrap gap-2">
+<span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-careflow-mint text-careflow-teal border border-careflow-teal/30 shadow-2xs">
+<span>🌡️</span>
+<span>High Fever (तेज़ बुखार) - 101.4°F peak</span>
+</span>
+<span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium bg-slate-50 text-slate-700 border border-slate-200">
+<span>🗣️</span>
+<span>Dry Hacking Cough (सूखी खांसी) - Persistent</span>
+</span>
+<span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium bg-slate-50 text-slate-700 border border-slate-200">
+<span>⚡</span>
+<span>Physical Fatigue &amp; Weakness (थकान एवं कमजोरी)</span>
+</span>
+<span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium bg-slate-50 text-slate-700 border border-slate-200">
+<span>🔴</span>
+<span>Mild Throat Irritation (गले में हल्की खराश)</span>
+</span>
+</div>
+</div>
+</div>
+<!-- Body Location Card with Image 34 Reference -->
+<div class="bg-white rounded-2xl border border-careflow-border p-6 shadow-xs space-y-4">
+<div class="flex items-center justify-between border-b border-slate-100 pb-3">
+<div class="flex items-center gap-2">
+<svg class="w-4 h-4 text-careflow-teal" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+<path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<h3 class="text-sm font-bold text-careflow-navy uppercase tracking-wider">
+                    Where is the discomfort? • असुविधा कहाँ है?
+                  </h3>
+</div>
+<span class="text-[11px] font-semibold text-slate-400">Interactive Body Map</span>
+</div>
+<!-- Body Graphic / Map Area -->
+<div class="flex flex-col sm:flex-row items-center gap-6 bg-slate-50/70 p-4 rounded-xl border border-slate-100">
+<!-- Silhouette image with exact src from DataStore -->
+<div class="relative w-full sm:w-56 shrink-0 flex justify-center items-center bg-white rounded-lg p-2 border border-slate-200/80 shadow-2xs">
+<img alt="CareFlow Anatomical Body Map" class="h-64 object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBEd2P3F6cIGSP-C5QNm-nwyU1WgHMPGmdVGxyPwwKbqJwP_izyt-2KhgTpfWCfTJnRycVdGjtC8RRW5hJUlTkO5oWGiKRFmHbbItDuuc6CtAbgRlWIiE2fjpgZGmlEoweqGZZOS3UiwPn_AnaW-ag0HLLJ2QtJnnp-gxzQaruODQhyGbXx6DNDb6aRMdGsmKhKKSTAjAvUQPsHnHFt3r9qiir8C9TJSfwMGFK3DJ84oQbQ2Q7rmUapqvRptgsTteQyCNw">
+</div>
+<!-- Pain point details right side -->
+<div class="space-y-3 flex-1 text-xs">
+<div>
+<span class="text-slate-400 font-bold uppercase text-[10px] tracking-wider block">Selected Region</span>
+<div class="inline-flex items-center gap-1.5 mt-1 px-3 py-1 bg-red-50 text-red-700 border border-red-200 rounded-lg font-bold text-xs">
+<span class="w-2 h-2 rounded-full bg-red-500 animate-ping"></span>
+<span>Chest &amp; Upper Throat (छाती एवं ऊपरी गला)</span>
+</div>
+</div>
+<div class="space-y-1">
+<span class="text-slate-400 font-bold uppercase text-[10px] tracking-wider block">Clinical Sensation Focus</span>
+<p class="font-medium text-slate-700 bg-white p-2.5 rounded-lg border border-slate-200">
+                      Sub-sternal tightness without radiating pain to left arm or neck. No sharp pleuritic stitch detected.
+                    </p>
+</div>
+<div class="flex items-center gap-2 text-emerald-700 bg-emerald-50/80 p-2 rounded-lg border border-emerald-200 text-[11px] font-medium">
+<svg class="w-4 h-4 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span>Negative guarding confirmed on mobile self-exam questionnaire.</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Patient's Description Card -->
+<div class="bg-white rounded-2xl border border-careflow-border p-6 shadow-xs space-y-3">
+<div class="flex items-center justify-between border-b border-slate-100 pb-3">
+<div class="flex items-center gap-2">
+<svg class="w-4 h-4 text-careflow-teal" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<h3 class="text-sm font-bold text-careflow-navy uppercase tracking-wider">
+                    Patient's description (मरीज का विवरण)
+                  </h3>
+</div>
+<span class="text-[11px] font-medium text-slate-400">Verbatim Note</span>
+</div>
+<!-- Quote Block -->
+<div class="relative bg-slate-50 rounded-xl p-4 pl-5 border-l-4 border-careflow-teal border-y border-r border-slate-200/80">
+<p class="text-slate-800 text-sm italic font-serif leading-relaxed">
+                  "I have had fever and cough for about three days now. It feels worse in the evening, with a dry cough that doesn't bring up phlegm, and I've been feeling extremely tired and weak since yesterday morning."
+                </p>
+<div class="flex items-center justify-between mt-3 pt-2 border-t border-slate-200/60 text-[11px] text-slate-500">
+<span class="flex items-center gap-1.5">
+<svg class="w-3.5 h-3.5 text-careflow-teal" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 100-6 3 3 0 000 6z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+                    Transcribed from voice response • 09:18 AM
+                  </span>
+<span class="font-semibold text-careflow-teal bg-careflow-mint px-2 py-0.5 rounded">English / Hindi bilingual input</span>
+</div>
+</div>
+</div>
+<!-- Symptom Timeline Card -->
+<div class="bg-white rounded-2xl border border-careflow-border p-6 shadow-xs space-y-4">
+<div class="flex items-center justify-between border-b border-slate-100 pb-3">
+<div class="flex items-center gap-2">
+<svg class="w-4 h-4 text-careflow-teal" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<h3 class="text-sm font-bold text-careflow-navy uppercase tracking-wider">
+                    Symptom timeline (लक्षणों की समयरेखा)
+                  </h3>
+</div>
+<span class="text-[11px] font-medium text-slate-400">Chronological</span>
+</div>
+<!-- Vertical Timeline -->
+<div class="relative pl-6 space-y-6 before:content-[''] before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-slate-200">
+<!-- Item 1 -->
+<div class="relative">
+<span class="absolute -left-[23px] top-1 w-3.5 h-3.5 rounded-full bg-white border-2 border-careflow-teal"></span>
+<div class="text-xs">
+<span class="font-bold text-careflow-navy">3 days ago (Friday)</span>
+<p class="text-slate-600 mt-0.5">Symptoms first noticed: mild body ache, low-grade warmth, light throat scratchiness.</p>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="relative">
+<span class="absolute -left-[23px] top-1 w-3.5 h-3.5 rounded-full bg-white border-2 border-careflow-teal"></span>
+<div class="text-xs">
+<span class="font-bold text-careflow-navy">2 days ago (Saturday)</span>
+<p class="text-slate-600 mt-0.5">Fever spiked to 101.2°F; paracetamol 650mg taken self-prescribed with temporary relief.</p>
+</div>
+</div>
+<!-- Item 3 -->
+<div class="relative">
+<span class="absolute -left-[23px] top-1 w-3.5 h-3.5 rounded-full bg-white border-2 border-careflow-teal"></span>
+<div class="text-xs">
+<span class="font-bold text-careflow-navy">Yesterday (Sunday)</span>
+<p class="text-slate-600 mt-0.5">Persistent dry cough began; fatigue increased significantly; evening temperature was 101.4°F.</p>
+</div>
+</div>
+<!-- Item 4 -->
+<div class="relative">
+<span class="absolute -left-[23px] top-1 w-3.5 h-3.5 rounded-full bg-careflow-teal ring-4 ring-careflow-mint"></span>
+<div class="text-xs">
+<span class="font-bold text-careflow-teal">Today, 09:18 AM</span>
+<p class="text-slate-700 font-medium mt-0.5">Complete symptoms &amp; pain severity recorded during CareFlow mobile digital intake.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- RIGHT COLUMN: Severity, Duration, Review of Systems, Voice Response & Clinical Notice -->
+<div class="lg:col-span-5 space-y-6">
+<!-- Severity Assessment Card -->
+<div class="bg-white rounded-2xl border border-careflow-border p-6 shadow-xs space-y-4">
+<div class="flex items-center justify-between border-b border-slate-100 pb-3">
+<div class="flex items-center gap-2">
+<span class="text-base">📊</span>
+<h3 class="text-sm font-bold text-careflow-navy uppercase tracking-wider">
+                    Severity assessment (गंभीरता)
+                  </h3>
+</div>
+<span class="px-2 py-0.5 bg-amber-50 text-amber-700 rounded-full font-bold text-[10px] border border-amber-200">
+                  Score: 4 / 10
+                </span>
+</div>
+<!-- Pain Scale Bar -->
+<div>
+<span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-2">
+                  Pain / Discomfort Face Scale (Wong-Baker standard)
+                </span>
+<div class="grid grid-cols-5 gap-1.5 text-center">
+<!-- 0 -->
+<div class="p-2 rounded-xl bg-slate-50 border border-slate-200">
+<div class="text-lg">😊</div>
+<div class="text-xs font-bold text-slate-600 mt-1">0</div>
+<div class="text-[9px] text-slate-400">None</div>
+</div>
+<!-- 2 -->
+<div class="p-2 rounded-xl bg-slate-50 border border-slate-200">
+<div class="text-lg">🙂</div>
+<div class="text-xs font-bold text-slate-600 mt-1">2</div>
+<div class="text-[9px] text-slate-400">Mild</div>
+</div>
+<!-- 4 - HIGHLIGHTED -->
+<div class="p-2 rounded-xl bg-careflow-mint border-2 border-careflow-teal ring-2 ring-careflow-teal/20">
+<div class="text-lg">😐</div>
+<div class="text-xs font-bold text-careflow-teal mt-1">4</div>
+<div class="text-[9px] font-bold text-careflow-teal">Moderate</div>
+</div>
+<!-- 6 -->
+<div class="p-2 rounded-xl bg-slate-50 border border-slate-200 opacity-60">
+<div class="text-lg">🙁</div>
+<div class="text-xs font-bold text-slate-600 mt-1">6</div>
+<div class="text-[9px] text-slate-400">Severe</div>
+</div>
+<!-- 8 -->
+<div class="p-2 rounded-xl bg-slate-50 border border-slate-200 opacity-60">
+<div class="text-lg">😫</div>
+<div class="text-xs font-bold text-slate-600 mt-1">8</div>
+<div class="text-[9px] text-slate-400">Very severe</div>
+</div>
+</div>
+</div>
+<div class="p-3 bg-slate-50 rounded-xl border border-slate-200/70 text-xs text-slate-600 leading-relaxed">
+<span class="font-semibold text-careflow-navy">Clinical Interpretation:</span> Manageable with oral antipyretics and hydration; no acute respiratory distress indicated in self-triage.
+              </div>
+</div>
+<!-- Duration Details Card -->
+<div class="bg-white rounded-2xl border border-careflow-border p-6 shadow-xs space-y-3">
+<div class="flex items-center justify-between border-b border-slate-100 pb-3">
+<div class="flex items-center gap-2">
+<svg class="w-4 h-4 text-careflow-teal" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<h3 class="text-sm font-bold text-careflow-navy uppercase tracking-wider">
+                    Duration (अवधि)
+                  </h3>
+</div>
+<span class="text-[10px] font-semibold text-slate-400">Acute Phase</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="text-2xl font-black text-careflow-navy">3 days</span>
+<span class="text-xs font-semibold text-careflow-teal bg-careflow-mint px-2 py-0.5 rounded-full">Ongoing</span>
+</div>
+<p class="text-xs text-slate-500">
+                Symptoms first noticed approximately 72 hours ago. Acute episode without prior chronic respiratory history.
+              </p>
+<a class="inline-flex items-center gap-1 text-xs font-bold text-careflow-teal hover:underline pt-1" href="#">
+<span>View duration details → (अवधि विवरण देखें)</span>
+</a>
+</div>
+<!-- Associated Symptoms Card -->
+<div class="bg-white rounded-2xl border border-careflow-border p-6 shadow-xs space-y-3">
+<div class="flex items-center justify-between border-b border-slate-100 pb-3">
+<div class="flex items-center gap-2">
+<svg class="w-4 h-4 text-careflow-teal" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<h3 class="text-sm font-bold text-careflow-navy uppercase tracking-wider">
+                    Associated symptoms (संबंधित लक्षण)
+                  </h3>
+</div>
+<span class="text-[11px] font-medium text-slate-400">Review of Systems</span>
+</div>
+<!-- Clean Check Rows -->
+<div class="divide-y divide-slate-100 text-xs">
+<div class="py-2.5 flex items-center justify-between">
+<span class="font-medium text-slate-700">Fatigue &amp; Malaise (थकान)</span>
+<span class="inline-flex items-center gap-1 text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full font-bold text-[11px] border border-emerald-200">
+                    ✓ Reported (हाँ)
+                  </span>
+</div>
+<div class="py-2.5 flex items-center justify-between">
+<span class="font-medium text-slate-700">Shortness of Breath (सांस फूलना)</span>
+<span class="inline-flex items-center gap-1 text-slate-500 bg-slate-100 px-2.5 py-0.5 rounded-full font-medium text-[11px]">
+                    ✕ Not reported (नहीं)
+                  </span>
+</div>
+<div class="py-2.5 flex items-center justify-between">
+<span class="font-medium text-slate-700">Chest Pain / Radiating (सीने में दर्द)</span>
+<span class="inline-flex items-center gap-1 text-slate-500 bg-slate-100 px-2.5 py-0.5 rounded-full font-medium text-[11px]">
+                    ✕ Not reported (नहीं)
+                  </span>
+</div>
+<div class="py-2.5 flex items-center justify-between">
+<span class="font-medium text-slate-700">Nausea / Vomiting (उल्टी)</span>
+<span class="inline-flex items-center gap-1 text-slate-500 bg-slate-100 px-2.5 py-0.5 rounded-full font-medium text-[11px]">
+                    ✕ Not reported (नहीं)
+                  </span>
+</div>
+<div class="py-2.5 flex items-center justify-between">
+<span class="font-medium text-slate-700">Loss of Smell / Taste (स्वाद/गंध)</span>
+<span class="inline-flex items-center gap-1 text-slate-500 bg-slate-100 px-2.5 py-0.5 rounded-full font-medium text-[11px]">
+                    ✕ Not reported (नहीं)
+                  </span>
+</div>
+</div>
+</div>
+<!-- Voice Response Card -->
+<div class="bg-white rounded-2xl border border-careflow-border p-6 shadow-xs space-y-3">
+<div class="flex items-center justify-between border-b border-slate-100 pb-3">
+<div class="flex items-center gap-2">
+<div class="w-7 h-7 rounded-full bg-careflow-mint text-careflow-teal flex items-center justify-center text-xs shrink-0">
+                    🎤
+                  </div>
+<h3 class="text-sm font-bold text-careflow-navy uppercase tracking-wider">
+                    Voice response (वॉइस रिकॉर्डिंग)
+                  </h3>
+</div>
+<span class="text-[11px] font-bold text-careflow-teal bg-careflow-mint px-2 py-0.5 rounded">0:42 duration</span>
+</div>
+<!-- Interactive-Style Audio Wave Pill -->
+<div class="bg-slate-50 rounded-xl p-3.5 border border-slate-200 flex items-center gap-3">
+<button aria-label="Play voice note" class="w-9 h-9 rounded-full bg-careflow-teal text-white flex items-center justify-center hover:bg-careflow-teal-dark shadow-xs transition-colors shrink-0" type="button">
+<svg class="w-4 h-4 translate-x-0.5" fill="currentColor" viewBox="0 0 24 24">
+<path d="M8 5v14l11-7z"></path>
+</svg>
+</button>
+<!-- Audio Wave Visualizer Bars -->
+<div class="flex-1 flex items-center gap-1 h-6">
+<span class="w-1 bg-careflow-teal/80 rounded-full h-3"></span>
+<span class="w-1 bg-careflow-teal rounded-full h-5"></span>
+<span class="w-1 bg-careflow-teal/90 rounded-full h-4"></span>
+<span class="w-1 bg-careflow-teal rounded-full h-6"></span>
+<span class="w-1 bg-careflow-teal/60 rounded-full h-2"></span>
+<span class="w-1 bg-careflow-teal rounded-full h-5"></span>
+<span class="w-1 bg-careflow-teal/80 rounded-full h-3"></span>
+<span class="w-1 bg-slate-300 rounded-full h-2"></span>
+<span class="w-1 bg-slate-300 rounded-full h-4"></span>
+<span class="w-1 bg-slate-300 rounded-full h-6"></span>
+<span class="w-1 bg-slate-300 rounded-full h-3"></span>
+<span class="w-1 bg-slate-300 rounded-full h-5"></span>
+<span class="w-1 bg-slate-300 rounded-full h-2"></span>
+<span class="w-1 bg-slate-300 rounded-full h-4"></span>
+</div>
+<div class="text-right shrink-0">
+<span class="text-xs font-mono font-bold text-careflow-navy block">0:42</span>
+<span class="text-[9px] text-slate-400">98.4% match</span>
+</div>
+</div>
+<div class="flex items-center justify-between text-xs pt-1">
+<span class="text-slate-500">Bilingual Sync (English / हिन्दी)</span>
+<a class="font-bold text-careflow-teal hover:underline text-xs" href="#">Listen / view full transcript →</a>
+</div>
+</div>
+<!-- Important Information Alert Card -->
+<div class="bg-amber-50/80 rounded-2xl border border-amber-200 p-5 shadow-xs space-y-2">
+<div class="flex items-center gap-2 text-amber-900">
+<div class="w-6 h-6 rounded-full bg-amber-100 flex items-center justify-center text-amber-700 shrink-0 text-xs font-bold">
+                  ⚠️
+                </div>
+<h4 class="text-xs font-bold uppercase tracking-wider text-amber-900">
+                  Important information • महत्वपूर्ण जानकारी
+                </h4>
+</div>
+<p class="text-xs text-amber-900/90 leading-relaxed">
+                Persistent fever reported for 3 days with temperature peaking at <span class="font-bold">101.4°F</span>. Negative guarding noted on mobile self-exam. Review full vital logs and lung auscultation before finalizing prescription.
+              </p>
+<div class="pt-2 border-t border-amber-200/60 text-[10px] font-semibold text-amber-800 flex items-center gap-1">
+<span>⚡ Triggered via Auto-Triage Severity Rule #4</span>
+</div>
+</div>
+</div>
+</div>
+<!-- END: TwoColumnClinicalGrid -->
+</main>
+<!-- END: Scrollable Main Content Canvas -->
+<!-- BEGIN: StickyBottomActionFooter -->
+<footer class="fixed bottom-0 right-0 left-0 lg:left-64 bg-white/95 backdrop-blur-md border-t border-careflow-border px-6 py-3.5 z-20 shadow-md">
+<div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
+<!-- Clinical Security Indicator -->
+<div class="flex items-center gap-2 text-[11px] text-slate-500">
+<svg class="w-4 h-4 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span class="hidden md:inline font-medium">CareFlow Clinical Security • Patient info protected • ABDM M1/M2/M3 Compliant • सुरक्षित एवं गोपनीय</span>
+<span class="md:hidden font-medium">ABDM M1/M2/M3 Compliant • Protected</span>
+</div>
+<!-- Footer Buttons -->
+<div class="flex items-center gap-2.5 shrink-0 w-full sm:w-auto justify-end">
+<button class="px-4 py-2 rounded-full border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold transition-colors shadow-2xs cursor-pointer" type="button" onclick="CareFlow.navigate(6)">
+              ← Back to intake (वापस)
+            </button>
+<button class="px-4 py-2 rounded-full border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold transition-colors shadow-2xs cursor-pointer" type="button" onclick="CareFlow.navigate(9)">
+              View documents (दस्तावेज़)
+            </button>
+<button class="px-5 py-2 rounded-full bg-careflow-teal hover:bg-careflow-teal-dark text-white text-xs font-semibold shadow-xs transition-colors cursor-pointer" type="button" onclick="CareFlow.navigate(8)">
+              Continue to questions → (प्रश्नों पर जाएं)
+            </button>
+</div>
+</div>
+</footer>
+<!-- END: StickyBottomActionFooter -->
+</div>
+<!-- END: MainContentWrapper -->
+</div>
+<!-- Client-side script for lightweight interactions -->
+<script data-purpose="clinical-interaction">
+    document.addEventListener('DOMContentLoaded', () => {
+      // Audio playback toggle simulation
+      const playBtn = document.querySelector('button[aria-label="Play voice note"]');
+      if (playBtn) {
+        let isPlaying = false;
+        playBtn.addEventListener('click', () => {
+          isPlaying = !isPlaying;
+          playBtn.classList.toggle('bg-careflow-teal-dark', isPlaying);
+          playBtn.setAttribute('title', isPlaying ? 'Pause' : 'Play');
+        });
+      }
+    });
+  </script>
+<div id="snapdom-sandbox" data-snapdom-sandbox="true" aria-hidden="true" style="position: absolute; left: -9999px; top: -9999px; width: 0px; height: 0px; overflow: hidden;"></div></body></html>

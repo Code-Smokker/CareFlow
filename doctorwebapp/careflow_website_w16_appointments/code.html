@@ -1,0 +1,732 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0" name="viewport"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"><link href="https://fonts.googleapis.com" rel="preconnect"><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"text-muted":"#3E4948","status-error":"#BA1A1A","on-primary-fixed":"#002020","surface-bright":"#f9f9ff","secondary-container":"#9cefdf","secondary-fixed-dim":"#83d5c6","on-surface-variant":"#3e4948","surface-container-lowest":"#ffffff","surface":"#f9f9ff","tertiary":"#015362","on-primary-fixed-variant":"#004f50","on-error-container":"#93000a","background":"#f9f9ff","primary-fixed":"#a0f0f0","surface-container-highest":"#d7e3ff","on-tertiary-fixed":"#001f26","inverse-primary":"#84d4d3","canvas-bg":"#FAF8FF","on-background":"#0c1b33","tertiary-fixed-dim":"#92d0e2","on-primary-container":"#9dedec","primary":"#005454","on-secondary-fixed-variant":"#005047","navy-dark":"#0B192C","tertiary-container":"#296b7a","surface-mint":"#D1F2E8","inverse-surface":"#223149","secondary":"#006b5f","on-tertiary-container":"#abe9fb","surface-card":"#FFFFFF","border-subtle":"#E2E8F0","outline":"#6e7979","border-teal":"#D6E4E2","inverse-on-surface":"#ecf0ff","surface-dim":"#ccdafa","surface-tint":"#016a6a","primary-fixed-dim":"#84d4d3","on-surface":"#0c1b33","surface-variant":"#d7e3ff","on-primary":"#ffffff","error-container":"#ffdad6","surface-container":"#e8eeff","on-secondary-fixed":"#00201c","on-tertiary-fixed-variant":"#004e5c","on-tertiary":"#ffffff","status-error-bg":"#FFDAD6","on-error":"#ffffff","tertiary-fixed":"#aeecfe","secondary-fixed":"#9ff2e2","surface-container-high":"#dfe8ff","primary-container":"#0d6e6e","error":"#ba1a1a","on-secondary":"#ffffff","surface-container-low":"#f1f3ff","surface-mint-subtle":"#E6F7F2","on-secondary-container":"#0b6f63","outline-variant":"#bec9c8"},"borderRadius":{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},"spacing":{"space-lg":"1.5rem","gutter-mobile":"1rem","space-md":"1rem","sidebar-width":"260px","container-max":"1320px","padding-card":"1.5rem","space-sm":"0.5rem","space-xs":"0.25rem","space-xl":"2rem","space-2xl":"3rem","gutter-desktop":"1.5rem"},"fontFamily":{"headline-md":["Plus Jakarta Sans"],"label-md":["Inter"],"label-sm":["Inter"],"headline-lg-mobile":["Plus Jakarta Sans"],"display-lg-mobile":["Plus Jakarta Sans"],"title-md":["Plus Jakarta Sans"],"body-sm-bilingual":["Plus Jakarta Sans"],"headline-lg":["Plus Jakarta Sans"],"body-md":["Plus Jakarta Sans"],"body-lg":["Plus Jakarta Sans"],"display-lg":["Plus Jakarta Sans"]},"fontSize":{"headline-md":["22px",{"lineHeight":"30px","letterSpacing":"-0.01em","fontWeight":"600"}],"label-md":["13px",{"lineHeight":"18px","letterSpacing":"0.01em","fontWeight":"600"}],"label-sm":["11px",{"lineHeight":"16px","letterSpacing":"0.03em","fontWeight":"600"}],"headline-lg-mobile":["24px",{"lineHeight":"32px","letterSpacing":"-0.01em","fontWeight":"600"}],"display-lg-mobile":["34px",{"lineHeight":"42px","letterSpacing":"-0.02em","fontWeight":"700"}],"title-md":["18px",{"lineHeight":"26px","fontWeight":"600"}],"body-sm-bilingual":["12px",{"lineHeight":"18px","fontWeight":"400"}],"headline-lg":["32px",{"lineHeight":"40px","letterSpacing":"-0.015em","fontWeight":"600"}],"body-md":["14px",{"lineHeight":"22px","fontWeight":"400"}],"body-lg":["16px",{"lineHeight":"26px","fontWeight":"400"}],"display-lg":["48px",{"lineHeight":"56px","letterSpacing":"-0.02em","fontWeight":"700"}]}}}}</script></head><body class="bg-background font-body-md text-on-surface antialiased"><aside class="hidden lg:flex fixed left-0 top-0 h-full w-[260px] bg-surface-card border-r border-border-subtle z-50 flex-col justify-between p-space-md"><div class="flex flex-col gap-space-md"><div class="flex items-center gap-space-sm px-space-sm py-space-xs"><div class="w-9 h-9 rounded-xl bg-surface-mint-subtle flex items-center justify-center text-primary-container"><span class="material-symbols-outlined text-[24px]">favorite</span></div><div class="flex flex-col"><span class="font-headline-md text-title-md text-navy-dark leading-none tracking-tight">CareFlow</span><span class="font-label-sm text-label-sm text-text-muted leading-none mt-1">Clinical Care Team</span></div></div><nav class="flex flex-col gap-1" data-active-classes="bg-surface-mint-subtle text-primary-container font-semibold rounded-xl"><a aria-current="page" class="flex items-center gap-space-sm px-space-md py-2.5 transition-all bg-surface-mint-subtle text-primary-container font-semibold rounded-xl" data-path="dashboard" href="#"><span class="material-symbols-outlined text-[20px]">grid_view</span><span class="font-body-md text-body-md">Dashboard</span></a><a class="flex items-center gap-space-sm px-space-md py-2.5 rounded-xl text-on-surface-variant hover:bg-surface-mint-subtle hover:text-primary-container transition-all" data-path="patients" href="#"><span class="material-symbols-outlined text-[20px]">personal_injury</span><span class="font-body-md text-body-md">Patients</span></a><a class="flex items-center gap-space-sm px-space-md py-2.5 rounded-xl text-on-surface-variant hover:bg-surface-mint-subtle hover:text-primary-container transition-all" data-path="appointments" href="#"><span class="material-symbols-outlined text-[20px]">calendar_today</span><span class="font-body-md text-body-md">Appointments</span></a><a class="flex items-center gap-space-sm px-space-md py-2.5 rounded-xl text-on-surface-variant hover:bg-surface-mint-subtle hover:text-primary-container transition-all" data-path="documents" href="#"><span class="material-symbols-outlined text-[20px]">clinical_notes</span><span class="font-body-md text-body-md">Documents</span></a><a class="flex items-center gap-space-sm px-space-md py-2.5 rounded-xl text-on-surface-variant hover:bg-surface-mint-subtle hover:text-primary-container transition-all" data-path="care-summaries" href="#"><span class="material-symbols-outlined text-[20px]">receipt_long</span><span class="font-body-md text-body-md">Care Summaries</span></a><a class="flex items-center justify-between px-space-md py-2.5 rounded-xl text-on-surface-variant hover:bg-surface-mint-subtle hover:text-primary-container transition-all" data-path="alerts" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[20px]">emergency</span><span class="font-body-md text-body-md">Alerts</span></div><span class="w-2 h-2 rounded-full bg-status-error"></span></a><a class="flex items-center gap-space-sm px-space-md py-2.5 rounded-xl text-on-surface-variant hover:bg-surface-mint-subtle hover:text-primary-container transition-all" data-path="analytics" href="#"><span class="material-symbols-outlined text-[20px]">monitoring</span><span class="font-body-md text-body-md">Analytics</span></a></nav></div><div class="flex flex-col gap-space-md pt-space-md border-t border-border-subtle"><nav class="flex flex-col gap-1" data-active-classes="bg-surface-mint-subtle text-primary-container font-semibold rounded-xl"><a class="flex items-center gap-space-sm px-space-md py-2 rounded-xl text-on-surface-variant hover:bg-surface-mint-subtle hover:text-primary-container transition-all" data-path="settings" href="#"><span class="material-symbols-outlined text-[20px]">settings</span><span class="font-body-md text-body-md">Settings</span></a><a class="flex items-center gap-space-sm px-space-md py-2 rounded-xl text-on-surface-variant hover:bg-surface-mint-subtle hover:text-primary-container transition-all" data-path="help-support" href="#"><span class="material-symbols-outlined text-[20px]">contact_support</span><span class="font-body-md text-body-md">Help &amp; Support</span></a></nav><div class="p-space-sm rounded-xl bg-canvas-bg border border-border-subtle flex items-center gap-space-sm"><div class="w-9 h-9 rounded-full bg-primary-container text-on-primary flex items-center justify-center flex-shrink-0 font-label-md text-label-md">AI</div><div class="flex flex-col min-w-0 flex-1"><span class="font-headline-md text-label-md text-navy-dark truncate leading-snug">Dr. Ananya Iyer</span><div class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-secondary-container"></span><span class="font-label-sm text-label-sm text-text-muted truncate">Desk 4 • OPD Session</span></div></div></div></div></aside><div class="lg:pl-[260px]"><header class="fixed top-0 right-0 left-0 lg:left-[260px] h-16 bg-surface-card/90 backdrop-blur-md border-b border-border-subtle z-40 px-space-md lg:px-space-xl flex items-center justify-between gap-space-md"><div class="flex items-center gap-space-sm"><button class="lg:hidden text-navy-dark hover:text-primary p-1.5 rounded-lg hover:bg-surface-mint-subtle" type="button"><span class="material-symbols-outlined text-[24px]">menu</span></button><div class="flex flex-col"><h1 class="font-headline-md text-title-md text-navy-dark leading-tight">Good morning, Care Team</h1><p class="hidden sm:block font-body-sm-bilingual text-body-sm-bilingual text-text-muted leading-none mt-0.5">Here's what needs your attention today.</p></div></div><div class="flex items-center gap-space-sm"><div class="relative hidden md:flex items-center"><span class="material-symbols-outlined absolute left-3 text-text-muted text-[18px]">search</span><input class="h-10 pl-9 pr-12 rounded-full border border-border-subtle bg-canvas-bg font-body-md text-body-md text-navy-dark placeholder:text-text-muted focus:outline-none focus:border-primary-container focus:ring-2 focus:ring-primary-container/20 w-64 lg:w-72 transition-all" placeholder="Search patients, UHID..." type="text"><kbd class="absolute right-3 px-1.5 py-0.5 text-[10px] font-label-sm text-text-muted bg-surface-card border border-border-subtle rounded-md">⌘K</kbd></div><button class="relative p-2 rounded-full hover:bg-surface-mint-subtle text-text-muted hover:text-navy-dark transition-colors" type="button"><span class="material-symbols-outlined text-[20px]">notifications</span><span class="absolute top-1.5 right-1.5 w-2 h-2 bg-status-error rounded-full ring-2 ring-surface-card"></span></button><div class="flex items-center bg-surface-mint-subtle rounded-full p-1 border border-border-teal"><button class="px-2.5 py-0.5 rounded-full font-label-sm text-label-sm font-semibold bg-surface-card text-navy-dark shadow-sm" type="button">English</button><button class="px-2 py-0.5 rounded-full font-label-sm text-label-sm text-secondary hover:text-navy-dark transition-colors" type="button">हिन्दी</button></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></header><main class="w-full pt-16 bg-background min-h-screen"><div class="flex flex-col w-full">
+<!-- Interactive Script for Filtering & Schedule Modal Simulation -->
+<script>
+    function switchStatusFilter(el, filterType) {
+      document.querySelectorAll('.status-pill').forEach(btn => {
+        btn.classList.remove('bg-primary', 'text-on-primary', 'shadow-sm');
+        btn.classList.add('bg-surface-card', 'text-text-muted');
+      });
+      el.classList.remove('bg-surface-card', 'text-text-muted');
+      el.classList.add('bg-primary', 'text-on-primary', 'shadow-sm');
+      
+      const cards = document.querySelectorAll('.appointment-card');
+      cards.forEach(card => {
+        if (filterType === 'all' || card.getAttribute('data-status') === filterType) {
+          card.style.display = 'flex';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+
+    function toggleQuickDrawer() {
+      const panel = document.getElementById('quick-scheduler-preview');
+      if (panel) {
+        panel.classList.toggle('ring-2');
+        panel.classList.toggle('ring-primary');
+      }
+    }
+  </script>
+<!-- Page Content Container with bespoke clinical spacing -->
+<div class="w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col gap-6">
+<!-- PAGE HEADER -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div class="flex flex-col gap-1.5">
+<div class="flex items-center gap-2">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-surface-mint text-primary font-label-sm text-label-sm uppercase tracking-wider">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+            SCHEDULE • समय-सारणी
+          </span>
+<span class="font-label-sm text-label-sm text-text-muted">OPD Shift II • New Delhi Central</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-navy-dark tracking-tight">
+          Appointments <span class="text-text-muted font-normal">• अपॉइंटमेंट</span>
+</h1>
+<p class="font-body-md text-body-md text-text-muted">
+          Manage upcoming consultations and patient visits <span class="text-text-muted/80">• आगामी परामर्श और मरीज के दौरों का प्रबंधन करें।</span>
+</p>
+</div>
+<!-- Action CTAs -->
+<div class="flex items-center gap-3 self-start md:self-auto">
+<button onclick="CareFlow.showToast('Appointment schedule exported to PDF', 'info')" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-surface-card hover:bg-surface-mint-subtle text-primary font-label-md text-label-md transition-all duration-200 shadow-sm cursor-pointer" type="button">
+<span class="material-symbols-outlined text-[18px]">file_download</span>
+          Export schedule
+        </button>
+<button class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-primary hover:bg-on-primary-fixed-variant text-on-primary font-label-md text-label-md shadow-md transition-all duration-200 hover:shadow-lg cursor-pointer" onclick="CareFlow.openAddPatientModal()" type="button">
+<span class="material-symbols-outlined text-[20px]">add</span>
+<span>+ New appointment <span class="opacity-90 font-normal">(+ नया अपॉइंटमेंट)</span></span>
+</button>
+</div>
+</div>
+<!-- DATE NAVIGATION & CHIPS -->
+<div class="bg-surface-card rounded-2xl p-4 shadow-sm flex flex-col xl:flex-row items-stretch xl:items-center justify-between gap-4">
+<!-- Date switcher controls -->
+<div class="flex items-center gap-3 flex-wrap sm:flex-nowrap">
+<div class="flex items-center bg-canvas-bg rounded-xl p-1">
+<button class="p-1.5 rounded-lg text-text-muted hover:text-navy-dark hover:bg-surface-card transition-colors" type="button">
+<span class="material-symbols-outlined text-[20px]">chevron_left</span>
+</button>
+<button class="px-3 py-1 text-label-md font-label-md text-navy-dark font-semibold" type="button">
+            Today <span class="text-text-muted font-normal text-[11px]">(आज)</span>
+</button>
+<button class="p-1.5 rounded-lg text-text-muted hover:text-navy-dark hover:bg-surface-card transition-colors" type="button">
+<span class="material-symbols-outlined text-[20px]">chevron_right</span>
+</button>
+</div>
+<div class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-canvas-bg">
+<span class="material-symbols-outlined text-primary text-[20px]">calendar_today</span>
+<span class="font-title-md text-body-lg text-navy-dark font-semibold">Monday, 7 September 2026</span>
+<span class="font-body-sm-bilingual text-body-sm-bilingual text-text-muted hidden sm:inline">• सोमवार, 7 सितंबर</span>
+</div>
+</div>
+<!-- Day selector chips row -->
+<div class="flex items-center gap-2 overflow-x-auto pb-1 xl:pb-0 scrollbar-none">
+<button class="flex flex-col items-center justify-center min-w-[76px] py-2 px-3 rounded-xl bg-primary text-on-primary shadow-sm flex-shrink-0 transition-transform hover:scale-[1.02]" type="button">
+<span class="font-label-md text-label-md font-bold">Mon 7</span>
+<span class="font-label-sm text-[10px] text-on-primary-container font-medium">12 Appts</span>
+</button>
+<button class="flex flex-col items-center justify-center min-w-[76px] py-2 px-3 rounded-xl bg-canvas-bg hover:bg-surface-mint-subtle text-navy-dark flex-shrink-0 transition-colors" type="button">
+<span class="font-label-md text-label-md">Tue 8</span>
+<span class="font-label-sm text-[10px] text-text-muted">9 Appts</span>
+</button>
+<button class="flex flex-col items-center justify-center min-w-[76px] py-2 px-3 rounded-xl bg-canvas-bg hover:bg-surface-mint-subtle text-navy-dark flex-shrink-0 transition-colors" type="button">
+<span class="font-label-md text-label-md">Wed 9</span>
+<span class="font-label-sm text-[10px] text-text-muted">14 Appts</span>
+</button>
+<button class="flex flex-col items-center justify-center min-w-[76px] py-2 px-3 rounded-xl bg-canvas-bg hover:bg-surface-mint-subtle text-navy-dark flex-shrink-0 transition-colors" type="button">
+<span class="font-label-md text-label-md">Thu 10</span>
+<span class="font-label-sm text-[10px] text-text-muted">11 Appts</span>
+</button>
+<button class="flex flex-col items-center justify-center min-w-[76px] py-2 px-3 rounded-xl bg-canvas-bg hover:bg-surface-mint-subtle text-navy-dark flex-shrink-0 transition-colors" type="button">
+<span class="font-label-md text-label-md">Fri 11</span>
+<span class="font-label-sm text-[10px] text-text-muted">8 Appts</span>
+</button>
+<button class="flex flex-col items-center justify-center min-w-[76px] py-2 px-3 rounded-xl bg-canvas-bg hover:bg-surface-mint-subtle text-navy-dark flex-shrink-0 transition-colors" type="button">
+<span class="font-label-md text-label-md">Sat 12</span>
+<span class="font-label-sm text-[10px] text-text-muted">4 Appts</span>
+</button>
+</div>
+</div>
+<!-- DAILY SUMMARY CARDS (4 COMPACT STAT CARDS) -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+<!-- Card 1: Total Appointments -->
+<div class="bg-surface-card rounded-2xl p-4 shadow-sm flex flex-col justify-between gap-3">
+<div class="flex items-start justify-between">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-text-muted">Today's appointments</span>
+<span class="font-body-sm-bilingual text-[11px] text-text-muted">आज के अपॉइंटमेंट</span>
+</div>
+<div class="w-9 h-9 rounded-xl bg-canvas-bg text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">event_available</span>
+</div>
+</div>
+<div class="flex items-baseline justify-between pt-1">
+<span class="font-display-lg-mobile text-[32px] text-navy-dark font-bold leading-none">12</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-mint-subtle text-primary font-label-sm text-label-sm">
+            3 morning • 9 aft
+          </span>
+</div>
+</div>
+<!-- Card 2: Confirmed -->
+<div class="bg-surface-card rounded-2xl p-4 shadow-sm flex flex-col justify-between gap-3">
+<div class="flex items-start justify-between">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-text-muted">Confirmed visits</span>
+<span class="font-body-sm-bilingual text-[11px] text-text-muted">पुष्ट मुलाक़ातें</span>
+</div>
+<div class="w-9 h-9 rounded-xl bg-surface-mint text-secondary flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">check_circle</span>
+</div>
+</div>
+<div class="flex items-baseline justify-between pt-1">
+<span class="font-display-lg-mobile text-[32px] text-secondary font-bold leading-none">08</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-mint text-secondary font-label-sm text-label-sm font-semibold">
+            6 checked-in
+          </span>
+</div>
+</div>
+<!-- Card 3: Waiting / Triage -->
+<div class="bg-surface-card rounded-2xl p-4 shadow-sm flex flex-col justify-between gap-3">
+<div class="flex items-start justify-between">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-text-muted">In waiting room</span>
+<span class="font-body-sm-bilingual text-[11px] text-text-muted">प्रतीक्षारत</span>
+</div>
+<div class="w-9 h-9 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">hourglass_top</span>
+</div>
+</div>
+<div class="flex items-baseline justify-between pt-1">
+<span class="font-display-lg-mobile text-[32px] text-amber-800 font-bold leading-none">02</span>
+<span class="px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 font-label-sm text-label-sm font-medium">
+            Avg wait: 14 min
+          </span>
+</div>
+</div>
+<!-- Card 4: Completed -->
+<div class="bg-surface-card rounded-2xl p-4 shadow-sm flex flex-col justify-between gap-3">
+<div class="flex items-start justify-between">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-text-muted">Completed</span>
+<span class="font-body-sm-bilingual text-[11px] text-text-muted">पूर्ण परामर्श</span>
+</div>
+<div class="w-9 h-9 rounded-xl bg-canvas-bg text-tertiary flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">task_alt</span>
+</div>
+</div>
+<div class="flex items-baseline justify-between pt-1">
+<span class="font-display-lg-mobile text-[32px] text-navy-dark font-bold leading-none">02</span>
+<span class="px-2 py-0.5 rounded-full bg-canvas-bg text-text-muted font-label-sm text-label-sm">
+            Consultation done
+          </span>
+</div>
+</div>
+</div>
+<!-- SEARCH & STATUS FILTERS TOOLBAR -->
+<div class="bg-surface-card rounded-2xl p-4 shadow-sm flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4">
+<!-- Search Field -->
+<div class="relative flex-1 max-w-lg">
+<span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-text-muted text-[19px]">search</span>
+<input class="w-full h-11 pl-10 pr-4 rounded-xl bg-canvas-bg font-body-md text-body-md text-navy-dark placeholder:text-text-muted/70 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all" placeholder="Search patient, UHID, or appointment (मरीज या अपॉइंटमेंट खोजें)..." type="text">
+</div>
+<!-- Status Filter Buttons -->
+<div class="flex items-center gap-1.5 overflow-x-auto pb-1 lg:pb-0 scrollbar-none">
+<button class="status-pill inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full font-label-md text-label-md bg-primary text-on-primary shadow-sm flex-shrink-0 transition-all" onclick="switchStatusFilter(this, 'all')" type="button">
+<span>All <span class="font-normal text-[11px]">(सभी)</span></span>
+</button>
+<button class="status-pill inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full font-label-md text-label-md bg-surface-card text-text-muted hover:text-navy-dark flex-shrink-0 transition-all" onclick="switchStatusFilter(this, 'confirmed')" type="button">
+<span>Confirmed <span class="font-normal text-[11px]">(पुष्ट)</span></span>
+<span class="px-1.5 py-0.2 rounded-full text-[10px] bg-canvas-bg font-bold">8</span>
+</button>
+<button class="status-pill inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full font-label-md text-label-md bg-surface-card text-text-muted hover:text-navy-dark flex-shrink-0 transition-all" onclick="switchStatusFilter(this, 'waiting')" type="button">
+<span>Waiting <span class="font-normal text-[11px]">(प्रतीक्षारत)</span></span>
+<span class="px-1.5 py-0.2 rounded-full text-[10px] bg-amber-100 text-amber-900 font-bold">2</span>
+</button>
+<button class="status-pill inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full font-label-md text-label-md bg-surface-card text-text-muted hover:text-navy-dark flex-shrink-0 transition-all" onclick="switchStatusFilter(this, 'completed')" type="button">
+<span>Completed <span class="font-normal text-[11px]">(पूर्ण)</span></span>
+<span class="px-1.5 py-0.2 rounded-full text-[10px] bg-canvas-bg font-bold">2</span>
+</button>
+<button class="status-pill inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full font-label-md text-label-md bg-surface-card text-text-muted hover:text-navy-dark flex-shrink-0 transition-all" onclick="switchStatusFilter(this, 'cancelled')" type="button">
+<span>Cancelled <span class="font-normal text-[11px]">(रद्द)</span></span>
+<span class="px-1.5 py-0.2 rounded-full text-[10px] bg-canvas-bg font-bold">0</span>
+</button>
+</div>
+<!-- Clinician & Room Quick Dropdowns -->
+<div class="flex items-center gap-2 self-end lg:self-auto">
+<div class="relative">
+<select class="appearance-none h-10 pl-3 pr-8 rounded-xl bg-canvas-bg font-label-sm text-label-sm text-navy-dark focus:outline-none cursor-pointer">
+<option>All Clinicians (सभी डॉक्टर)</option>
+<option>Dr. Priya Sharma (Desk 4)</option>
+<option>Dr. Rohan Mehta (Desk 2)</option>
+<option>Dr. Ananya Rao (Desk 1)</option>
+</select>
+<span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none text-[16px]">expand_more</span>
+</div>
+<div class="relative">
+<select class="appearance-none h-10 pl-3 pr-8 rounded-xl bg-canvas-bg font-label-sm text-label-sm text-navy-dark focus:outline-none cursor-pointer">
+<option>All Rooms (सभी कक्ष)</option>
+<option>OPD Clinic 2</option>
+<option>Desk 4 Consultation A</option>
+<option>Urgent Bay 1</option>
+</select>
+<span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none text-[16px]">expand_more</span>
+</div>
+</div>
+</div>
+<!-- MAIN TWO-COLUMN WORKFLOW LAYOUT -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+<!-- LEFT / MAIN COLUMN (approx 68% width -> lg:col-span-8) -->
+<div class="lg:col-span-8 flex flex-col gap-6">
+<!-- TODAY'S APPOINTMENTS SECTION -->
+<div class="flex flex-col gap-3">
+<div class="flex items-center justify-between px-1">
+<div class="flex items-center gap-2">
+<h2 class="font-headline-md text-title-md text-navy-dark">Today's Schedule</h2>
+<span class="font-body-sm-bilingual text-body-sm-bilingual text-text-muted">आज के अपॉइंटमेंट (4 shown)</span>
+</div>
+<span class="font-label-sm text-label-sm text-primary flex items-center gap-1 cursor-pointer hover:underline">
+<span class="material-symbols-outlined text-[16px]">sort</span> Time ascending
+            </span>
+</div>
+<div class="flex flex-col gap-3.5">
+<!-- APPOINTMENT 02 (10:15 AM) - HIGHLIGHTED / CURRENTLY NEXT -->
+<div class="appointment-card bg-surface-card rounded-2xl p-5 shadow-md flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all hover:shadow-lg relative overflow-hidden" data-status="waiting">
+<div class="absolute left-0 top-0 bottom-0 w-1.5 bg-amber-500"></div>
+<div class="flex items-start gap-4 min-w-0">
+<!-- Time & Room badge -->
+<div class="flex flex-col items-center justify-center p-2.5 rounded-xl bg-amber-50/80 min-w-[85px] text-center flex-shrink-0">
+<span class="font-headline-md text-title-md font-bold text-amber-900 leading-none">10:15</span>
+<span class="font-label-sm text-[10px] text-amber-800 uppercase tracking-wide mt-0.5">AM</span>
+<span class="font-label-sm text-[10px] text-amber-900/70 mt-1 font-medium">Room B</span>
+</div>
+<!-- Patient Details -->
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-2 flex-wrap">
+<div class="w-8 h-8 rounded-full bg-secondary-container text-on-secondary-container font-label-md text-label-md flex items-center justify-center font-bold">
+                      AV
+                    </div>
+<span class="font-headline-md text-title-md text-navy-dark font-semibold truncate">Ananya Verma</span>
+<span class="font-body-sm-bilingual text-body-sm-bilingual text-text-muted">34 Y / F</span>
+<span class="px-2 py-0.5 rounded-md bg-canvas-bg font-label-sm text-label-sm text-text-muted">UHID: CF-1031</span>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 font-label-sm text-label-sm font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-amber-600 animate-pulse"></span>
+                      Waiting • प्रतीक्षारत (12m)
+                    </span>
+</div>
+<!-- Clinical context -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1 mt-2.5">
+<div class="flex items-center gap-1.5 text-navy-dark font-body-md text-body-md">
+<span class="material-symbols-outlined text-[16px] text-primary">stethoscope</span>
+<span class="font-medium">Follow-up</span>
+<span class="text-text-muted text-body-sm-bilingual">(मधुमेह जांच)</span>
+</div>
+<div class="flex items-center gap-1.5 text-text-muted font-body-md text-body-md">
+<span class="material-symbols-outlined text-[16px]">person_outline</span>
+<span>Dr. Rohan Mehta, MBBS</span>
+</div>
+</div>
+<div class="mt-2 text-text-muted font-body-sm-bilingual text-body-sm-bilingual flex items-center gap-1.5 bg-canvas-bg px-2.5 py-1 rounded-lg w-fit">
+<span class="material-symbols-outlined text-amber-700 text-[14px]">description</span>
+<span>Notes: Blood sugar report attached, fasting review</span>
+</div>
+</div>
+</div>
+<!-- Action buttons -->
+<div class="flex items-center gap-2 md:flex-col md:items-end justify-end flex-shrink-0 pt-2 md:pt-0">
+<button onclick="CareFlow.navigate(6)" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-primary hover:bg-on-primary-fixed-variant text-on-primary font-label-md text-label-md shadow-sm transition-all cursor-pointer" type="button">
+<span>Call patient in →</span>
+</button>
+<div class="flex items-center gap-2">
+<button onclick="CareFlow.navigate(6)" class="px-3 py-1.5 rounded-lg text-text-muted hover:text-navy-dark hover:bg-canvas-bg font-label-sm text-label-sm transition-colors cursor-pointer" type="button">
+                    View intake
+                  </button>
+<button onclick="CareFlow.showToast('Reschedule modal opened', 'info')" class="px-3 py-1.5 rounded-lg text-text-muted hover:text-navy-dark hover:bg-canvas-bg font-label-sm text-label-sm transition-colors cursor-pointer" type="button">
+                    Reschedule
+                  </button>
+</div>
+</div>
+</div>
+<!-- APPOINTMENT 01 (09:30 AM) -->
+<div class="appointment-card bg-surface-card rounded-2xl p-5 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all hover:shadow-md" data-status="confirmed">
+<div class="flex items-start gap-4 min-w-0">
+<!-- Time slot -->
+<div class="flex flex-col items-center justify-center p-2.5 rounded-xl bg-canvas-bg min-w-[85px] text-center flex-shrink-0">
+<span class="font-headline-md text-title-md font-bold text-navy-dark leading-none">09:30</span>
+<span class="font-label-sm text-[10px] text-text-muted uppercase tracking-wide mt-0.5">AM</span>
+<span class="font-label-sm text-[10px] text-text-muted mt-1">Desk 4</span>
+</div>
+<!-- Patient info -->
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-2 flex-wrap">
+<div class="w-8 h-8 rounded-full bg-surface-mint text-primary font-label-md text-label-md flex items-center justify-center font-bold">
+                      AS
+                    </div>
+<span class="font-headline-md text-title-md text-navy-dark font-semibold truncate">Aarav Sharma</span>
+<span class="font-body-sm-bilingual text-body-sm-bilingual text-text-muted">28 Y / M</span>
+<span class="px-2 py-0.5 rounded-md bg-canvas-bg font-label-sm text-label-sm text-text-muted">UHID: CF-1024</span>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-surface-mint-subtle text-primary font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[12px]">verified</span>
+                      ABHA Verified
+                    </span>
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-surface-mint-subtle text-primary font-label-sm text-label-sm font-semibold">
+                      Confirmed • पुष्ट
+                    </span>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1 mt-2.5">
+<div class="flex items-center gap-1.5 text-navy-dark font-body-md text-body-md">
+<span class="material-symbols-outlined text-[16px] text-primary">medical_services</span>
+<span>General Medicine</span>
+</div>
+<div class="flex items-center gap-1.5 text-text-muted font-body-md text-body-md">
+<span class="material-symbols-outlined text-[16px]">person_outline</span>
+<span>Dr. Priya Sharma, MD</span>
+</div>
+</div>
+<div class="mt-2 text-text-muted font-body-sm-bilingual text-body-sm-bilingual flex items-center gap-1.5">
+<span class="material-symbols-outlined text-secondary text-[14px]">fact_check</span>
+<span>Intake complete (W15) • Fever &amp; cough symptoms recorded</span>
+</div>
+</div>
+</div>
+<!-- Actions -->
+<div class="flex items-center gap-2 md:flex-col md:items-end justify-end flex-shrink-0 pt-2 md:pt-0">
+<button onclick="CareFlow.navigate(5)" class="inline-flex items-center gap-1 px-3.5 py-1.5 rounded-full bg-surface-mint-subtle hover:bg-surface-mint text-primary font-label-md text-label-md transition-colors cursor-pointer" type="button">
+                  View profile →
+                </button>
+<div class="flex items-center gap-2">
+<span class="px-2.5 py-1 rounded-lg bg-canvas-bg font-label-sm text-label-sm text-text-muted">
+                    Checked in (09:18)
+                  </span>
+<button class="p-1 rounded-lg hover:bg-canvas-bg text-text-muted" type="button">
+<span class="material-symbols-outlined text-[18px]">more_horiz</span>
+</button>
+</div>
+</div>
+</div>
+<!-- APPOINTMENT 03 (11:00 AM) -->
+<div class="appointment-card bg-surface-card rounded-2xl p-5 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all hover:shadow-md" data-status="confirmed">
+<div class="flex items-start gap-4 min-w-0">
+<div class="flex flex-col items-center justify-center p-2.5 rounded-xl bg-canvas-bg min-w-[85px] text-center flex-shrink-0">
+<span class="font-headline-md text-title-md font-bold text-navy-dark leading-none">11:00</span>
+<span class="font-label-sm text-[10px] text-text-muted uppercase tracking-wide mt-0.5">AM</span>
+<span class="font-label-sm text-[10px] text-text-muted mt-1">Urgent Bay 1</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-2 flex-wrap">
+<div class="w-8 h-8 rounded-full bg-slate-200 text-slate-700 font-label-md text-label-md flex items-center justify-center font-bold">
+                      RS
+                    </div>
+<span class="font-headline-md text-title-md text-navy-dark font-semibold truncate">Rahul Singh</span>
+<span class="font-body-sm-bilingual text-body-sm-bilingual text-text-muted">42 Y / M</span>
+<span class="px-2 py-0.5 rounded-md bg-canvas-bg font-label-sm text-label-sm text-text-muted">UHID: CF-1042</span>
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-surface-mint-subtle text-primary font-label-sm text-label-sm font-semibold">
+                      Confirmed • पुष्ट
+                    </span>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1 mt-2.5">
+<div class="flex items-center gap-1.5 text-navy-dark font-body-md text-body-md">
+<span class="material-symbols-outlined text-[16px] text-primary">cardiology</span>
+<span>Primary Care • Chest check</span>
+</div>
+<div class="flex items-center gap-1.5 text-text-muted font-body-md text-body-md">
+<span class="material-symbols-outlined text-[16px]">person_outline</span>
+<span>Dr. Ananya Rao, MD</span>
+</div>
+</div>
+<div class="mt-2 text-text-muted font-body-sm-bilingual text-body-sm-bilingual flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-[14px]">priority_high</span>
+<span>ECG requested prior to consult by Triage</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-2 md:flex-col md:items-end justify-end flex-shrink-0 pt-2 md:pt-0">
+<button onclick="CareFlow.navigate(5)" class="inline-flex items-center gap-1 px-3.5 py-1.5 rounded-full bg-canvas-bg hover:bg-surface-mint-subtle text-navy-dark font-label-md text-label-md transition-colors cursor-pointer" type="button">
+                  View patient
+                </button>
+<button class="p-1 rounded-lg hover:bg-canvas-bg text-text-muted" type="button">
+<span class="material-symbols-outlined text-[18px]">more_horiz</span>
+</button>
+</div>
+</div>
+<!-- APPOINTMENT 04 (08:45 AM) - COMPLETED -->
+<div class="appointment-card bg-surface-card/75 rounded-2xl p-5 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all opacity-85 hover:opacity-100" data-status="completed">
+<div class="flex items-start gap-4 min-w-0">
+<div class="flex flex-col items-center justify-center p-2.5 rounded-xl bg-canvas-bg min-w-[85px] text-center flex-shrink-0">
+<span class="font-headline-md text-title-md font-bold text-text-muted leading-none">08:45</span>
+<span class="font-label-sm text-[10px] text-text-muted uppercase tracking-wide mt-0.5">AM</span>
+<span class="font-label-sm text-[10px] text-text-muted mt-1">Desk 4</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-2 flex-wrap">
+<div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 font-label-md text-label-md flex items-center justify-center font-bold">
+                      PK
+                    </div>
+<span class="font-headline-md text-title-md text-navy-dark font-medium truncate">Pooja Kulkarni</span>
+<span class="font-body-sm-bilingual text-body-sm-bilingual text-text-muted">52 Y / F</span>
+<span class="px-2 py-0.5 rounded-md bg-canvas-bg font-label-sm text-label-sm text-text-muted">UHID: CF-1019</span>
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-canvas-bg text-text-muted font-label-sm text-label-sm font-medium">
+<span class="material-symbols-outlined text-[14px]">done_all</span>
+                      Completed • पूर्ण
+                    </span>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1 mt-2.5">
+<div class="flex items-center gap-1.5 text-text-muted font-body-md text-body-md">
+<span class="material-symbols-outlined text-[16px]">monitor_heart</span>
+<span>Hypertension Review</span>
+</div>
+<div class="flex items-center gap-1.5 text-text-muted font-body-md text-body-md">
+<span class="material-symbols-outlined text-[16px]">person_outline</span>
+<span>Dr. Priya Sharma, MD</span>
+</div>
+</div>
+<div class="mt-2 text-text-muted font-body-sm-bilingual text-body-sm-bilingual flex items-center gap-1.5">
+<span class="material-symbols-outlined text-secondary text-[14px]">prescriptions</span>
+<span>Prescription generated • Sent to Pharmacy queue</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-2 md:flex-col md:items-end justify-end flex-shrink-0 pt-2 md:pt-0">
+<button onclick="CareFlow.navigate(11)" class="inline-flex items-center gap-1 px-3.5 py-1.5 rounded-full bg-canvas-bg hover:bg-surface-mint-subtle text-primary font-label-md text-label-md transition-colors cursor-pointer" type="button">
+                  View summary
+                </button>
+</div>
+</div>
+</div>
+</div>
+<!-- UPCOMING APPOINTMENTS GROUP -->
+<div class="bg-surface-card rounded-2xl p-5 shadow-sm flex flex-col gap-4">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">calendar_month</span>
+<h3 class="font-headline-md text-title-md text-navy-dark">Upcoming Appointments</h3>
+<span class="font-body-sm-bilingual text-body-sm-bilingual text-text-muted">(आने वाले अपॉइंटमेंट)</span>
+</div>
+<span class="font-label-sm text-label-sm text-text-muted">Next 48 Hours</span>
+</div>
+<div class="flex flex-col gap-4 divide-y divide-border-subtle/40">
+<!-- Day Group 1: Tomorrow -->
+<div class="flex flex-col gap-2 pt-2 first:pt-0">
+<span class="font-label-md text-label-md text-primary font-bold uppercase tracking-wider">
+                Tomorrow • मंगलवार, 8 सितंबर
+              </span>
+<div class="flex flex-col gap-2">
+<div class="flex items-center justify-between p-3 rounded-xl bg-canvas-bg hover:bg-surface-mint-subtle/50 transition-colors">
+<div class="flex items-center gap-3">
+<span class="font-label-md text-label-md font-bold text-navy-dark">09:00 AM</span>
+<span class="w-1 h-1 rounded-full bg-text-muted"></span>
+<span class="font-body-md text-body-md font-medium text-navy-dark">Aarav Sharma (CF-1024)</span>
+<span class="hidden sm:inline font-body-sm-bilingual text-body-sm-bilingual text-text-muted">— Lab Follow-up • Dr. Priya Sharma</span>
+</div>
+<span class="px-2.5 py-0.5 rounded-full bg-surface-mint text-secondary font-label-sm text-label-sm">Confirmed</span>
+</div>
+<div class="flex items-center justify-between p-3 rounded-xl bg-canvas-bg hover:bg-surface-mint-subtle/50 transition-colors">
+<div class="flex items-center gap-3">
+<span class="font-label-md text-label-md font-bold text-navy-dark">11:30 AM</span>
+<span class="w-1 h-1 rounded-full bg-text-muted"></span>
+<span class="font-body-md text-body-md font-medium text-navy-dark">Meera Kapoor (CF-1050)</span>
+<span class="hidden sm:inline font-body-sm-bilingual text-body-sm-bilingual text-text-muted">— Routine Diabetes • Dr. Rohan Mehta</span>
+</div>
+<span class="px-2.5 py-0.5 rounded-full bg-surface-mint text-secondary font-label-sm text-label-sm">Confirmed</span>
+</div>
+</div>
+</div>
+<!-- Day Group 2: Wednesday -->
+<div class="flex flex-col gap-2 pt-3">
+<span class="font-label-md text-label-md text-text-muted font-bold uppercase tracking-wider">
+                Wednesday • बुधवार, 9 सितंबर
+              </span>
+<div class="flex items-center justify-between p-3 rounded-xl bg-canvas-bg hover:bg-surface-mint-subtle/50 transition-colors">
+<div class="flex items-center gap-3">
+<span class="font-label-md text-label-md font-bold text-navy-dark">02:00 PM</span>
+<span class="w-1 h-1 rounded-full bg-text-muted"></span>
+<span class="font-body-md text-body-md font-medium text-navy-dark">Vikram Rao (CF-1028)</span>
+<span class="hidden sm:inline font-body-sm-bilingual text-body-sm-bilingual text-text-muted">— Cardiology Consult • Dr. Sen</span>
+</div>
+<span class="px-2.5 py-0.5 rounded-full bg-surface-mint text-secondary font-label-sm text-label-sm">Confirmed</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- RIGHT / SUPPORTING COLUMN (approx 32% width -> lg:col-span-4) -->
+<div class="lg:col-span-4 flex flex-col gap-6">
+<!-- 1. NEXT APPOINTMENT FOCUS CARD -->
+<div class="bg-surface-card rounded-2xl p-5 shadow-sm flex flex-col gap-4 relative overflow-hidden bg-gradient-to-b from-surface-mint-subtle/40 via-surface-card to-surface-card">
+<!-- Pulse banner -->
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="relative flex h-2.5 w-2.5">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-secondary"></span>
+</span>
+<span class="font-label-sm text-label-sm uppercase font-bold text-secondary tracking-wider">Next in queue • कतार में अगला</span>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 font-label-sm text-label-sm font-semibold">In 8 mins</span>
+</div>
+<!-- Time & details -->
+<div class="flex flex-col">
+<span class="font-headline-lg text-[28px] text-navy-dark font-bold leading-tight">10:15 AM</span>
+<span class="font-body-sm-bilingual text-body-sm-bilingual text-text-muted">OPD Clinic 2 • Desk 2</span>
+</div>
+<!-- Patient Identity Micro Card -->
+<div class="p-3 rounded-xl bg-canvas-bg flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-secondary-container text-on-secondary-container font-label-md text-label-md flex items-center justify-center font-bold flex-shrink-0">
+              AV
+            </div>
+<div class="flex flex-col min-w-0">
+<span class="font-headline-md text-body-lg text-navy-dark font-semibold truncate">Ananya Verma</span>
+<span class="font-body-sm-bilingual text-body-sm-bilingual text-text-muted">34 Y / F • CF-1031</span>
+</div>
+</div>
+<!-- Chief Concern & Clinician -->
+<div class="flex flex-col gap-2 font-body-sm-bilingual text-body-sm-bilingual">
+<div class="flex items-start gap-2">
+<span class="material-symbols-outlined text-primary text-[18px]">assignment_late</span>
+<div>
+<span class="text-text-muted">Chief concern:</span>
+<p class="font-medium text-navy-dark">Routine Diabetes Follow-up • HbA1c review</p>
+</div>
+</div>
+<div class="flex items-start gap-2">
+<span class="material-symbols-outlined text-text-muted text-[18px]">badge</span>
+<div>
+<span class="text-text-muted">Assigned Doctor:</span>
+<p class="font-medium text-navy-dark">Dr. Rohan Mehta, MBBS</p>
+</div>
+</div>
+</div>
+<!-- Buttons -->
+<div class="flex flex-col gap-2 pt-2">
+<button class="w-full py-2.5 px-4 rounded-full bg-primary hover:bg-on-primary-fixed-variant text-on-primary font-label-md text-label-md text-center shadow-md transition-all" type="button">
+              Start consultation now (परामर्श शुरू करें) →
+            </button>
+<button class="w-full py-2 px-4 rounded-full bg-surface-mint-subtle hover:bg-surface-mint text-primary font-label-sm text-label-sm text-center transition-colors flex items-center justify-center gap-1.5" type="button">
+<span class="material-symbols-outlined text-[16px]">sms</span>
+              Send SMS notification
+            </button>
+</div>
+</div>
+<!-- 2. QUICK SCHEDULING DRAWER / MODAL PREVIEW -->
+<div class="bg-surface-card rounded-2xl p-5 shadow-sm flex flex-col gap-3 transition-all duration-300" id="quick-scheduler-preview">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">add_circle</span>
+<h3 class="font-headline-md text-title-md text-navy-dark">Quick Booking</h3>
+</div>
+<span class="font-label-sm text-label-sm text-text-muted">नया अपॉइंटमेंट</span>
+</div>
+<p class="font-body-sm-bilingual text-body-sm-bilingual text-text-muted leading-tight">
+            Schedule walk-in or phone consultation directly into active OPD slot.
+          </p>
+<form class="flex flex-col gap-3 pt-1">
+<!-- Patient select -->
+<div>
+<label class="font-label-sm text-label-sm text-text-muted block mb-1">Patient (मरीज)</label>
+<div class="relative">
+<input class="w-full h-10 px-3 pr-8 rounded-xl bg-canvas-bg font-body-md text-body-md text-navy-dark focus:outline-none focus:ring-1 focus:ring-primary" type="text" value="Aarav Sharma #CF-1024">
+<span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted text-[16px]">person_search</span>
+</div>
+</div>
+<!-- Doctor select -->
+<div>
+<label class="font-label-sm text-label-sm text-text-muted block mb-1">Clinician (डॉक्टर)</label>
+<div class="relative">
+<select class="w-full h-10 px-3 pr-8 rounded-xl bg-canvas-bg font-body-md text-body-md text-navy-dark appearance-none focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer">
+<option>Dr. Priya Sharma, MD</option>
+<option>Dr. Rohan Mehta, MBBS</option>
+<option>Dr. Ananya Rao, MD</option>
+</select>
+<span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted text-[16px] pointer-events-none">expand_more</span>
+</div>
+</div>
+<!-- Type chips -->
+<div>
+<label class="font-label-sm text-label-sm text-text-muted block mb-1.5">Visit Type</label>
+<div class="grid grid-cols-3 gap-1.5">
+<button class="py-1 px-2 rounded-lg bg-surface-mint-subtle text-primary font-label-sm text-[11px] font-semibold text-center truncate" type="button">General</button>
+<button class="py-1 px-2 rounded-lg bg-canvas-bg hover:bg-surface-mint-subtle text-text-muted font-label-sm text-[11px] text-center truncate" type="button">Follow-up</button>
+<button class="py-1 px-2 rounded-lg bg-canvas-bg hover:bg-surface-mint-subtle text-text-muted font-label-sm text-[11px] text-center truncate" type="button">Urgent</button>
+</div>
+</div>
+<!-- Time slot -->
+<div>
+<label class="font-label-sm text-label-sm text-text-muted block mb-1">Date &amp; Time Slot</label>
+<div class="flex items-center gap-2">
+<input class="w-full h-10 px-3 rounded-xl bg-canvas-bg font-body-md text-body-md text-navy-dark focus:outline-none" type="text" value="02:30 PM Today">
+</div>
+</div>
+<!-- Submit -->
+<button class="w-full py-2.5 mt-1 rounded-full bg-primary hover:bg-on-primary-fixed-variant text-on-primary font-label-md text-label-md transition-all shadow-sm" type="button">
+              Schedule visit (दर्ज करें)
+            </button>
+</form>
+</div>
+<!-- 3. CARE TEAM AVAILABILITY FILTER -->
+<div class="bg-surface-card rounded-2xl p-5 shadow-sm flex flex-col gap-3">
+<div class="flex items-center justify-between">
+<h3 class="font-headline-md text-title-md text-navy-dark">Team Presence</h3>
+<span class="font-body-sm-bilingual text-body-sm-bilingual text-text-muted">केयर टीम उपस्थिति</span>
+</div>
+<div class="flex flex-col gap-3 pt-1">
+<!-- Doctor 1 -->
+<div class="flex items-center justify-between p-2.5 rounded-xl bg-canvas-bg">
+<div class="flex items-center gap-2.5">
+<div class="relative">
+<div class="w-8 h-8 rounded-full bg-surface-mint text-primary flex items-center justify-center font-label-md text-label-md font-bold">PS</div>
+<span class="absolute bottom-0 right-0 w-2 h-2 rounded-full bg-secondary ring-1 ring-surface-card"></span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-md text-label-md text-navy-dark font-semibold">Dr. Priya Sharma</span>
+<span class="font-label-sm text-[11px] text-text-muted">General Medicine • 3 appts</span>
+</div>
+</div>
+<span class="px-2 py-0.5 rounded-md bg-surface-mint text-secondary font-label-sm text-[10px] font-semibold">Desk 4</span>
+</div>
+<!-- Doctor 2 -->
+<div class="flex items-center justify-between p-2.5 rounded-xl bg-canvas-bg">
+<div class="flex items-center gap-2.5">
+<div class="relative">
+<div class="w-8 h-8 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center font-label-md text-label-md font-bold">RM</div>
+<span class="absolute bottom-0 right-0 w-2 h-2 rounded-full bg-amber-500 ring-1 ring-surface-card"></span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-md text-label-md text-navy-dark font-semibold">Dr. Rohan Mehta</span>
+<span class="font-label-sm text-[11px] text-text-muted">General Medicine • 4 appts</span>
+</div>
+</div>
+<span class="px-2 py-0.5 rounded-md bg-amber-100 text-amber-900 font-label-sm text-[10px] font-semibold">In session (Desk 2)</span>
+</div>
+<!-- Doctor 3 -->
+<div class="flex items-center justify-between p-2.5 rounded-xl bg-canvas-bg">
+<div class="flex items-center gap-2.5">
+<div class="relative">
+<div class="w-8 h-8 rounded-full bg-surface-variant text-primary flex items-center justify-center font-label-md text-label-md font-bold">AR</div>
+<span class="absolute bottom-0 right-0 w-2 h-2 rounded-full bg-secondary ring-1 ring-surface-card"></span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-md text-label-md text-navy-dark font-semibold">Dr. Ananya Rao</span>
+<span class="font-label-sm text-[11px] text-text-muted">Primary Care • 5 appts</span>
+</div>
+</div>
+<span class="px-2 py-0.5 rounded-md bg-surface-mint text-secondary font-label-sm text-[10px] font-semibold">Desk 1</span>
+</div>
+</div>
+</div>
+<!-- 4. CLINIC LOCATION OCCUPANCY SUMMARY -->
+<div class="bg-surface-card rounded-2xl p-5 shadow-sm flex flex-col gap-3">
+<div class="flex items-center justify-between">
+<h3 class="font-headline-md text-title-md text-navy-dark">Room Occupancy</h3>
+<span class="font-body-sm-bilingual text-body-sm-bilingual text-text-muted">स्थान स्थिति</span>
+</div>
+<div class="flex flex-col gap-3 pt-1">
+<!-- Location 1 -->
+<div class="flex flex-col gap-1.5">
+<div class="flex items-center justify-between text-label-sm font-label-sm">
+<span class="text-navy-dark font-medium">General Medicine OPD (Room A &amp; B)</span>
+<span class="text-text-muted font-bold">7 booked / 2 open</span>
+</div>
+<div class="w-full bg-canvas-bg rounded-full h-2 overflow-hidden">
+<div class="bg-primary h-2 rounded-full" style="width: 78%;"></div>
+</div>
+</div>
+<!-- Location 2 -->
+<div class="flex flex-col gap-1.5">
+<div class="flex items-center justify-between text-label-sm font-label-sm">
+<span class="text-navy-dark font-medium">Urgent Care Triage (Bay 1)</span>
+<span class="text-text-muted font-bold">3 booked</span>
+</div>
+<div class="w-full bg-canvas-bg rounded-full h-2 overflow-hidden">
+<div class="bg-amber-500 h-2 rounded-full" style="width: 60%;"></div>
+</div>
+</div>
+<!-- Location 3 -->
+<div class="flex flex-col gap-1.5">
+<div class="flex items-center justify-between text-label-sm font-label-sm">
+<span class="text-navy-dark font-medium">Teleconsultation Bay</span>
+<span class="text-text-muted font-bold">2 booked</span>
+</div>
+<div class="w-full bg-canvas-bg rounded-full h-2 overflow-hidden">
+<div class="bg-secondary h-2 rounded-full" style="width: 40%;"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- REGULATORY ASSURANCE FOOTER -->
+<div class="mt-4 py-4 px-6 rounded-2xl bg-canvas-bg flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
+<div class="flex items-center gap-2 text-text-muted font-body-sm-bilingual text-body-sm-bilingual">
+<span class="material-symbols-outlined text-[18px] text-primary">lock</span>
+<span>🔒 Patient appointments and clinical records protected • मरीज के अपॉइंटमेंट एवं रिकॉर्ड सुरक्षित हैं</span>
+</div>
+<div class="flex items-center gap-3 font-label-sm text-[11px] text-text-muted/80">
+<span>ABDM M1/M2/M3 Compliant</span>
+<span>•</span>
+<span>256-bit AES Vault</span>
+<span>•</span>
+<span>HIPAA &amp; DISHA Standard</span>
+</div>
+</div>
+</div>
+</div></main></div><script src="../careflow-nav.js" defer></script></body></html>

@@ -23,6 +23,20 @@ async function main() {
       { label: "When is the fever worst?", value: "continuous" },
       { label: "How bad is the pain right now?", value: 8 },
     ],
+    // The Ayurvedic case record too — Observations with PLACEHOLDER-flagged NAMASTE codings and a
+    // dual-coded diagnosis. A bundle that only validates without them proves nothing about them.
+    ayurveda: {
+      observations: [
+        { section: "prashna", fieldId: "agni_appetite", label: "Agni — How is your appetite these days?", value: "Poor, little desire to eat", noteText: "source=tap; confidence=1; patient-reported" },
+        { section: "trividha", fieldId: "trividha.darshana.notes", label: "Darshana — Darshana findings", value: "No pallor or icterus.", noteText: "source=clinician; recorded_by=synthetic" },
+        { section: "ashtavidha", fieldId: "ashtavidha.mala.nature", label: "Mala — Nature", value: "Prakrita", noteText: "source=clinician; disposition=overridden; overrides patient-reported: Hard (tap, confidence 1)" },
+        { section: "ashtavidha", fieldId: "ashtavidha.nadi.rate_bpm", label: "Nadi — Rate", value: 78, unit: "beats/min" },
+        { section: "dashavidha", fieldId: "dashavidha.pramana.bmi", label: "Pramana — BMI", value: 22.5, unit: "kg/m²", noteText: "source=computed" },
+      ],
+      diagnoses: [
+        { displayText: "Synthetic disorder", namaste: { code: "SYN-1", display: "Synthetic disorder" }, icd11: { code: "SYN-TM2-1", display: "Synthetic TM2 pattern" }, mappingReviewed: false },
+      ],
+    },
     signedAt: now,
   });
 

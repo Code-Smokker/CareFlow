@@ -1,0 +1,529 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"><title>CareFlow - AYUSH Intake</title><link href="https://fonts.googleapis.com" rel="preconnect"><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&amp;display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"><style>@layer base{html,body{width:100%;margin:0;padding:0;min-height:100%;background-color:#faf8ff;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script src="../shared_careflow.js"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "tertiary-container": "#006c7f", "on-secondary-fixed": "#00201c", "on-background": "#131b2e", "primary-container": "#0d6e6e", "on-error": "#ffffff", "on-surface-variant": "#3e4948", "surface-container": "#eaedff", "tertiary-fixed-dim": "#4cd7f6", "secondary-fixed-dim": "#4fdbc8", "surface-container-highest": "#dae2fd", "on-primary": "#ffffff", "secondary": "#006b5f", "surface-bright": "#faf8ff", "surface": "#faf8ff", "inverse-on-surface": "#eef0ff", "surface-container-high": "#e2e7ff", "tertiary": "#005261", "surface-container-lowest": "#ffffff", "tertiary-fixed": "#acedff", "primary": "#005454", "background": "#faf8ff", "on-primary-fixed-variant": "#004f50", "on-tertiary": "#ffffff", "on-surface": "#131b2e", "on-primary-fixed": "#002020", "surface-dim": "#d2d9f4", "primary-fixed": "#a0f0f0", "outline": "#6e7979", "on-error-container": "#93000a", "surface-variant": "#dae2fd", "primary-fixed-dim": "#84d4d3", "on-primary-container": "#9dedec", "inverse-primary": "#84d4d3", "error": "#ba1a1a", "on-tertiary-fixed-variant": "#004e5c", "secondary-container": "#6df5e1", "secondary-fixed": "#71f8e4", "error-container": "#ffdad6", "on-tertiary-container": "#9eeaff", "surface-container-low": "#f2f3ff", "outline-variant": "#bec9c8", "on-secondary": "#ffffff", "surface-tint": "#016a6a", "on-secondary-container": "#006f64", "on-tertiary-fixed": "#001f26", "inverse-surface": "#283044", "on-secondary-fixed-variant": "#005048" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "margin-mobile": "1.25rem", "space-2xl": "3rem", "space-md": "1rem", "space-lg": "1.5rem", "space-xl": "2rem", "space-xxs": "0.25rem", "space-xs": "0.5rem", "gutter-desktop": "1.5rem", "space-3xl": "4rem", "margin-desktop": "2.5rem", "gutter-mobile": "1rem", "space-sm": "0.75rem" }, "fontFamily": { "title-md": ["Plus Jakarta Sans"], "display-lg": ["Plus Jakarta Sans"], "headline-md": ["Plus Jakarta Sans"], "headline-lg-mobile": ["Plus Jakarta Sans"], "headline-lg": ["Plus Jakarta Sans"], "body-lg": ["Plus Jakarta Sans"], "label-md": ["Plus Jakarta Sans"], "headline-sm": ["Plus Jakarta Sans"], "display-lg-mobile": ["Plus Jakarta Sans"], "body-md": ["Plus Jakarta Sans"], "label-sm": ["Plus Jakarta Sans"] }, "fontSize": { "title-md": ["18px", { "lineHeight": "24px", "fontWeight": "600" }], "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }], "headline-lg-mobile": ["26px", { "lineHeight": "34px", "letterSpacing": "-0.01em", "fontWeight": "600" }], "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.015em", "fontWeight": "600" }], "body-lg": ["16px", { "lineHeight": "26px", "fontWeight": "400" }], "label-md": ["13px", { "lineHeight": "18px", "letterSpacing": "0.01em", "fontWeight": "600" }], "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }], "display-lg-mobile": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "body-md": ["14px", { "lineHeight": "22px", "fontWeight": "400" }], "label-sm": ["11px", { "lineHeight": "16px", "letterSpacing": "0.04em", "fontWeight": "600" }] } } } }</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
+
+<link rel="preload" href="../material-symbols-outlined.woff2" as="font" type="font/woff2" crossorigin>
+<style id="careflow-material-symbols-core">
+  @font-face {
+    font-family: "Material Symbols Outlined";
+    font-style: normal;
+    font-weight: 100 700;
+    font-display: block;
+    src: url("../material-symbols-outlined.woff2") format("woff2"),
+         url("/material-symbols-outlined.woff2") format("woff2"),
+         url("https://fonts.gstatic.com/s/materialsymbolsoutlined/v373/kJEhBvYX7BgnkSrUwT8OhrdQw4oELdPIeeII9v6oFsLjBuVY.woff2") format("woff2");
+  }
+  .material-symbols-outlined {
+    font-family: "Material Symbols Outlined" !important;
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -webkit-font-feature-settings: "liga";
+    -moz-font-feature-settings: "liga";
+    font-feature-settings: "liga";
+    -webkit-font-smoothing: antialiased;
+    vertical-align: middle;
+  }
+</style>
+</head><body class="bg-surface text-on-surface font-body-md min-h-screen relative flex flex-col selection:bg-secondary-container selection:text-on-secondary-container"><div class="fixed inset-0 pointer-events-none z-0 overflow-hidden"><div class="absolute -top-32 -right-24 w-96 h-96 rounded-full bg-secondary-fixed-dim/20 blur-3xl"></div><div class="absolute top-1/4 -left-32 w-80 h-80 rounded-full bg-primary-fixed-dim/15 blur-3xl"></div><div class="absolute bottom-10 right-0 w-80 h-80 rounded-full bg-tertiary-fixed-dim/15 blur-3xl"></div></div><header class="fixed top-0 inset-x-0 z-50 pt-safe bg-surface/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(13,110,110,0.04)]"><div class="h-16 px-margin-mobile flex items-center justify-between"><div class="flex items-center gap-space-xs"><button id="ayush-nav-back-btn" class="w-10 h-10 rounded-xl bg-surface-container-low hover:bg-surface-container flex items-center justify-center text-primary transition-colors" type="button" aria-label="Go back"><span class="material-symbols-outlined text-[20px]">arrow_back</span></button><div class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center shadow-[0_2px_8px_-2px_rgba(13,110,110,0.25)]"><span class="material-symbols-outlined text-on-primary text-[22px]">volunteer_activism</span></div><div class="flex flex-col"><span class="font-title-md text-title-md text-primary tracking-tight">CareFlow</span></div></div><div class="flex items-center gap-space-xs"><button class="h-11 px-space-sm rounded-full bg-surface-container-low text-on-surface-variant font-label-md text-label-md flex items-center gap-space-xxs hover:bg-surface-container transition-colors" type="button"><span class="material-symbols-outlined text-[18px] text-primary">language</span><span>English</span><span class="material-symbols-outlined text-[16px]">arrow_drop_down</span></button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="relative z-10 flex flex-col flex-1 w-full pt-16 pb-safe bg-surface"><div class="flex flex-col w-full pb-space-2xl">
+<!-- Progress Stepper & Context Banner -->
+<div class="px-margin-mobile pt-space-sm pb-space-xs flex flex-col gap-space-xs">
+<!-- Context Pills & Back Row -->
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<button id="ayush-back-btn" aria-label="Go back" class="w-9 h-9 rounded-full bg-surface-container-lowest shadow-sm flex items-center justify-center text-on-surface hover:bg-surface-container-low transition-colors" type="button">
+<span class="material-symbols-outlined text-[20px] text-primary">arrow_back</span>
+</button>
+<span class="px-space-xs py-space-xxs rounded-full bg-primary/10 text-primary font-label-sm text-label-sm tracking-wider uppercase">
+          AYUSH INTAKE
+        </span>
+<span class="px-space-xs py-space-xxs rounded-full bg-surface-container text-on-surface-variant font-label-sm text-label-sm">
+          Care Triage
+        </span>
+</div>
+<span class="px-space-xs py-space-xxs rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm">
+        50% Complete
+      </span>
+</div>
+<!-- Stepper Metric -->
+<div class="flex items-center justify-between mt-space-xxs">
+<span class="font-label-md text-label-md text-on-surface-variant">
+        Step 3 of 8 • Health Questions
+      </span>
+<span class="font-label-sm text-label-sm text-primary font-medium">
+        Assessment 15
+      </span>
+</div>
+<!-- Horizontal Linear Progress Bar -->
+<div class="w-full h-1.5 rounded-full bg-surface-container-high overflow-hidden">
+<div class="h-full bg-primary rounded-full transition-all duration-500" style="width: 50%;"></div>
+</div>
+<!-- Sub-steps Breadcrumbs -->
+<div class="flex items-center justify-between pt-space-xxs">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-primary text-[14px]">check_circle</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Started</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-primary text-[14px]">check_circle</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Symptoms</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<span class="font-label-sm text-label-sm text-primary font-bold">AYUSH</span>
+</div>
+<div class="flex items-center gap-1 opacity-50">
+<span class="w-1.5 h-1.5 rounded-full bg-outline"></span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Review</span>
+</div>
+<div class="flex items-center gap-1 opacity-50">
+<span class="w-1.5 h-1.5 rounded-full bg-outline"></span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Finish</span>
+</div>
+</div>
+</div>
+<!-- Primary Question & Bilingual Intro Header -->
+<div class="px-margin-mobile pt-space-xs pb-space-sm flex flex-col gap-space-xxs">
+<div class="flex items-start justify-between gap-space-xs">
+<div class="flex flex-col flex-1">
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface tracking-tight">
+          Tell us a little more about you
+        </h1>
+<p class="font-title-md text-title-md text-primary font-medium mt-0.5">
+          अपने बारे में थोड़ा और बताएं
+        </p>
+</div>
+<button class="shrink-0 px-space-xs py-1.5 rounded-full bg-surface-container-low hover:bg-surface-container text-primary flex items-center gap-1 font-label-sm text-label-sm shadow-sm transition-all active:scale-95" id="hear-btn" type="button">
+<span class="material-symbols-outlined text-[16px]">volume_up</span>
+<span>Hear</span>
+</button>
+</div>
+<div class="flex flex-col mt-space-xxs bg-surface-container-lowest/60 rounded-xl p-space-xs">
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+        These traditional health questions help your care team understand your overall constitution and systemic balance.
+      </p>
+<p class="font-body-md text-body-md text-secondary font-medium mt-0.5">
+        ये पारंपरिक स्वास्थ्य प्रश्न आपकी समग्र सेहत को समझने में आपकी देखभाल टीम की मदद करते हैं।
+      </p>
+</div>
+</div>
+<!-- Dashavidha Pariksha Main Assessment Card -->
+<div class="px-margin-mobile flex flex-col gap-space-md">
+<div class="w-full bg-surface-container-lowest rounded-2xl p-space-md shadow-[0_2px_12px_-3px_rgba(13,110,110,0.06)] flex flex-col">
+<!-- Card Header Block -->
+<div class="flex items-start gap-space-sm pb-space-sm">
+<div class="w-12 h-12 rounded-2xl bg-secondary-container/30 flex items-center justify-center shrink-0 shadow-sm">
+<span class="material-symbols-outlined text-primary text-[26px]" style="font-variation-settings: 'FILL' 1;">spa</span>
+</div>
+<div class="flex flex-col flex-1 min-w-0">
+<div class="flex items-center justify-between gap-1">
+<h2 class="font-headline-sm text-headline-sm text-on-surface truncate">
+              Dashavidha Pariksha
+            </h2>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-high text-primary font-label-sm text-label-sm whitespace-nowrap">
+              10 Pillars
+            </span>
+</div>
+<span class="font-body-md text-body-md text-on-surface-variant">
+            10-point traditional health assessment
+          </span>
+<span class="font-label-md text-label-md text-secondary font-medium">
+            दशविध परीक्षा • पारंपरिक स्वास्थ्य मूल्यांकन
+          </span>
+</div>
+</div>
+<!-- Informative Subtext & Category Progress -->
+<div class="bg-surface-container-low rounded-xl p-space-xs flex flex-col gap-space-xxs mb-space-xs">
+<p class="font-label-sm text-label-sm text-on-surface-variant">
+          Optional holistic baseline used to support your personalized Ayurvedic clinical team.
+        </p>
+<div class="flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm pt-1">
+<span id="pariksha-progress-text">0 of 10 completed</span>
+<span class="font-medium text-primary">0%</span>
+</div>
+<div class="w-full h-1 rounded-full bg-surface-container-high overflow-hidden">
+<div class="h-full bg-primary rounded-full transition-all duration-300" id="pariksha-progress-bar" style="width: 0%;"></div>
+</div>
+</div>
+<!-- 10 Assessment Items List -->
+<div class="flex flex-col" id="assessment-list">
+<!-- 1. Prakriti -->
+<div class="assessment-row flex items-center justify-between py-2.5 px-2 rounded-xl hover:bg-surface-container-low active:bg-surface-container cursor-pointer transition-colors group" role="button" tabindex="0">
+<div class="flex items-center gap-space-xs min-w-0">
+<div class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center shrink-0 group-hover:bg-primary/10 transition-colors">
+<span class="material-symbols-outlined text-primary text-[18px]">nature_people</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5">
+<span class="font-label-md text-label-md text-on-surface">Prakriti</span>
+<span class="font-label-sm text-label-sm text-secondary font-medium">(प्रकृति)</span>
+</div>
+<span class="font-body-md text-body-md text-on-surface-variant truncate">Body constitution (Vata, Pitta, Kapha baseline)</span>
+</div>
+</div>
+<div class="flex items-center gap-1 shrink-0 ml-2">
+<span class="status-indicator font-label-sm text-label-sm text-on-surface-variant">Not set</span>
+<span class="material-symbols-outlined text-outline text-[18px] group-hover:text-primary transition-colors">chevron_right</span>
+</div>
+</div>
+<div class="h-[1px] bg-surface-container-low mx-2"></div>
+<!-- 2. Vikriti -->
+<div class="assessment-row flex items-center justify-between py-2.5 px-2 rounded-xl hover:bg-surface-container-low active:bg-surface-container cursor-pointer transition-colors group" role="button" tabindex="0">
+<div class="flex items-center gap-space-xs min-w-0">
+<div class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center shrink-0 group-hover:bg-primary/10 transition-colors">
+<span class="material-symbols-outlined text-primary text-[18px]">healing</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5">
+<span class="font-label-md text-label-md text-on-surface">Vikriti</span>
+<span class="font-label-sm text-label-sm text-secondary font-medium">(विकृति)</span>
+</div>
+<span class="font-body-md text-body-md text-on-surface-variant truncate">Current imbalance (Active symptoms)</span>
+</div>
+</div>
+<div class="flex items-center gap-1 shrink-0 ml-2">
+<span class="status-indicator font-label-sm text-label-sm text-on-surface-variant">Not set</span>
+<span class="material-symbols-outlined text-outline text-[18px] group-hover:text-primary transition-colors">chevron_right</span>
+</div>
+</div>
+<div class="h-[1px] bg-surface-container-low mx-2"></div>
+<!-- 3. Sara -->
+<div class="assessment-row flex items-center justify-between py-2.5 px-2 rounded-xl hover:bg-surface-container-low active:bg-surface-container cursor-pointer transition-colors group" role="button" tabindex="0">
+<div class="flex items-center gap-space-xs min-w-0">
+<div class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center shrink-0 group-hover:bg-primary/10 transition-colors">
+<span class="material-symbols-outlined text-primary text-[18px]">bloodtype</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5">
+<span class="font-label-md text-label-md text-on-surface">Sara</span>
+<span class="font-label-sm text-label-sm text-secondary font-medium">(सार)</span>
+</div>
+<span class="font-body-md text-body-md text-on-surface-variant truncate">Tissue quality (Dhatu vitality &amp; purity)</span>
+</div>
+</div>
+<div class="flex items-center gap-1 shrink-0 ml-2">
+<span class="status-indicator font-label-sm text-label-sm text-on-surface-variant">Not set</span>
+<span class="material-symbols-outlined text-outline text-[18px] group-hover:text-primary transition-colors">chevron_right</span>
+</div>
+</div>
+<div class="h-[1px] bg-surface-container-low mx-2"></div>
+<!-- 4. Samhanana -->
+<div class="assessment-row flex items-center justify-between py-2.5 px-2 rounded-xl hover:bg-surface-container-low active:bg-surface-container cursor-pointer transition-colors group" role="button" tabindex="0">
+<div class="flex items-center gap-space-xs min-w-0">
+<div class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center shrink-0 group-hover:bg-primary/10 transition-colors">
+<span class="material-symbols-outlined text-primary text-[18px]">accessibility_new</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5">
+<span class="font-label-md text-label-md text-on-surface">Samhanana</span>
+<span class="font-label-sm text-label-sm text-secondary font-medium">(संहनन)</span>
+</div>
+<span class="font-body-md text-body-md text-on-surface-variant truncate">Body build (Compactness &amp; symmetry)</span>
+</div>
+</div>
+<div class="flex items-center gap-1 shrink-0 ml-2">
+<span class="status-indicator font-label-sm text-label-sm text-on-surface-variant">Not set</span>
+<span class="material-symbols-outlined text-outline text-[18px] group-hover:text-primary transition-colors">chevron_right</span>
+</div>
+</div>
+<div class="h-[1px] bg-surface-container-low mx-2"></div>
+<!-- 5. Pramana -->
+<div class="assessment-row flex items-center justify-between py-2.5 px-2 rounded-xl hover:bg-surface-container-low active:bg-surface-container cursor-pointer transition-colors group" role="button" tabindex="0">
+<div class="flex items-center gap-space-xs min-w-0">
+<div class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center shrink-0 group-hover:bg-primary/10 transition-colors">
+<span class="material-symbols-outlined text-primary text-[18px]">straighten</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5">
+<span class="font-label-md text-label-md text-on-surface">Pramana</span>
+<span class="font-label-sm text-label-sm text-secondary font-medium">(प्रमाण)</span>
+</div>
+<span class="font-body-md text-body-md text-on-surface-variant truncate">Body measurements (Proportions &amp; posture)</span>
+</div>
+</div>
+<div class="flex items-center gap-1 shrink-0 ml-2">
+<span class="status-indicator font-label-sm text-label-sm text-on-surface-variant">Not set</span>
+<span class="material-symbols-outlined text-outline text-[18px] group-hover:text-primary transition-colors">chevron_right</span>
+</div>
+</div>
+<div class="h-[1px] bg-surface-container-low mx-2"></div>
+<!-- 6. Satmya -->
+<div class="assessment-row flex items-center justify-between py-2.5 px-2 rounded-xl hover:bg-surface-container-low active:bg-surface-container cursor-pointer transition-colors group" role="button" tabindex="0">
+<div class="flex items-center gap-space-xs min-w-0">
+<div class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center shrink-0 group-hover:bg-primary/10 transition-colors">
+<span class="material-symbols-outlined text-primary text-[18px]">routine</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5">
+<span class="font-label-md text-label-md text-on-surface">Satmya</span>
+<span class="font-label-sm text-label-sm text-secondary font-medium">(सात्म्य)</span>
+</div>
+<span class="font-body-md text-body-md text-on-surface-variant truncate">Adaptability (Dietary &amp; climate resilience)</span>
+</div>
+</div>
+<div class="flex items-center gap-1 shrink-0 ml-2">
+<span class="status-indicator font-label-sm text-label-sm text-on-surface-variant">Not set</span>
+<span class="material-symbols-outlined text-outline text-[18px] group-hover:text-primary transition-colors">chevron_right</span>
+</div>
+</div>
+<div class="h-[1px] bg-surface-container-low mx-2"></div>
+<!-- 7. Satva -->
+<div class="assessment-row flex items-center justify-between py-2.5 px-2 rounded-xl hover:bg-surface-container-low active:bg-surface-container cursor-pointer transition-colors group" role="button" tabindex="0">
+<div class="flex items-center gap-space-xs min-w-0">
+<div class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center shrink-0 group-hover:bg-primary/10 transition-colors">
+<span class="material-symbols-outlined text-primary text-[18px]">psychology</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5">
+<span class="font-label-md text-label-md text-on-surface">Satva</span>
+<span class="font-label-sm text-label-sm text-secondary font-medium">(सत्व)</span>
+</div>
+<span class="font-body-md text-body-md text-on-surface-variant truncate">Mental strength (Emotional endurance &amp; mood)</span>
+</div>
+</div>
+<div class="flex items-center gap-1 shrink-0 ml-2">
+<span class="status-indicator font-label-sm text-label-sm text-on-surface-variant">Not set</span>
+<span class="material-symbols-outlined text-outline text-[18px] group-hover:text-primary transition-colors">chevron_right</span>
+</div>
+</div>
+<div class="h-[1px] bg-surface-container-low mx-2"></div>
+<!-- 8. Ahara Shakti -->
+<div class="assessment-row flex items-center justify-between py-2.5 px-2 rounded-xl hover:bg-surface-container-low active:bg-surface-container cursor-pointer transition-colors group" role="button" tabindex="0">
+<div class="flex items-center gap-space-xs min-w-0">
+<div class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center shrink-0 group-hover:bg-primary/10 transition-colors">
+<span class="material-symbols-outlined text-primary text-[18px]">nutrition</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5">
+<span class="font-label-md text-label-md text-on-surface">Ahara Shakti</span>
+<span class="font-label-sm text-label-sm text-secondary font-medium">(आहार शक्ति)</span>
+</div>
+<span class="font-body-md text-body-md text-on-surface-variant truncate">Digestive capacity (Agni &amp; metabolic power)</span>
+</div>
+</div>
+<div class="flex items-center gap-1 shrink-0 ml-2">
+<span class="status-indicator font-label-sm text-label-sm text-on-surface-variant">Not set</span>
+<span class="material-symbols-outlined text-outline text-[18px] group-hover:text-primary transition-colors">chevron_right</span>
+</div>
+</div>
+<div class="h-[1px] bg-surface-container-low mx-2"></div>
+<!-- 9. Vaya -->
+<div class="assessment-row flex items-center justify-between py-2.5 px-2 rounded-xl hover:bg-surface-container-low active:bg-surface-container cursor-pointer transition-colors group" role="button" tabindex="0">
+<div class="flex items-center gap-space-xs min-w-0">
+<div class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center shrink-0 group-hover:bg-primary/10 transition-colors">
+<span class="material-symbols-outlined text-primary text-[18px]">hourglass_empty</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5">
+<span class="font-label-md text-label-md text-on-surface">Vaya</span>
+<span class="font-label-sm text-label-sm text-secondary font-medium">(वय)</span>
+</div>
+<span class="font-body-md text-body-md text-on-surface-variant truncate">Age &amp; life stage (Chronological health phase)</span>
+</div>
+</div>
+<div class="flex items-center gap-1 shrink-0 ml-2">
+<span class="status-indicator font-label-sm text-label-sm text-on-surface-variant">Not set</span>
+<span class="material-symbols-outlined text-outline text-[18px] group-hover:text-primary transition-colors">chevron_right</span>
+</div>
+</div>
+<div class="h-[1px] bg-surface-container-low mx-2"></div>
+<!-- 10. Bala -->
+<div class="assessment-row flex items-center justify-between py-2.5 px-2 rounded-xl hover:bg-surface-container-low active:bg-surface-container cursor-pointer transition-colors group" role="button" tabindex="0">
+<div class="flex items-center gap-space-xs min-w-0">
+<div class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center shrink-0 group-hover:bg-primary/10 transition-colors">
+<span class="material-symbols-outlined text-primary text-[18px]">vital_signs</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5">
+<span class="font-label-md text-label-md text-on-surface">Bala</span>
+<span class="font-label-sm text-label-sm text-secondary font-medium">(बल)</span>
+</div>
+<span class="font-body-md text-body-md text-on-surface-variant truncate">Physical strength &amp; immunity (Ojas &amp; stamina)</span>
+</div>
+</div>
+<div class="flex items-center gap-1 shrink-0 ml-2">
+<span class="status-indicator font-label-sm text-label-sm text-on-surface-variant">Not set</span>
+<span class="material-symbols-outlined text-outline text-[18px] group-hover:text-primary transition-colors">chevron_right</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Patient-Friendly Reassurance Card -->
+<div class="w-full bg-secondary-container/20 rounded-xl p-space-sm flex items-start gap-space-xs shadow-sm">
+<div class="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-primary text-[18px]" style="font-variation-settings: 'FILL' 1;">verified_user</span>
+</div>
+<div class="flex flex-col flex-1">
+<span class="font-label-md text-label-md text-on-surface font-semibold">You can skip any question</span>
+<span class="font-body-md text-body-md text-on-surface-variant leading-snug mt-0.5">
+          Answer only what you are comfortable sharing. (जो जानकारी साझा करने में आप सहज हों, वही दें।)
+        </span>
+</div>
+</div>
+<!-- Voice Assistance Card (Matching Screen 14 Flow) -->
+<div class="w-full bg-surface-container-lowest rounded-xl p-space-sm shadow-sm flex items-center justify-between gap-space-xs">
+<div class="flex items-center gap-space-xs min-w-0">
+<div class="w-10 h-10 rounded-full bg-secondary-container/40 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary text-[20px]">mic</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-md text-label-md text-on-surface">Prefer to speak? · बोलकर बताएं</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant truncate">Tell us about your constitution aloud</span>
+</div>
+</div>
+<button class="shrink-0 px-3 py-1.5 rounded-full bg-primary text-on-primary font-label-sm text-label-sm flex items-center gap-1 hover:bg-primary-container shadow-sm transition-transform active:scale-95" type="button">
+<span class="material-symbols-outlined text-[16px]">mic</span>
+<span>Speak →</span>
+</button>
+</div>
+<!-- Sticky / Action CTA Section -->
+<div class="flex flex-col gap-space-xs mt-space-xs">
+<button class="w-full h-12 rounded-full bg-primary hover:bg-primary-container active:scale-[0.99] text-on-primary font-title-md text-title-md flex items-center justify-center gap-space-xs shadow-md transition-all" id="primary-cta" type="button">
+<span id="cta-label">Continue without AYUSH</span>
+<span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+</button>
+<!-- ABDM Security Footer -->
+<div class="flex items-center justify-center gap-1.5 py-space-xxs text-center">
+<span class="material-symbols-outlined text-secondary text-[16px]">lock</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">
+          Private &amp; Secure • ABDM Compliant • आपके उत्तर सुरक्षित हैं
+        </span>
+</div>
+</div>
+</div>
+</div>
+<script>
+  (function() {
+    let completedCount = 0;
+    const rows = document.querySelectorAll('.assessment-row');
+    const progressBar = document.getElementById('pariksha-progress-bar');
+    const progressText = document.getElementById('pariksha-progress-text');
+    const ctaLabel = document.getElementById('cta-label');
+    const hearBtn = document.getElementById('hear-btn');
+
+    function updateProgress() {
+      const percentage = Math.round((completedCount / rows.length) * 100);
+      if (progressBar) progressBar.style.width = percentage + '%';
+      if (progressText) progressText.textContent = `${completedCount} of 10 completed`;
+
+      if (ctaLabel) {
+        if (completedCount > 0) {
+          ctaLabel.textContent = `Save & Continue (${completedCount} added)`;
+        } else {
+          ctaLabel.textContent = 'Continue without AYUSH';
+        }
+      }
+    }
+
+    // Interactive toggle for rows to simulate completion & state updates
+    rows.forEach((row) => {
+      row.addEventListener('click', function() {
+        const indicator = this.querySelector('.status-indicator');
+        const iconDiv = this.querySelector('div:first-child > div:first-child');
+        const isCompleted = this.getAttribute('data-completed') === 'true';
+
+        if (!isCompleted) {
+          this.setAttribute('data-completed', 'true');
+          indicator.textContent = 'Completed ✓';
+          indicator.classList.remove('text-on-surface-variant');
+          indicator.classList.add('text-primary', 'font-semibold');
+          iconDiv.classList.add('bg-secondary-container/50');
+          completedCount++;
+        } else {
+          this.removeAttribute('data-completed');
+          indicator.textContent = 'Not set';
+          indicator.classList.remove('text-primary', 'font-semibold');
+          indicator.classList.add('text-on-surface-variant');
+          iconDiv.classList.remove('bg-secondary-container/50');
+          completedCount = Math.max(0, completedCount - 1);
+        }
+
+        updateProgress();
+      });
+    });
+
+    // Voice Hear Button
+    if (hearBtn) {
+      hearBtn.addEventListener('click', function() {
+        CareFlow.speak("Dashavidha Pariksha. These traditional health questions help your care team understand your overall constitution and systemic balance. You can skip any question.");
+        const text = this.querySelector('span:last-child');
+        if (text) {
+          text.textContent = 'Playing...';
+          this.classList.add('bg-secondary-container', 'text-on-secondary-container');
+          setTimeout(() => {
+            text.textContent = 'Hear';
+            this.classList.remove('bg-secondary-container', 'text-on-secondary-container');
+          }, 3000);
+        }
+      });
+    }
+
+    // Voice speak button in helper card
+    const speakCardBtn = document.querySelector('button.shrink-0.px-3.py-1\\.5');
+    if (speakCardBtn) {
+      speakCardBtn.addEventListener('click', () => {
+        CareFlow.speak("Please tell us your constitution or symptoms.");
+        CareFlow.showToast("Voice assessment assistant activated");
+      });
+    }
+
+    // Back buttons
+    ['ayush-back-btn', 'ayush-nav-back-btn'].forEach(id => {
+      const btn = document.getElementById(id);
+      if (btn) {
+        btn.addEventListener('click', () => {
+          CareFlow.navigate('../careflow_question_13_duration/code.html');
+        });
+      }
+    });
+
+    // Primary CTA Continue
+    const primaryCta = document.getElementById('primary-cta');
+    if (primaryCta) {
+      primaryCta.addEventListener('click', () => {
+        const completedItems = [];
+        rows.forEach(r => {
+          if (r.getAttribute('data-completed') === 'true') {
+            const title = r.querySelector('.font-label-md')?.textContent.trim() || 'Item';
+            completedItems.push(title);
+          }
+        });
+
+        CareFlow.saveState({
+          ayush: {
+            completedCount: completedCount,
+            items: completedItems
+          }
+        });
+
+        CareFlow.showToast(completedCount > 0 ? `AYUSH details (${completedCount}) saved` : 'Proceeding to document capture');
+        setTimeout(() => {
+          CareFlow.navigate('../careflow_document_capture/code.html');
+        }, 250);
+      });
+    }
+
+    // Restore state
+    const state = CareFlow.getState();
+    if (state.ayush && state.ayush.items && state.ayush.items.length > 0) {
+      rows.forEach(r => {
+        const title = r.querySelector('.font-label-md')?.textContent.trim();
+        if (state.ayush.items.includes(title)) {
+          r.click();
+        }
+      });
+    }
+  })();
+</script></main></body></html>

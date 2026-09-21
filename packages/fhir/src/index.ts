@@ -9,5 +9,6 @@ export * from "./medication-statement";
 export * from "./observation";
 export * from "./document-reference";
 export * from "./composition";
+export * from "./ayurveda";
 export * from "./bundle";
 export * from "./hapi-client";

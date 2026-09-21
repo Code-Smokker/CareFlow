@@ -4,17 +4,29 @@ from typing import Any
 import httpx
 
 from ...client import AuthenticatedClient, Client
+from ...models.create_session_body import CreateSessionBody
 from ...models.create_session_response_201 import CreateSessionResponse201
 from ...models.error_response import ErrorResponse
-from ...types import Response
+from ...types import UNSET, Response, Unset
 
 
-def _get_kwargs() -> dict[str, Any]:
+def _get_kwargs(
+    *,
+    body: CreateSessionBody | Unset = UNSET,
+) -> dict[str, Any]:
+    headers: dict[str, Any] = {}
+
     _kwargs: dict[str, Any] = {
         "method": "post",
         "url": "/v1/sessions",
     }
 
+    if not isinstance(body, Unset):
+        _kwargs["json"] = body.to_dict()
+
+    headers["Content-Type"] = "application/json"
+
+    _kwargs["headers"] = headers
     return _kwargs
 
 
@@ -45,8 +57,17 @@ def _build_response(
 def sync_detailed(
     *,
     client: AuthenticatedClient | Client,
+    body: CreateSessionBody | Unset = UNSET,
 ) -> Response[CreateSessionResponse201 | ErrorResponse]:
     """Start a new intake session
+
+     `department` is set by staff (the check-in URL / QR a desk or kiosk is configured with), never
+    chosen by the patient. AYUSH mode is a property of the department, read from the gateway's visit
+    config (`AYUSH_DEPARTMENTS`): an AYUSH department runs the complaint module and then the Prashna
+    modules under packages/ontology/modules/ayush/.
+
+    Args:
+        body (CreateSessionBody | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -56,7 +77,9 @@ def sync_detailed(
         Response[CreateSessionResponse201 | ErrorResponse]
     """
 
-    kwargs = _get_kwargs()
+    kwargs = _get_kwargs(
+        body=body,
+    )
 
     response = client.get_httpx_client().request(
         **kwargs,
@@ -68,8 +91,17 @@ def sync_detailed(
 def sync(
     *,
     client: AuthenticatedClient | Client,
+    body: CreateSessionBody | Unset = UNSET,
 ) -> CreateSessionResponse201 | ErrorResponse | None:
     """Start a new intake session
+
+     `department` is set by staff (the check-in URL / QR a desk or kiosk is configured with), never
+    chosen by the patient. AYUSH mode is a property of the department, read from the gateway's visit
+    config (`AYUSH_DEPARTMENTS`): an AYUSH department runs the complaint module and then the Prashna
+    modules under packages/ontology/modules/ayush/.
+
+    Args:
+        body (CreateSessionBody | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -81,14 +113,24 @@ def sync(
 
     return sync_detailed(
         client=client,
+        body=body,
     ).parsed
 
 
 async def asyncio_detailed(
     *,
     client: AuthenticatedClient | Client,
+    body: CreateSessionBody | Unset = UNSET,
 ) -> Response[CreateSessionResponse201 | ErrorResponse]:
     """Start a new intake session
+
+     `department` is set by staff (the check-in URL / QR a desk or kiosk is configured with), never
+    chosen by the patient. AYUSH mode is a property of the department, read from the gateway's visit
+    config (`AYUSH_DEPARTMENTS`): an AYUSH department runs the complaint module and then the Prashna
+    modules under packages/ontology/modules/ayush/.
+
+    Args:
+        body (CreateSessionBody | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -98,7 +140,9 @@ async def asyncio_detailed(
         Response[CreateSessionResponse201 | ErrorResponse]
     """
 
-    kwargs = _get_kwargs()
+    kwargs = _get_kwargs(
+        body=body,
+    )
 
     response = await client.get_async_httpx_client().request(**kwargs)
 
@@ -108,8 +152,17 @@ async def asyncio_detailed(
 async def asyncio(
     *,
     client: AuthenticatedClient | Client,
+    body: CreateSessionBody | Unset = UNSET,
 ) -> CreateSessionResponse201 | ErrorResponse | None:
     """Start a new intake session
+
+     `department` is set by staff (the check-in URL / QR a desk or kiosk is configured with), never
+    chosen by the patient. AYUSH mode is a property of the department, read from the gateway's visit
+    config (`AYUSH_DEPARTMENTS`): an AYUSH department runs the complaint module and then the Prashna
+    modules under packages/ontology/modules/ayush/.
+
+    Args:
+        body (CreateSessionBody | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -122,5 +175,6 @@ async def asyncio(
     return (
         await asyncio_detailed(
             client=client,
+            body=body,
         )
     ).parsed

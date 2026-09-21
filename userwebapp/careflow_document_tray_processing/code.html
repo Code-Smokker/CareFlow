@@ -1,0 +1,304 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"><title>CareFlow - Document Processing</title><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"><script src="https://cdn.tailwindcss.com"></script><script src="../shared_careflow.js"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { colors: { "on-secondary-fixed": "#00201c", "on-surface": "#131b2e", "on-tertiary": "#ffffff", "on-tertiary-fixed-variant": "#004e5c", "primary-container": "#0d6e6e", "surface-container-low": "#f2f3ff", "secondary-fixed": "#71f8e4", "error": "#ba1a1a", "inverse-primary": "#84d4d3", "tertiary-fixed": "#acedff", "surface-dim": "#d2d9f4", "primary-fixed": "#a0f0f0", "on-primary-fixed": "#002020", "tertiary-fixed-dim": "#4cd7f6", "on-surface-variant": "#3e4948", "surface-container-highest": "#dae2fd", "error-container": "#ffdad6", "surface-bright": "#faf8ff", "inverse-on-surface": "#eef0ff", "on-primary-fixed-variant": "#004f50", "on-tertiary-container": "#9eeaff", "surface": "#faf8ff", "surface-container-lowest": "#ffffff", "outline-variant": "#bec9c8", "secondary-fixed-dim": "#4fdbc8", "inverse-surface": "#283044", "secondary-container": "#6df5e1", "tertiary": "#005261", "on-error": "#ffffff", "on-background": "#131b2e", "secondary": "#006b5f", "on-primary-container": "#9dedec", "on-tertiary-fixed": "#001f26", "on-secondary-fixed-variant": "#005048", "tertiary-container": "#006c7f", "surface-tint": "#016a6a", "surface-container": "#eaedff", "surface-variant": "#dae2fd", "on-secondary": "#ffffff", "on-secondary-container": "#006f64", "on-error-container": "#93000a", "primary-fixed-dim": "#84d4d3", "primary": "#005454", "background": "#faf8ff", "on-primary": "#ffffff", "outline": "#6e7979", "surface-container-high": "#e2e7ff" }, borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, spacing: { "space-md": "1rem", "margin-desktop": "2.5rem", "space-3xl": "4rem", "margin-mobile": "1.25rem", "space-lg": "1.5rem", "space-sm": "0.75rem", "space-xs": "0.5rem", "gutter-mobile": "1rem", "gutter-desktop": "1.5rem", "space-xl": "2rem", "space-2xl": "3rem", "space-xxs": "0.25rem" }, fontFamily: { "display-lg-mobile": ["Plus Jakarta Sans"], "title-md": ["Plus Jakarta Sans"], "body-md": ["Plus Jakarta Sans"], "label-md": ["Plus Jakarta Sans"], "display-lg": ["Plus Jakarta Sans"], "headline-sm": ["Plus Jakarta Sans"], "headline-lg": ["Plus Jakarta Sans"], "body-lg": ["Plus Jakarta Sans"], "headline-lg-mobile": ["Plus Jakarta Sans"], "headline-md": ["Plus Jakarta Sans"], "label-sm": ["Plus Jakarta Sans"] }, fontSize: { "display-lg-mobile": ["36px", { lineHeight: "44px", letterSpacing: "-0.02em", fontWeight: "700" }], "title-md": ["18px", { lineHeight: "24px", fontWeight: "600" }], "body-md": ["14px", { lineHeight: "22px", fontWeight: "400" }], "label-md": ["13px", { lineHeight: "18px", letterSpacing: "0.01em", fontWeight: "600" }], "display-lg": ["48px", { lineHeight: "56px", letterSpacing: "-0.02em", fontWeight: "700" }], "headline-sm": ["20px", { lineHeight: "28px", fontWeight: "600" }], "headline-lg": ["32px", { lineHeight: "40px", letterSpacing: "-0.015em", fontWeight: "600" }], "body-lg": ["16px", { lineHeight: "26px", fontWeight: "400" }], "headline-lg-mobile": ["26px", { lineHeight: "34px", letterSpacing: "-0.01em", fontWeight: "600" }], "headline-md": ["24px", { lineHeight: "32px", letterSpacing: "-0.01em", fontWeight: "600" }], "label-sm": ["11px", { lineHeight: "16px", letterSpacing: "0.04em", fontWeight: "600" }] } } } }</script><style>@layer base{html,body{width:100%;margin:0;padding:0;background-color:#faf8ff;}body{overscroll-behavior-y:none;-webkit-tap-highlight-color:transparent;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
+
+<link rel="preload" href="../material-symbols-outlined.woff2" as="font" type="font/woff2" crossorigin>
+<style id="careflow-material-symbols-core">
+  @font-face {
+    font-family: "Material Symbols Outlined";
+    font-style: normal;
+    font-weight: 100 700;
+    font-display: block;
+    src: url("../material-symbols-outlined.woff2") format("woff2"),
+         url("/material-symbols-outlined.woff2") format("woff2"),
+         url("https://fonts.gstatic.com/s/materialsymbolsoutlined/v373/kJEhBvYX7BgnkSrUwT8OhrdQw4oELdPIeeII9v6oFsLjBuVY.woff2") format("woff2");
+  }
+  .material-symbols-outlined {
+    font-family: "Material Symbols Outlined" !important;
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -webkit-font-feature-settings: "liga";
+    -moz-font-feature-settings: "liga";
+    font-feature-settings: "liga";
+    -webkit-font-smoothing: antialiased;
+    vertical-align: middle;
+  }
+</style>
+</head><body class="bg-surface font-body-md text-body-md text-on-surface antialiased min-h-screen flex flex-col"><header class="fixed top-0 inset-x-0 z-50 pt-safe bg-surface/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(13,110,110,0.04)]"><div class="h-16 px-4 flex items-center justify-between"><div class="flex items-center gap-2"><button id="tray-back-btn" class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-on-surface hover:bg-surface-container-high active:scale-95 transition-all shadow-sm" type="button" aria-label="Go Back"><span class="material-symbols-outlined text-[20px]">arrow_back</span></button><div class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center shadow-[0_2px_8px_-2px_rgba(13,110,110,0.25)]"><span class="material-symbols-outlined text-on-primary text-[22px]">volunteer_activism</span></div><div class="flex flex-col"><span class="font-title-md text-title-md text-primary tracking-tight font-bold">CareFlow</span></div></div><div class="flex items-center gap-2"><button class="h-10 px-3 rounded-full bg-surface-container-low text-on-surface-variant font-label-md text-label-md flex items-center gap-1 hover:bg-surface-container transition-colors" type="button"><span class="material-symbols-outlined text-[18px] text-primary">language</span><span>English</span><span class="material-symbols-outlined text-[16px]">arrow_drop_down</span></button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="flex-1 flex flex-col relative w-full px-4 pt-20 pb-24 bg-surface"><div class="flex flex-col w-full space-y-4 pb-6">
+<!-- PAGE INTRO & BILINGUAL HEADINGS -->
+<div class="flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<span class="px-2.5 py-1 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm font-semibold tracking-wide uppercase">
+          Document Processing
+        </span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm font-medium">
+          Care triage
+        </span>
+</div>
+<!-- Accessible Audio Pill -->
+<button aria-label="Listen to instructions in English and Hindi" class="h-8 px-3 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface flex items-center gap-1.5 shadow-sm transition-all active:scale-95" id="audio-btn" type="button">
+<span class="material-symbols-outlined text-[16px] text-primary" style="font-variation-settings: 'FILL' 1;">volume_up</span>
+<span class="font-label-sm text-label-sm font-semibold">Hear / सुनें</span>
+</button>
+</div>
+<!-- Step Tracker Bar -->
+<div class="bg-surface-container-lowest p-3 rounded-xl shadow-sm flex flex-col gap-1.5">
+<div class="flex items-center justify-between font-label-sm text-label-sm">
+<span class="font-semibold text-on-surface">Step 6 of 8 • Documents</span>
+<span class="text-primary font-bold">80% Complete</span>
+</div>
+<div class="w-full h-1.5 rounded-full bg-surface-container overflow-hidden">
+<div class="h-full bg-primary rounded-full w-[80%] transition-all duration-500 ease-out"></div>
+</div>
+<div class="flex items-center justify-between font-label-sm text-label-sm text-outline pt-0.5">
+<span class="text-primary font-semibold flex items-center gap-0.5">✓ Basics</span>
+<span class="text-primary font-semibold flex items-center gap-0.5">✓ Symptoms</span>
+<span class="text-primary font-bold flex items-center gap-0.5">● Documents</span>
+<span class="text-outline-variant flex items-center gap-0.5">○ Review</span>
+<span class="text-outline-variant flex items-center gap-0.5">○ Complete</span>
+</div>
+</div>
+<!-- Main Title & Subtitle Section -->
+<div class="pt-1 flex flex-col gap-1">
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface font-bold tracking-tight">
+        Your document is being processed
+      </h1>
+<p class="font-title-md text-title-md text-primary font-semibold">
+        आपके दस्तावेज़ को प्रोसेस किया जा रहा है
+      </p>
+<div class="mt-1 bg-surface-container-low p-3 rounded-xl flex flex-col gap-1">
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+          We're securely reading your document. This usually takes just a moment.
+        </p>
+<p class="font-body-md text-body-md text-on-surface-variant/90 leading-relaxed">
+          हम आपके दस्तावेज़ को सुरक्षित रूप से पढ़ रहे हैं। इसमें बस कुछ क्षण लगते हैं।
+        </p>
+</div>
+</div>
+</div>
+<!-- MAIN PROCESSING & DOCUMENT TRAY CARD -->
+<div class="bg-surface-container-lowest rounded-2xl p-5 shadow-sm flex flex-col gap-4 relative overflow-hidden">
+<!-- Ambient subtle background glow -->
+<div class="absolute -top-10 -right-10 w-32 h-32 bg-secondary-container/20 rounded-full blur-2xl pointer-events-none"></div>
+<!-- Header Status Badges -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 z-10">
+<div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container-low text-on-surface font-label-sm text-label-sm font-semibold w-fit">
+<span class="material-symbols-outlined text-[16px] text-primary">description</span>
+<span>Prescription / प्रिस्क्रिप्शन</span>
+</div>
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary-container/30 text-secondary font-label-sm text-label-sm font-semibold w-fit">
+<span class="relative flex h-2 w-2">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+</span>
+<span class="tracking-tight">Processing securely... · सुरक्षित रूप से प्रोसेस हो रहा है</span>
+</div>
+</div>
+<!-- Document Tray Preview Container -->
+<div class="bg-surface-container-low rounded-xl p-3.5 flex items-center gap-3.5 z-10">
+<!-- Thumbnail Prescription Visual -->
+<div class="relative w-16 h-20 rounded-lg bg-surface-container-lowest shadow-sm flex-shrink-0 flex flex-col p-1.5 justify-between overflow-hidden">
+<div class="flex items-center justify-between">
+<span class="font-bold text-[10px] text-primary leading-none">Rx</span>
+<div class="w-2 h-2 rounded-full bg-secondary"></div>
+</div>
+<div class="flex flex-col gap-1 w-full opacity-70">
+<div class="w-full h-1 bg-surface-container-high rounded-full"></div>
+<div class="w-3/4 h-1 bg-surface-container-high rounded-full"></div>
+<div class="w-5/6 h-1 bg-surface-container-high rounded-full"></div>
+<div class="w-1/2 h-1 bg-surface-container-high rounded-full"></div>
+</div>
+<div class="flex items-center justify-between pt-0.5">
+<span class="material-symbols-outlined text-[10px] text-outline">verified</span>
+<div class="w-4 h-1 bg-primary/40 rounded-full"></div>
+</div>
+<!-- Captured Check badge on corner -->
+<div class="absolute bottom-1 right-1 w-4 h-4 bg-primary text-on-primary rounded-full flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-[11px] font-bold">check</span>
+</div>
+</div>
+<!-- Metadata -->
+<div class="flex flex-col justify-center min-w-0 flex-1">
+<div class="flex items-center gap-1">
+<span id="tray-doc-name" class="font-title-md text-title-md text-on-surface font-semibold truncate">Prescription_scan_01.jpg</span>
+</div>
+<span id="tray-doc-type" class="font-label-sm text-label-sm text-on-surface-variant">Prescription · Rx Slip</span>
+<span class="font-label-sm text-label-sm text-outline mt-0.5">Captured just now · 1.8 MB</span>
+<div class="flex items-center gap-3 mt-1.5">
+<button class="text-primary font-label-sm text-label-sm font-semibold hover:underline flex items-center gap-0.5" type="button" onclick="CareFlow.showToast('Document preview high-res loaded')">
+<span class="material-symbols-outlined text-[14px]">visibility</span>
+<span>View preview</span>
+</button>
+<span class="text-outline-variant">•</span>
+<button id="retake-doc-btn" class="text-primary font-label-sm text-label-sm font-semibold hover:underline flex items-center gap-0.5" type="button">
+<span class="material-symbols-outlined text-[14px]">replay</span>
+<span>Retake</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Processing Steps Timeline (Vertical Checklist) -->
+<div class="flex flex-col gap-3 pt-1 z-10">
+<!-- Step 1: Completed -->
+<div class="flex items-start gap-3">
+<div class="w-6 h-6 rounded-full bg-primary text-on-primary flex items-center justify-center flex-shrink-0 mt-0.5 shadow-sm">
+<span class="material-symbols-outlined text-[15px] font-bold">check</span>
+</div>
+<div class="flex flex-col">
+<p class="font-label-md text-label-md text-on-surface font-semibold">
+            Document captured · Image quality checked
+          </p>
+<p class="font-label-sm text-label-sm text-outline">
+            दस्तावेज़ कैप्चर हुआ · गुणवत्ता मान्य
+          </p>
+</div>
+</div>
+<!-- Step 2: Active / In-Progress -->
+<div class="flex items-start gap-3">
+<div class="relative w-6 h-6 flex items-center justify-center flex-shrink-0 mt-0.5">
+<span class="animate-ping absolute inline-flex h-5 w-5 rounded-full bg-primary opacity-40"></span>
+<div class="w-6 h-6 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center shadow-sm">
+<span class="w-2.5 h-2.5 rounded-full bg-primary"></span>
+</div>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-1.5">
+<p class="font-label-md text-label-md text-primary font-bold">
+              Reading document · Extracting medical &amp; dosage details
+            </p>
+</div>
+<p class="font-label-sm text-label-sm text-primary/80 font-medium">
+            दस्तावेज़ का विश्लेषण जारी है
+          </p>
+</div>
+</div>
+<!-- Step 3: Upcoming -->
+<div class="flex items-start gap-3 opacity-60">
+<div class="w-6 h-6 rounded-full bg-surface-container flex items-center justify-center flex-shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[14px] text-outline">radio_button_unchecked</span>
+</div>
+<div class="flex flex-col">
+<p class="font-label-md text-label-md text-on-surface font-medium">
+            Preparing review · You'll verify extracted details next
+          </p>
+<p class="font-label-sm text-label-sm text-outline">
+            समीक्षा तैयार हो रही है
+          </p>
+</div>
+</div>
+</div>
+</div>
+<!-- DOCUMENT INFORMATION SUMMARY CARD -->
+<div class="bg-surface-container-lowest rounded-2xl p-4 shadow-sm flex items-center justify-between gap-2">
+<div class="flex flex-col min-w-0">
+<span class="font-label-sm text-label-sm text-outline uppercase tracking-wider">Document Type</span>
+<span class="font-label-md text-label-md font-bold text-on-surface truncate">Prescription (प्रिस्क्रिप्शन)</span>
+</div>
+<div class="w-px h-8 bg-surface-container"></div>
+<div class="flex flex-col items-center">
+<span class="font-label-sm text-label-sm text-outline uppercase tracking-wider">Pages</span>
+<span class="font-label-md text-label-md font-bold text-on-surface">1 of 1</span>
+</div>
+<div class="w-px h-8 bg-surface-container"></div>
+<div class="flex flex-col items-end min-w-[90px]">
+<div class="flex items-center justify-between w-full font-label-sm text-label-sm">
+<span class="text-outline uppercase tracking-wider">Extract</span>
+<span class="text-primary font-bold">85%</span>
+</div>
+<div class="w-full h-1.5 rounded-full bg-surface-container mt-1 overflow-hidden">
+<div class="h-full bg-primary rounded-full w-[85%]"></div>
+</div>
+</div>
+</div>
+<!-- SECURITY & PRIVACY CARD -->
+<div class="bg-secondary-container/20 rounded-2xl p-4 flex items-start gap-3 shadow-sm">
+<div class="w-9 h-9 rounded-full bg-surface-container-lowest flex items-center justify-center flex-shrink-0 shadow-sm">
+<span class="material-symbols-outlined text-primary text-[20px]" style="font-variation-settings: 'FILL' 1;">shield</span>
+</div>
+<div class="flex flex-col gap-0.5">
+<h3 class="font-title-md text-title-md text-on-surface font-bold">
+        Your document is secure · आपके दस्तावेज़ सुरक्षित हैं
+      </h3>
+<p class="font-body-md text-body-md text-on-surface-variant leading-snug">
+        Your medical document is securely processed and used only to help your care team understand your health information.
+      </p>
+</div>
+</div>
+<!-- PRIMARY BOTTOM ACTION AREA -->
+<div class="flex flex-col gap-2 pt-2">
+<div class="flex items-center justify-center gap-1.5 font-label-sm text-label-sm text-secondary font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary animate-ping"></span>
+<span>Ready to review extracted data • समीक्षा के लिए तैयार</span>
+</div>
+<button class="w-full h-14 rounded-full bg-primary hover:bg-primary-container text-on-primary font-headline-sm text-headline-sm font-semibold shadow-md flex items-center justify-center gap-2 transition-all active:scale-[0.99]" id="continue-btn" type="button">
+<span>Continue to Review →</span>
+<span class="font-label-md text-label-md font-medium text-on-primary-container">(आगे बढ़ें)</span>
+</button>
+</div>
+</div>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const state = CareFlow.getState();
+    if (state.document) {
+      if (state.document.fileName) {
+        const nameEl = document.getElementById('tray-doc-name');
+        if (nameEl) nameEl.textContent = state.document.fileName;
+      }
+      if (state.document.type) {
+        const typeEl = document.getElementById('tray-doc-type');
+        if (typeEl) typeEl.textContent = `${state.document.type} · Validated`;
+      }
+    }
+
+    // Audio Button
+    const audioBtn = document.getElementById('audio-btn');
+    if (audioBtn) {
+      audioBtn.addEventListener('click', () => {
+        CareFlow.speak("Your document is being processed securely. We are reading and extracting medical and dosage details.");
+        audioBtn.querySelector('span:last-child').innerText = 'Playing...';
+        setTimeout(() => {
+          audioBtn.querySelector('span:last-child').innerText = 'Hear / सुनें';
+        }, 2500);
+      });
+    }
+
+    // Back Button
+    const backBtn = document.getElementById('tray-back-btn');
+    if (backBtn) {
+      backBtn.addEventListener('click', () => {
+        CareFlow.navigate('../careflow_document_capture/code.html');
+      });
+    }
+
+    // Retake Button
+    const retakeBtn = document.getElementById('retake-doc-btn');
+    if (retakeBtn) {
+      retakeBtn.addEventListener('click', () => {
+        CareFlow.navigate('../careflow_document_capture/code.html');
+      });
+    }
+
+    // Continue to Review Button
+    const continueBtn = document.getElementById('continue-btn');
+    if (continueBtn) {
+      continueBtn.addEventListener('click', () => {
+        CareFlow.showToast("Proceeding to review extraction");
+        CareFlow.navigate('../careflow_document_review_extraction/code.html');
+      });
+    }
+  });
+</script></main><footer class="fixed bottom-0 w-full z-50 pb-safe bg-surface/90 backdrop-blur-xl shadow-[0_-4px_16px_rgba(13,110,110,0.04)]"><div class="px-4 py-3 flex flex-col items-center justify-center text-center gap-1"><div class="flex items-center justify-center gap-1.5 text-on-surface-variant font-label-sm text-label-sm"><span class="material-symbols-outlined text-[15px] text-primary">lock</span><span class="font-semibold text-on-surface">Private &amp; Secure</span><span>•</span><span>ABDM Compliant</span></div><p class="text-label-sm font-label-sm text-outline">आपके दस्तावेज़ सुरक्षित हैं</p></div></footer></body></html>

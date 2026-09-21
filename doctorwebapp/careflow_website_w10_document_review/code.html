@@ -1,0 +1,752 @@
+<!DOCTYPE html><html lang="en" class="h-full scroll-smooth"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>CareFlow - Review Document (Aarav Sharma)</title>
+<script src="../careflow-nav.js" defer></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#005454",
+            "primary-container": "#0d6e6e",
+            "on-primary": "#ffffff",
+            "secondary": "#006b5f",
+            "secondary-container": "#E6F7F2",
+            "surface-mint": "#D1F2E8",
+            "surface-mint-subtle": "#E6F7F2",
+            "background": "#F8FAFC",
+            "surface": "#FAF8FF",
+            "surface-card": "#FFFFFF",
+            "surface-container-lowest": "#FFFFFF",
+            "surface-container-low": "#F1F3FF",
+            "surface-container": "#E8EEFF",
+            "surface-container-high": "#DFE8FF",
+            "surface-dim": "#D2D9F4",
+            "on-surface": "#0c1b33",
+            "on-surface-variant": "#3E4948",
+            "outline": "#6E7979",
+            "outline-variant": "#BEC9C8",
+            "border-subtle": "#E2E8F0",
+            "navy-dark": "#0B192C",
+            "text-muted": "#3E4948",
+            "error": "#BA1A1A",
+            "error-container": "#FFDAD6"
+          },
+          fontFamily: {
+            sans: ["Plus Jakarta Sans", "Inter", "sans-serif"],
+            mono: ["ui-monospace", "SFMono-Regular", "Menlo", "monospace"]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    body {
+      background-color: #FAF8FF;
+      color: #0c1b33;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+    }
+    .material-symbols-outlined.fill {
+      font-variation-settings: 'FILL' 1;
+    }
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #D2D9F4;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #BEC9C8;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex bg-[#FAF8FF] text-[#0c1b33] antialiased">
+<!-- 1. PERSISTENT LEFT SIDEBAR NAVIGATION -->
+<aside class="w-64 bg-white border-r border-slate-200 fixed top-0 bottom-0 left-0 z-40 flex flex-col justify-between select-none">
+<!-- Top Brand & Navigation -->
+<div class="flex flex-col">
+<!-- Logo Header -->
+<div class="h-16 px-5 flex items-center justify-between border-b border-slate-100">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-[#0D6E6E] flex items-center justify-center text-white shadow-sm">
+<span class="material-symbols-outlined fill text-[22px]">volunteer_activism</span>
+</div>
+<div class="flex flex-col">
+<span class="font-bold text-[18px] tracking-tight text-[#0F1E36] leading-none">CareFlow</span>
+<span class="text-[11px] font-medium text-slate-500 mt-0.5">Clinical Care Team</span>
+</div>
+</div>
+<span class="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded-md bg-[#E6F7F2] text-[#0D6E6E] border border-[#0D6E6E]/20">OPD</span>
+</div>
+<!-- Navigation Menu Items -->
+<nav class="p-3 space-y-1">
+<!-- Dashboard -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 text-sm font-medium transition-colors" href="javascript:void(0)">
+<span class="material-symbols-outlined text-[20px] text-slate-400">grid_view</span>
+<span>Dashboard</span>
+</a>
+<!-- Patients -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 text-sm font-medium transition-colors" href="javascript:void(0)">
+<span class="material-symbols-outlined text-[20px] text-slate-400">group</span>
+<span>Patients</span>
+</a>
+<!-- Appointments -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 text-sm font-medium transition-colors" href="javascript:void(0)">
+<span class="material-symbols-outlined text-[20px] text-slate-400">calendar_month</span>
+<span>Appointments</span>
+</a>
+<!-- Documents (Active State!) -->
+<a class="flex items-center justify-between px-3 py-2.5 rounded-xl bg-[#E6F7F2] text-[#0D6E6E] text-sm font-semibold transition-colors shadow-xs" href="javascript:void(0)">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[20px] text-[#0D6E6E] fill">folder</span>
+<span>Documents</span>
+</div>
+<span class="w-2 h-2 rounded-full bg-[#0D6E6E]"></span>
+</a>
+<!-- Care Summaries -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 text-sm font-medium transition-colors" href="javascript:void(0)">
+<span class="material-symbols-outlined text-[20px] text-slate-400">description</span>
+<span>Care Summaries</span>
+</a>
+<!-- Alerts -->
+<a class="flex items-center justify-between px-3 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 text-sm font-medium transition-colors" href="javascript:void(0)">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[20px] text-slate-400">notifications</span>
+<span>Alerts</span>
+</div>
+<span class="w-2 h-2 rounded-full bg-red-500"></span>
+</a>
+<!-- Analytics -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 text-sm font-medium transition-colors" href="javascript:void(0)">
+<span class="material-symbols-outlined text-[20px] text-slate-400">trending_up</span>
+<span>Analytics</span>
+</a>
+</nav>
+</div>
+<!-- Bottom Sidebar (Settings, Support & Clinician Profile) -->
+<div class="p-3 border-t border-slate-100 flex flex-col gap-1">
+<a class="flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 text-sm font-medium transition-colors" href="javascript:void(0)">
+<span class="material-symbols-outlined text-[20px] text-slate-400">settings</span>
+<span>Settings</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 text-sm font-medium transition-colors" href="javascript:void(0)">
+<span class="material-symbols-outlined text-[20px] text-slate-400">help</span>
+<span>Help &amp; Support</span>
+</a>
+<!-- Clinician Profile Card -->
+<div class="mt-2 p-2.5 rounded-xl bg-slate-50 border border-slate-200/70 flex items-center justify-between">
+<div class="flex items-center gap-2.5 min-w-0">
+<div class="relative w-9 h-9 rounded-full bg-[#0D6E6E] text-white flex items-center justify-center font-bold text-xs shrink-0">
+            AI
+            <span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-white"></span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="text-xs font-bold text-[#0F1E36] truncate">Dr. Ananya Iyer</span>
+<span class="text-[11px] text-slate-500 truncate">Desk 4 • OPD Session</span>
+</div>
+</div>
+<button aria-label="More options" class="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-200/50 transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</div>
+</aside>
+<!-- MAIN APP WRAPPER (Offset by sidebar w-64) -->
+<div class="flex-1 ml-64 flex flex-col min-h-screen min-w-0">
+<!-- 2. PERSISTENT TOP APP BAR -->
+<header class="sticky top-0 z-30 h-16 bg-white/95 backdrop-blur border-b border-slate-200 px-8 flex items-center justify-between">
+<!-- Search Input with Keyboard Shortcut -->
+<div class="w-96 max-w-md relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[18px]">search</span>
+<input class="w-full h-10 pl-9 pr-12 rounded-xl bg-slate-50 border border-slate-200 text-sm text-[#0F1E36] placeholder-slate-400 focus:outline-none focus:border-[#0D6E6E] focus:ring-1 focus:ring-[#0D6E6E] transition-all" placeholder="Search patients, UHID, ABHA... ⌘K" type="text">
+<kbd class="absolute right-2.5 top-1/2 -translate-y-1/2 px-1.5 py-0.5 text-[10px] font-semibold text-slate-400 bg-white border border-slate-200 rounded shadow-2xs">⌘K</kbd>
+</div>
+<!-- Right Side Controls -->
+<div class="flex items-center gap-3">
+<!-- Language Selector Pill -->
+<button class="h-9 px-3 rounded-full bg-slate-50 border border-slate-200 text-slate-700 hover:bg-slate-100 text-xs font-semibold flex items-center gap-1.5 transition-colors" type="button">
+<span class="material-symbols-outlined text-[#0D6E6E] text-[16px]">language</span>
+<span>English (हिन्दी) ▼</span>
+</button>
+<!-- Notification Bell with Red Badge -->
+<button class="relative w-9 h-9 rounded-full bg-slate-50 border border-slate-200 text-slate-600 hover:bg-slate-100 flex items-center justify-center transition-colors" type="button">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+<span class="absolute top-1 right-1 w-2 h-2 rounded-full bg-red-500 ring-2 ring-white"></span>
+</button>
+<!-- Clinician Profile Avatar -->
+<button class="w-9 h-9 rounded-full bg-[#0D6E6E] text-white flex items-center justify-center font-bold text-xs ring-2 ring-[#E6F7F2] transition-transform hover:scale-105" type="button">
+          AI
+        </button>
+</div>
+</header>
+<!-- MAIN CONTENT AREA (Screen W10 - Document Review Workflow) -->
+<main class="flex-1 p-8 max-w-7xl w-full mx-auto space-y-6">
+<!-- TOP BREADCRUMB & ABDM SYNC BAR -->
+<div class="flex flex-wrap items-center justify-between gap-3 pb-2 border-b border-border-subtle/70">
+<div class="flex items-center gap-2 text-xs font-medium text-slate-500">
+<a class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-slate-200 text-primary hover:text-primary-container transition-colors font-semibold cursor-pointer" href="../careflow_website_w09_documents/code.html">
+<span class="material-symbols-outlined text-[16px] text-primary">arrow_back</span>
+<span>Documents (दस्तावेज़)</span>
+</a>
+<span class="text-slate-300">/</span>
+<span class="text-slate-500">Patients</span>
+<span class="text-slate-300">/</span>
+<span class="text-slate-700 font-semibold">Aarav Sharma</span>
+<span class="text-slate-300">/</span>
+<span class="text-slate-500">Documents</span>
+<span class="text-slate-300">/</span>
+<span class="text-primary font-bold">Prescription</span>
+</div>
+<div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface-mint-subtle border border-[#0D6E6E]/20 text-secondary text-xs font-medium shadow-xs">
+<span class="relative flex h-2 w-2">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#0D6E6E] opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-[#0D6E6E]"></span>
+</span>
+<span class="font-bold text-[#0D6E6E]">ABHA Sync: Active</span>
+<span class="text-slate-300">•</span>
+<span class="font-mono text-slate-600">ABHA ID: 91-8472-3021-9920</span>
+</div>
+</div>
+<!-- PAGE HEADER & PRIMARY ACTIONS -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div>
+<div class="flex items-center gap-2 mb-1.5">
+<span class="px-2.5 py-0.5 rounded-full bg-surface-mint-subtle border border-[#0D6E6E]/20 text-primary font-semibold text-[11px] uppercase tracking-wider">
+          DOCUMENT REVIEW • दस्तावेज़ समीक्षा
+        </span>
+<span class="text-xs font-mono font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded">UHID: CF-1024</span>
+</div>
+<h1 class="text-2xl lg:text-3xl font-bold text-on-surface tracking-tight">
+        Review document <span class="text-slate-500 font-normal text-xl lg:text-2xl">• दस्तावेज़ की समीक्षा करें</span>
+</h1>
+<p class="text-sm text-on-surface-variant mt-1 max-w-3xl">
+        Verify the extracted clinical information and resolve handwritten ambiguities before adding to the patient's care summary.
+      </p>
+</div>
+<div class="flex items-center gap-2.5 self-start md:self-auto">
+<div class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-amber-50 border border-amber-200 text-amber-800 text-xs font-semibold shadow-xs">
+<span class="material-symbols-outlined text-[16px] text-amber-600">warning</span>
+<span>Needs review • समीक्षा आवश्यक</span>
+</div>
+<button class="inline-flex items-center gap-1.5 h-10 px-4 rounded-full bg-white border border-slate-300 text-on-surface-variant hover:text-on-surface hover:bg-slate-50 transition-all text-xs font-semibold shadow-2xs" type="button">
+<span class="material-symbols-outlined text-[16px] text-slate-500">history</span>
+<span>Audit Log</span>
+</button>
+</div>
+</div>
+<!-- COMPACT DOCUMENT OVERVIEW CARD (4 METRICS) -->
+<div class="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-xs">
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+<div class="flex items-start gap-3.5">
+<div class="w-10 h-10 rounded-xl bg-surface-mint-subtle flex items-center justify-center text-primary shrink-0 border border-[#0D6E6E]/15">
+<span class="material-symbols-outlined text-[22px]">prescriptions</span>
+</div>
+<div class="min-w-0">
+<p class="text-xs font-medium text-slate-500">Document</p>
+<p class="text-sm font-bold text-on-surface truncate mt-0.5">Prescription — Aarav Sharma</p>
+<p class="text-xs text-slate-400 mt-0.5">CF-1024 • 28 Y / M</p>
+</div>
+</div>
+<div class="flex items-start gap-3.5">
+<div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-on-surface shrink-0">
+<span class="material-symbols-outlined text-[20px] text-slate-600">document_scanner</span>
+</div>
+<div class="min-w-0">
+<p class="text-xs font-medium text-slate-500">Type &amp; Source</p>
+<p class="text-sm font-bold text-on-surface truncate mt-0.5">Physical Paper Slip</p>
+<p class="text-xs text-slate-400 mt-0.5">Patient Mobile Intake Session</p>
+</div>
+</div>
+<div class="flex items-start gap-3.5">
+<div class="w-10 h-10 rounded-xl bg-surface-mint-subtle flex items-center justify-center text-secondary shrink-0 border border-[#0D6E6E]/15">
+<span class="material-symbols-outlined text-[20px]">verified</span>
+</div>
+<div class="min-w-0">
+<p class="text-xs font-medium text-slate-500">OCR Status</p>
+<div class="flex items-center gap-1.5 mt-0.5">
+<span class="text-base font-bold text-secondary">96.8%</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-mint text-secondary text-[11px] font-bold">High</span>
+</div>
+<p class="text-xs text-slate-400 mt-0.5">Processed: Completed</p>
+</div>
+</div>
+<div class="flex items-start gap-3.5">
+<div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-primary shrink-0">
+<span class="material-symbols-outlined text-[20px]">schedule</span>
+</div>
+<div class="min-w-0">
+<p class="text-xs font-medium text-slate-500">Uploaded &amp; Format</p>
+<p class="text-sm font-bold text-on-surface mt-0.5">Today • 09:26 AM IST</p>
+<p class="text-xs text-slate-400 mt-0.5">1 Page • Scanned Paper</p>
+</div>
+</div>
+</div>
+</div>
+<!-- MAIN 2-COLUMN CLINICAL REVIEW WORKFLOW -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+<!-- LEFT COLUMN: DOCUMENT PREVIEW & INSPECTION (6 cols on lg) -->
+<div class="lg:col-span-6 flex flex-col gap-4">
+<div class="rounded-2xl bg-white border border-slate-200/80 shadow-xs p-5">
+<!-- Preview Toolbar -->
+<div class="flex flex-wrap items-center justify-between gap-2 pb-3 mb-3 border-b border-border-subtle">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px] text-primary">visibility</span>
+<h3 class="text-sm font-bold text-on-surface">Original Document Preview</h3>
+</div>
+<div class="flex items-center gap-1 bg-slate-100 rounded-full px-2 py-1">
+<button aria-label="Zoom out" class="w-7 h-7 flex items-center justify-center rounded-full hover:bg-white text-on-surface transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">remove</span>
+</button>
+<span class="text-xs font-semibold text-on-surface px-1.5">100%</span>
+<button aria-label="Zoom in" class="w-7 h-7 flex items-center justify-center rounded-full hover:bg-white text-on-surface transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">add</span>
+</button>
+<div class="w-px h-3.5 bg-slate-300 mx-1"></div>
+<button aria-label="Fit width" class="w-7 h-7 flex items-center justify-center rounded-full hover:bg-white text-slate-600 hover:text-slate-900 transition-colors" title="Fit to Width" type="button">
+<span class="material-symbols-outlined text-[16px]">fit_screen</span>
+</button>
+<button aria-label="Rotate" class="w-7 h-7 flex items-center justify-center rounded-full hover:bg-white text-slate-600 hover:text-slate-900 transition-colors" title="Rotate 90°" type="button">
+<span class="material-symbols-outlined text-[16px]">rotate_right</span>
+</button>
+<button aria-label="Download" class="w-7 h-7 flex items-center justify-center rounded-full hover:bg-white text-slate-600 hover:text-slate-900 transition-colors" title="Download scan" type="button">
+<span class="material-symbols-outlined text-[16px]">download</span>
+</button>
+</div>
+</div>
+<!-- Realistic Prescription Paper Canvas -->
+<div class="relative rounded-xl p-6 bg-gradient-to-b from-[#FFFDF9] to-[#FDFBF7] border border-amber-900/10 shadow-inner min-h-[520px] transition-all duration-300" id="prescription-paper">
+<!-- Subtle Paper Watermark -->
+<div class="absolute inset-0 pointer-events-none flex items-center justify-center opacity-5 select-none">
+<span class="text-4xl font-extrabold text-primary tracking-widest">CARE CLINIC</span>
+</div>
+<!-- Header Section of Paper -->
+<div class="relative pb-4 mb-4 border-b border-amber-900/15">
+<div class="flex items-start justify-between">
+<div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[24px] text-primary">local_hospital</span>
+<span class="text-base font-bold tracking-tight text-navy-dark">APOLLO CARE CLINIC</span>
+</div>
+<p class="text-xs font-semibold text-on-surface mt-0.5">Dr. Priya Sharma, MBBS, MD (Internal Medicine)</p>
+<p class="text-xs text-text-muted">Reg. No: D-48291 • Medical Council of Delhi</p>
+<p class="text-xs text-text-muted">14, Mathura Road, New Delhi 110025 • Ph: +91 11 4829 0100</p>
+</div>
+<div class="text-right">
+<span class="text-3xl font-black text-primary/70 italic select-none">℞</span>
+<p class="text-xs text-text-muted mt-1">Date: <strong class="text-on-surface">07-Sep-2026</strong></p>
+</div>
+</div>
+</div>
+<!-- Patient Metadata on Prescription -->
+<div class="relative flex flex-wrap items-center justify-between text-xs py-2 px-3 mb-4 rounded-lg bg-amber-50/60 border border-amber-900/10 text-on-surface">
+<div><strong>Patient:</strong> Aarav Sharma</div>
+<div><strong>Age / Sex:</strong> 28 Y / M</div>
+<div><strong>Weight:</strong> 72 kg</div>
+<div><strong>BP:</strong> 122/78 mmHg</div>
+</div>
+<!-- Doctor's Handwritten Simulation & Prescription Lines -->
+<div class="space-y-4 py-2 relative">
+<!-- Item 1: Paracetamol with Ambiguity Highlight Box -->
+<div class="relative p-3 rounded-lg bg-amber-100/70 border border-amber-300/80 shadow-xs transition-all duration-200">
+<div class="flex items-center justify-between text-xs mb-1">
+<span class="font-semibold text-amber-900 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">search_insights</span>
+                  1. Tab. Paracetamol 650mg
+                </span>
+<span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-200 text-amber-900">
+                  OCR Uncertainty (84%)
+                </span>
+</div>
+<p class="text-base font-semibold text-navy-dark tracking-wide italic pl-3">
+                1 tab TDS <span class="bg-amber-300/70 px-1 rounded not-italic font-bold text-amber-950">(three times daily)</span> after food x 3 days
+              </p>
+<div class="mt-1 pl-3 text-xs text-amber-950/80">
+                Handwriting loop on "TDS" confirmed via physician's typical script format.
+              </div>
+</div>
+<!-- Item 2: Cetirizine -->
+<div class="p-3 rounded-lg bg-white/75 border border-amber-900/10">
+<div class="text-xs font-semibold text-on-surface mb-1">
+                2. Tab. Cetirizine 10mg
+              </div>
+<p class="text-base font-semibold text-navy-dark tracking-wide italic pl-3">
+                1 tab OD at bedtime x 3 days
+              </p>
+</div>
+<!-- Item 3: Clinical Instructions -->
+<div class="p-3 rounded-lg bg-white/75 border border-amber-900/10">
+<div class="text-xs font-semibold text-on-surface mb-1">
+                3. General Advice
+              </div>
+<p class="text-xs text-on-surface tracking-wide italic pl-3 leading-relaxed">
+                Steam inhalation twice daily; adequate hydration &amp; rest. Review if fever &gt; 101°F persists beyond 48 hrs.
+              </p>
+</div>
+</div>
+<!-- Doctor's Signature & Stamp Artifact -->
+<div class="relative mt-8 pt-4 flex items-end justify-between">
+<div class="text-xs text-text-muted">
+<p>Generated via Clinic OPD Paper System</p>
+<p class="text-primary font-medium text-[10px]">Verified with Ayushman Bharat Health Record standards</p>
+</div>
+<div class="text-center">
+<div class="h-9 w-32 flex items-center justify-center text-sm italic font-semibold text-primary/80 select-none">
+                Priya Sharma
+              </div>
+<div class="w-36 pt-1 border-t border-navy-dark/30 text-xs text-on-surface font-semibold">
+                Signature of Physician
+              </div>
+</div>
+</div>
+</div>
+<!-- Quick Image Inspection Controls -->
+<div class="flex flex-wrap items-center justify-between gap-2 mt-4 pt-3 border-t border-border-subtle">
+<div class="flex items-center gap-2">
+<button class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 text-xs font-medium text-on-surface hover:bg-slate-200 transition-colors" onclick="toggleFilter('contrast')" type="button">
+<span class="material-symbols-outlined text-[15px]">contrast</span>
+<span>High-Contrast Filter</span>
+</button>
+<button class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 text-xs font-medium text-on-surface hover:bg-slate-200 transition-colors" onclick="toggleFilter('invert')" type="button">
+<span class="material-symbols-outlined text-[15px]">invert_colors</span>
+<span>Invert</span>
+</button>
+</div>
+<button class="inline-flex items-center gap-1 text-xs text-primary hover:text-primary-container font-semibold transition-colors" onclick="resetScan()" type="button">
+<span class="material-symbols-outlined text-[15px]">restart_alt</span>
+<span>Inspect Original Scan</span>
+</button>
+</div>
+</div>
+<!-- Single page indicator hint -->
+<div class="flex items-center justify-between px-4 py-3 rounded-xl bg-white border border-slate-200/80 shadow-xs text-xs">
+<div class="flex items-center gap-2 text-slate-500">
+<span class="material-symbols-outlined text-[18px] text-primary">layers</span>
+<span>Showing <strong>Page 1 of 1</strong> (Single page clinical slip)</span>
+</div>
+<span class="text-secondary font-semibold">No additional pages detected</span>
+</div>
+</div>
+<!-- RIGHT COLUMN: EXTRACTED INFORMATION & VERIFICATION DECISION (6 cols on lg) -->
+<div class="lg:col-span-6 flex flex-col gap-4">
+<!-- SECTION 1: ATTENTION / VERIFICATION WARNING BANNER -->
+<div class="rounded-2xl p-5 bg-amber-50/90 border border-amber-200 shadow-xs">
+<div class="flex items-start gap-3.5">
+<div class="w-9 h-9 rounded-full bg-amber-200 flex items-center justify-center text-amber-900 shrink-0">
+<span class="material-symbols-outlined text-[20px]">shield_with_heart</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between gap-2">
+<h4 class="text-sm font-bold text-amber-950">
+                Dosage Frequency Confirmation Required
+              </h4>
+<span class="px-2 py-0.5 rounded-full bg-amber-200/80 text-amber-900 text-[11px] font-bold">
+                कृपया सत्यापित करें
+              </span>
+</div>
+<p class="text-xs text-amber-950/90 mt-1.5 leading-relaxed">
+              OCR detected handwriting compression on <strong>Item #1 (Paracetamol)</strong>. Frequency indicated as <strong>"TDS" (3 times daily)</strong> with 84% confidence. Please confirm before syncing to active prescription record.
+            </p>
+<!-- Quick Action Selector -->
+<div class="flex flex-wrap items-center gap-2.5 mt-3 pt-1">
+<button class="inline-flex items-center gap-1.5 h-9 px-4 rounded-full bg-[#0D6E6E] text-white text-xs font-semibold shadow-xs hover:bg-[#005454] transition-all" id="btn-confirm-tds" onclick="setDosageDecision('TDS')" type="button">
+<span class="material-symbols-outlined text-[16px]">check_circle</span>
+<span>Confirm TDS (थ्री टाइम्स डेली)</span>
+</button>
+<button class="inline-flex items-center gap-1.5 h-9 px-4 rounded-full bg-white border border-slate-300 text-on-surface hover:bg-slate-50 text-xs font-semibold transition-all shadow-2xs" id="btn-set-bd" onclick="setDosageDecision('BD')" type="button">
+<span class="material-symbols-outlined text-[16px]">edit_calendar</span>
+<span>Set to BD (ट्वाइस डेली)</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- SECTION 2: EXTRACTED INFORMATION (WHITE CARD) -->
+<div class="rounded-2xl bg-white border border-slate-200/80 shadow-xs p-5 flex flex-col gap-5">
+<div class="flex items-center justify-between pb-3 border-b border-border-subtle">
+<div>
+<h3 class="text-sm font-bold text-on-surface">Extracted Information • निकाली गई जानकारी</h3>
+<p class="text-xs text-slate-500">Validated against ABDM registry format</p>
+</div>
+<span class="px-3 py-1 rounded-full bg-surface-mint-subtle border border-[#0D6E6E]/20 text-secondary text-xs font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px]">bolt</span>
+<span>Extraction Quality: 96.8%</span>
+</span>
+</div>
+<!-- Field Group 1: Patient & Provider -->
+<div class="space-y-2.5">
+<p class="text-xs font-bold text-slate-500 uppercase tracking-wider">
+            Patient &amp; Provider Information
+          </p>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+<div class="p-3 rounded-xl bg-slate-50 border border-slate-200/70 flex flex-col justify-between">
+<div>
+<span class="text-xs text-slate-500">Patient Name</span>
+<p class="text-sm font-bold text-on-surface mt-0.5">Aarav Sharma</p>
+<span class="inline-flex items-center gap-0.5 text-secondary text-[11px] font-semibold mt-1">
+<span class="material-symbols-outlined text-[13px]">check</span> Verified ABHA
+                </span>
+</div>
+<button class="text-primary text-xs font-semibold text-left mt-2 hover:underline" type="button">Edit</button>
+</div>
+<div class="p-3 rounded-xl bg-slate-50 border border-slate-200/70 flex flex-col justify-between">
+<div>
+<span class="text-xs text-slate-500">Prescribing Doctor</span>
+<p class="text-sm font-bold text-on-surface mt-0.5 truncate">Dr. Priya Sharma</p>
+<span class="text-[11px] text-slate-500 mt-1 block">MBBS, MD (D-48291)</span>
+</div>
+<button class="text-primary text-xs font-semibold text-left mt-2 hover:underline" type="button">Edit</button>
+</div>
+<div class="p-3 rounded-xl bg-slate-50 border border-slate-200/70 flex flex-col justify-between">
+<div>
+<span class="text-xs text-slate-500">Prescription Date</span>
+<p class="text-sm font-bold text-on-surface mt-0.5">07 Sep 2026</p>
+<span class="text-[11px] text-secondary font-semibold mt-1 block">Within 7-day validity</span>
+</div>
+<button class="text-primary text-xs font-semibold text-left mt-2 hover:underline" type="button">Edit</button>
+</div>
+</div>
+</div>
+<!-- Field Group 2: Prescribed Medications -->
+<div class="space-y-3 pt-2">
+<div class="flex items-center justify-between">
+<p class="text-xs font-bold text-slate-500 uppercase tracking-wider">
+              Prescribed Medications (दवाएँ) • 2 items
+            </p>
+<button class="text-primary text-xs font-semibold flex items-center gap-1 hover:underline" type="button">
+<span class="material-symbols-outlined text-[15px]">add</span>
+<span>Add medication manually</span>
+</button>
+</div>
+<!-- Medication Card 1 -->
+<div class="p-4 rounded-xl bg-slate-50 border border-slate-200/70 shadow-2xs transition-all duration-200" id="med-card-1">
+<div class="flex items-start justify-between gap-2">
+<div class="flex items-start gap-2.5">
+<div class="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-primary shrink-0 shadow-2xs">
+<span class="material-symbols-outlined text-[18px]">medication</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<h5 class="text-sm font-bold text-on-surface">Paracetamol</h5>
+<span class="px-2 py-0.5 rounded-full bg-white border border-slate-200 text-slate-600 text-xs">650 mg Tablet</span>
+</div>
+<p class="text-xs text-slate-500 mt-0.5">Indications: Antipyretic / Analgesic for viral prodrome</p>
+</div>
+</div>
+<button class="text-primary text-xs font-semibold hover:underline shrink-0" type="button">
+                Edit field
+              </button>
+</div>
+<div class="grid grid-cols-3 gap-2 mt-3 pt-3 border-t border-slate-200/60 text-xs">
+<div>
+<span class="text-slate-500">Dosage:</span>
+<p class="font-semibold text-on-surface mt-0.5">650 mg</p>
+</div>
+<div>
+<span class="text-slate-500">Frequency:</span>
+<p class="font-semibold text-primary mt-0.5" id="med-freq-1">TDS (3 times daily, after meals)</p>
+</div>
+<div>
+<span class="text-slate-500">Duration:</span>
+<p class="font-semibold text-on-surface mt-0.5">3 days</p>
+</div>
+</div>
+<div class="flex items-center justify-between mt-3 pt-2">
+<div class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-surface-mint-subtle text-secondary text-xs font-semibold border border-[#0D6E6E]/20" id="med-status-pill-1">
+<span class="material-symbols-outlined text-[14px]">check</span>
+<span>Verified by Clinician</span>
+</div>
+<span class="text-[11px] text-slate-400">Mapped: RxNorm / SNOMED CT</span>
+</div>
+</div>
+<!-- Medication Card 2 -->
+<div class="p-4 rounded-xl bg-slate-50 border border-slate-200/70 shadow-2xs">
+<div class="flex items-start justify-between gap-2">
+<div class="flex items-start gap-2.5">
+<div class="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-primary shrink-0 shadow-2xs">
+<span class="material-symbols-outlined text-[18px]">medication</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<h5 class="text-sm font-bold text-on-surface">Cetirizine</h5>
+<span class="px-2 py-0.5 rounded-full bg-white border border-slate-200 text-slate-600 text-xs">10 mg Tablet</span>
+</div>
+<p class="text-xs text-slate-500 mt-0.5">Indications: Antihistamine for allergic rhinitis / rhinorrhea</p>
+</div>
+</div>
+<button class="text-primary text-xs font-semibold hover:underline shrink-0" type="button">
+                Edit field
+              </button>
+</div>
+<div class="grid grid-cols-3 gap-2 mt-3 pt-3 border-t border-slate-200/60 text-xs">
+<div>
+<span class="text-slate-500">Dosage:</span>
+<p class="font-semibold text-on-surface mt-0.5">10 mg</p>
+</div>
+<div>
+<span class="text-slate-500">Frequency:</span>
+<p class="font-semibold text-on-surface mt-0.5">OD (Once daily, at bedtime)</p>
+</div>
+<div>
+<span class="text-slate-500">Duration:</span>
+<p class="font-semibold text-on-surface mt-0.5">3 days</p>
+</div>
+</div>
+<div class="flex items-center justify-between mt-3 pt-2">
+<div class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-surface-mint-subtle text-secondary text-xs font-semibold border border-[#0D6E6E]/20">
+<span class="material-symbols-outlined text-[14px]">auto_awesome</span>
+<span>99% High Confidence</span>
+</div>
+<span class="text-[11px] text-slate-400">Mapped: RxNorm / SNOMED CT</span>
+</div>
+</div>
+</div>
+</div>
+<!-- SECTION 3: REVIEW NOTE (WHITE CARD) -->
+<div class="rounded-2xl bg-white border border-slate-200/80 shadow-xs p-5 flex flex-col gap-3">
+<div class="flex items-center justify-between">
+<div>
+<h4 class="text-sm font-bold text-on-surface">Review Note • समीक्षा टिप्पणी</h4>
+<p class="text-xs text-slate-500">Clinician or triage administrator verification remarks</p>
+</div>
+<span class="material-symbols-outlined text-[20px] text-primary">edit_note</span>
+</div>
+<div class="relative">
+<textarea class="w-full p-3 rounded-xl bg-slate-50 border border-slate-200 text-on-surface text-xs placeholder:text-slate-400 focus:outline-none focus:border-[#0D6E6E] focus:bg-white transition-colors" id="review-note-input" placeholder="Add clinical note or pharmacist dispensing remark regarding handwriting or allergy check..." rows="3">Verified Paracetamol 650mg TDS with patient; no history of hepatotoxicity or adverse drug reactions reported.</textarea>
+</div>
+<div class="flex items-center justify-between pt-1">
+<span class="text-xs text-slate-400">Will be attached to OPD audit trail</span>
+<button class="h-8 px-4 rounded-full bg-white border border-slate-200 text-primary text-xs font-semibold shadow-2xs hover:bg-[#E6F7F2] transition-all flex items-center gap-1.5" id="save-note-btn" onclick="saveDraftNote()" type="button">
+<span class="material-symbols-outlined text-[15px]">save</span>
+<span>Save note</span>
+</button>
+</div>
+</div>
+<!-- SECTION 4: REVIEW DECISION (ACTION BAR) -->
+<div class="rounded-2xl p-5 bg-gradient-to-br from-white to-slate-50 border border-slate-200/80 shadow-xs">
+<div class="flex flex-col gap-3">
+<div class="flex items-center justify-between">
+<h4 class="text-sm font-bold text-on-surface">Review Decision • समीक्षा निर्णय</h4>
+<span class="text-xs text-secondary font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">lock</span>
+<span>Final Clinical Lock</span>
+</span>
+</div>
+<div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mt-1">
+<!-- Primary CTA -->
+<button class="flex-1 inline-flex items-center justify-center gap-2 h-12 px-6 rounded-full bg-[#0D6E6E] text-white font-bold text-sm shadow-sm hover:bg-[#005454] transition-all active:scale-[0.99]" onclick="confirmVerification()" type="button">
+<span>Verify Document (सत्यापित करें)</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+<!-- Secondary Action -->
+<button class="inline-flex items-center justify-center gap-1.5 h-12 px-5 rounded-full bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 font-semibold text-sm transition-colors shadow-2xs" type="button">
+<span class="material-symbols-outlined text-[18px] text-amber-600">report_problem</span>
+<span>Needs Correction (सुधार आवश्यक)</span>
+</button>
+</div>
+<div class="flex flex-wrap items-center justify-between gap-2 pt-2 text-xs">
+<div class="flex items-center gap-1.5 text-primary font-semibold cursor-pointer" onclick="confirmVerification()">
+<span class="material-symbols-outlined text-[16px]">fast_forward</span>
+<span>Next: Proceed to W11 — Care Summary (देखभाल सारांश)</span>
+</div>
+<a class="text-slate-500 hover:text-primary transition-colors flex items-center gap-1 cursor-pointer" href="../careflow_website_w09_documents/code.html">
+<span>← Back to all documents</span>
+</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- 9. BOTTOM REGULATORY & ENCRYPTION STRIP -->
+<footer class="w-full py-3.5 px-5 rounded-2xl bg-white border border-slate-200/80 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-[#0D6E6E]">verified_user</span>
+<span class="font-bold text-[#0F1E36]">Patient documents are protected</span>
+<span>• मरीज के दस्तावेज़ सुरक्षित हैं</span>
+</div>
+<div class="flex items-center gap-3 text-slate-500 flex-wrap justify-center">
+<span>ABDM M1/M2/M3 Compliant</span>
+<span class="text-slate-300">•</span>
+<span>256-bit AES Vault</span>
+<span class="text-slate-300">•</span>
+<span class="text-[#006b5f] font-semibold">HIPAA &amp; DISHA Standard</span>
+</div>
+</footer>
+</main>
+</div>
+<!-- INTERACTION LOGIC SCRIPT -->
+<script>
+    function setDosageDecision(choice) {
+      const freqElem = document.getElementById('med-freq-1');
+      const pillElem = document.getElementById('med-status-pill-1');
+      const btnTds = document.getElementById('btn-confirm-tds');
+      const btnBd = document.getElementById('btn-set-bd');
+
+      if (choice === 'TDS') {
+        if (freqElem) freqElem.textContent = 'TDS (3 times daily, after meals)';
+        if (pillElem) {
+          pillElem.className = 'inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-surface-mint text-secondary text-xs font-semibold border border-[#0D6E6E]/20';
+          pillElem.innerHTML = '<span class="material-symbols-outlined text-[14px]">check</span><span>Confirmed: TDS (3x daily)</span>';
+        }
+        if (btnTds) btnTds.classList.add('ring-2', 'ring-offset-1', 'ring-[#0D6E6E]');
+        if (btnBd) btnBd.classList.remove('ring-2', 'ring-offset-1', 'ring-[#0D6E6E]');
+      } else {
+        if (freqElem) freqElem.textContent = 'BD (2 times daily, after meals)';
+        if (pillElem) {
+          pillElem.className = 'inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-slate-200 text-slate-800 text-xs font-semibold';
+          pillElem.innerHTML = '<span class="material-symbols-outlined text-[14px]">edit</span><span>Adjusted by Clinician: BD</span>';
+        }
+        if (btnBd) btnBd.classList.add('ring-2', 'ring-offset-1', 'ring-[#0D6E6E]');
+        if (btnTds) btnTds.classList.remove('ring-2', 'ring-offset-1', 'ring-[#0D6E6E]');
+      }
+    }
+
+    function toggleFilter(type) {
+      const canvas = document.getElementById('prescription-paper');
+      if (!canvas) return;
+
+      if (type === 'contrast') {
+        canvas.classList.toggle('contrast-150');
+      } else if (type === 'invert') {
+        canvas.classList.toggle('invert');
+      }
+    }
+
+    function resetScan() {
+      const canvas = document.getElementById('prescription-paper');
+      if (!canvas) return;
+      canvas.className = 'relative rounded-xl p-6 bg-gradient-to-b from-[#FFFDF9] to-[#FDFBF7] border border-amber-900/10 shadow-inner min-h-[520px] transition-all duration-300';
+    }
+
+    function saveDraftNote() {
+      const btn = document.getElementById('save-note-btn');
+      if (!btn) return;
+      const originalText = btn.innerHTML;
+      btn.innerHTML = '<span class="material-symbols-outlined text-[15px]">check</span><span>Saved!</span>';
+      btn.classList.add('bg-surface-mint', 'text-secondary');
+      setTimeout(() => {
+        btn.innerHTML = originalText;
+        btn.classList.remove('bg-surface-mint', 'text-secondary');
+      }, 2000);
+    }
+
+    function confirmVerification() {
+      CareFlow.showToast('Prescription approved & synced with ABHA repository! Proceeding to Care Summary...', 'success');
+      setTimeout(() => {
+        CareFlow.navigate(11);
+      }, 700);
+    }
+  </script>
+<div id="snapdom-sandbox" data-snapdom-sandbox="true" aria-hidden="true" style="position: absolute; left: -9999px; top: -9999px; width: 0px; height: 0px; overflow: hidden;"></div></body></html>

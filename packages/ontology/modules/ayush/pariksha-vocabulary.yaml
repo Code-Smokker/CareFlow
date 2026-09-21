@@ -1,0 +1,519 @@
+# Pariksha vocabulary — every examination field, and every option, the Ayurvedic case record
+# (apps/console /visit/[id]/ayurveda) may use. UI and API read options ONLY from this file;
+# no component or service hardcodes one.
+#
+# This is NOT an interview module (no slots asked of the patient). Loaders skip any file named
+# `*-vocabulary.yaml` when they build the interview graph; the gateway serves it at
+# GET /v1/ayurveda/vocabulary.
+#
+# ┌──────────────────────────────────────────────────────────────────────────────────────────┐
+# │ status: PENDING_EXPERT_REVIEW                                                            │
+# │ Every Sanskrit term, gloss, option list, grading and age cut-off below was written by    │
+# │ engineers, not an Ayurveda practitioner. It MUST be verified by a qualified Vaidya       │
+# │ before any clinical use — the same discipline as NAMASTE PLACEHOLDER codes              │
+# │ (docs/07-ayush-terminology.md). Nothing here is a validated instrument.                  │
+# └──────────────────────────────────────────────────────────────────────────────────────────┘
+#
+# The core rule that decides every ambiguous field:
+#   the PATIENT answers only what a patient can honestly report (Prashna);
+#   the DOCTOR records everything that needs examination.
+# CareFlow never suggests or computes Vikriti, Samprapti or a diagnosis (CLAUDE.md rule 2).
+#
+# Field types
+#   text          free text, clinician-entered
+#   enum          one of `options`
+#   enum_multi    any of `options`
+#   number        numeric, `min`/`max`/`unit`
+#   computed      derived by code from other fields (never stored as a clinician fact)
+#   namaste_codes NAMASTE code(s) picked by the doctor via /terminology
+#
+# Per-field keys
+#   required            counts toward the step's completion indicator
+#   patient_reference   patient answers (slot ids in modules/ayush/*.yaml) shown beside the field.
+#                       With `map`, the value is also offered as a PRE-FILL (shown as "Patient
+#                       reported"; the doctor confirms or overrides). Without `map` it is
+#                       reference only and nothing is pre-filled.
+#   namaste_code        verified NAMASTE code for the field, if one exists. null → the FHIR
+#                       Observation carries code PLACEHOLDER and a namaste-placeholder tag.
+
+id: pariksha_vocabulary
+status: PENDING_EXPERT_REVIEW
+version: 1
+title:
+  label: Ayurvediya Rugna Pariksha
+  gloss: Ayurvedic Case Record
+
+review:
+  status: PENDING_EXPERT_REVIEW
+  note: >
+    Written by engineers. Verify every term, option list, gloss, the Vaya cut-offs and the
+    patient-answer → exam-value mappings with an Ayurveda practitioner before clinical use.
+
+# --------------------------------------------------------------------------------------------
+# Step 1 — Prashna. Read-only in the console: every group is rendered from what the patient
+# answered at intake (modules/ayush/*.yaml plus the chief-complaint module). `module: null`
+# means "the chief-complaint module the patient picked".
+# --------------------------------------------------------------------------------------------
+prashna:
+  label: Prashna
+  gloss: Patient-reported history
+  # Interview order for an AYUSH department: the complaint module first, then these, in order.
+  groups:
+    - { id: pradhana_vedana, label: Pradhana Vedana, gloss: Chief complaint, module: null }
+    - { id: nidana, label: Nidana, gloss: Causative and aggravating factors, module: nidana }
+    - { id: ahara, label: Ahara, gloss: Diet, module: ahara }
+    - { id: vihara, label: Vihara, gloss: Lifestyle and routine, module: vihara }
+    - { id: agni, label: Agni, gloss: Digestive fire (as the patient feels it), module: agni }
+    - { id: koshtha, label: Koshtha, gloss: Bowel tendency, module: koshtha }
+    - { id: mutra, label: Mutra, gloss: Urine, module: mutra }
+    - { id: mala, label: Mala, gloss: Stool, module: mala }
+    - { id: satmya, label: Satmya, gloss: What suits and what disagrees, module: satmya }
+    - { id: ahara_shakti, label: Ahara Shakti, gloss: Capacity to eat and digest, module: ahara_shakti }
+    - { id: vyayama_shakti, label: Vyayama Shakti, gloss: Capacity for exertion, module: vyayama_shakti }
+    - { id: prakriti, label: Prakriti questionnaire, gloss: Condensed proxy for the CCRAS Prakriti scale, module: prakriti }
+
+# Prakriti questionnaire scoring. Each answer to a listed slot counts one point toward the dosha
+# it is tagged with. The result is a COUNT per dosha shown to the Vaidya as REFERENCE only —
+# CareFlow never names a dominant dosha or asserts a constitution.
+prakriti_scoring:
+  label: Prakriti questionnaire score
+  gloss: Condensed proxy for the CCRAS Prakriti Assessment Scale
+  caveat: >
+    A condensed, demo-scope proxy — NOT the validated CCRAS Prakriti Assessment Scale
+    (91 predictors, 30 domains). Must be replaced with the real instrument before it is
+    presented as a validated assessment.
+  doshas:
+    - { value: vata, label: Vata }
+    - { value: pitta, label: Pitta }
+    - { value: kapha, label: Kapha }
+  slots:
+    prakriti_body_frame: { thin: vata, medium: pitta, heavy: kapha }
+    prakriti_skin: { dry_rough: vata, warm_oily_sensitive: pitta, cool_smooth_moist: kapha }
+    prakriti_hunger: { irregular: vata, sharp_intense: pitta, slow_mild: kapha }
+    prakriti_sleep: { light_broken: vata, moderate_sound: pitta, deep_long: kapha }
+    prakriti_temperament: { anxious_restless: vata, irritable_intense: pitta, calm_steady: kapha }
+
+# --------------------------------------------------------------------------------------------
+# Steps 2–5 — what the Vaidya records.
+# --------------------------------------------------------------------------------------------
+steps:
+  - id: trividha
+    label: Trividha Pariksha
+    gloss: Threefold examination
+    sections:
+      - id: darshana
+        label: Darshana
+        gloss: Inspection
+        fields:
+          - { id: trividha.darshana.notes, label: Darshana findings, gloss: Clinician notes on inspection, type: text, required: true }
+      - id: sparshana
+        label: Sparshana
+        gloss: Palpation
+        fields:
+          - { id: trividha.sparshana.notes, label: Sparshana findings, gloss: Clinician notes on palpation, type: text, required: true }
+      - id: prashna
+        label: Prashna
+        gloss: Patient-reported history — recorded at intake, not re-entered here
+        link_to_step: prashna
+        fields: []
+
+  - id: ashtavidha
+    label: Ashtavidha Pariksha
+    gloss: Eightfold examination
+    sections:
+      - id: nadi
+        label: Nadi
+        gloss: Pulse
+        fields:
+          - id: ashtavidha.nadi.type
+            label: Nadi type
+            gloss: Pulse quality by dosha
+            type: enum
+            required: true
+            options:
+              - { value: vataja, label: Vataja (Sarpa gati), gloss: Vata pulse — serpent-like movement }
+              - { value: pittaja, label: Pittaja (Manduka gati), gloss: Pitta pulse — frog-like movement }
+              - { value: kaphaja, label: Kaphaja (Hamsa gati), gloss: Kapha pulse — swan-like movement }
+              - { value: dwandvaja, label: Dwandvaja, gloss: Two doshas combined }
+              - { value: sannipataja, label: Sannipataja, gloss: All three doshas combined }
+          - { id: ashtavidha.nadi.rate_bpm, label: Rate, gloss: Pulse rate, type: number, required: true, min: 20, max: 250, unit: beats/min }
+      - id: mutra
+        label: Mutra
+        gloss: Urine
+        fields:
+          - id: ashtavidha.mutra.nature
+            label: Nature
+            gloss: Normal or abnormal
+            type: enum
+            required: true
+            patient_reference:
+              - { slot: mutra_frequency }
+              - { slot: mutra_night_waking }
+            options:
+              - { value: prakrita, label: Prakrita, gloss: Normal }
+              - { value: vikrita, label: Vikrita, gloss: Abnormal }
+          - id: ashtavidha.mutra.colour
+            label: Colour
+            gloss: Urine colour
+            type: enum
+            required: true
+            patient_reference:
+              - slot: mutra_colour
+                map: { pale_yellow: pale_yellow, deep_yellow: deep_yellow, reddish: reddish, dark: dark }
+            options:
+              - { value: pale_yellow, label: Pale yellow, gloss: Straw-coloured }
+              - { value: deep_yellow, label: Deep yellow, gloss: Concentrated }
+              - { value: reddish, label: Reddish, gloss: Red-tinged }
+              - { value: dark, label: Dark, gloss: Brown or very dark }
+              - { value: turbid, label: Turbid, gloss: Cloudy }
+          - id: ashtavidha.mutra.daha
+            label: Daha
+            gloss: Burning on passing urine
+            type: enum
+            required: true
+            patient_reference:
+              - slot: mutra_burning
+                map: { "yes": present, "no": absent }   # quoted: bare yes/no parse as booleans in YAML 1.1
+            options:
+              - { value: present, label: Present, gloss: Burning present }
+              - { value: absent, label: Absent, gloss: No burning }
+      - id: mala
+        label: Mala
+        gloss: Stool
+        fields:
+          - id: ashtavidha.mala.nature
+            label: Nature
+            gloss: Consistency of stool
+            type: enum
+            required: true
+            patient_reference:
+              - slot: mala_consistency
+                map: { normal: prakrita, hard: baddha, loose: drava }
+            options:
+              - { value: prakrita, label: Prakrita, gloss: Normal }
+              - { value: baddha, label: Baddha, gloss: Hard }
+              - { value: drava, label: Drava, gloss: Loose }
+          - id: ashtavidha.mala.ama
+            label: Sama / Nirama
+            gloss: With or without Ama — doctor only, never pre-filled
+            type: enum
+            required: true
+            options:
+              - { value: sama, label: Sama, gloss: With Ama }
+              - { value: nirama, label: Nirama, gloss: Without Ama }
+      - id: jihva
+        label: Jihva
+        gloss: Tongue
+        fields:
+          - id: ashtavidha.jihva.coating
+            label: Sama / Nirama
+            gloss: Coated or clean
+            type: enum
+            required: true
+            options:
+              - { value: sama, label: Sama, gloss: Coated }
+              - { value: nirama, label: Nirama, gloss: Clean }
+          - id: ashtavidha.jihva.colour
+            label: Colour
+            gloss: Tongue colour
+            type: enum
+            required: true
+            options:
+              - { value: pink, label: Pink, gloss: Usual colour }
+              - { value: white, label: White, gloss: White }
+              - { value: yellow, label: Yellow, gloss: Yellow }
+              - { value: red, label: Red, gloss: Red }
+              - { value: dark, label: Dark, gloss: Dark or blackish }
+          - id: ashtavidha.jihva.cracks
+            label: Cracks
+            gloss: Fissures on the tongue
+            type: enum
+            required: true
+            options:
+              - { value: present, label: Present, gloss: Cracks present }
+              - { value: absent, label: Absent, gloss: No cracks }
+      - id: shabda
+        label: Shabda
+        gloss: Voice
+        fields:
+          - id: ashtavidha.shabda.type
+            label: Shabda type
+            gloss: Quality of voice
+            type: enum
+            required: true
+            options:
+              - { value: prakrita, label: Prakrita, gloss: Normal }
+              - { value: guru, label: Guru, gloss: Heavy }
+              - { value: kshina, label: Kshina, gloss: Feeble }
+              - { value: rooksha, label: Rooksha, gloss: Rough or dry }
+      - id: sparsha
+        label: Sparsha
+        gloss: Skin (touch)
+        fields:
+          - id: ashtavidha.sparsha.temperature
+            label: Temperature
+            gloss: Warm or cool to touch
+            type: enum
+            required: true
+            options:
+              - { value: ushna, label: Ushna, gloss: Warm }
+              - { value: sheeta, label: Sheeta, gloss: Cool }
+          - id: ashtavidha.sparsha.oiliness
+            label: Oiliness
+            gloss: Oily or dry
+            type: enum
+            required: true
+            options:
+              - { value: snigdha, label: Snigdha, gloss: Oily / unctuous }
+              - { value: rooksha, label: Rooksha, gloss: Dry }
+          - id: ashtavidha.sparsha.texture
+            label: Texture
+            gloss: Soft or rough
+            type: enum
+            required: true
+            options:
+              - { value: mridu, label: Mridu, gloss: Soft }
+              - { value: khara, label: Khara, gloss: Rough }
+      - id: drik
+        label: Drik
+        gloss: Eyes
+        fields:
+          - id: ashtavidha.drik.type
+            label: Drik type
+            gloss: Appearance of the eyes
+            type: enum
+            required: true
+            options:
+              - { value: prakrita, label: Prakrita, gloss: Normal }
+              - { value: pita, label: Pita, gloss: Yellow }
+              - { value: rakta, label: Rakta, gloss: Red }
+              - { value: shweta, label: Shweta, gloss: Pale }
+              - { value: shushka, label: Shushka, gloss: Dry }
+      - id: akriti
+        label: Akriti
+        gloss: Build
+        fields:
+          - id: ashtavidha.akriti.type
+            label: Akriti type
+            gloss: Body build
+            type: enum
+            required: true
+            options:
+              - { value: krisha, label: Krisha, gloss: Lean }
+              - { value: madhyama, label: Madhyama, gloss: Medium }
+              - { value: sthula, label: Sthula, gloss: Stout }
+
+  - id: dashavidha
+    label: Dashavidha Pariksha
+    gloss: Tenfold examination
+    sections:
+      - id: prakriti
+        label: Prakriti
+        gloss: Constitution — the Vaidya decides; the patient questionnaire score is shown beside it as reference only
+        show_prakriti_score: true
+        fields:
+          - id: dashavidha.prakriti.type
+            label: Prakriti
+            gloss: Constitution
+            type: enum
+            required: true
+            options:
+              - { value: vata_pradhana, label: Vata pradhana, gloss: Vata-dominant }
+              - { value: pitta_pradhana, label: Pitta pradhana, gloss: Pitta-dominant }
+              - { value: kapha_pradhana, label: Kapha pradhana, gloss: Kapha-dominant }
+              - { value: vata_pitta, label: Vata-Pitta, gloss: Dwandvaja — Vata and Pitta }
+              - { value: pitta_kapha, label: Pitta-Kapha, gloss: Dwandvaja — Pitta and Kapha }
+              - { value: vata_kapha, label: Vata-Kapha, gloss: Dwandvaja — Vata and Kapha }
+              - { value: sama, label: Sama, gloss: Balanced (all three doshas equal) }
+      - id: vikriti
+        label: Vikriti
+        gloss: Current imbalance — doctor only, never pre-filled
+        fields:
+          - id: dashavidha.vikriti.doshas
+            label: Doshas involved
+            gloss: Doshas the Vaidya finds vitiated
+            type: enum_multi
+            required: true
+            options:
+              - { value: vata, label: Vata, gloss: Vata }
+              - { value: pitta, label: Pitta, gloss: Pitta }
+              - { value: kapha, label: Kapha, gloss: Kapha }
+          - id: dashavidha.vikriti.dushyas
+            label: Dushyas involved
+            gloss: Tissues and excreta affected
+            type: enum_multi
+            required: true
+            options:
+              - { value: rasa, label: Rasa, gloss: Plasma / lymph }
+              - { value: rakta, label: Rakta, gloss: Blood }
+              - { value: mamsa, label: Mamsa, gloss: Muscle }
+              - { value: meda, label: Meda, gloss: Fat }
+              - { value: asthi, label: Asthi, gloss: Bone }
+              - { value: majja, label: Majja, gloss: Marrow / nerve }
+              - { value: shukra, label: Shukra, gloss: Reproductive tissue }
+              - { value: purisha, label: Purisha, gloss: Stool (mala) }
+              - { value: mutra, label: Mutra, gloss: Urine (mala) }
+              - { value: sweda, label: Sweda, gloss: Sweat (mala) }
+      - id: sara
+        label: Sara
+        gloss: Tissue excellence
+        fields:
+          - id: dashavidha.sara.grade
+            label: Sara
+            gloss: Tissue excellence
+            type: enum
+            required: true
+            options: &grades
+              - { value: pravara, label: Pravara, gloss: Excellent }
+              - { value: madhyama, label: Madhyama, gloss: Moderate }
+              - { value: avara, label: Avara, gloss: Poor }
+      - id: samhanana
+        label: Samhanana
+        gloss: Compactness of build
+        fields:
+          - { id: dashavidha.samhanana.grade, label: Samhanana, gloss: Compactness of build, type: enum, required: true, options: *grades }
+      - id: pramana
+        label: Pramana
+        gloss: Body measurements
+        fields:
+          - { id: dashavidha.pramana.height_cm, label: Height, gloss: Standing height, type: number, required: true, min: 30, max: 250, unit: cm }
+          - { id: dashavidha.pramana.weight_kg, label: Weight, gloss: Body weight, type: number, required: true, min: 2, max: 300, unit: kg }
+          - id: dashavidha.pramana.bmi
+            label: BMI
+            gloss: Body mass index — calculated
+            type: computed
+            computed: { kind: bmi, height_field: dashavidha.pramana.height_cm, weight_field: dashavidha.pramana.weight_kg }
+            unit: kg/m²
+      - id: satmya
+        label: Satmya
+        gloss: What suits the patient
+        fields:
+          - id: dashavidha.satmya.grade
+            label: Satmya
+            gloss: Adaptability to food, climate and habits
+            type: enum
+            required: true
+            patient_reference:
+              - { slot: satmya_foods }
+              - { slot: satmya_disagree }
+              - { slot: satmya_climate }
+              - { slot: satmya_habits }
+            options: *grades
+      - id: sattva
+        label: Sattva
+        gloss: Mental strength
+        fields:
+          - { id: dashavidha.sattva.grade, label: Sattva, gloss: Mental strength, type: enum, required: true, options: *grades }
+      - id: ahara_shakti
+        label: Ahara Shakti
+        gloss: Capacity to eat and digest
+        fields:
+          - id: dashavidha.ahara_shakti.abhyavarana
+            label: Abhyavarana Shakti
+            gloss: Capacity to take in food
+            type: enum
+            required: true
+            patient_reference:
+              - { slot: ahara_shakti_quantity }
+              - { slot: ahara_shakti_hunger }
+            options: *grades
+          - { id: dashavidha.ahara_shakti.jarana, label: Jarana Shakti, gloss: Capacity to digest food, type: enum, required: true, options: *grades }
+      - id: vyayama_shakti
+        label: Vyayama Shakti
+        gloss: Capacity for exertion
+        fields:
+          - id: dashavidha.vyayama_shakti.grade
+            label: Vyayama Shakti
+            gloss: Exercise capacity
+            type: enum
+            required: true
+            patient_reference:
+              - { slot: vyayama_walk }
+              - { slot: vyayama_stairs }
+              - { slot: vyayama_load }
+            options: *grades
+      - id: vaya
+        label: Vaya
+        gloss: Age band
+        fields:
+          - id: dashavidha.vaya.age_years
+            label: Age
+            gloss: Age in completed years — taken from the patient's date of birth when known
+            type: number
+            required: true
+            min: 0
+            max: 120
+            unit: years
+          - id: dashavidha.vaya.band
+            label: Vaya
+            gloss: Age band — calculated from age
+            type: computed
+            computed: { kind: vaya_band, age_field: dashavidha.vaya.age_years }
+            # TO VERIFY with a Vaidya: cut-offs, boundary inclusivity and the classical source.
+            # Charaka (Vimana Sthana) and Sushruta (Sutra Sthana) both give a three-fold Bala /
+            # Madhya / Vriddha (Charaka: Jirna) division; the figures below are the commonly
+            # cited Sushruta ones. `below_age_years` is an EXCLUSIVE upper bound.
+            source: >
+              Sushruta Samhita, Sutra Sthana — three-fold age division, commonly cited as Bala
+              below 16, Madhya 16 to below 70, Vriddha 70 and above. Charaka Samhita, Vimana
+              Sthana gives a comparable Bala / Madhya / Jirna division with different upper
+              bounds in some editions. Verse numbers and boundary inclusivity NOT verified.
+            bands:
+              - { value: bala, label: Bala, gloss: Young, below_age_years: 16 }
+              - { value: madhya, label: Madhya, gloss: Middle age, below_age_years: 70 }
+              - { value: vriddha, label: Vriddha, gloss: Elderly, below_age_years: null }
+      - id: agni
+        label: Agni
+        gloss: Digestive fire
+        fields:
+          - id: dashavidha.agni.type
+            label: Agni
+            gloss: State of digestive fire
+            type: enum
+            required: true
+            patient_reference:
+              - { slot: agni_appetite }
+              - { slot: agni_heaviness }
+              - { slot: agni_bloating }
+              - { slot: agni_acidity }
+            options:
+              - { value: samagni, label: Samagni, gloss: Balanced }
+              - { value: vishamagni, label: Vishamagni, gloss: Irregular }
+              - { value: tikshnagni, label: Tikshnagni, gloss: Sharp }
+              - { value: mandagni, label: Mandagni, gloss: Weak }
+      - id: koshtha
+        label: Koshtha
+        gloss: Bowel nature
+        fields:
+          - id: dashavidha.koshtha.type
+            label: Koshtha
+            gloss: Nature of the bowel
+            type: enum
+            required: true
+            patient_reference:
+              - { slot: koshtha_tendency }
+            options:
+              - { value: mridu, label: Mridu, gloss: Soft }
+              - { value: madhyama, label: Madhyama, gloss: Moderate }
+              - { value: krura, label: Krura, gloss: Hard }
+
+  - id: vyadhi_vinishchaya
+    label: Vyadhi Vinishchaya
+    gloss: Assessment by the Vaidya
+    sections:
+      - id: samprapti
+        label: Samprapti
+        gloss: Pathogenesis — doctor only, free text
+        fields:
+          - { id: vyadhi_vinishchaya.samprapti.notes, label: Samprapti, gloss: The Vaidya's own account of the pathogenesis, type: text, required: true }
+      - id: diagnosis
+        label: Diagnosis
+        gloss: NAMASTE code with its linked ICD-11 TM2 code — the Vaidya picks; CareFlow never suggests or ranks
+        fields:
+          - { id: vyadhi_vinishchaya.diagnosis.codes, label: Diagnosis, gloss: Picked from the NAMASTE terminology, type: namaste_codes, required: true }
+
+# The sixth step is not a form: the merged case sheet, then the existing sign flow.
+summary_step:
+  id: summary
+  label: Summary & Sign
+  gloss: The Ayurvedic case sheet, merged into the clinician summary

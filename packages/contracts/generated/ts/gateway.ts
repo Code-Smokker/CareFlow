@@ -13,7 +13,10 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Start a new intake session */
+        /**
+         * Start a new intake session
+         * @description `department` is set by staff (the check-in URL / QR a desk or kiosk is configured with), never chosen by the patient. AYUSH mode is a property of the department, read from the gateway's visit config (`AYUSH_DEPARTMENTS`): an AYUSH department runs the complaint module and then the Prashna modules under packages/ontology/modules/ayush/.
+         */
         post: operations["createSession"];
         delete?: never;
         options?: never;
@@ -427,6 +430,89 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/ayurveda/vocabulary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * The Pariksha vocabulary — every examination field and option
+         * @description Serves packages/ontology/modules/ayush/pariksha-vocabulary.yaml. UI and API read options only from here; no component hardcodes one. `status` is PENDING_EXPERT_REVIEW until an Ayurveda practitioner has verified the file — clients must show that.
+         */
+        get: operations["getAyurvedaVocabulary"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/visits/{id}/ayurveda": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: components["parameters"]["VisitIdParam"];
+            };
+            cookie?: never;
+        };
+        /**
+         * Ayurvedic case record — Prashna answers and every examination field
+         * @description Prashna is composed live from the patient's intake answers (with provenance and confidence) and is read-only. Everything the Vaidya recorded is returned beside the patient-reported reference values. CareFlow never computes or suggests Vikriti, Samprapti or a diagnosis — `computed` carries only BMI and the Vaya band, both pure arithmetic over fields the Vaidya entered.
+         */
+        get: operations["getAyurvedaRecord"];
+        /**
+         * Save examination fields (partial saves allowed)
+         * @description Only fields present in the request are touched. A `null` value clears a field. For a field the patient answered (a `patient_reference` with a `map` in the vocabulary), the server decides the disposition: the patient's mapped value → `confirmed`; any other value → `overridden`, and the original patient value is kept beside it. Every save writes one row to the append-only audit log. A signed visit rejects saves (409).
+         */
+        put: operations["saveAyurvedaExam"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/terminology/search": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Search NAMASTE / ICD-11 concepts (proxied to the terminology service)
+         * @description Lets a browser client reach the terminology service through the gateway (the terminology service has no browser CORS of its own). Results carry a relevance `score`; clients picking a diagnosis must NOT rank or suggest by it (CLAUDE.md rule 2) — list alphabetically and let the Vaidya pick. 502 when the terminology service is unreachable.
+         */
+        get: operations["searchTerminology"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/terminology/translate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Crosswalk a concept, e.g. NAMASTE to ICD-11 TM2 */
+        post: operations["translateTerminology"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/redflags/{id}/acknowledge": {
         parameters: {
             query?: never;
@@ -661,6 +747,226 @@ export interface components {
             signed: boolean;
             /** @description Unacknowledged red flags for this visit — a non-empty array is what the clinician console reads as "open this on the red banner" (docs/05-interview-engine.md); this is derived live from the red_flag table on every request, not a separate stamped flag that could drift out of sync with it. */
             red_flags: components["schemas"]["RedFlag"][];
+            /** @description The Ayurvedic case sheet in PS 26047 order — Prashna, Trividha, Ashtavidha, Dashavidha, Vyadhi Vinishchaya — composed live from the patient's answers and the Vaidya's examination record. Empty for a visit with no Ayurvedic data. */
+            ayurveda_sections?: components["schemas"]["AyurvedicSection"][];
+        };
+        AyurvedaVocabulary: {
+            id: string;
+            /** @enum {string} */
+            status: "PENDING_EXPERT_REVIEW" | "VERIFIED";
+            version: number;
+            title: components["schemas"]["VocabLabel"];
+            review: {
+                status: string;
+                note: string;
+                verified_by?: string | null;
+            };
+            prashna: {
+                label: string;
+                gloss: string;
+                groups: {
+                    id: string;
+                    label: string;
+                    gloss: string;
+                    /** @description Interview module id; null = the chief-complaint module the patient picked. */
+                    module: string | null;
+                }[];
+            };
+            prakriti_scoring: {
+                label: string;
+                gloss: string;
+                caveat: string;
+                doshas: {
+                    value: string;
+                    label: string;
+                }[];
+                /** @description slot id → (option value → dosha value) */
+                slots: {
+                    [key: string]: {
+                        [key: string]: string;
+                    };
+                };
+            };
+            steps: components["schemas"]["ExamStep"][];
+            summary_step: components["schemas"]["VocabLabelWithId"];
+        };
+        VocabLabel: {
+            /** @description The Sanskrit term. */
+            label: string;
+            /** @description Short English gloss. */
+            gloss: string;
+        };
+        VocabLabelWithId: {
+            id: string;
+            label: string;
+            gloss: string;
+        };
+        ExamStep: {
+            id: string;
+            label: string;
+            gloss: string;
+            sections: components["schemas"]["ExamSection"][];
+        };
+        ExamSection: {
+            id: string;
+            label: string;
+            gloss: string;
+            /** @description This section is a pointer to another step, not a form. */
+            link_to_step?: string;
+            /** @description Show the patient's Prakriti questionnaire score beside this section, as reference only. */
+            show_prakriti_score?: boolean;
+            fields: components["schemas"]["ExamField"][];
+        };
+        ExamField: {
+            /** @description Dotted, prefixed with its step id — e.g. ashtavidha.mala.nature. */
+            id: string;
+            label: string;
+            gloss: string;
+            /** @enum {string} */
+            type: "text" | "enum" | "enum_multi" | "number" | "computed" | "namaste_codes";
+            required?: boolean;
+            options?: components["schemas"]["VocabOption"][];
+            min?: number;
+            max?: number;
+            unit?: string;
+            patient_reference?: {
+                slot: string;
+                /** @description Patient option value → this field's option value. Present = offered as a pre-fill. */
+                map?: {
+                    [key: string]: string;
+                };
+            }[];
+            computed?: {
+                /** @enum {string} */
+                kind: "bmi" | "vaya_band";
+                height_field?: string;
+                weight_field?: string;
+                age_field?: string;
+            };
+            /** @description Classical source note for a computed field's cut-offs. */
+            source?: string;
+            bands?: {
+                value: string;
+                label: string;
+                gloss: string;
+                /** @description Exclusive upper bound; null = no upper bound. */
+                below_age_years: number | null;
+            }[];
+            /** @description Verified NAMASTE code, if one exists. null → PLACEHOLDER in the FHIR bundle. */
+            namaste_code?: string | null;
+        };
+        VocabOption: {
+            value: string;
+            label: string;
+            gloss: string;
+        };
+        AyurvedaRecord: {
+            visit_id: string;
+            signed: boolean;
+            department: string | null;
+            ayush_mode: boolean;
+            prashna: components["schemas"]["PrashnaRecord"];
+            exam: components["schemas"]["ExamValue"][];
+            /** @description Exam field id → what the patient reported that bears on it. */
+            patient_reference: {
+                [key: string]: components["schemas"]["PrashnaItem"][];
+            };
+            computed: {
+                bmi: number | null;
+                vaya: {
+                    age_years: number | null;
+                    /** @enum {string|null} */
+                    age_source: "dob" | "clinician" | null;
+                    band: string | null;
+                };
+            };
+            completion: {
+                step_id: string;
+                filled: number;
+                required_total: number;
+                /** @enum {string} */
+                status: "not_started" | "in_progress" | "complete";
+            }[];
+        };
+        PrashnaRecord: {
+            groups: {
+                id: string;
+                label: string;
+                gloss: string;
+                items: components["schemas"]["PrashnaItem"][];
+            }[];
+            answered: number;
+            total: number;
+            prakriti_score: components["schemas"]["PrakritiScore"] | null;
+        };
+        PrashnaItem: {
+            slot_id: string;
+            question: string;
+            value: unknown;
+            /** @description Human-readable label(s) of the answer */
+            value_label: string;
+            /** @enum {string} */
+            source: "voice" | "tap" | "bodymap" | "proxy" | "ocr";
+            confidence: number;
+            audio_offset_ms: number | null;
+            /** @description The exam-field value the vocabulary maps this answer to (a pre-fill offer); null when reference only. */
+            suggested_value: string | null;
+        };
+        /** @description A count per dosha of the patient's questionnaire answers, REFERENCE only. There is deliberately no "dominant dosha" field — CareFlow never asserts a constitution. */
+        PrakritiScore: {
+            label: string;
+            gloss: string;
+            caveat: string;
+            counts: {
+                dosha: string;
+                label: string;
+                count: number;
+            }[];
+            answered: number;
+            total: number;
+        };
+        ExamValue: {
+            field_id: string;
+            value: unknown;
+            /** @enum {string} */
+            source: "clinician";
+            /**
+             * @description entered = the Vaidya's own finding; confirmed = the Vaidya accepted the patient-reported value; overridden = the Vaidya replaced it (the original is kept).
+             * @enum {string}
+             */
+            disposition: "entered" | "confirmed" | "overridden";
+            recorded_by: string;
+            /** Format: date-time */
+            recorded_at: string;
+            /** @description The patient-reported value this one confirms or overrides; never discarded. */
+            original: components["schemas"]["ExamOriginal"] | null;
+        };
+        ExamOriginal: {
+            value: unknown;
+            value_label: string;
+            /** @enum {string} */
+            source: "voice" | "tap" | "bodymap" | "proxy" | "ocr";
+            confidence: number;
+        };
+        AyurvedicSection: {
+            id: string;
+            label: string;
+            gloss: string;
+            rows: components["schemas"]["AyurvedicRow"][];
+        };
+        AyurvedicRow: {
+            /** @description Sub-heading (e.g. "Nadi — Pulse"). */
+            group: string | null;
+            label: string;
+            gloss: string;
+            value_label: string;
+            /** @enum {string} */
+            source: "voice" | "tap" | "bodymap" | "proxy" | "ocr" | "clinician" | "computed";
+            confidence: number | null;
+            /** @enum {string|null} */
+            disposition: "entered" | "confirmed" | "overridden" | null;
+            original: components["schemas"]["ExamOriginal"] | null;
+            recorded_by: string | null;
         };
         VisitDiff: {
             previous_visit_id: string | null;
@@ -754,7 +1060,14 @@ export interface operations {
             path?: never;
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody?: {
+            content: {
+                "application/json": {
+                    /** @description Defaults to `general`. */
+                    department?: string;
+                };
+            };
+        };
         responses: {
             /** @description Session created */
             201: {
@@ -767,6 +1080,8 @@ export interface operations {
                         resume_token: string;
                         /** Format: uri */
                         qr_url: string;
+                        department: string;
+                        ayush_mode: boolean;
                     };
                 };
             };
@@ -1403,6 +1718,154 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["VisitDiff"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    getAyurvedaVocabulary: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Vocabulary */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AyurvedaVocabulary"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    getAyurvedaRecord: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: components["parameters"]["VisitIdParam"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Case record */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AyurvedaRecord"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    saveAyurvedaExam: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: components["parameters"]["VisitIdParam"];
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description Same identifier convention as `signed_by` — no RBAC until Day 4. */
+                    recorded_by: string;
+                    fields: {
+                        field_id: string;
+                        /** @description Type depends on the field — see the vocabulary. `null` clears. */
+                        value: unknown;
+                    }[];
+                };
+            };
+        };
+        responses: {
+            /** @description Updated case record */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AyurvedaRecord"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    searchTerminology: {
+        parameters: {
+            query: {
+                q: string;
+                system?: "namaste" | "icd11-tm2" | "icd11-bio";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Matches */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @enum {string} */
+                        system: "namaste" | "icd11-tm2" | "icd11-bio";
+                        code: string;
+                        display: string;
+                        score: number;
+                    }[];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    translateTerminology: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @enum {string} */
+                    system: "namaste" | "icd11-tm2" | "icd11-bio";
+                    code: string;
+                    /** @enum {string} */
+                    target: "namaste" | "icd11-tm2" | "icd11-bio";
+                };
+            };
+        };
+        responses: {
+            /** @description Match, or matched=false when no mapping exists (never a fabricated target) */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        matched: boolean;
+                        equivalence?: string | null;
+                        target_system?: string;
+                        target_code?: string | null;
+                        target_display?: string | null;
+                        reviewed_by?: string | null;
+                        provenance?: string | null;
+                    };
                 };
             };
             default: components["responses"]["Error"];

@@ -121,3 +121,47 @@ discharge/referral records, and several duplicate routes that were one-line re-e
 pages under a different name (`clinical-queue` → redirected to home, `clinical-dossier` →
 aliased `patient-overview`, `clinical-summary` → aliased `discharge-referrals`, `pharmacy` →
 aliased `pharmacy-lab`, `radiology` → aliased `imaging`, and others).
+
+---
+
+## `doctorwebapp` — Ayurvedic Case Record & Demo Path
+
+Bound via `doctorwebapp/careflow-live.js` and `doctorwebapp/careflow-ayurveda.js`, preserving static Tailwind HTML markup and design.
+
+| Screen | Key | Wired to | Status & Notes |
+|---|---|---|---|
+| Dashboard | `w03` | `GET /v1/visits/queue` | **LIVE**: Populates "Today's patients" table with live OPD tokens, wait times, priority status, and "Needs attention" list for active red flags. |
+| Patient Directory | `w04` | `GET /v1/visits/queue`, `GET /v1/visits/{id}/summary` | **LIVE**: Renders OPD queue with patient status pills (`Ready for review`, `In progress`, `Signed`, `Important`), complaint summary, and direct links to profile or red flags. |
+| Patient Profile | `w05` | `GET /v1/visits/{id}/summary`, `GET /v1/visits/queue` | **LIVE**: Displays patient concern, structured HPI chips with provenance, red flag alert banners, and re-points the primary action button to the Ayurvedic Case Record (`a01`). |
+| Care Summary | `w11` | `GET /v1/visits/{id}/summary`, `GET /v1/ayurveda/vocabulary` | **LIVE**: Renders HPI questionnaire review and appends the "Ayurvediya Rugna Pariksha" card with complete case sheet rows and Vaidya chips. |
+| Red Flag Alerts | `w13` | `GET /v1/visits/queue`, `POST /v1/redflags/{id}/acknowledge` | **LIVE**: Displays unacknowledged red flags; one-tap acknowledge updates the queue and records an audit log row. |
+| Ayurvedic Case Record | `a01` | `GET /v1/ayurveda/vocabulary`, `GET/PUT /v1/visits/{id}/ayurveda`, `GET /v1/terminology/search`, `POST /v1/terminology/translate`, `POST /v1/visits/{id}/sign`, `GET /v1/visits/{id}/printable-summary` | **LIVE**: Step 1 renders read-only Prashna (43 questions) + Prakriti score chart. Steps 2–4 render dynamic forms with patient-reported pre-fills and Mala override. Computes BMI and Vaya age band in real time. Step 5 provides NAMASTE diagnosis search and ICD-11 TM2 translation. Step 6 displays case sheet, executes HAPI FHIR-validated signing, and links to the A4 print view. Post-sign saves are locked (409). |
+
+---
+
+## `userwebapp` — Patient Self-Intake
+
+Bound via `userwebapp/shared_careflow.js` with full `CareFlow.api` and `CareFlow.qrScanner` integration.
+
+| Screen | File | Wired to | Status & Notes |
+|---|---|---|---|
+| Scan / Check-in | `02_scan_qr_code/code.html` | Live QR Scanner (Camera + BarcodeDetector + File fallback) | **LIVE**: Scans OPD QR codes and initializes session via `POST /v1/sessions`. |
+| Language | `04_language_selection/code.html` | `POST /v1/sessions/{id}/language` | **LIVE**: Sets preferred intake language (English, Hindi, etc.). |
+| Consent | `05_consent_and_permissions/code.html` | `POST /v1/sessions/{id}/consent` | **LIVE**: Records patient consent with valid scopes. |
+| Symptoms / Complaint | `07_symptoms_and_chief_complaint/code.html` | `POST /v1/sessions/{id}/answer` | **LIVE**: Submits `chief_complaint` slot. |
+| Health Questionnaire | `08_health_questionnaire/code.html` | `POST /v1/sessions/{id}/answer` | **LIVE**: Drives sequential question answering with voice and tap inputs. |
+| Documents Upload | `09_clinical_documents_upload/code.html` | `POST /v1/sessions/{id}/documents` | **LIVE**: Uploads patient clinical records and lab reports. |
+| Summary Review | `11_summary_and_review/code.html` | `GET /v1/visits/{id}/summary` | **LIVE**: Displays structured read-back summary with provenance chips. |
+| Session Complete | `24_session_complete/code.html` | `POST /v1/sessions/{id}/complete` | **LIVE**: Finalizes intake session and returns token and next steps in queue. |
+
+---
+
+## `adminwebapp` — Admin & Operations Control Center
+
+Bound via `adminwebapp/shared_nav.js` with live backend access (`CareFlow.api`) connecting to `http://localhost:4000`.
+
+| Screen / Feature | Path | Wired to | Status & Notes |
+|---|---|---|---|
+| Admin & Operations Control Center | `careflow_admin_panel/code.html` | `GET /v1/visits/queue`, `GET /v1/audit-log`, `GET /v1/integration-events`, `POST /v1/redflags/{id}/acknowledge` | **LIVE**: Central operations console monitoring live OPD queue tokens, real-time wait times, unacknowledged red flags with one-tap acknowledgment, append-only audit trail with DB-trigger integrity verification, and AI cascade telemetry. Direct links to Doctor App (`:3020`), Patient App (`/userwebapp/`), and Staff Console (`:3011`). |
+| Master Suite Shell | `index.html` | Embedded controller & viewport switcher | **LIVE**: Includes dedicated `ADM: Admin & Operations Control Center` tab, responsive viewport switcher, and navigation across all 20 patient experience screens plus admin operations. |
+| Patient Experience (P01–P20) | `careflow_patient_web_p01` through `p20` | `shared_nav.js` (`CareFlow.api`) | **LIVE**: Navigation dock includes direct Admin Panel jump button; exposed API client provides session creation, ABHA OTP verification, consent, and document uploads. |

@@ -1,0 +1,358 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"><title>CareFlow - Clinical Attention Required</title><link href="https://fonts.googleapis.com" rel="preconnect"><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&amp;display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"><style>@layer base{html,body{width:100%;margin:0;padding:0;min-height:100%;background-color:#faf8ff;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script src="../shared_careflow.js"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "tertiary-container": "#006c7f", "on-secondary-fixed": "#00201c", "on-background": "#131b2e", "primary-container": "#0d6e6e", "on-error": "#ffffff", "on-surface-variant": "#3e4948", "surface-container": "#eaedff", "tertiary-fixed-dim": "#4cd7f6", "secondary-fixed-dim": "#4fdbc8", "surface-container-highest": "#dae2fd", "on-primary": "#ffffff", "secondary": "#006b5f", "surface-bright": "#faf8ff", "surface": "#faf8ff", "inverse-on-surface": "#eef0ff", "surface-container-high": "#e2e7ff", "tertiary": "#005261", "surface-container-lowest": "#ffffff", "tertiary-fixed": "#acedff", "primary": "#005454", "background": "#faf8ff", "on-primary-fixed-variant": "#004f50", "on-tertiary": "#ffffff", "on-surface": "#131b2e", "on-primary-fixed": "#002020", "surface-dim": "#d2d9f4", "primary-fixed": "#a0f0f0", "outline": "#6e7979", "on-error-container": "#93000a", "surface-variant": "#dae2fd", "primary-fixed-dim": "#84d4d3", "on-primary-container": "#9dedec", "inverse-primary": "#84d4d3", "error": "#ba1a1a", "on-tertiary-fixed-variant": "#004e5c", "secondary-container": "#6df5e1", "secondary-fixed": "#71f8e4", "error-container": "#ffdad6", "on-tertiary-container": "#9eeaff", "surface-container-low": "#f2f3ff", "outline-variant": "#bec9c8", "on-secondary": "#ffffff", "surface-tint": "#016a6a", "on-secondary-container": "#006f64", "on-tertiary-fixed": "#001f26", "inverse-surface": "#283044", "on-secondary-fixed-variant": "#005048" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "margin-mobile": "1.25rem", "space-2xl": "3rem", "space-md": "1rem", "space-lg": "1.5rem", "space-xl": "2rem", "space-xxs": "0.25rem", "space-xs": "0.5rem", "gutter-desktop": "1.5rem", "space-3xl": "4rem", "margin-desktop": "2.5rem", "gutter-mobile": "1rem", "space-sm": "0.75rem" }, "fontFamily": { "title-md": ["Plus Jakarta Sans"], "display-lg": ["Plus Jakarta Sans"], "headline-md": ["Plus Jakarta Sans"], "headline-lg-mobile": ["Plus Jakarta Sans"], "headline-lg": ["Plus Jakarta Sans"], "body-lg": ["Plus Jakarta Sans"], "label-md": ["Plus Jakarta Sans"], "headline-sm": ["Plus Jakarta Sans"], "display-lg-mobile": ["Plus Jakarta Sans"], "body-md": ["Plus Jakarta Sans"], "label-sm": ["Plus Jakarta Sans"] }, "fontSize": { "title-md": ["18px", { "lineHeight": "24px", "fontWeight": "600" }], "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }], "headline-lg-mobile": ["26px", { "lineHeight": "34px", "letterSpacing": "-0.01em", "fontWeight": "600" }], "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.015em", "fontWeight": "600" }], "body-lg": ["16px", { "lineHeight": "26px", "fontWeight": "400" }], "label-md": ["13px", { "lineHeight": "18px", "letterSpacing": "0.01em", "fontWeight": "600" }], "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }], "display-lg-mobile": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "body-md": ["14px", { "lineHeight": "22px", "fontWeight": "400" }], "label-sm": ["11px", { "lineHeight": "16px", "letterSpacing": "0.04em", "fontWeight": "600" }] } } } }</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
+
+<link rel="preload" href="../material-symbols-outlined.woff2" as="font" type="font/woff2" crossorigin>
+<style id="careflow-material-symbols-core">
+  @font-face {
+    font-family: "Material Symbols Outlined";
+    font-style: normal;
+    font-weight: 100 700;
+    font-display: block;
+    src: url("../material-symbols-outlined.woff2") format("woff2"),
+         url("/material-symbols-outlined.woff2") format("woff2"),
+         url("https://fonts.gstatic.com/s/materialsymbolsoutlined/v373/kJEhBvYX7BgnkSrUwT8OhrdQw4oELdPIeeII9v6oFsLjBuVY.woff2") format("woff2");
+  }
+  .material-symbols-outlined {
+    font-family: "Material Symbols Outlined" !important;
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -webkit-font-feature-settings: "liga";
+    -moz-font-feature-settings: "liga";
+    font-feature-settings: "liga";
+    -webkit-font-smoothing: antialiased;
+    vertical-align: middle;
+  }
+</style>
+</head><body class="bg-surface text-on-surface font-body-md min-h-screen relative flex flex-col selection:bg-secondary-container selection:text-on-secondary-container"><div class="fixed inset-0 pointer-events-none z-0 overflow-hidden"><div class="absolute -top-32 -right-24 w-96 h-96 rounded-full bg-secondary-fixed-dim/20 blur-3xl"></div><div class="absolute top-1/4 -left-32 w-80 h-80 rounded-full bg-primary-fixed-dim/15 blur-3xl"></div><div class="absolute bottom-10 right-0 w-80 h-80 rounded-full bg-tertiary-fixed-dim/15 blur-3xl"></div></div><header class="fixed top-0 inset-x-0 z-50 pt-safe bg-surface/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(13,110,110,0.04)]"><div class="h-16 px-margin-mobile flex items-center justify-between"><div class="flex items-center gap-space-xs"><button id="redflag-back-btn" class="w-10 h-10 rounded-xl bg-surface-container-low hover:bg-surface-container flex items-center justify-center text-primary transition-colors" type="button" aria-label="Go back"><span class="material-symbols-outlined text-[20px]">arrow_back</span></button><div class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center shadow-[0_2px_8px_-2px_rgba(13,110,110,0.25)]"><span class="material-symbols-outlined text-on-primary text-[22px]">volunteer_activism</span></div><div class="flex flex-col"><span class="font-title-md text-title-md text-primary tracking-tight">CareFlow</span></div></div><div class="flex items-center gap-space-xs"><button class="h-11 px-space-sm rounded-full bg-surface-container-low text-on-surface-variant font-label-md text-label-md flex items-center gap-space-xxs hover:bg-surface-container transition-colors" type="button"><span class="material-symbols-outlined text-[18px] text-primary">language</span><span>English</span><span class="material-symbols-outlined text-[16px]">arrow_drop_down</span></button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="relative z-10 flex flex-col flex-1 w-full pt-16 pb-safe bg-surface"><div class="flex flex-col w-full px-margin-mobile pb-space-2xl gap-space-lg max-w-[440px] mx-auto">
+<!-- 1. TOP PROGRESS STEPPER SECTION -->
+<section class="flex flex-col gap-space-sm pt-space-xs">
+<!-- Badges Row -->
+<div class="flex items-center justify-between gap-space-xs flex-wrap">
+<div class="flex items-center gap-space-xs">
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-error-container text-on-error-container font-label-sm text-label-sm font-semibold tracking-wide">
+<span class="w-2 h-2 rounded-full bg-error animate-pulse"></span>
+          IMPORTANT • महत्वपूर्ण
+        </span>
+<span class="inline-flex items-center px-2.5 py-1 rounded-full bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm">
+          Care triage
+        </span>
+</div>
+<span class="font-label-sm text-label-sm font-semibold text-primary">
+        100% Complete
+      </span>
+</div>
+<!-- Stepper Text & Full Bar -->
+<div class="flex flex-col gap-1.5">
+<div class="flex justify-between items-center text-on-surface-variant font-label-md text-label-md">
+<span>Step 8 of 8 • Important | चरण 8/8</span>
+<span class="font-semibold text-primary">Final review</span>
+</div>
+<div class="w-full h-2 rounded-full bg-surface-container overflow-hidden">
+<div class="h-full w-full bg-primary rounded-full transition-all duration-500"></div>
+</div>
+</div>
+<!-- Sub-step Milestones -->
+<div class="grid grid-cols-5 gap-1 pt-1 text-center">
+<div class="flex flex-col items-center">
+<span class="font-label-sm text-label-sm text-primary font-medium flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[13px]">check</span>Basics
+        </span>
+</div>
+<div class="flex flex-col items-center">
+<span class="font-label-sm text-label-sm text-primary font-medium flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[13px]">check</span>Symptoms
+        </span>
+</div>
+<div class="flex flex-col items-center">
+<span class="font-label-sm text-label-sm text-primary font-medium flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[13px]">check</span>Docs
+        </span>
+</div>
+<div class="flex flex-col items-center">
+<span class="font-label-sm text-label-sm text-primary font-medium flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[13px]">check</span>Review
+        </span>
+</div>
+<div class="flex flex-col items-center">
+<span class="font-label-sm text-label-sm text-primary font-semibold flex items-center gap-0.5">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>Important
+        </span>
+</div>
+</div>
+</section>
+<!-- 2. INTRO & AUDIO CONTROL -->
+<section class="flex flex-col gap-space-xs">
+<div class="flex items-center justify-between gap-space-xs">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-error font-semibold">
+        Clinical Attention Required
+      </span>
+<!-- Audio Pill -->
+<button class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-secondary-fixed text-on-secondary-fixed font-label-sm text-label-sm active:scale-95 transition-transform" id="audioBtn" type="button">
+<span class="material-symbols-outlined text-[16px] text-secondary">volume_up</span>
+<span id="audioText">Hear instruction / निर्देश सुनें</span>
+</button>
+</div>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface tracking-tight mt-1">
+      We noticed something that needs attention
+    </h1>
+<p class="font-title-md text-title-md text-primary font-semibold leading-snug">
+      हमने एक ऐसी बात देखी है जिस पर ध्यान देना ज़रूरी है
+    </p>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1 leading-relaxed">
+      Based on your answers, please speak with a healthcare professional about this symptom. <span class="block text-on-surface/80 mt-0.5">(आपके उत्तरों के आधार पर, इस लक्षण के बारे में किसी स्वास्थ्य विशेषज्ञ से बात करें।)</span>
+</p>
+</section>
+<!-- 3. RED FLAG CARD (Primary Highlight Card) -->
+<section class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm flex flex-col gap-space-md">
+<div class="flex items-start gap-space-sm">
+<div class="w-10 h-10 rounded-full bg-error-container text-on-error-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">medical_information</span>
+</div>
+<div class="flex flex-col">
+<h2 class="font-title-md text-title-md text-on-surface font-semibold">
+          Please don't ignore this symptom
+        </h2>
+<span class="font-body-md text-body-md text-primary font-medium">
+          इस लक्षण को नज़रअंदाज़ न करें
+        </span>
+</div>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant bg-surface-container-low p-space-sm rounded-lg leading-relaxed">
+      Your response suggests that this may need timely medical attention.
+      <span class="block font-label-md text-label-md text-on-surface/70 mt-1">
+        (आपके उत्तर से संकेत मिलता है कि इस पर समय पर चिकित्सकीय ध्यान देना उचित है।)
+      </span>
+</p>
+<!-- Detailed Observation Rows -->
+<div class="flex flex-col gap-space-xs pt-space-xs">
+<div class="flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wide">
+<span>What We Noticed • हमने क्या देखा</span>
+<span class="font-semibold text-primary">Patient Logged</span>
+</div>
+<div class="flex flex-col bg-surface-container-lowest rounded-lg divide-y-0">
+<!-- Row 1 -->
+<div class="py-2.5 px-3 rounded-lg bg-surface-container-low/60 flex items-center justify-between mb-1.5">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-semibold">Severe chest discomfort</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">छाती में तेज असुविधा</span>
+</div>
+<span class="material-symbols-outlined text-[18px] text-primary">symptoms</span>
+</div>
+<!-- Row 2 -->
+<div class="py-2.5 px-3 rounded-lg bg-surface-container-low/60 flex items-center justify-between mb-1.5">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-semibold">Started recently</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">हाल ही में शुरू हुआ</span>
+</div>
+<span class="material-symbols-outlined text-[18px] text-outline">schedule</span>
+</div>
+<!-- Row 3 -->
+<div class="py-2.5 px-3 rounded-lg bg-surface-container-low/60 flex items-center justify-between">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-semibold">Severity: 8 of 10</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">गंभीरता: 8/10</span>
+</div>
+<span class="px-2.5 py-1 rounded-full bg-error-container text-on-error-container font-label-sm text-label-sm font-semibold">
+            Needs evaluation
+          </span>
+</div>
+</div>
+</div>
+</section>
+<!-- 4. WHAT TO DO NOW (Clear Stepped Recommendations) -->
+<section class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm flex flex-col gap-space-md">
+<div>
+<h3 class="font-title-md text-title-md text-on-surface font-semibold">
+        What should you do?
+      </h3>
+<span class="font-body-md text-body-md text-primary font-medium">
+        आपको क्या करना चाहिए?
+      </span>
+</div>
+<div class="flex flex-col gap-space-md">
+<!-- Step 01 -->
+<div class="flex items-start gap-space-sm">
+<div class="w-8 h-8 rounded-full bg-primary-fixed text-on-primary-fixed flex items-center justify-center font-label-md text-label-md font-bold shrink-0">
+          01
+        </div>
+<div class="flex flex-col">
+<span class="font-body-lg text-body-lg font-semibold text-on-surface">
+            Speak with a healthcare professional
+          </span>
+<span class="font-body-md text-body-md text-on-surface-variant mt-0.5">
+            Contact your care team or clinician as soon as practical.
+          </span>
+<span class="font-label-sm text-label-sm text-on-surface/70 mt-1">
+            स्वास्थ्य विशेषज्ञ से जल्द से जल्द संपर्क करें।
+          </span>
+</div>
+</div>
+<!-- Step 02 -->
+<div class="flex items-start gap-space-sm">
+<div class="w-8 h-8 rounded-full bg-primary-fixed text-on-primary-fixed flex items-center justify-center font-label-md text-label-md font-bold shrink-0">
+          02
+        </div>
+<div class="flex flex-col">
+<span class="font-body-lg text-body-lg font-semibold text-on-surface">
+            Keep your information ready
+          </span>
+<span class="font-body-md text-body-md text-on-surface-variant mt-0.5">
+            Your CareFlow summary can help your care team understand what you reported.
+          </span>
+<span class="font-label-sm text-label-sm text-on-surface/70 mt-1">
+            अपनी जानकारी और सारांश तैयार रखें।
+          </span>
+</div>
+</div>
+<!-- Step 03 -->
+<div class="flex items-start gap-space-sm">
+<div class="w-8 h-8 rounded-full bg-primary-fixed text-on-primary-fixed flex items-center justify-center font-label-md text-label-md font-bold shrink-0">
+          03
+        </div>
+<div class="flex flex-col">
+<span class="font-body-lg text-body-lg font-semibold text-on-surface">
+            If symptoms become severe
+          </span>
+<span class="font-body-md text-body-md text-on-surface-variant mt-0.5">
+            Seek immediate emergency medical help without delay.
+          </span>
+<span class="font-label-sm text-label-sm text-on-surface/70 mt-1">
+            लक्षण गंभीर होने पर आपातकालीन सहायता लें।
+          </span>
+</div>
+</div>
+</div>
+</section>
+<!-- 5. EMERGENCY NOTICE (Calm, Responsible Peach Tint) -->
+<section class="bg-error-container/30 rounded-xl p-space-md flex items-start gap-space-sm shadow-sm">
+<div class="w-9 h-9 rounded-xl bg-error-container text-on-error-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">emergency</span>
+</div>
+<div class="flex flex-col">
+<h4 class="font-label-md text-label-md font-semibold text-on-surface">
+        If this feels like an emergency (अगर यह आपात स्थिति लगती है)
+      </h4>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1 leading-relaxed">
+        Seek immediate local emergency medical help. Do not wait for this CareFlow session to finish.
+      </p>
+<p class="font-label-sm text-label-sm text-on-surface/75 mt-1">
+        तुरंत स्थानीय आपातकालीन चिकित्सा सहायता लें। CareFlow सत्र पूरा होने का इंतज़ार न करें।
+      </p>
+</div>
+</section>
+<!-- 6. PATIENT REASSURANCE CARD (Soft Mint Tint) -->
+<section class="bg-secondary-fixed/30 rounded-xl p-space-md flex items-start gap-space-sm shadow-sm">
+<div class="w-9 h-9 rounded-xl bg-primary text-on-primary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[18px]">verified_user</span>
+</div>
+<div class="flex flex-col">
+<h4 class="font-label-md text-label-md font-semibold text-primary">
+        You're not alone • आप अकेले नहीं हैं
+      </h4>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1 leading-relaxed">
+        Your care team can use this information to better understand what you're experiencing and recommend appropriate next steps.
+      </p>
+<p class="font-label-sm text-label-sm text-on-surface/70 mt-1">
+        आपकी देखभाल टीम इस जानकारी का उपयोग आपकी स्थिति को बेहतर समझने के लिए कर सकती है।
+      </p>
+</div>
+</section>
+<!-- 7. BOTTOM ACTION & COMPLIANCE FOOTER -->
+<section class="flex flex-col gap-space-sm pt-space-xs">
+<button class="w-full py-3.5 px-space-lg rounded-full bg-primary text-on-primary font-title-md text-title-md flex items-center justify-center gap-space-xs shadow-md active:scale-[0.99] hover:bg-primary-container transition-all" id="continueBtn" type="button">
+<span>Continue to Care Team</span>
+<span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+</button>
+<div class="text-center">
+<span class="font-label-sm text-label-sm text-primary font-medium">
+        (केयर टीम के साथ जारी रखें)
+      </span>
+</div>
+<!-- Security & ABDM Compliance -->
+<div class="flex items-center justify-center gap-1.5 text-on-surface-variant/70 font-label-sm text-label-sm pt-space-xxs text-center">
+<span class="material-symbols-outlined text-[14px]">lock</span>
+<span>Private &amp; Secure • ABDM Compliant • आपके उत्तर सुरक्षित हैं</span>
+</div>
+</section>
+<script>
+    (function() {
+      const state = CareFlow.getState();
+      
+      // Dynamic observation display if user entered data
+      const noticedRows = document.querySelectorAll('.bg-surface-container-lowest > div');
+      if (state.chiefComplaint && noticedRows[0]) {
+        const titleSpan = noticedRows[0].querySelector('.font-label-md');
+        if (titleSpan) titleSpan.textContent = state.chiefComplaint;
+      }
+      if (state.duration && noticedRows[1]) {
+        const titleSpan = noticedRows[1].querySelector('.font-label-md');
+        if (titleSpan) titleSpan.textContent = "Started: " + state.duration;
+      }
+      if (state.painScore !== undefined && noticedRows[2]) {
+        const titleSpan = noticedRows[2].querySelector('.font-label-md');
+        if (titleSpan) titleSpan.textContent = "Severity: " + state.painScore + " of 10 (" + (state.painLabel || 'High') + ")";
+      }
+
+      const backBtn = document.getElementById('redflag-back-btn');
+      if (backBtn) {
+        backBtn.addEventListener('click', function() {
+          CareFlow.navigate('../careflow_read_back_summary/code.html');
+        });
+      }
+
+      const audioBtn = document.getElementById('audioBtn');
+      const audioText = document.getElementById('audioText');
+      let isSpeaking = false;
+
+      if (audioBtn) {
+        audioBtn.addEventListener('click', function() {
+          if (isSpeaking) {
+            window.speechSynthesis && window.speechSynthesis.cancel();
+            isSpeaking = false;
+            if (audioText) audioText.textContent = 'Hear instruction / निर्देश सुनें';
+            audioBtn.classList.remove('bg-secondary-fixed-dim');
+          } else {
+            isSpeaking = true;
+            if (audioText) audioText.textContent = 'Speaking... / बज रहा है...';
+            audioBtn.classList.add('bg-secondary-fixed-dim');
+            const alertMsg = "Clinical Attention Required. Your response suggests that this may need timely medical attention. Please inform the intake triage desk immediately.";
+            CareFlow.speak(alertMsg, state.language || 'en', function() {
+              isSpeaking = false;
+              if (audioText) audioText.textContent = 'Hear instruction / निर्देश सुनें';
+              audioBtn.classList.remove('bg-secondary-fixed-dim');
+            });
+          }
+        });
+      }
+
+      const continueBtn = document.getElementById('continueBtn');
+      if (continueBtn) {
+        continueBtn.addEventListener('click', function() {
+          CareFlow.saveState({
+            triagePriority: 'High',
+            redFlagAcknowledged: true
+          });
+          CareFlow.showToast("Proceeding to care team handoff...");
+          continueBtn.innerHTML = '<span>Connecting to Team...</span><span class="material-symbols-outlined animate-spin text-[20px]">progress_activity</span>';
+          setTimeout(function() {
+            CareFlow.navigate('../careflow_health_summary/code.html');
+          }, 600);
+        });
+      }
+    })();
+  </script>
+</div></main></body></html>

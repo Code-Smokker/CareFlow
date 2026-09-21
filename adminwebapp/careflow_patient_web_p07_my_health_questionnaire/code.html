@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+
+<html class="h-full bg-slate-50" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CareFlow Patient Web — P07 My Health Questionnaire</title>
+<!-- Tailwind CSS v3 with Plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Google Fonts: Plus Jakarta Sans -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&amp;display=swap" rel="stylesheet"/>
+<!-- Shared CareFlow Universal Navigation & Utilities -->
+<script src="../shared_nav.js"></script>
+<!-- Tailwind Configuration -->
+<script data-purpose="tailwind-config">
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              DEFAULT: '#0d6e6e',
+              50: '#f0f9f9',
+              100: '#d7f0f0',
+              200: '#b2e2e2',
+              600: '#0d6e6e',
+              700: '#095555',
+              800: '#084343',
+              900: '#063333',
+            },
+            mint: {
+              soft: '#e6f7f2',
+              badge: '#0b8265',
+              tint: '#f4fbf8'
+            }
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+<style data-purpose="custom-scroll-and-effects">
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    .badge-ring {
+      box-shadow: 0 0 0 1px rgba(13, 110, 110, 0.15);
+    }
+  </style>
+</head>
+<body class="min-h-full flex flex-col bg-[#f8fafc] text-slate-800 antialiased">
+<!-- BEGIN: MainHeader -->
+<!-- Clean top patient portal bar: mirrors reference with brand emblem, bilingual navigation, and patient badge -->
+<header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex items-center justify-between h-20">
+<!-- Left: Brand & Portal Indicator -->
+<div class="flex items-center gap-3">
+<div aria-label="CareFlow Emblem" class="w-10 h-10 rounded-xl bg-[#0d6e6e] flex items-center justify-center text-white shadow-sm shadow-teal-900/10">
+<!-- Heart-Cross Icon -->
+<svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.2" viewbox="0 0 24 24">
+<path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<span class="text-xl font-bold tracking-tight text-slate-900 leading-none">CareFlow</span>
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#e6f7f2] text-[#0d6e6e]">
+                Patient Portal
+              </span>
+</div>
+<p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase mt-0.5">PATIENT CARE</p>
+</div>
+</div>
+<!-- Center: Horizontal Bilingual Nav Links -->
+<nav aria-label="Primary Navigation" class="hidden lg:flex items-center space-x-1">
+<!-- Home -->
+<a class="px-3.5 py-2 text-xs font-semibold text-slate-600 hover:text-[#0d6e6e] rounded-lg transition-colors flex items-center gap-1.5" href="#">
+<span>Home</span>
+<span class="text-[11px] font-normal text-slate-400">गृह</span>
+</a>
+<!-- My Health (Active) -->
+<a aria-current="page" class="px-3.5 py-2 text-xs font-semibold text-[#0d6e6e] bg-[#e6f7f2]/80 rounded-full transition-colors flex items-center gap-1.5 ring-1 ring-[#0d6e6e]/20" href="#">
+<span class="w-1.5 h-1.5 rounded-full bg-[#0d6e6e]"></span>
+<span>My Health</span>
+<span class="text-[11px] font-medium text-[#0d6e6e]/80">स्वास्थ्य</span>
+</a>
+<!-- Appointments -->
+<a class="px-3.5 py-2 text-xs font-semibold text-slate-600 hover:text-[#0d6e6e] rounded-lg transition-colors flex items-center gap-1.5" href="#">
+<span>Appointments</span>
+<span class="text-[11px] font-normal text-slate-400">अपॉइंटमेंट</span>
+</a>
+<!-- Documents -->
+<a class="px-3.5 py-2 text-xs font-semibold text-slate-600 hover:text-[#0d6e6e] rounded-lg transition-colors flex items-center gap-1.5" href="#">
+<span>Documents</span>
+<span class="text-[11px] font-normal text-slate-400">दस्तावेज़</span>
+</a>
+<!-- Care Summary -->
+<a class="px-3.5 py-2 text-xs font-semibold text-slate-600 hover:text-[#0d6e6e] rounded-lg transition-colors flex items-center gap-1.5" href="#">
+<span>Care Summary</span>
+<span class="text-[11px] font-normal text-slate-400">सारांश</span>
+</a>
+</nav>
+<!-- Right Utilities: Language Switcher, Bell, and Patient Identity Chip -->
+<div class="flex items-center gap-3">
+<!-- Language Toggle Pill -->
+<div class="hidden sm:inline-flex items-center rounded-full bg-slate-100 p-0.5 border border-slate-200 text-xs font-medium">
+<span class="px-2.5 py-1 rounded-full bg-white text-slate-800 shadow-sm font-semibold">English</span>
+<span class="px-2.5 py-1 rounded-full text-slate-500 hover:text-slate-800 transition-colors cursor-pointer">हिन्दी</span>
+</div>
+<!-- Notification Bell with Ping Dot -->
+<button aria-label="Notifications" class="relative p-2 text-slate-500 hover:text-slate-700 rounded-full hover:bg-slate-100 transition-colors" type="button">
+<span class="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 rounded-full ring-2 ring-white"></span>
+<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewbox="0 0 24 24">
+<path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</button>
+<!-- Patient Identity Chip (As in Reference) -->
+<div class="flex items-center gap-3 pl-2 py-1 pr-3 rounded-full border border-slate-200 bg-white hover:border-[#0d6e6e]/40 transition-all shadow-sm">
+<div class="relative">
+<div class="w-9 h-9 rounded-full bg-[#d7f0f0] border border-[#0d6e6e]/30 flex items-center justify-center text-[#0d6e6e] font-bold text-xs">
+                AS
+              </div>
+<span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-1.5 ring-white"></span>
+</div>
+<div class="hidden sm:block text-left">
+<div class="text-xs font-bold text-slate-900 leading-tight">Aarav Sharma</div>
+<div class="text-[10px] text-slate-500 font-mono tracking-tighter">ABHA: 91-8472-3021-9920</div>
+</div>
+<button aria-label="Patient Settings" class="text-slate-400 hover:text-slate-600 transition-colors ml-1">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" stroke-linecap="round" stroke-linejoin="round"></path>
+<path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</button>
+</div>
+</div>
+</div>
+</div>
+</header>
+<!-- END: MainHeader -->
+<!-- BEGIN: PageHeader -->
+<!-- Page Header & Action Section -->
+<section class="bg-gradient-to-b from-white to-[#f8fafc] border-b border-slate-200/80 pt-7 pb-8"><div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"><div class="flex items-center gap-2 mb-2"><span class="text-xs font-bold tracking-wider uppercase text-[#0d6e6e]">MY HEALTH</span><span class="text-slate-300">•</span><span class="text-xs font-semibold text-slate-500">मेरा स्वास्थ्य</span></div><div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4"><div><div class="flex flex-wrap items-center gap-3"><h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2"><span>Health Questionnaire</span><span class="text-xl sm:text-2xl font-semibold text-slate-600">स्वास्थ्य प्रश्नावली</span></h1><span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[#e6f7f2] text-[#0d6e6e] border border-[#0d6e6e]/20 shadow-2xs"><svg class="w-3.5 h-3.5 text-[#0d6e6e]" fill="currentColor" viewbox="0 0 20 20"><path clip-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" fill-rule="evenodd"></path></svg><span>Confidential &amp; ABDM Verified</span></span></div><p class="mt-2 text-sm text-slate-600 max-w-3xl leading-relaxed">Answer a few questions to keep your health information up to date. <span class="text-slate-400">•</span> <span class="text-slate-500">अपनी स्वास्थ्य जानकारी अपडेट रखने के लिए कुछ सवालों के जवाब दें।</span></p></div><div class="flex-shrink-0 pt-1 md:pt-0"><div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-100 border border-slate-200 text-xs font-medium text-slate-600"><span class="w-2 h-2 rounded-full bg-emerald-500"></span><span>Auto-saved at 10:42 AM • स्वतः सहेजा गया</span></div></div></div></div></section>
+<!-- END: PageHeader -->
+<!-- BEGIN: MainContentGrid -->
+<main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8"><div class="grid grid-cols-1 lg:grid-cols-12 gap-8"><section aria-label="Health Questionnaire Form" class="lg:col-span-8 space-y-6"><div class="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 shadow-sm"><div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3"><div><div class="flex items-center gap-2"><h2 class="text-base font-bold text-slate-900">Your progress</h2><span class="text-sm text-slate-500 font-medium">• आपकी प्रगति</span></div><p class="text-xs text-slate-500 mt-0.5">12 of 15 questions answered (12/15 प्रश्न पूर्ण)</p></div><div class="flex items-center gap-2"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-[#e6f7f2] text-[#0d6e6e]">3 Remaining • 3 शेष</span><span class="text-xs text-slate-400">Est. time: 2 mins</span></div></div><div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden mb-2"><div class="bg-[#0d6e6e] h-2.5 rounded-full transition-all duration-500" style="width: 80%;"></div></div><div class="flex justify-between items-center text-xs"><span class="font-bold text-[#0d6e6e]">80% Complete</span><span class="text-slate-400">Section 3 of 8</span></div></div><div class="bg-white rounded-2xl border border-slate-200 p-5 sm:p-7 shadow-sm"><div class="flex items-center justify-between pb-4 border-b border-slate-100 mb-6"><div><div class="flex items-center gap-2"><span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-[#0d6e6e] text-white text-xs font-bold">3</span><h3 class="text-lg font-bold text-slate-900">Medical History</h3><span class="text-base font-semibold text-slate-500">• चिकित्सा इतिहास</span></div><p class="text-xs text-slate-500 mt-1">Tell us about your previous health conditions • अपनी पिछली स्वास्थ्य स्थितियों के बारे में बताएं।</p></div><span class="text-xs font-semibold text-[#0d6e6e] bg-[#e6f7f2] px-2.5 py-1 rounded-full">In Progress</span></div><div class="space-y-6"><div class="space-y-3"><label class="block text-sm font-bold text-slate-800 leading-snug">1. Have you ever been diagnosed with a long-term health condition?<span class="block text-xs font-normal text-slate-500 mt-0.5">क्या आपको कभी किसी दीर्घकालिक स्वास्थ्य स्थिति का निदान किया गया है?</span></label><div class="grid grid-cols-1 sm:grid-cols-3 gap-3"><label class="relative flex items-center justify-between p-3.5 text-xs font-medium rounded-xl border border-[#0d6e6e] bg-[#e6f7f2] text-[#0d6e6e] cursor-pointer transition-all shadow-2xs"><div class="flex items-center gap-2"><span class="w-4 h-4 rounded-full border-2 border-[#0d6e6e] flex items-center justify-center"><span class="w-2 h-2 rounded-full bg-[#0d6e6e]"></span></span><span class="font-bold">Yes (हाँ)</span></div><input checked="" class="sr-only" name="diagnosed_long_term" type="radio" value="yes"/></label><label class="relative flex items-center justify-between p-3.5 text-xs font-medium rounded-xl border border-slate-200 bg-white hover:border-[#0d6e6e] text-slate-700 cursor-pointer transition-all"><div class="flex items-center gap-2"><span class="w-4 h-4 rounded-full border border-slate-300 flex items-center justify-center"></span><span class="font-semibold">No (नहीं)</span></div><input class="sr-only" name="diagnosed_long_term" type="radio" value="no"/></label><label class="relative flex items-center justify-between p-3.5 text-xs font-medium rounded-xl border border-slate-200 bg-white hover:border-[#0d6e6e] text-slate-700 cursor-pointer transition-all"><div class="flex items-center gap-2"><span class="w-4 h-4 rounded-full border border-slate-300 flex items-center justify-center"></span><span class="font-semibold">Prefer not to say (बताना नहीं चाहते)</span></div><input class="sr-only" name="diagnosed_long_term" type="radio" value="prefer_not"/></label></div><div class="mt-4 p-4 rounded-xl bg-[#f0f9f9] border border-[#0d6e6e]/30 space-y-3"><span class="text-xs font-bold text-slate-800 block">Which conditions? (Select all that apply) <span class="font-normal text-slate-600">• कौन सी स्थितियां? (लागू होने वाले सभी चुनें)</span></span><div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5"><label class="flex items-center gap-2.5 p-2.5 rounded-lg bg-white border border-[#0d6e6e]/30 text-xs font-semibold text-[#0d6e6e] cursor-pointer"><input checked="" class="rounded border-slate-300 text-[#0d6e6e] focus:ring-[#0d6e6e]" type="checkbox"/><span class="text-slate-800">Hypertension (उच्च रक्तचाप)</span></label><label class="flex items-center gap-2.5 p-2.5 rounded-lg bg-white border border-[#0d6e6e]/30 text-xs font-semibold text-[#0d6e6e] cursor-pointer"><input checked="" class="rounded border-slate-300 text-[#0d6e6e] focus:ring-[#0d6e6e]" type="checkbox"/><span class="text-slate-800">Asthma (दमा / अस्थमा)</span></label><label class="flex items-center gap-2.5 p-2.5 rounded-lg bg-white border border-slate-200 text-xs font-normal text-slate-700 cursor-pointer hover:border-[#0d6e6e]"><input class="rounded border-slate-300 text-[#0d6e6e] focus:ring-[#0d6e6e]" type="checkbox"/><span class="text-slate-800">Diabetes (मधुमेह)</span></label><label class="flex items-center gap-2.5 p-2.5 rounded-lg bg-white border border-slate-200 text-xs font-normal text-slate-700 cursor-pointer hover:border-[#0d6e6e]"><input class="rounded border-slate-300 text-[#0d6e6e] focus:ring-[#0d6e6e]" type="checkbox"/><span class="text-slate-800">Heart condition (हृदय रोग)</span></label><label class="sm:col-span-2 flex items-center gap-2.5 p-2.5 rounded-lg bg-white border border-[#0d6e6e]/30 text-xs font-semibold text-[#0d6e6e] cursor-pointer"><input checked="" class="rounded border-slate-300 text-[#0d6e6e] focus:ring-[#0d6e6e]" type="checkbox"/><span class="text-slate-800">Other (अन्य)</span></label></div><div class="pt-2"><label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">Please specify • कृपया विवरण दें</label><input class="w-full text-xs rounded-lg border-slate-200 focus:border-[#0d6e6e] focus:ring focus:ring-[#0d6e6e]/20 py-2 px-3 text-slate-800 bg-white" type="text" value="Mild seasonal allergic rhinitis in autumn"/></div></div></div><div class="space-y-3 pt-4 border-t border-slate-100"><label class="block text-sm font-bold text-slate-800 leading-snug">2. Any prior surgeries or hospitalizations in the past 2 years?<span class="block text-xs font-normal text-slate-500 mt-0.5">पिछले 2 वर्षों में कोई पूर्व सर्जरी या अस्पताल में भर्ती?</span></label><div class="grid grid-cols-1 sm:grid-cols-3 gap-3"><label class="relative flex items-center justify-between p-3.5 text-xs font-medium rounded-xl border border-[#0d6e6e] bg-[#e6f7f2] text-[#0d6e6e] cursor-pointer transition-all shadow-2xs"><div class="flex items-center gap-2"><span class="w-4 h-4 rounded-full border-2 border-[#0d6e6e] flex items-center justify-center"><span class="w-2 h-2 rounded-full bg-[#0d6e6e]"></span></span><span class="font-bold">No (नहीं)</span></div><input checked="" class="sr-only" name="surgeries_past_2y" type="radio" value="no"/></label><label class="relative flex items-center justify-between p-3.5 text-xs font-medium rounded-xl border border-slate-200 bg-white hover:border-[#0d6e6e] text-slate-700 cursor-pointer transition-all"><div class="flex items-center gap-2"><span class="w-4 h-4 rounded-full border border-slate-300 flex items-center justify-center"></span><span class="font-semibold">Yes (हाँ)</span></div><input class="sr-only" name="surgeries_past_2y" type="radio" value="yes"/></label><label class="relative flex items-center justify-between p-3.5 text-xs font-medium rounded-xl border border-slate-200 bg-white hover:border-[#0d6e6e] text-slate-700 cursor-pointer transition-all"><div class="flex items-center gap-2"><span class="w-4 h-4 rounded-full border border-slate-300 flex items-center justify-center"></span><span class="font-semibold">Prefer not to say (बताना नहीं चाहते)</span></div><input class="sr-only" name="surgeries_past_2y" type="radio" value="prefer_not"/></label></div></div></div><div class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 mt-6 border-t border-slate-100"><button class="w-full sm:w-auto px-4 py-2.5 rounded-full text-xs font-semibold text-slate-600 hover:bg-slate-100 border border-slate-200 transition-colors flex items-center justify-center gap-1.5" type="button"><span>← Back (वापस)</span></button><div class="flex items-center gap-3 w-full sm:w-auto justify-end"><button class="px-4 py-2.5 rounded-full text-xs font-semibold text-slate-600 hover:text-[#0d6e6e] border border-slate-300 hover:bg-slate-50 transition-colors" type="button">Save for later (बाद के लिए सहेजें)</button><button class="inline-flex items-center justify-center gap-1.5 px-6 py-2.5 rounded-full bg-[#0d6e6e] hover:bg-[#095555] text-white text-xs font-bold shadow-sm transition-all" type="button"><span>Save &amp; continue (सहेजें और जारी रखें)</span><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24"><path d="M14 5l7 7m0 0l-7 7m7-7H3" stroke-linecap="round" stroke-linejoin="round"></path></svg></button></div></div><div class="flex items-center gap-2 mt-4 text-xs text-emerald-800 bg-emerald-100/70 px-3.5 py-2 rounded-lg"><svg class="w-4 h-4 text-emerald-600" fill="currentColor" viewbox="0 0 20 20"><path clip-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" fill-rule="evenodd"></path></svg><span>Your progress has been saved. • आपकी प्रगति सहेज ली गई है।</span></div></div><div class="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 shadow-sm"><div class="flex items-center justify-between pb-4 border-b border-slate-100 mb-4"><div><h2 class="text-base font-bold text-slate-900">Review your answers</h2><p class="text-xs text-slate-500">अपने उत्तरों की समीक्षा करें और आवश्यकतानुसार संपादित करें</p></div><span class="text-xs font-semibold text-[#0d6e6e]">5 of 8 reviewed</span></div><div class="divide-y divide-slate-100 text-xs"><div class="py-3 flex items-center justify-between gap-3"><div><div class="flex items-center gap-2"><span class="font-bold text-slate-800">1. Personal Information</span><span class="text-slate-400">• व्यक्तिगत जानकारी</span></div><span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-[#e6f7f2] text-[#0d6e6e] mt-1">Complete (पूर्ण)</span></div><button class="font-semibold text-[#0d6e6e] hover:underline" type="button">Edit / संपादित करें</button></div><div class="py-3 flex items-center justify-between gap-3"><div><div class="flex items-center gap-2"><span class="font-bold text-slate-800">2. General &amp; Symptoms</span><span class="text-slate-400">• लक्षण और शुरुआत</span></div><span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-[#e6f7f2] text-[#0d6e6e] mt-1">Complete (पूर्ण)</span></div><button class="font-semibold text-[#0d6e6e] hover:underline" type="button">Edit / संपादित करें</button></div><div class="py-3 flex items-center justify-between gap-3 bg-slate-50/50 -mx-2 px-2 rounded-lg"><div><div class="flex items-center gap-2"><span class="font-bold text-slate-900">3. Medical History</span><span class="text-slate-500">• चिकित्सा इतिहास</span></div><span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-amber-100 text-amber-800 mt-1">In Progress (प्रगति पर)</span></div><span class="text-xs text-slate-400 italic">Currently editing</span></div><div class="py-3 flex items-center justify-between gap-3"><div><div class="flex items-center gap-2"><span class="font-bold text-slate-800">4. Allergies &amp; Sensitivities</span><span class="text-slate-400">• एलर्जी</span></div><span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-[#e6f7f2] text-[#0d6e6e] mt-1">Complete (NKDA Verified)</span></div><button class="font-semibold text-[#0d6e6e] hover:underline" type="button">Edit / संपादित करें</button></div><div class="py-3 flex items-center justify-between gap-3"><div><div class="flex items-center gap-2"><span class="font-bold text-slate-800">5. Current Medications</span><span class="text-slate-400">• वर्तमान दवाएं</span></div><span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-[#e6f7f2] text-[#0d6e6e] mt-1">Complete (1 reported)</span></div><button class="font-semibold text-[#0d6e6e] hover:underline" type="button">Edit / संपादित करें</button></div><div class="py-3 flex items-center justify-between gap-3 opacity-60"><div><div class="flex items-center gap-2"><span class="font-bold text-slate-700">6. Lifestyle &amp; Habits</span><span class="text-slate-400">• जीवनशैली</span></div><span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-slate-100 text-slate-600 mt-1">Not Started (प्रारंभ नहीं)</span></div><button class="font-semibold text-slate-700 hover:underline" type="button">Start / शुरू करें</button></div></div></div></section><aside aria-label="Questionnaire Navigation and Guidelines" class="lg:col-span-4 space-y-6"><div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm"><div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4"><h3 class="text-sm font-bold text-slate-900 uppercase tracking-wide">Questionnaire Sections</h3><span class="text-xs font-medium text-slate-400">प्रश्नावली अनुभाग</span></div><div class="space-y-2 text-xs"><div class="flex items-center justify-between p-2 rounded-xl bg-slate-50 border border-slate-100"><div class="flex items-center gap-2.5"><span class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center text-[10px] font-bold">✓</span><span class="font-semibold text-slate-800">01 Personal Info</span></div><span class="text-[10px] text-emerald-800 font-medium">Done</span></div><div class="flex items-center justify-between p-2 rounded-xl bg-slate-50 border border-slate-100"><div class="flex items-center gap-2.5"><span class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center text-[10px] font-bold">✓</span><span class="font-semibold text-slate-800">02 Symptoms &amp; Complaint</span></div><span class="text-[10px] text-emerald-800 font-medium">Done</span></div><div class="flex items-center justify-between p-2 rounded-xl bg-[#e6f7f2] border border-[#0d6e6e]/40 ring-1 ring-[#0d6e6e]/20"><div class="flex items-center gap-2.5"><span class="w-5 h-5 rounded-full bg-[#0d6e6e] text-white flex items-center justify-center text-[10px] font-bold">03</span><span class="font-bold text-[#0d6e6e]">03 Medical History</span></div><span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span></div><div class="flex items-center justify-between p-2 rounded-xl bg-slate-50 border border-slate-100"><div class="flex items-center gap-2.5"><span class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center text-[10px] font-bold">✓</span><span class="font-semibold text-slate-800">04 Allergies</span></div><span class="text-[10px] text-emerald-800 font-medium">Done</span></div><div class="flex items-center justify-between p-2 rounded-xl bg-slate-50 border border-slate-100"><div class="flex items-center gap-2.5"><span class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center text-[10px] font-bold">✓</span><span class="font-semibold text-slate-800">05 Medications</span></div><span class="text-[10px] text-emerald-800 font-medium">Done</span></div><div class="flex items-center justify-between p-2 rounded-xl bg-white border border-slate-200 text-slate-500"><div class="flex items-center gap-2.5"><span class="w-5 h-5 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center text-[10px] font-bold">06</span><span>06 Lifestyle &amp; Habits</span></div><span class="text-[10px] text-slate-400">Pending</span></div><div class="flex items-center justify-between p-2 rounded-xl bg-white border border-slate-200 text-slate-500"><div class="flex items-center gap-2.5"><span class="w-5 h-5 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center text-[10px] font-bold">07</span><span>07 Family History</span></div><span class="text-[10px] text-slate-400">Pending</span></div><div class="flex items-center justify-between p-2 rounded-xl bg-white border border-slate-200 text-slate-500"><div class="flex items-center gap-2.5"><span class="w-5 h-5 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center text-[10px] font-bold">08</span><span>08 Additional Notes</span></div><span class="text-[10px] text-slate-400">Pending</span></div></div></div><div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm text-xs text-slate-600"><div class="flex items-center gap-2.5 mb-2"><div class="w-8 h-8 rounded-lg bg-[#e6f7f2] text-[#0d6e6e] flex items-center justify-center"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" stroke-linecap="round" stroke-linejoin="round"></path></svg></div><div><h4 class="font-bold text-slate-900">Your privacy is protected</h4><span class="text-[11px] text-slate-400">गोपनीयता सुरक्षा</span></div></div><p class="text-slate-500 leading-relaxed mb-3">Your answers are part of your personal health record, encrypted with 256-bit AES. Sensitive questions always include 'Prefer not to say'. No data is shared without your explicit ABDM consent.</p><div class="flex flex-wrap gap-2 pt-2 border-t border-slate-100"><span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-100 text-slate-700">ABDM M1/M2/M3 Compliant</span><span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-[#e6f7f2] text-[#0d6e6e]">DISHA Standard</span></div></div><div class="bg-slate-50 rounded-2xl border border-slate-200 p-5 shadow-2xs text-xs"><div class="flex items-start gap-3"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 text-[#0d6e6e] flex items-center justify-center flex-shrink-0 mt-0.5"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24"><path d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" stroke-linecap="round" stroke-linejoin="round"></path></svg></div><div><h4 class="font-bold text-slate-900 mb-1">Need Help? (सहायता चाहिए?)</h4><p class="text-slate-500 leading-relaxed">Have questions about this form? Contact your care coordinator or call helpline <span class="font-bold text-slate-800">108 / 112</span>.</p></div></div></div></aside></div></main>
+<!-- END: MainContentGrid -->
+<!-- BEGIN: MainFooter -->
+<!-- Responsive Footer adhering strictly to CareFlow clinical security specifications -->
+<footer class="mt-auto bg-white border-t border-slate-200 py-6 text-xs text-slate-500">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-4">
+<!-- Security Badges Summary -->
+<div class="flex flex-wrap items-center justify-center md:justify-start gap-x-3 gap-y-1 text-slate-600">
+<span class="font-bold text-slate-800">CareFlow Clinical Security</span>
+<span class="text-slate-300">•</span>
+<span>Patient information is protected</span>
+<span class="text-slate-300">•</span>
+<span>ABDM M1/M2/M3 Compliant</span>
+<span class="text-slate-300">•</span>
+<span>256-bit AES Patient Vault</span>
+<span class="text-slate-300">•</span>
+<span>HIPAA &amp; DISHA Standard</span>
+</div>
+<!-- Copyright & Bilingual Legal Links -->
+<div class="flex items-center gap-4 text-slate-400">
+<span>© 2026 CareFlow Inc. All rights reserved.</span>
+<a class="hover:text-[#0d6e6e] transition-colors" href="#">Privacy Policy (गोपनीयता नीति)</a>
+<a class="hover:text-[#0d6e6e] transition-colors" href="#">Terms of Care</a>
+</div>
+</div>
+</footer>
+<!-- END: MainFooter -->
+
+<!-- Page Interactivity Script -->
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // Back button
+    const backBtn = document.querySelector('button:has(span:contains("Back"))') || 
+                    Array.from(document.querySelectorAll('button')).find(b => b.textContent.includes('Back'));
+    if (backBtn) {
+      backBtn.addEventListener('click', () => {
+        window.location.href = '../careflow_patient_web_p06_my_symptoms_health_information/code.html';
+      });
+    }
+
+    // Save for later button
+    const saveLaterBtn = Array.from(document.querySelectorAll('button')).find(b => b.textContent.includes('Save for later'));
+    if (saveLaterBtn) {
+      saveLaterBtn.addEventListener('click', () => {
+        if (window.CareFlow) {
+          CareFlow.showToast('Questionnaire draft auto-saved securely. You can resume anytime.', 'success');
+        }
+      });
+    }
+
+    // Save & continue button -> leads to P10
+    const continueBtn = Array.from(document.querySelectorAll('button')).find(b => b.textContent.includes('Save & continue'));
+    if (continueBtn) {
+      continueBtn.addEventListener('click', () => {
+        if (window.CareFlow) {
+          CareFlow.showToast('Questionnaire completed! Finalizing clinical intake...', 'info');
+        }
+        continueBtn.disabled = true;
+        continueBtn.innerHTML = `
+          <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white inline" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+          </svg>
+          Submitting...
+        `;
+        setTimeout(() => {
+          if (window.CareFlow) {
+            CareFlow.showToast('Pre-visit intake complete! Redirecting to confirmation...', 'success');
+          }
+          setTimeout(() => {
+            window.location.href = '../careflow_patient_web_p10_visit_intake_complete/code.html';
+          }, 800);
+        }, 1200);
+      });
+    }
+
+    // Toggle conditional conditions block based on long-term condition radio
+    const radioInputs = document.querySelectorAll('input[name="diagnosed_long_term"]');
+    const conditionsBlock = document.querySelector('.bg-\\[\\#f0f9f9\\]');
+    radioInputs.forEach(radio => {
+      radio.addEventListener('change', () => {
+        // update styling on parent labels
+        radioInputs.forEach(r => {
+          const lbl = r.closest('label');
+          if (lbl) {
+            if (r.checked) {
+              lbl.className = 'relative flex items-center justify-between p-3.5 text-xs font-medium rounded-xl border border-[#0d6e6e] bg-[#e6f7f2] text-[#0d6e6e] cursor-pointer transition-all shadow-2xs';
+            } else {
+              lbl.className = 'relative flex items-center justify-between p-3.5 text-xs font-medium rounded-xl border border-slate-200 bg-white hover:border-[#0d6e6e] text-slate-700 cursor-pointer transition-all';
+            }
+          }
+        });
+
+        if (conditionsBlock) {
+          if (radio.value === 'yes' && radio.checked) {
+            conditionsBlock.style.display = 'block';
+          } else if (radio.checked) {
+            conditionsBlock.style.display = 'none';
+          }
+        }
+      });
+    });
+
+    // Surgery radio styling
+    const surgeryRadios = document.querySelectorAll('input[name="surgeries_past_2y"]');
+    surgeryRadios.forEach(radio => {
+      radio.addEventListener('change', () => {
+        surgeryRadios.forEach(r => {
+          const lbl = r.closest('label');
+          if (lbl) {
+            if (r.checked) {
+              lbl.className = 'relative flex items-center justify-between p-3.5 text-xs font-medium rounded-xl border border-[#0d6e6e] bg-[#e6f7f2] text-[#0d6e6e] cursor-pointer transition-all shadow-2xs';
+            } else {
+              lbl.className = 'relative flex items-center justify-between p-3.5 text-xs font-medium rounded-xl border border-slate-200 bg-white hover:border-[#0d6e6e] text-slate-700 cursor-pointer transition-all';
+            }
+          }
+        });
+      });
+    });
+
+    // Review answer Edit buttons
+    document.querySelectorAll('.divide-y button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const title = btn.closest('.py-3')?.querySelector('.font-bold')?.textContent?.trim() || 'Section';
+        if (window.CareFlow) {
+          CareFlow.showToast(`Navigating to ${title}...`, 'info');
+        }
+      });
+    });
+  });
+</script>
+</body></html>

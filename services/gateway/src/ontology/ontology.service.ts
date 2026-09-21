@@ -1,5 +1,5 @@
 import { readdirSync, readFileSync } from "node:fs";
-import { join, resolve } from "node:path";
+import { basename, join, resolve } from "node:path";
 import { Injectable, OnModuleInit } from "@nestjs/common";
 import { load } from "js-yaml";
 import { rootLogger } from "../common/logger";
@@ -10,8 +10,11 @@ import {
   OntologyModuleSchema,
   type Slot,
 } from "./ontology.types";
+import { checkVocabulary, loadVocabulary, type Vocabulary } from "./vocabulary";
 
 const CHIEF_COMPLAINT_SLOT_ID = "chief_complaint";
+const AYUSH_DIR = "ayush";
+const VOCABULARY_SUFFIX = "-vocabulary";
 
 /**
  * Walks packages/ontology at startup and answers "what's the next question" and "which red
@@ -21,6 +24,11 @@ const CHIEF_COMPLAINT_SLOT_ID = "chief_complaint";
 @Injectable()
 export class OntologyService implements OnModuleInit {
   private modules = new Map<string, OntologyModule>();
+  /** Modules under modules/ayush/ — Prashna modules asked after the complaint module in an AYUSH
+   * department. Never offered as a chief complaint. */
+  private ayushModuleIds = new Set<string>();
+  private ayushSlotIds = new Set<string>();
+  private vocabulary!: Vocabulary;
 
   onModuleInit() {
     this.loadModules();
@@ -36,6 +44,9 @@ export class OntologyService implements OnModuleInit {
       (f): f is string => typeof f === "string" && (f.endsWith(".yaml") || f.endsWith(".yml")),
     );
     for (const file of files) {
+      // `*-vocabulary.yaml` is the clinician-side examination vocabulary, not an interview
+      // module — loaded separately below.
+      if (basename(file).replace(/\.ya?ml$/, "").endsWith(VOCABULARY_SUFFIX)) continue;
       const raw = load(readFileSync(join(dir, file), "utf8"));
       const parsed = OntologyModuleSchema.safeParse(raw);
       if (!parsed.success) {
@@ -44,18 +55,81 @@ export class OntologyService implements OnModuleInit {
         );
       }
       this.modules.set(parsed.data.id, parsed.data);
+      if (file.split(/[\\/]/)[0] === AYUSH_DIR) this.ayushModuleIds.add(parsed.data.id);
     }
+    this.assertAyushSlotIdsAreUnique();
+
+    this.vocabulary = loadVocabulary(dir);
+    const problems = checkVocabulary(this.vocabulary, [...this.modules.values()]);
+    if (problems.length > 0) {
+      throw new Error(`Pariksha vocabulary is inconsistent with the ontology modules:\n  ${problems.join("\n  ")}`);
+    }
+
     rootLogger.info(
-      { modules: [...this.modules.keys()] },
+      { modules: [...this.modules.keys()], ayush: [...this.ayushModuleIds], vocabulary_status: this.vocabulary.status },
       "ontology modules loaded",
     );
   }
 
+  /** An AYUSH session's `filled` map accumulates across modules, keyed by slot id — so an ayush
+   * slot id that collided with another ayush slot, or with the complaint module the patient
+   * picked, would silently overwrite an answer. Fail at startup instead. */
+  private assertAyushSlotIdsAreUnique() {
+    const owners = new Map<string, string>();
+    for (const id of this.ayushModuleIds) {
+      for (const slot of this.modules.get(id)!.slots) {
+        const existing = owners.get(slot.id);
+        if (existing) throw new Error(`Slot id '${slot.id}' is declared by both '${existing}' and '${id}'`);
+        owners.set(slot.id, id);
+        this.ayushSlotIds.add(slot.id);
+      }
+    }
+    for (const [id, module_] of this.modules) {
+      if (this.ayushModuleIds.has(id)) continue;
+      for (const slot of module_.slots) {
+        const owner = owners.get(slot.id);
+        if (owner) throw new Error(`Slot id '${slot.id}' in '${id}' collides with AYUSH module '${owner}'`);
+      }
+    }
+  }
+
+  /** Every loaded module, AYUSH ones included. */
   listModules(): { id: string; label: string }[] {
     return [...this.modules.values()].map((m) => ({
       id: m.id,
       label: m.label,
     }));
+  }
+
+  /** Modules a patient can pick as their chief complaint — AYUSH Prashna modules are excluded:
+   * they are asked by the state machine, never chosen. */
+  listComplaintModules(): { id: string; label: string }[] {
+    return this.listModules().filter((m) => !this.ayushModuleIds.has(m.id));
+  }
+
+  isAyushModule(moduleId: string): boolean {
+    return this.ayushModuleIds.has(moduleId);
+  }
+
+  isAyushSlot(slotId: string): boolean {
+    return this.ayushSlotIds.has(slotId);
+  }
+
+  getVocabulary(): Vocabulary {
+    return this.vocabulary;
+  }
+
+  /** The Prashna modules, in interview order — the vocabulary's `prashna.groups` order. The
+   * chief-complaint group has `module: null` (whatever complaint module the patient picked). */
+  ayushSequence(): string[] {
+    return this.vocabulary.prashna.groups.flatMap((g) => (g.module ? [g.module] : []));
+  }
+
+  /** The ordered modules an interview walks: the complaint module, then — in an AYUSH
+   * department — every Prashna module. Code decides; no model is consulted (rule 1). */
+  moduleOrder(complaintModuleId: string, ayushMode: boolean): string[] {
+    this.getModule(complaintModuleId);
+    return ayushMode ? [complaintModuleId, ...this.ayushSequence()] : [complaintModuleId];
   }
 
   getModule(moduleId: string): OntologyModule {
@@ -76,7 +150,7 @@ export class OntologyService implements OnModuleInit {
       type: "enum",
       required: true,
       input: ["voice", "chips"],
-      options: this.listModules().map((m) => ({
+      options: this.listComplaintModules().map((m) => ({
         value: m.id,
         label: { en: m.label },
       })),
@@ -107,6 +181,20 @@ export class OntologyService implements OnModuleInit {
     return eligible.find((slot) => !(slot.id in filled)) ?? null;
   }
 
+  /** Where the interview goes next across an ordered module list: the first unanswered eligible
+   * slot in `order[fromIndex]`, else the first in the following modules. `null` = interview over. */
+  nextInOrder(
+    order: string[],
+    fromIndex: number,
+    filled: Record<string, unknown>,
+  ): { moduleId: string; moduleIndex: number; slot: Slot } | null {
+    for (let i = fromIndex; i < order.length; i++) {
+      const slot = this.nextSlot(order[i], filled);
+      if (slot) return { moduleId: order[i], moduleIndex: i, slot };
+    }
+    return null;
+  }
+
   progress(
     moduleId: string,
     filled: Record<string, unknown>,
@@ -114,6 +202,21 @@ export class OntologyService implements OnModuleInit {
     const eligible = this.eligibleSlots(moduleId, filled);
     const completed = eligible.filter((slot) => slot.id in filled).length;
     return { completed, total: eligible.length };
+  }
+
+  /** Progress across every module of an interview — the denominator of an AYUSH session is the
+   * complaint module plus all Prashna modules, so the bar never resets between modules. */
+  progressAcross(
+    order: string[],
+    filled: Record<string, unknown>,
+  ): { completed: number; total: number } {
+    return order.reduce(
+      (acc, id) => {
+        const p = this.progress(id, filled);
+        return { completed: acc.completed + p.completed, total: acc.total + p.total };
+      },
+      { completed: 0, total: 0 },
+    );
   }
 
   /** Deterministic predicates only, evaluated over filled slots — CLAUDE.md rule 3. `quote`
