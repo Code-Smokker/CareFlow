@@ -4,9 +4,9 @@
   "private": true,
   "description": "Staff console — queue, triage, the case dossier, documents, medications, and the standards/governance screens PS 26047 requires. Design lifted from the original Hospital-Side-Panel import; see docs/16-design-system.md.",
   "scripts": {
-    "dev": "next dev --port 3001",
+    "dev": "next dev --port 3011",
     "build": "next build",
-    "start": "next start --port 3001",
+    "start": "next start --port 3011",
     "lint": "eslint",
     "typecheck": "tsc --noEmit"
   },

@@ -4,9 +4,9 @@
   "private": true,
   "description": "The patient. PWA, one question per screen, patient-density design (packages/ui). Attaches to any device via the QR on the token slip — not a kiosk app.",
   "scripts": {
-    "dev": "next dev --port 3000",
+    "dev": "next dev --port 3010",
     "build": "next build",
-    "start": "next start --port 3000",
+    "start": "next start --port 3010",
     "lint": "eslint",
     "typecheck": "tsc --noEmit"
   },

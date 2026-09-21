@@ -16,7 +16,11 @@ export function useQrScanner(onDecode: (text: string) => void) {
   const [scanning, setScanning] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const supported = typeof window !== "undefined" && "BarcodeDetector" in window && "mediaDevices" in navigator;
+  const [supported, setSupported] = useState(false);
+
+  useEffect(() => {
+    setSupported("BarcodeDetector" in window && "mediaDevices" in navigator);
+  }, []);
 
   const stop = useCallback(() => {
     if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);

@@ -13,14 +13,36 @@ const priorityTone: Record<string, "critical" | "uncertain" | "neutral"> = {
 
 export default async function QueuePage() {
   const gateway = createGatewayClient();
-  const { data, error } = await gateway.GET("/v1/visits/queue");
+  let data;
+  let error;
+
+  try {
+    const res = await gateway.GET("/v1/visits/queue");
+    data = res.data;
+    error = res.error;
+  } catch (err) {
+    return (
+      <div className="p-panel-padding">
+        <h1 className="font-page-title text-page-title text-on-surface">OPD Queue</h1>
+        <div className="mt-space-md p-panel-padding rounded-xl border border-error-container bg-error-container/20">
+          <p className="font-body-strong text-body-strong text-error">
+            Gateway API unreachable (port 4000)
+          </p>
+          <p className="mt-space-xs text-clinical-data text-on-surface-variant">
+            Could not connect to the gateway API: {err instanceof Error ? err.message : String(err)}.
+            Ensure the gateway is running (<code>cd services/gateway && pnpm dev</code>).
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   if (error) {
     return (
       <div className="p-panel-padding">
         <h1 className="font-page-title text-page-title text-on-surface">OPD Queue</h1>
         <p className="mt-space-sm text-clinical-data text-error">
-          Could not reach the gateway: {error.error.message ?? "unknown error"}. Is it running on{" "}
+          Could not reach the gateway: {error.error?.message ?? "unknown error"}. Is it running on{" "}
           <code>GATEWAY_URL</code>?
         </p>
       </div>
