@@ -1,362 +1,281 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"><title>CareFlow</title><link href="https://fonts.googleapis.com" rel="preconnect"><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&amp;display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"><script src="../shared_careflow.js"></script><style>@layer base{html,body{width:100%;margin:0;padding:0;min-height:100%;background-color:#faf8ff;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "tertiary-container": "#006c7f", "on-secondary-fixed": "#00201c", "on-background": "#131b2e", "primary-container": "#0d6e6e", "on-error": "#ffffff", "on-surface-variant": "#3e4948", "surface-container": "#eaedff", "tertiary-fixed-dim": "#4cd7f6", "secondary-fixed-dim": "#4fdbc8", "surface-container-highest": "#dae2fd", "on-primary": "#ffffff", "secondary": "#006b5f", "surface-bright": "#faf8ff", "surface": "#faf8ff", "inverse-on-surface": "#eef0ff", "surface-container-high": "#e2e7ff", "tertiary": "#005261", "surface-container-lowest": "#ffffff", "tertiary-fixed": "#acedff", "primary": "#005454", "background": "#faf8ff", "on-primary-fixed-variant": "#004f50", "on-tertiary": "#ffffff", "on-surface": "#131b2e", "on-primary-fixed": "#002020", "surface-dim": "#d2d9f4", "primary-fixed": "#a0f0f0", "outline": "#6e7979", "on-error-container": "#93000a", "surface-variant": "#dae2fd", "primary-fixed-dim": "#84d4d3", "on-primary-container": "#9dedec", "inverse-primary": "#84d4d3", "error": "#ba1a1a", "on-tertiary-fixed-variant": "#004e5c", "secondary-container": "#6df5e1", "secondary-fixed": "#71f8e4", "error-container": "#ffdad6", "on-tertiary-container": "#9eeaff", "surface-container-low": "#f2f3ff", "outline-variant": "#bec9c8", "on-secondary": "#ffffff", "surface-tint": "#016a6a", "on-secondary-container": "#006f64", "on-tertiary-fixed": "#001f26", "inverse-surface": "#283044", "on-secondary-fixed-variant": "#005048" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "margin-mobile": "1.25rem", "space-2xl": "3rem", "space-md": "1rem", "space-lg": "1.5rem", "space-xl": "2rem", "space-xxs": "0.25rem", "space-xs": "0.5rem", "gutter-desktop": "1.5rem", "space-3xl": "4rem", "margin-desktop": "2.5rem", "gutter-mobile": "1rem", "space-sm": "0.75rem" }, "fontFamily": { "title-md": ["Plus Jakarta Sans"], "display-lg": ["Plus Jakarta Sans"], "headline-md": ["Plus Jakarta Sans"], "headline-lg-mobile": ["Plus Jakarta Sans"], "headline-lg": ["Plus Jakarta Sans"], "body-lg": ["Plus Jakarta Sans"], "label-md": ["Plus Jakarta Sans"], "headline-sm": ["Plus Jakarta Sans"], "display-lg-mobile": ["Plus Jakarta Sans"], "body-md": ["Plus Jakarta Sans"], "label-sm": ["Plus Jakarta Sans"] }, "fontSize": { "title-md": ["18px", { "lineHeight": "24px", "fontWeight": "600" }], "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }], "headline-lg-mobile": ["26px", { "lineHeight": "34px", "letterSpacing": "-0.01em", "fontWeight": "600" }], "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.015em", "fontWeight": "600" }], "body-lg": ["16px", { "lineHeight": "26px", "fontWeight": "400" }], "label-md": ["13px", { "lineHeight": "18px", "letterSpacing": "0.01em", "fontWeight": "600" }], "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }], "display-lg-mobile": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "body-md": ["14px", { "lineHeight": "22px", "fontWeight": "400" }], "label-sm": ["11px", { "lineHeight": "16px", "letterSpacing": "0.04em", "fontWeight": "600" }] } } } }</script>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
-
-<link rel="preload" href="../material-symbols-outlined.woff2" as="font" type="font/woff2" crossorigin>
-<style id="careflow-material-symbols-core">
-  @font-face {
-    font-family: "Material Symbols Outlined";
-    font-style: normal;
-    font-weight: 100 700;
-    font-display: block;
-    src: url("../material-symbols-outlined.woff2") format("woff2"),
-         url("/material-symbols-outlined.woff2") format("woff2"),
-         url("https://fonts.gstatic.com/s/materialsymbolsoutlined/v373/kJEhBvYX7BgnkSrUwT8OhrdQw4oELdPIeeII9v6oFsLjBuVY.woff2") format("woff2");
-  }
-  .material-symbols-outlined {
-    font-family: "Material Symbols Outlined" !important;
-    font-weight: normal;
-    font-style: normal;
-    font-size: 24px;
-    line-height: 1;
-    letter-spacing: normal;
-    text-transform: none;
-    display: inline-block;
-    white-space: nowrap;
-    word-wrap: normal;
-    direction: ltr;
-    -webkit-font-feature-settings: "liga";
-    -moz-font-feature-settings: "liga";
-    font-feature-settings: "liga";
-    -webkit-font-smoothing: antialiased;
-    vertical-align: middle;
-  }
-</style>
-</head><body class="bg-surface text-on-surface font-body-md min-h-screen relative flex flex-col selection:bg-secondary-container selection:text-on-secondary-container"><div class="fixed inset-0 pointer-events-none z-0 overflow-hidden"><div class="absolute -top-32 -right-24 w-96 h-96 rounded-full bg-secondary-fixed-dim/20 blur-3xl"></div><div class="absolute top-1/4 -left-32 w-80 h-80 rounded-full bg-primary-fixed-dim/15 blur-3xl"></div><div class="absolute bottom-10 right-0 w-80 h-80 rounded-full bg-tertiary-fixed-dim/15 blur-3xl"></div></div><header class="fixed top-0 inset-x-0 z-50 pt-safe bg-surface/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(13,110,110,0.04)]"><div class="h-16 px-margin-mobile flex items-center justify-between"><div class="flex items-center gap-space-xs"><div class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center shadow-[0_2px_8px_-2px_rgba(13,110,110,0.25)]"><span class="material-symbols-outlined text-on-primary text-[22px]">volunteer_activism</span></div><div class="flex flex-col"><span class="font-title-md text-title-md text-primary tracking-tight">CareFlow</span></div></div><div class="flex items-center gap-space-xs"><button class="h-11 px-space-sm rounded-full bg-surface-container-low text-on-surface-variant font-label-md text-label-md flex items-center gap-space-xxs hover:bg-surface-container transition-colors" type="button"><span class="material-symbols-outlined text-[18px] text-primary">language</span><span>English</span><span class="material-symbols-outlined text-[16px]">arrow_drop_down</span></button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="relative z-10 flex flex-col flex-1 w-full pt-16 pb-safe bg-surface"><div class="flex flex-col w-full">
-<!-- Interactive Step Progress Ribbon -->
-<section class="px-margin-mobile pt-space-xs pb-space-sm">
-<div class="flex items-center justify-between py-space-xs">
-<div class="flex items-center gap-space-xs">
-<button id="consent-back-btn" aria-label="Go back to previous screen" class="w-9 h-9 rounded-full bg-surface-container flex items-center justify-center text-primary active:scale-95 transition-transform" type="button">
-<span class="material-symbols-outlined text-[20px]">arrow_back</span>
-</button>
-<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Step 2 of 6</span>
-</div>
-<div class="flex items-center gap-1.5 px-space-xs py-1 rounded-full bg-surface-container">
-<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
-<span class="font-label-sm text-label-sm text-primary font-semibold">30% completed</span>
-</div>
-</div>
-<!-- Stepper Navigation Nodes -->
-<nav aria-label="Onboarding Progress" class="pt-space-xs">
-<ol class="grid grid-cols-6 gap-1.5 items-center">
-<!-- Step 1: Language (Completed) -->
-<li class="flex flex-col gap-1 items-center">
-<div class="w-full h-1.5 rounded-full bg-primary"></div>
-<span class="font-label-sm text-[10px] text-primary flex items-center gap-0.5">
-<span class="material-symbols-outlined text-[11px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
-<span>Lang</span>
-</span>
-</li>
-<!-- Step 2: Consent (Active) -->
-<li class="flex flex-col gap-1 items-center">
-<div class="w-full h-1.5 rounded-full bg-primary shadow-sm shadow-primary/30"></div>
-<span class="font-label-sm text-[10px] text-primary font-bold">Consent</span>
-</li>
-<!-- Step 3: Identity -->
-<li class="flex flex-col gap-1 items-center">
-<div class="w-full h-1.5 rounded-full bg-surface-container"></div>
-<span class="font-label-sm text-[10px] text-on-surface-variant/60">Identity</span>
-</li>
-<!-- Step 4: Health Info -->
-<li class="flex flex-col gap-1 items-center">
-<div class="w-full h-1.5 rounded-full bg-surface-container"></div>
-<span class="font-label-sm text-[10px] text-on-surface-variant/60">Health</span>
-</li>
-<!-- Step 5: Review -->
-<li class="flex flex-col gap-1 items-center">
-<div class="w-full h-1.5 rounded-full bg-surface-container"></div>
-<span class="font-label-sm text-[10px] text-on-surface-variant/60">Review</span>
-</li>
-<!-- Step 6: Complete -->
-<li class="flex flex-col gap-1 items-center">
-<div class="w-full h-1.5 rounded-full bg-surface-container"></div>
-<span class="font-label-sm text-[10px] text-on-surface-variant/60">Done</span>
-</li>
-</ol>
-</nav>
-</section>
-<!-- Hero Reassurance Container with Flat Caring Healthcare Illustration -->
-<section class="px-margin-mobile py-space-xs">
-<div class="relative overflow-hidden rounded-2xl bg-surface-container-low p-space-md shadow-sm">
-<div class="relative flex items-center gap-space-md">
-<div class="w-24 h-24 rounded-xl overflow-hidden flex-shrink-0 bg-surface-container">
-<img class="w-full h-full object-cover" data-alt="Delightful warm flat vector illustration showing a compassionate doctor holding a gentle aqua shield with a glowing medical cross, surrounded by reassuring soft pastel teal ribbons and a subtle privacy lock, modern Indian healthcare aesthetic, clean minimalist lines" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCiV6JaQp0HXdVoNiis9N44XlP0qGyeG8NKU4EBSxWinoSgRJtEJYntivOcOLaAUu7WE5nrLb5NBnX7Wpe3AWAjnv-7w2WJidNJRwrifmUfUSoWSP_nbuEC8oK752NBNQm0cXP5B7QReaUGd8HTDOPj8WL2jpnL7sYeP9fldTtLIXUHvAPnuXhEFddOdOyboF09oEBIMrKES4vCigE__Ej8AE7MnEisEfVVWSXHMF8AB3d6zDtuoMJFww">
-</div>
-<div class="flex flex-col min-w-0">
-<div class="inline-flex items-center gap-1 self-start px-2 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed font-label-sm text-[10px] mb-1">
-<span class="material-symbols-outlined text-[12px]" style="font-variation-settings: 'FILL' 1;">verified_user</span>
-<span>Your Privacy First</span>
-</div>
-<h1 class="font-headline-sm text-headline-sm text-on-surface tracking-tight leading-snug">
-            Before we begin, your privacy is protected.
-          </h1>
-<p class="font-body-md text-body-md text-on-surface-variant pt-1">
-            Choose what you feel comfortable sharing. You can modify these anytime.
-          </p>
-</div>
-</div>
-</div>
-</section>
-<!-- Consent Action Cards Stack -->
-<section class="px-margin-mobile py-space-xs flex flex-col gap-space-sm" id="consent-options-group">
-<!-- CARD 1: Essential Health Data (Locked ON) -->
-<article class="p-space-md rounded-2xl bg-surface-container-lowest shadow-sm hover:shadow-md transition-shadow">
-<div class="flex items-start justify-between gap-space-xs mb-space-xs">
-<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed font-label-sm text-label-sm font-bold">
-<span class="material-symbols-outlined text-[12px]" style="font-variation-settings: 'FILL' 1;">lock</span>
-          ESSENTIAL
-        </span>
-<span class="font-label-sm text-label-sm text-on-surface-variant/80">Required for care</span>
-</div>
-<div class="flex items-center justify-between gap-space-sm">
-<div class="flex items-start gap-space-sm min-w-0">
-<div class="w-11 h-11 rounded-xl bg-surface-container-low flex items-center justify-center flex-shrink-0 text-primary">
-<span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 1;">health_and_safety</span>
-</div>
-<div class="flex flex-col min-w-0">
-<h2 class="font-title-md text-title-md text-on-surface truncate">Share health information</h2>
-<p class="font-body-md text-body-md text-on-surface-variant">
-              Allow CareFlow to collect symptoms and details provided during this intake.
-            </p>
-</div>
-</div>
-<!-- Locked Toggle (Active & Disabled) -->
-<div class="relative flex-shrink-0 pl-space-xs">
-<input aria-label="Essential health data sharing is permanently enabled" checked="" class="sr-only peer" disabled="" id="toggle-essential" type="checkbox">
-<div class="w-12 h-7 bg-primary rounded-full peer cursor-not-allowed opacity-95 transition-colors flex items-center px-1">
-<div class="w-5 h-5 bg-surface-container-lowest rounded-full shadow-sm transform translate-x-5 transition-transform flex items-center justify-center">
-<span class="material-symbols-outlined text-[13px] text-primary" style="font-variation-settings: 'FILL' 1;">lock</span>
-</div>
-</div>
-</div>
-</div>
-</article>
-<!-- CARD 2: Voice Input Assistance (Interactive ON) -->
-<article class="p-space-md rounded-2xl bg-surface-container-lowest shadow-sm hover:shadow-md transition-shadow">
-<div class="flex items-start justify-between gap-space-xs mb-space-xs">
-<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed font-label-sm text-label-sm font-bold">
-<span class="material-symbols-outlined text-[12px]">mic</span>
-          VOICE CARE
-        </span>
-<span class="font-label-sm text-label-sm text-secondary font-medium">Faster intake</span>
-</div>
-<label class="flex items-center justify-between gap-space-sm cursor-pointer select-none" for="toggle-voice">
-<div class="flex items-start gap-space-sm min-w-0">
-<div class="w-11 h-11 rounded-xl bg-surface-container-low flex items-center justify-center flex-shrink-0 text-secondary">
-<span class="material-symbols-outlined text-[24px]">graphic_eq</span>
-</div>
-<div class="flex flex-col min-w-0">
-<h2 class="font-title-md text-title-md text-on-surface truncate">Use voice for faster answers</h2>
-<p class="font-body-md text-body-md text-on-surface-variant">
-              Speak naturally instead of typing. Your audio stream is encrypted and securely processed.
-            </p>
-</div>
-</div>
-<!-- Dynamic Toggle Switch -->
-<div class="relative flex-shrink-0 pl-space-xs">
-<input checked="" class="sr-only peer" id="toggle-voice" type="checkbox">
-<div class="w-12 h-7 bg-surface-container rounded-full peer peer-checked:bg-primary transition-colors flex items-center px-1">
-<div class="w-5 h-5 bg-surface-container-lowest rounded-full shadow-sm peer-checked:translate-x-5 transition-transform flex items-center justify-center">
-<span class="material-symbols-outlined text-[13px] text-primary">check</span>
-</div>
-</div>
-</div>
-</label>
-</article>
-<!-- CARD 3: Past Medical Records (Interactive Optional OFF) -->
-<article class="p-space-md rounded-2xl bg-surface-container-lowest shadow-sm hover:shadow-md transition-shadow">
-<div class="flex items-start justify-between gap-space-xs mb-space-xs">
-<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-label-sm font-bold">
-<span class="material-symbols-outlined text-[12px]">folder_open</span>
-          OPTIONAL
-        </span>
-<span class="font-label-sm text-label-sm text-on-surface-variant/70">Past records</span>
-</div>
-<label class="flex items-center justify-between gap-space-sm cursor-pointer select-none" for="toggle-history">
-<div class="flex items-start gap-space-sm min-w-0">
-<div class="w-11 h-11 rounded-xl bg-surface-container-low flex items-center justify-center flex-shrink-0 text-tertiary">
-<span class="material-symbols-outlined text-[24px]">receipt_long</span>
-</div>
-<div class="flex flex-col min-w-0">
-<h2 class="font-title-md text-title-md text-on-surface truncate">Use previous medical records</h2>
-<p class="font-body-md text-body-md text-on-surface-variant">
-              Allow previous prescriptions and diagnostic tests to assist your attending doctor.
-            </p>
-</div>
-</div>
-<!-- Dynamic Toggle Switch -->
-<div class="relative flex-shrink-0 pl-space-xs">
-<input class="sr-only peer" id="toggle-history" type="checkbox">
-<div class="w-12 h-7 bg-surface-container rounded-full peer peer-checked:bg-primary transition-colors flex items-center px-1">
-<div class="w-5 h-5 bg-surface-container-lowest rounded-full shadow-sm peer-checked:translate-x-5 transition-transform flex items-center justify-center">
-<span class="material-symbols-outlined text-[13px] text-outline opacity-0 peer-checked:opacity-100">check</span>
-</div>
-</div>
-</div>
-</label>
-</article>
-</section>
-<!-- Reassuring Standards Badge (ABDM Compliance Callout) -->
-<section class="px-margin-mobile py-space-xs">
-<div class="p-space-md rounded-2xl bg-surface-container-low flex items-start gap-space-sm">
-<div class="w-9 h-9 rounded-full bg-primary-fixed flex items-center justify-center flex-shrink-0 text-on-primary-fixed">
-<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">shield</span>
-</div>
-<div class="flex flex-col">
-<span class="font-label-md text-label-md text-on-surface font-semibold">Your information stays protected.</span>
-<p class="font-body-md text-body-md text-on-surface-variant pt-0.5">
-          CareFlow adheres strictly to applicable Ayushman Bharat Digital Mission (ABDM) data protection benchmarks and ISO health privacy standards.
-        </p>
-</div>
-</div>
-</section>
-<!-- Bottom Interactive Action Area -->
-<section class="sticky bottom-0 z-30 px-margin-mobile pt-space-xs pb-space-lg bg-surface/90 backdrop-blur-md">
-<div class="flex flex-col gap-space-xs max-w-md mx-auto">
-<!-- Primary Pill CTA -->
-<button class="w-full h-13 py-3.5 px-space-md rounded-full bg-primary text-on-primary font-title-md text-title-md flex items-center justify-center gap-space-xs shadow-md shadow-primary/20 active:scale-[0.98] transition-all" id="btn-agree-continue" type="button">
-<span>Agree &amp; Continue</span>
-<span class="material-symbols-outlined text-[22px]">arrow_forward</span>
-</button>
-<!-- Sub Links -->
-<div class="flex flex-col items-center pt-space-xxs">
-<button class="font-label-md text-label-md text-primary font-medium hover:underline py-1 flex items-center gap-1" id="btn-review-terms" type="button">
-<span class="material-symbols-outlined text-[16px]">visibility</span>
-<span>Review full privacy details</span>
-</button>
-<span class="font-label-sm text-label-sm text-on-surface-variant/70 text-center pt-0.5">
-          You can change or revoke your consent choices at any time.
-        </span>
-</div>
-</div>
-</section>
-<!-- Floating Sheet for Micro-Review of Details (Toggled via JS) -->
-<div class="fixed inset-0 z-50 bg-inverse-surface/40 backdrop-blur-sm hidden items-end justify-center" id="privacy-sheet">
-<div class="w-full max-w-md bg-surface-container-lowest rounded-t-3xl p-space-lg flex flex-col gap-space-md shadow-2xl">
-<div class="w-12 h-1.5 rounded-full bg-surface-container self-center"></div>
-<div class="flex items-center justify-between">
-<div class="flex items-center gap-space-xs">
-<div class="w-8 h-8 rounded-lg bg-primary-fixed flex items-center justify-center text-primary">
-<span class="material-symbols-outlined text-[18px]">verified_user</span>
-</div>
-<h2 class="font-title-md text-title-md text-on-surface">Data Protection Summary</h2>
-</div>
-<button class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant" id="btn-close-sheet" type="button">
-<span class="material-symbols-outlined text-[18px]">close</span>
-</button>
-</div>
-<div class="space-y-3 font-body-md text-body-md text-on-surface-variant">
-<div class="p-space-sm rounded-xl bg-surface-container-low">
-<p class="font-semibold text-on-surface">No Third-Party Advertising</p>
-<p class="text-[13px] pt-0.5">We do not sell, rent, or trade your identifiable medical records to advertisers or data aggregators.</p>
-</div>
-<div class="p-space-sm rounded-xl bg-surface-container-low">
-<p class="font-semibold text-on-surface">Encrypted Transmission</p>
-<p class="text-[13px] pt-0.5">All voice streams and clinical notes are transmitted via TLS 1.3 with AES-256 rest encryption.</p>
-</div>
-<div class="p-space-sm rounded-xl bg-surface-container-low">
-<p class="font-semibold text-on-surface">Granular Revocation</p>
-<p class="text-[13px] pt-0.5">You may withdraw access or request total data purging in Settings &gt; Privacy Controls at any visit stage.</p>
-</div>
-</div>
-<button class="w-full py-3 rounded-full bg-primary text-on-primary font-label-md text-label-md font-semibold" id="btn-confirm-sheet" type="button">
-        Understood, Return to Intake
-      </button>
-</div>
-</div>
-<script>
-    (function () {
-      const voiceToggle = document.getElementById('toggle-voice');
-      const historyToggle = document.getElementById('toggle-history');
-      const continueBtn = document.getElementById('btn-agree-continue');
-      const reviewBtn = document.getElementById('btn-review-terms');
-      const sheet = document.getElementById('privacy-sheet');
-      const closeSheet = document.getElementById('btn-close-sheet');
-      const confirmSheet = document.getElementById('btn-confirm-sheet');
-
-      // Modal open/close handlers
-      if (reviewBtn && sheet) {
-        reviewBtn.addEventListener('click', () => {
-          sheet.classList.remove('hidden');
-          sheet.classList.add('flex');
-        });
-      }
-
-      const hideModal = () => {
-        if (sheet) {
-          sheet.classList.add('hidden');
-          sheet.classList.remove('flex');
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport">
+  <title>CareFlow — Patient Consent & Privacy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="../shared_careflow.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#0D6E6E',
+            'primary-dark': '#0A5656',
+            'primary-light': '#14B8A6',
+            secondary: '#14B8A6',
+            'secondary-container': '#F0FDFA',
+            surface: '#FAF8FF',
+            'on-surface': '#0F1E36',
+            'on-surface-variant': '#4A5B73'
+          }
         }
-      };
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #FAF8FF;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+  </style>
+</head>
+<body class="bg-[#FAF8FF] text-[#0F1E36] min-h-screen flex flex-col antialiased">
 
-      if (closeSheet) closeSheet.addEventListener('click', hideModal);
-      if (confirmSheet) confirmSheet.addEventListener('click', hideModal);
+  <!-- CareFlow Standardized Global Header -->
+  <header class="fixed top-0 inset-x-0 z-50 pt-safe bg-[#FAF8FF]/95 backdrop-blur-md border-b border-[#E2E8F0]/80 shadow-[0_1px_8px_rgba(13,110,110,0.04)]">
+    <div class="h-16 px-4 md:px-6 max-w-4xl mx-auto flex items-center justify-between">
+      <div class="flex items-center gap-2.5">
+        <button id="consent-back-btn" aria-label="Go back" class="w-10 h-10 rounded-full bg-white border border-[#E2E8F0] flex items-center justify-center text-[#0F1E36] hover:bg-[#F8FAFC] active:scale-95 transition-all shadow-xs cursor-pointer" type="button">
+          <span class="material-symbols-outlined text-[20px]">arrow_back</span>
+        </button>
+        <div class="flex items-center gap-2 select-none">
+          <div class="w-9 h-9 rounded-xl bg-[#0D6E6E] flex items-center justify-center text-white shadow-sm">
+            <span class="material-symbols-outlined text-[20px]">volunteer_activism</span>
+          </div>
+          <span class="text-[19px] font-bold tracking-tight text-[#0F1E36]">Care<span class="text-[#0D6E6E]">Flow</span></span>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <button class="careflow-header-lang h-10 px-3 rounded-full bg-white border border-[#E2E8F0] text-[#0F1E36] text-[13px] font-medium flex items-center gap-1.5 hover:bg-[#F8FAFC] active:scale-95 transition-all shadow-xs cursor-pointer" type="button">
+          <span class="material-symbols-outlined text-[17px] text-[#0D6E6E]">language</span>
+          <span class="careflow-lang-text font-semibold">हिन्दी</span>
+          <span class="material-symbols-outlined text-[16px] text-[#4A5B73]">arrow_drop_down</span>
+        </button>
+      </div>
+    </div>
+  </header>
 
+  <!-- Main Content Container -->
+  <main class="flex-1 w-full pt-20 pb-32 px-4 md:px-6 flex flex-col items-center">
+    <div class="w-full max-w-xl md:max-w-2xl flex flex-col gap-4">
+
+      <!-- Step Progress Header -->
+      <div class="careflow-card p-4 flex flex-col gap-2">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="px-2.5 py-0.5 rounded-full bg-[#E6F7F5] text-[#0D6E6E] text-[11px] font-bold uppercase tracking-wider border border-[#99F6E4]/60">
+              Step 1 of 5
+            </span>
+            <span class="text-[12px] font-semibold text-[#0F1E36]">Patient Consent • रोगी सहमति</span>
+          </div>
+          <span class="text-[11px] font-bold text-[#0D6E6E]">25% completed</span>
+        </div>
+        <div class="w-full h-1.5 rounded-full bg-[#E2E8F0] overflow-hidden">
+          <div class="h-full bg-[#0D6E6E] rounded-full transition-all duration-500 w-[25%]"></div>
+        </div>
+      </div>
+
+      <!-- Hero Privacy & Reassurance Banner -->
+      <div class="careflow-card p-4.5 bg-gradient-to-br from-[#F0FDFA] via-white to-white flex items-center gap-4">
+        <div class="w-16 h-16 rounded-2xl bg-[#E6F7F5] border border-[#99F6E4]/60 flex items-center justify-center shrink-0 shadow-xs">
+          <span class="material-symbols-outlined text-[#0D6E6E] text-[34px]">verified_user</span>
+        </div>
+        <div class="flex flex-col min-w-0">
+          <div class="inline-flex items-center gap-1 text-[11px] font-bold text-[#0D6E6E] uppercase tracking-wide mb-0.5">
+            <span>Your Privacy First • पूर्ण गोपनीयता</span>
+          </div>
+          <h1 class="text-[20px] font-bold text-[#0F1E36] tracking-tight leading-tight">
+            Before we begin, your privacy is protected
+          </h1>
+          <p class="text-[13px] text-[#4A5B73] mt-0.5">
+            CareFlow encrypts your health data in compliance with ABDM standards.
+          </p>
+          <p class="text-[12px] text-[#0D6E6E] font-medium mt-0.5">
+            आपकी सहमति से ही आपकी जानकारी डॉक्टर के साथ साझा होगी।
+          </p>
+        </div>
+      </div>
+
+      <!-- Consent Scopes Stack -->
+      <div class="flex flex-col gap-3" id="consent-options-group">
+        
+        <!-- SCOPE 1: Essential Health Data (Required) -->
+        <div class="careflow-card p-4 flex flex-col gap-2.5">
+          <div class="flex items-center justify-between">
+            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#E6F7F5] text-[#0D6E6E] text-[11px] font-bold tracking-wide uppercase border border-[#99F6E4]/60">
+              <span class="material-symbols-outlined text-[13px]">lock</span>
+              <span>Essential • आवश्यक</span>
+            </span>
+            <span class="text-[11px] font-semibold text-[#64748B]">Required for OPD intake</span>
+          </div>
+
+          <div class="flex items-center justify-between gap-3">
+            <div class="flex items-start gap-3 min-w-0">
+              <div class="w-10 h-10 rounded-xl bg-[#F0FDFA] border border-[#99F6E4]/50 flex items-center justify-center shrink-0 text-[#0D6E6E] mt-0.5">
+                <span class="material-symbols-outlined text-[22px]">health_and_safety</span>
+              </div>
+              <div class="flex flex-col min-w-0">
+                <h2 class="text-sm font-bold text-[#0F1E36]">Share clinical symptoms &amp; intake responses</h2>
+                <p class="text-xs text-[#4A5B73] mt-0.5">
+                  Allows CareFlow to organize your symptoms and generate a structured summary for your physician.
+                </p>
+                <p class="text-[11px] text-[#0D6E6E] mt-0.5">
+                  (आपके लक्षण और उत्तर डॉक्टर की पर्ची में तैयार करने के लिए)
+                </p>
+              </div>
+            </div>
+
+            <!-- Locked Active Switch -->
+            <div class="shrink-0">
+              <div class="w-12 h-7 bg-[#0D6E6E] rounded-full flex items-center px-1 cursor-not-allowed opacity-90 shadow-inner">
+                <div class="w-5 h-5 bg-white rounded-full shadow-xs transform translate-x-5 flex items-center justify-center">
+                  <span class="material-symbols-outlined text-[13px] text-[#0D6E6E]">lock</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SCOPE 2: Voice Interview (Toggleable) -->
+        <label for="toggle-voice-consent" class="careflow-card p-4 flex flex-col gap-2.5 cursor-pointer hover:border-[#CBD5E1] transition-all">
+          <div class="flex items-center justify-between">
+            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#E6F7F5] text-[#0D6E6E] text-[11px] font-bold tracking-wide uppercase border border-[#99F6E4]/60">
+              <span class="material-symbols-outlined text-[13px]">mic</span>
+              <span>Voice Care • आवाज़ सुविधा</span>
+            </span>
+            <span class="text-[11px] font-semibold text-[#14B8A6]">Faster interview</span>
+          </div>
+
+          <div class="flex items-center justify-between gap-3">
+            <div class="flex items-start gap-3 min-w-0">
+              <div class="w-10 h-10 rounded-xl bg-[#F0FDFA] border border-[#99F6E4]/50 flex items-center justify-center shrink-0 text-[#0D6E6E] mt-0.5">
+                <span class="material-symbols-outlined text-[22px]">graphic_eq</span>
+              </div>
+              <div class="flex flex-col min-w-0">
+                <h2 class="text-sm font-bold text-[#0F1E36]">Use voice recognition for answers</h2>
+                <p class="text-xs text-[#4A5B73] mt-0.5">
+                  Speak naturally in Hindi, English, or regional languages. Audio stream is strictly de-identified.
+                </p>
+                <p class="text-[11px] text-[#0D6E6E] mt-0.5">
+                  (आवाज़ से उत्तर देने की सुविधा • तुरंत ट्रांसक्रिप्शन)
+                </p>
+              </div>
+            </div>
+
+            <div class="shrink-0">
+              <input type="checkbox" id="toggle-voice-consent" checked class="sr-only peer">
+              <div class="w-12 h-7 bg-[#CBD5E1] peer-checked:bg-[#0D6E6E] rounded-full flex items-center px-1 transition-colors shadow-inner">
+                <div class="w-5 h-5 bg-white rounded-full shadow-xs peer-checked:translate-x-5 transition-transform flex items-center justify-center">
+                  <span class="material-symbols-outlined text-[13px] text-[#0D6E6E]">check</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </label>
+
+        <!-- SCOPE 3: ABHA Linking (Toggleable) -->
+        <label for="toggle-abha-consent" class="careflow-card p-4 flex flex-col gap-2.5 cursor-pointer hover:border-[#CBD5E1] transition-all">
+          <div class="flex items-center justify-between">
+            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#F1F5F9] text-[#0F1E36] text-[11px] font-bold tracking-wide uppercase border border-[#CBD5E1]">
+              <span class="material-symbols-outlined text-[13px]">hub</span>
+              <span>ABDM Health ID • आभा पहचान</span>
+            </span>
+            <span class="text-[11px] font-semibold text-[#64748B]">Optional linking</span>
+          </div>
+
+          <div class="flex items-center justify-between gap-3">
+            <div class="flex items-start gap-3 min-w-0">
+              <div class="w-10 h-10 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] flex items-center justify-center shrink-0 text-[#0F1E36] mt-0.5">
+                <span class="material-symbols-outlined text-[22px]">badge</span>
+              </div>
+              <div class="flex flex-col min-w-0">
+                <h2 class="text-sm font-bold text-[#0F1E36]">Link with Ayushman Bharat Digital Mission (ABHA)</h2>
+                <p class="text-xs text-[#4A5B73] mt-0.5">
+                  Securely link your existing OPD records and previous prescriptions via your 14-digit ABHA ID.
+                </p>
+                <p class="text-[11px] text-[#0D6E6E] mt-0.5">
+                  (सरकारी आभा नंबर से पूर्व पर्चियां और रिपोर्ट जोड़ें)
+                </p>
+              </div>
+            </div>
+
+            <div class="shrink-0">
+              <input type="checkbox" id="toggle-abha-consent" checked class="sr-only peer">
+              <div class="w-12 h-7 bg-[#CBD5E1] peer-checked:bg-[#0D6E6E] rounded-full flex items-center px-1 transition-colors shadow-inner">
+                <div class="w-5 h-5 bg-white rounded-full shadow-xs peer-checked:translate-x-5 transition-transform flex items-center justify-center">
+                  <span class="material-symbols-outlined text-[13px] text-[#0D6E6E]">check</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </label>
+
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Sticky Bottom Action Bar -->
+  <div class="fixed bottom-0 inset-x-0 z-40 bg-gradient-to-t from-[#FAF8FF] via-[#FAF8FF]/95 to-transparent pt-3 pb-safe px-4 shadow-[0_-4px_16px_rgba(15,30,54,0.04)]">
+    <div class="max-w-xl md:max-w-2xl mx-auto flex flex-col gap-2">
+      <button class="w-full h-12 rounded-full bg-[#0D6E6E] hover:bg-[#0A5656] active:scale-[0.98] text-white text-[15px] font-semibold flex items-center justify-center gap-2 shadow-md shadow-[#0D6E6E]/20 transition-all cursor-pointer" id="consent-continue-btn" type="button">
+        <span>Agree &amp; Continue • सहमति दें और आगे बढ़ें</span>
+        <span class="material-symbols-outlined text-[19px]">arrow_forward</span>
+      </button>
+      <div class="flex items-center justify-center gap-1.5 text-[#4A5B73] text-[11px] font-medium py-1 select-none">
+        <span class="material-symbols-outlined text-[14px] text-[#0D6E6E]">verified_user</span>
+        <span>ABDM Compliant • You can revoke consent anytime</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function() {
       const backBtn = document.getElementById('consent-back-btn');
+      const continueBtn = document.getElementById('consent-continue-btn');
+      const voiceToggle = document.getElementById('toggle-voice-consent');
+      const abhaToggle = document.getElementById('toggle-abha-consent');
+
       if (backBtn) {
         backBtn.addEventListener('click', () => {
-          CareFlow.navigate('../careflow_qr_welcome_landing/code.html');
+          CareFlow.navigate('../careflow_qr_welcome_landing/code.html', 'backward');
         });
       }
 
-      // Restore saved consent state if present
-      const state = CareFlow.getState();
-      if (state.consentVoice !== undefined && voiceToggle) voiceToggle.checked = state.consentVoice;
-      if (state.consentHistory !== undefined && historyToggle) historyToggle.checked = state.consentHistory;
-
-      // Micro Feedback on Continue
       if (continueBtn) {
         continueBtn.addEventListener('click', async () => {
-          continueBtn.innerHTML = `
-            <span class="material-symbols-outlined text-[20px] animate-spin">progress_activity</span>
-            <span>Securing Consent...</span>
-          `;
-          continueBtn.disabled = true;
+          const consents = {
+            healthInfo: true,
+            voiceData: voiceToggle ? voiceToggle.checked : true,
+            abdmShare: abhaToggle ? abhaToggle.checked : true
+          };
+          CareFlow.saveState({ consents });
 
-          const voiceChecked = voiceToggle ? voiceToggle.checked : true;
-          const historyChecked = historyToggle ? historyToggle.checked : false;
-
-          CareFlow.saveState({
-            consentHealth: true,
-            consentVoice: voiceChecked,
-            consentHistory: historyChecked
-          });
-
-          const curState = CareFlow.getState();
-          if (curState.sessionId) {
-            const scopes = ['health_data'];
-            if (voiceChecked) scopes.push('voice_recording');
-            if (historyChecked) scopes.push('abdm_share');
-            await CareFlow.api.recordConsent(curState.sessionId, scopes);
+          const cur = CareFlow.getState();
+          if (cur.sessionId) {
+            const scopes = ['history', 'documents'];
+            if (consents.voiceData) scopes.push('audio_recording');
+            if (consents.abdmShare) scopes.push('abha_lookup');
+            await CareFlow.api.recordConsent(cur.sessionId, scopes);
           }
 
-          CareFlow.speak('Consent recorded. Please verify your identity.');
-          CareFlow.showToast('Consent securely registered! ✓');
+          CareFlow.showToast('Consent saved securely ✓', 'check_circle');
 
-          continueBtn.innerHTML = `
-            <span class="material-symbols-outlined text-[20px]">check_circle</span>
-            <span>Saved! Proceeding...</span>
-          `;
-          continueBtn.classList.remove('bg-primary');
-          continueBtn.classList.add('bg-secondary');
-
-          setTimeout(() => {
-            CareFlow.navigate('../careflow_new_patient_identity/code.html');
-          }, 400);
+          // If ABHA toggle is enabled, direct to ABHA QR or direct to new patient
+          if (consents.abdmShare) {
+            CareFlow.navigate('../careflow_abha_qr_identity/code.html', 'forward');
+          } else {
+            CareFlow.navigate('../careflow_new_patient_identity/code.html', 'forward');
+          }
         });
       }
     })();
   </script>
-</div></main></body></html>
-l>
+</body>
+</html>

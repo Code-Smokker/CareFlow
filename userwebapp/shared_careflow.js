@@ -1,7 +1,7 @@
 /**
  * CareFlow Shared State & Navigation Manager
  * Handles persistent patient intake state, voice synthesis, toast feedback,
- * and page-to-page navigation with View Transitions.
+ * design token normalization, and page-to-page navigation with View Transitions.
  */
 (function(window) {
   // Global font & ligature enforcer
@@ -42,7 +42,7 @@
     }
   })();
 
-  // Universal Responsive Layout Adaptor for Website & Phone App
+  // Universal Responsive Layout & Design System Normalizer
   (function ensureResponsiveAdaptor() {
     if (window.location.pathname.endsWith('index.html') || (document.body && document.body.classList.contains('master-runner'))) return;
     if (!document.getElementById('careflow-responsive-style')) {
@@ -57,14 +57,18 @@
           margin: 0 !important;
           padding: 0 !important;
           background-color: #FAF8FF !important;
+          color: #0F1E36;
+          font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+          -webkit-font-smoothing: antialiased;
+          text-rendering: optimizeLegibility;
         }
 
         /* Fluid Header on all devices */
-        header.fixed {
+        header.fixed, header.sticky {
           width: 100% !important;
           left: 0 !important;
           right: 0 !important;
-          transform: none !important;
+          box-sizing: border-box;
         }
 
         /* Normal Website Responsive Content Container */
@@ -73,42 +77,46 @@
           display: flex !important;
           flex-direction: column !important;
           align-items: center !important;
+          box-sizing: border-box;
         }
 
-        main > div {
+        main > div, .careflow-main-container {
           width: 100% !important;
           display: flex !important;
           flex-direction: column !important;
           align-items: center !important;
+          box-sizing: border-box;
         }
 
         /* Mobile First (< 640px) */
         @media (max-width: 639px) {
-          main > div > div, .px-margin-mobile {
+          main > div > div, .px-margin-mobile, .careflow-content-bounds {
             width: 100% !important;
             max-width: 100% !important;
             padding-left: 1rem !important;
             padding-right: 1rem !important;
+            box-sizing: border-box;
           }
         }
 
         /* Tablet & Desktop (>= 640px) */
         @media (min-width: 640px) {
-          main > div > div, .px-margin-mobile {
+          main > div > div, .px-margin-mobile, .careflow-content-bounds {
             width: 100% !important;
-            max-width: 768px !important;
+            max-width: 720px !important;
             padding-left: 1.5rem !important;
             padding-right: 1.5rem !important;
+            box-sizing: border-box;
           }
           /* 2-column options on desktop */
-          #single-choice-group, .options-grid-responsive {
+          #single-choice-group, .options-grid-responsive, .careflow-grid-responsive {
             display: grid !important;
             grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
             gap: 1rem !important;
           }
-          footer.fixed, div.fixed.bottom-0 {
+          footer.fixed, div.fixed.bottom-0, .careflow-bottom-bar {
             width: 100% !important;
-            max-width: 768px !important;
+            max-width: 720px !important;
             left: 50% !important;
             transform: translateX(-50%) !important;
           }
@@ -116,12 +124,104 @@
 
         /* Large Desktop (>= 1024px) */
         @media (min-width: 1024px) {
-          main > div > div, .px-margin-mobile {
-            max-width: 880px !important;
+          main > div > div, .px-margin-mobile, .careflow-content-bounds {
+            max-width: 840px !important;
           }
-          footer.fixed, div.fixed.bottom-0 {
-            max-width: 880px !important;
+          footer.fixed, div.fixed.bottom-0, .careflow-bottom-bar {
+            max-width: 840px !important;
           }
+        }
+
+        /* Suppress artificial 9:41 mobile mockup status bars */
+        [data-purpose="ios-status-bar"],
+        .ios-status-bar,
+        .fake-status-bar {
+          display: none !important;
+        }
+
+        /* Safe area helpers */
+        .pb-safe {
+          padding-bottom: max(1rem, env(safe-area-inset-bottom, 0px));
+        }
+        .pt-safe {
+          padding-top: max(0.5rem, env(safe-area-inset-top, 0px));
+        }
+
+        /* Normalized CareFlow interactive components */
+        .careflow-card {
+          background-color: #FFFFFF;
+          border-radius: 1rem;
+          border: 1px solid rgba(13, 110, 110, 0.08);
+          box-shadow: 0 2px 8px -2px rgba(13, 110, 110, 0.04), 0 1px 4px -1px rgba(15, 23, 42, 0.02);
+          transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease;
+        }
+        .careflow-card:hover {
+          border-color: rgba(13, 110, 110, 0.2);
+          box-shadow: 0 6px 16px -2px rgba(13, 110, 110, 0.08);
+        }
+
+        .careflow-btn-primary {
+          background-color: #0D6E6E;
+          color: #FFFFFF;
+          border-radius: 9999px;
+          height: 3rem;
+          min-height: 48px;
+          padding: 0 1.5rem;
+          font-weight: 600;
+          font-size: 0.9375rem;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.5rem;
+          box-shadow: 0 4px 12px rgba(13, 110, 110, 0.2);
+          transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+          cursor: pointer;
+          border: none;
+          text-decoration: none;
+        }
+        .careflow-btn-primary:hover {
+          background-color: #0A5656;
+          box-shadow: 0 6px 18px rgba(13, 110, 110, 0.3);
+          transform: translateY(-1px);
+        }
+        .careflow-btn-primary:active {
+          transform: scale(0.98);
+        }
+
+        .careflow-btn-secondary {
+          background-color: #F0FDFA;
+          color: #0D6E6E;
+          border-radius: 9999px;
+          height: 3rem;
+          min-height: 48px;
+          padding: 0 1.5rem;
+          font-weight: 600;
+          font-size: 0.9375rem;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.5rem;
+          border: 1px solid rgba(20, 184, 166, 0.3);
+          transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+          cursor: pointer;
+        }
+        .careflow-btn-secondary:hover {
+          background-color: #E6F7F5;
+          border-color: #14B8A6;
+        }
+        .careflow-btn-secondary:active {
+          transform: scale(0.98);
+        }
+
+        /* Audio speak button active pulse */
+        .careflow-audio-speaking {
+          animation: careflow-pulse 1.4s infinite ease-in-out;
+          border-color: #14B8A6 !important;
+          background-color: #F0FDFA !important;
+        }
+        @keyframes careflow-pulse {
+          0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(20, 184, 166, 0.4); }
+          50% { transform: scale(1.03); box-shadow: 0 0 0 6px rgba(20, 184, 166, 0); }
         }
       `;
       document.head.appendChild(style);
@@ -192,6 +292,8 @@
       const current = getState();
       const updated = Object.assign({}, current, patch);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+      // Dispatch state update event for live UI synchronization
+      window.dispatchEvent(new CustomEvent('careflow:state-updated', { detail: { state: updated, patch } }));
       return updated;
     } catch (e) {
       console.warn('CareFlow: Failed to save state', e);
@@ -212,19 +314,16 @@
   function navigate(url, direction = 'forward') {
     if (!url) return;
 
-    // Dispatch custom event for embedders (like index.html container)
     window.dispatchEvent(new CustomEvent('careflow:navigate', {
       detail: { url, direction }
     }));
 
-    // If running inside iframe in master runner, notify parent
     try {
       if (window.parent && window.parent !== window) {
         window.parent.postMessage({ type: 'careflow:navigating', url: url, direction: direction }, '*');
       }
     } catch(e) {}
 
-    // Direct standalone page navigation
     if (document.startViewTransition) {
       document.startViewTransition({
         update: () => {
@@ -248,15 +347,32 @@
       if (!text) return;
       const utterance = new SpeechSynthesisUtterance(text);
       let onEnd = null;
+      const state = getState();
+      let targetLang = (state && state.language === 'en') ? 'en-US' : 'hi-IN';
+
       if (typeof langOrOnEnd === 'string') {
-        utterance.lang = (langOrOnEnd === 'hi') ? 'hi-IN' : 'en-US';
+        targetLang = (langOrOnEnd === 'hi') ? 'hi-IN' : (langOrOnEnd === 'en' ? 'en-US' : langOrOnEnd);
         if (typeof maybeOnEnd === 'function') onEnd = maybeOnEnd;
       } else if (typeof langOrOnEnd === 'function') {
         onEnd = langOrOnEnd;
       }
+
+      utterance.lang = targetLang;
       utterance.rate = 0.95;
       utterance.pitch = 1.0;
-      if (onEnd) utterance.onend = onEnd;
+
+      // Update active audio buttons visually
+      const audioPills = document.querySelectorAll('.careflow-audio-btn, #audioBtn, #voiceListenBtn, #hear-btn, #quickAudioBtn, #audioToggleBtn');
+      audioPills.forEach(p => p.classList.add('careflow-audio-speaking'));
+
+      utterance.onend = () => {
+        audioPills.forEach(p => p.classList.remove('careflow-audio-speaking'));
+        if (onEnd) onEnd();
+      };
+      utterance.onerror = () => {
+        audioPills.forEach(p => p.classList.remove('careflow-audio-speaking'));
+      };
+
       currentUtterance = utterance;
       window.speechSynthesis.speak(utterance);
     } catch (e) {
@@ -267,6 +383,8 @@
   function stopSpeaking() {
     if ('speechSynthesis' in window) {
       window.speechSynthesis.cancel();
+      const audioPills = document.querySelectorAll('.careflow-audio-btn, #audioBtn, #voiceListenBtn, #hear-btn, #quickAudioBtn, #audioToggleBtn');
+      audioPills.forEach(p => p.classList.remove('careflow-audio-speaking'));
     }
   }
 
@@ -292,7 +410,276 @@
     }, duration);
   }
 
-  // Backend API Client
+  // Supported languages list
+  const SUPPORTED_LANGUAGES = [
+    { id: 'hi', name: 'हिन्दी', label: 'Hindi', sample: 'नमस्ते, आपको क्या तकलीफ है?' },
+    { id: 'en', name: 'English', label: 'Indian English', sample: 'Hello, how can we help you today?' },
+    { id: 'mr', name: 'मराठी', label: 'Marathi', sample: 'नमस्कार, तुम्हाला काय त्रास होत आहे?' },
+    { id: 'gu', name: 'ગુજરાતી', label: 'Gujarati', sample: 'નમસ્તે, તમને શું તકલીફ છે?' },
+    { id: 'ta', name: 'தமிழ்', label: 'Tamil', sample: 'வணக்கம், உங்களுக்கு என்ன பிரச்சனை?' },
+    { id: 'te', name: 'తెలుగు', label: 'Telugu', sample: 'నమస్కారం, మీకు ఏమి ఇబ్బందిగా ఉంది?' }
+  ];
+
+  // UI Components & Standardized Renderers
+  const ui = {
+    SUPPORTED_LANGUAGES,
+
+    /**
+     * Standardized CareFlow Global Header
+     */
+    renderHeader({ backUrl = null, onBack = null, title = 'CareFlow', showLang = true, showProfile = true } = {}) {
+      const state = getState();
+      const currentLangName = state.languageName || 'हिन्दी';
+
+      return `
+        <header class="careflow-standard-header fixed top-0 inset-x-0 z-50 pt-safe bg-[#FAF8FF]/95 backdrop-blur-md border-b border-[#E2E8F0]/80 shadow-[0_1px_8px_rgba(13,110,110,0.04)]">
+          <div class="h-16 px-4 md:px-6 max-w-4xl mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-2.5">
+              ${backUrl || onBack ? `
+                <button type="button" class="careflow-header-back w-10 h-10 rounded-full bg-white border border-[#E2E8F0] flex items-center justify-center text-[#0F1E36] hover:bg-[#F8FAFC] active:scale-95 transition-all shadow-xs cursor-pointer" aria-label="Go Back">
+                  <span class="material-symbols-outlined text-[20px]">arrow_back</span>
+                </button>
+              ` : ''}
+              <div class="flex items-center gap-2 select-none">
+                <div class="w-9 h-9 rounded-xl bg-[#0D6E6E] flex items-center justify-center text-white shadow-sm">
+                  <span class="material-symbols-outlined text-[20px]">volunteer_activism</span>
+                </div>
+                <span class="text-[19px] font-bold tracking-tight text-[#0F1E36]">Care<span class="text-[#0D6E6E]">Flow</span></span>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-2">
+              ${showLang ? `
+                <button type="button" class="careflow-header-lang h-10 px-3 rounded-full bg-white border border-[#E2E8F0] text-[#0F1E36] text-[13px] font-medium flex items-center gap-1.5 hover:bg-[#F8FAFC] active:scale-95 transition-all shadow-xs cursor-pointer" aria-label="Change Language">
+                  <span class="material-symbols-outlined text-[17px] text-[#0D6E6E]">language</span>
+                  <span class="careflow-lang-text font-semibold">${currentLangName}</span>
+                  <span class="material-symbols-outlined text-[16px] text-[#64748B]">arrow_drop_down</span>
+                </button>
+              ` : ''}
+              ${showProfile ? `
+                <div class="w-9 h-9 rounded-full bg-[#0D6E6E] text-white flex items-center justify-center shadow-xs select-none" title="${state.patient?.name || 'Patient'}">
+                  <span class="material-symbols-outlined text-[19px]">person</span>
+                </div>
+              ` : ''}
+            </div>
+          </div>
+        </header>
+      `;
+    },
+
+    /**
+     * Standardized 5-Stage Journey Progress Stepper
+     */
+    renderStepper({ currentStep = 1, totalSteps = 5, stepTitle = 'Health Questions', stage = 'Basics', percent = 20 } = {}) {
+      const stages = ['Basics', 'Symptoms', 'Documents', 'Review', 'Complete'];
+      const stageIdx = stages.indexOf(stage) !== -1 ? stages.indexOf(stage) : (currentStep - 1);
+
+      return `
+        <div class="careflow-stepper w-full bg-white rounded-2xl p-3.5 sm:p-4 border border-[#E2E8F0]/80 shadow-[0_2px_8px_-2px_rgba(13,110,110,0.04)] mb-4">
+          <div class="flex items-center justify-between mb-2">
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-0.5 rounded-full bg-[#E6F7F5] text-[#0D6E6E] text-[11px] font-bold tracking-wider uppercase border border-[#99F6E4]/50">
+                Step ${currentStep} of ${totalSteps}
+              </span>
+              <span class="text-[12px] font-semibold text-[#0F1E36]">${stepTitle}</span>
+            </div>
+            <span class="text-[11px] font-bold text-[#0D6E6E]">${percent}% Complete</span>
+          </div>
+
+          <div class="w-full h-1.5 rounded-full bg-[#E2E8F0] overflow-hidden mb-2.5">
+            <div class="h-full bg-[#0D6E6E] rounded-full transition-all duration-500 ease-out" style="width: ${percent}%;"></div>
+          </div>
+
+          <div class="flex items-center justify-between text-[11px] font-medium text-[#64748B] pt-0.5 px-0.5 overflow-x-auto no-scrollbar gap-1">
+            ${stages.map((st, i) => {
+              if (i < stageIdx) {
+                return `<span class="text-[#0D6E6E] font-semibold flex items-center gap-0.5 whitespace-nowrap"><span class="material-symbols-outlined text-[12px]">check</span>${st}</span>`;
+              } else if (i === stageIdx) {
+                return `<span class="text-[#0D6E6E] font-bold flex items-center gap-1 whitespace-nowrap"><span class="w-1.5 h-1.5 rounded-full bg-[#0D6E6E] inline-block"></span>${st}</span>`;
+              } else {
+                return `<span class="text-[#94A3B8] whitespace-nowrap">${st}</span>`;
+              }
+            }).join('')}
+          </div>
+        </div>
+      `;
+    },
+
+    /**
+     * Standardized Audio Speech Listen Pill
+     */
+    renderAudioPill({ text = '', labelEn = 'Hear', labelHi = 'सुनें', id = 'careflow-audio-btn' } = {}) {
+      return `
+        <button type="button" id="${id}" class="careflow-audio-btn shrink-0 h-9 px-3.5 rounded-full bg-[#F0FDFA] hover:bg-[#E6F7F5] border border-[#99F6E4]/60 text-[#0D6E6E] text-[12px] font-bold flex items-center gap-1.5 shadow-xs active:scale-95 transition-all cursor-pointer select-none" data-speak-text="${text.replace(/"/g, '&quot;')}">
+          <span class="material-symbols-outlined text-[17px] text-[#0D6E6E]">volume_up</span>
+          <span>${labelEn} / ${labelHi}</span>
+        </button>
+      `;
+    },
+
+    /**
+     * Standardized Bottom Action Bar (Fixed / Sticky with Safe Area)
+     */
+    renderBottomBar({ primaryText = 'Continue', primaryIcon = 'arrow_forward', onPrimary = null, secondaryText = null, onSecondary = null, secureText = 'Private & Secure • ABDM Compliant' } = {}) {
+      return `
+        <div class="careflow-bottom-bar fixed bottom-0 inset-x-0 z-40 bg-gradient-to-t from-[#FAF8FF] via-[#FAF8FF]/95 to-transparent pt-3 pb-safe px-4 shadow-[0_-4px_16px_rgba(15,30,54,0.04)]">
+          <div class="max-w-4xl mx-auto flex flex-col gap-2">
+            <div class="flex items-center gap-3">
+              ${secondaryText ? `
+                <button type="button" class="careflow-bottom-secondary flex-1 careflow-btn-secondary" id="careflow-bottom-sec-btn">
+                  ${secondaryText}
+                </button>
+              ` : ''}
+              <button type="button" class="careflow-bottom-primary flex-1 careflow-btn-primary" id="careflow-bottom-pri-btn">
+                <span>${primaryText}</span>
+                ${primaryIcon ? `<span class="material-symbols-outlined text-[20px]">${primaryIcon}</span>` : ''}
+              </button>
+            </div>
+            <div class="flex items-center justify-center gap-1.5 text-[#64748B] text-[11px] font-medium py-1 select-none">
+              <span class="material-symbols-outlined text-[14px] text-[#0D6E6E]">lock</span>
+              <span>${secureText}</span>
+            </div>
+          </div>
+        </div>
+      `;
+    },
+
+    /**
+     * Interactive Language Switcher Modal
+     */
+    openLanguageModal() {
+      let modal = document.getElementById('careflow-lang-modal');
+      if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'careflow-lang-modal';
+        modal.className = 'fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm transition-opacity duration-200 opacity-0 pointer-events-none';
+        modal.innerHTML = `
+          <div class="careflow-lang-modal-card w-full max-w-md bg-white rounded-3xl p-5 shadow-2xl border border-slate-100 flex flex-col gap-4 transform transition-transform duration-200 scale-95">
+            <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+              <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-lg bg-[#E6F7F5] flex items-center justify-center text-[#0D6E6E]">
+                  <span class="material-symbols-outlined text-[18px]">language</span>
+                </div>
+                <div>
+                  <h3 class="text-base font-bold text-[#0F1E36]">Select Language</h3>
+                  <p class="text-xs text-[#64748B]">अपनी पसंदीदा भाषा चुनें</p>
+                </div>
+              </div>
+              <button type="button" class="careflow-modal-close w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center active:scale-95 transition-all">
+                <span class="material-symbols-outlined text-[18px]">close</span>
+              </button>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-h-[60vh] overflow-y-auto pr-1">
+              ${SUPPORTED_LANGUAGES.map(lang => `
+                <button type="button" class="careflow-lang-choice-btn p-3 rounded-2xl border text-left flex items-center justify-between transition-all active:scale-[0.98] cursor-pointer" data-lang-id="${lang.id}" data-lang-name="${lang.name}">
+                  <div>
+                    <div class="text-sm font-bold text-[#0F1E36]">${lang.name}</div>
+                    <div class="text-xs text-[#64748B]">${lang.label}</div>
+                  </div>
+                  <span class="material-symbols-outlined text-[18px] check-icon text-[#0D6E6E] opacity-0">check_circle</span>
+                </button>
+              `).join('')}
+            </div>
+
+            <div class="pt-2 text-center">
+              <p class="text-[11px] text-[#64748B]">Speech and transcripts automatically adapt to your chosen language.</p>
+            </div>
+          </div>
+        `;
+        document.body.appendChild(modal);
+
+        modal.querySelector('.careflow-modal-close').addEventListener('click', () => ui.closeLanguageModal());
+        modal.addEventListener('click', (e) => {
+          if (e.target === modal) ui.closeLanguageModal();
+        });
+
+        modal.querySelectorAll('.careflow-lang-choice-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const lId = btn.getAttribute('data-lang-id');
+            const lName = btn.getAttribute('data-lang-name');
+            saveState({ language: lId, languageName: lName });
+            showToast(`Language set to ${lName}`, 'check_circle');
+            ui.closeLanguageModal();
+            // Sync all language displays on the page
+            document.querySelectorAll('.careflow-lang-text').forEach(t => t.textContent = lName);
+            window.dispatchEvent(new CustomEvent('careflow:language-changed', { detail: { language: lId, languageName: lName } }));
+          });
+        });
+      }
+
+      // Refresh checked state
+      const currentLang = getState().language || 'hi';
+      modal.querySelectorAll('.careflow-lang-choice-btn').forEach(btn => {
+        const isMatch = btn.getAttribute('data-lang-id') === currentLang;
+        btn.className = `careflow-lang-choice-btn p-3 rounded-2xl border text-left flex items-center justify-between transition-all active:scale-[0.98] cursor-pointer ${
+          isMatch ? 'bg-[#F0FDFA] border-[#0D6E6E] text-[#0D6E6E]' : 'bg-white border-[#E2E8F0] hover:bg-[#F8FAFC]'
+        }`;
+        const check = btn.querySelector('.check-icon');
+        if (check) check.style.opacity = isMatch ? '1' : '0';
+      });
+
+      modal.classList.remove('opacity-0', 'pointer-events-none');
+      modal.classList.add('opacity-100');
+      const card = modal.querySelector('.careflow-lang-modal-card');
+      if (card) {
+        card.classList.remove('scale-95');
+        card.classList.add('scale-100');
+      }
+    },
+
+    closeLanguageModal() {
+      const modal = document.getElementById('careflow-lang-modal');
+      if (!modal) return;
+      modal.classList.remove('opacity-100');
+      modal.classList.add('opacity-0', 'pointer-events-none');
+      const card = modal.querySelector('.careflow-lang-modal-card');
+      if (card) {
+        card.classList.remove('scale-100');
+        card.classList.add('scale-95');
+      }
+    },
+
+    /**
+     * Automatic initializer for elements on current screen
+     */
+    initCommon() {
+      // Remove simulated 9:41 status bars
+      document.querySelectorAll('[data-purpose="ios-status-bar"], .ios-status-bar, header:has(span:first-child:contains("9:41"))').forEach(el => el.remove());
+
+      // Bind all language triggers
+      document.querySelectorAll('.careflow-header-lang, button:has(span:contains("language"))').forEach(btn => {
+        if (!btn._careflowBound) {
+          btn._careflowBound = true;
+          btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            ui.openLanguageModal();
+          });
+        }
+      });
+
+      // Bind all audio triggers
+      document.querySelectorAll('.careflow-audio-btn, [data-speak-text]').forEach(btn => {
+        if (!btn._careflowBound) {
+          btn._careflowBound = true;
+          btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const text = btn.getAttribute('data-speak-text') || btn.textContent;
+            speak(text);
+          });
+        }
+      });
+    }
+  };
+
+  // Run initializer when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => ui.initCommon());
+  } else {
+    setTimeout(() => ui.initCommon(), 50);
+  }
+
+  // Backend API Client (with offline demo resilience)
   const API_BASE = 'http://localhost:4000/v1';
 
   const api = {
@@ -624,7 +1011,8 @@
     showToast,
     defaultState,
     api,
-    qrScanner
+    qrScanner,
+    ui
   };
 
 })(window);
