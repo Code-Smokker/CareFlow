@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import QRCode from "qrcode";
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { buildConsent, urnReference } from "@careflow/fhir";
@@ -24,6 +25,7 @@ import type {
   AnswerSubmissionDto,
   ConsentBodyDto,
   LanguageBodyDto,
+  RegistrationPatientDto,
   ResumeBodyDto,
 } from "./dto/session.dto";
 import {
@@ -124,8 +126,37 @@ export class SessionsService {
     return (configured ?? []).includes(department);
   }
 
-  async create(publicWebUrl: string, requestedDepartment?: string) {
-    const patient = await this.prisma.patient.create({ data: {} });
+  /** `general` plus every AYUSH department in the visit config — what a token slip can be issued for. */
+  listDepartments() {
+    const ayush = (this.config.get("AYUSH_DEPARTMENTS", { infer: true }) as string[] | undefined) ?? [];
+    const label = (id: string) => id.charAt(0).toUpperCase() + id.slice(1).replace(/[-_]/g, " ");
+    return [
+      { id: "general", label: "General OPD", ayush_mode: false },
+      ...ayush.filter((id) => id !== "general").map((id) => ({ id, label: `${label(id)} (AYUSH)`, ayush_mode: true })),
+    ];
+  }
+
+  /** Age entered at the desk → an approximate date of birth (same day and month, so the age is
+   * exact today). The Vaidya can correct age in Vaya; nothing downstream treats it as verified. */
+  private dobFromAge(ageYears: number): Date {
+    const now = new Date();
+    return new Date(Date.UTC(now.getUTCFullYear() - ageYears, now.getUTCMonth(), now.getUTCDate()));
+  }
+
+  async create(publicWebUrl: string, requestedDepartment?: string, registration?: RegistrationPatientDto) {
+    // Name, phone and ABHA number are field-level encrypted (src/common/crypto.ts) — a database
+    // dump must not yield identities (docs/09).
+    const patient = await this.prisma.patient.create({
+      data: registration
+        ? {
+            name: this.cipher.encrypt(registration.name),
+            phone: registration.phone ? this.cipher.encrypt(registration.phone) : null,
+            abhaNumber: registration.abha_number ? this.cipher.encrypt(registration.abha_number) : null,
+            sex: registration.sex ?? null,
+            dob: registration.age_years !== undefined ? this.dobFromAge(registration.age_years) : null,
+          }
+        : {},
+    });
     // No registration flow exists yet (ADR 0007). The department comes from whoever configured
     // the check-in screen (the URL a desk or kiosk opens) and defaults to the one placeholder
     // department, so the queue is usable either way. Token numbering has a known benign race
@@ -153,16 +184,21 @@ export class SessionsService {
       },
     });
     sessionLogger(session.id).info({ visit_id: visit.id, department, ayush_mode: ayushMode }, "session created");
+    const qrUrl = `${publicWebUrl}/s/${session.id}?token=${rawToken}`;
     return {
       session_id: session.id,
       resume_token: rawToken,
       department,
       ayush_mode: ayushMode,
+      token_no: tokenNo,
+      visit_id: visit.id,
+      // Rendered here so the slip prints with no CDN and no network beyond the gateway (rule 9).
+      qr_data_url: await QRCode.toDataURL(qrUrl, { margin: 1, width: 360, errorCorrectionLevel: "M" }),
       // Matches apps/intake's actual route (src/app/s/[id]/page.tsx) — this used to point at
       // /intake/{id}?rt=, a placeholder written before that app was scaffolded and never
       // updated afterward. A QR built from the old shape 404'd on scan; nothing caught it
       // because nothing renders qr_url as an actual QR code yet (see docs/19).
-      qr_url: `${publicWebUrl}/s/${session.id}?token=${rawToken}`,
+      qr_url: qrUrl,
     };
   }
 

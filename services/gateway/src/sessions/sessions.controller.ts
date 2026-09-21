@@ -39,6 +39,7 @@ export class SessionsController {
     return this.sessions.create(
       this.config.get("PUBLIC_WEB_URL", { infer: true }),
       body.department,
+      body.patient,
     );
   }
 

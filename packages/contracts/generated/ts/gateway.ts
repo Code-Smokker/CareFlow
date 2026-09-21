@@ -24,6 +24,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/departments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Departments a token slip can be issued for
+         * @description `general` plus every department in the gateway's `AYUSH_DEPARTMENTS` visit config. AYUSH mode is a property of the department, never of the patient.
+         */
+        get: operations["listDepartments"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/sessions/{id}": {
         parameters: {
             query?: never;
@@ -267,6 +287,69 @@ export interface paths {
         put?: never;
         /** Upload a scanned prescription or lab report for this session */
         post: operations["uploadDocument"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/visits/{id}/documents": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: components["parameters"]["VisitIdParam"];
+            };
+            cookie?: never;
+        };
+        /**
+         * Every document uploaded for this visit, with OCR status and extractions
+         * @description Handwritten extractions are never auto-accepted (CLAUDE.md rule 5): each carries `confirmed_by` — null until a human confirms it — and a dictionary-matched shortlist is a separate follow-up, not invented here.
+         */
+        get: operations["listVisitDocuments"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/extractions/{id}/confirm": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * A human confirms one extracted value (CLAUDE.md rule 5)
+         * @description Handwritten OCR output is never auto-accepted; this is the human acceptance. Idempotent refusal: confirming an already-confirmed value returns 409. Writes an append-only audit row in the same transaction. `actor_id` is a plain identifier until RBAC lands (Day 4).
+         */
+        post: operations["confirmExtraction"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/documents/{id}/file": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        /** The original uploaded image or PDF */
+        get: operations["getDocumentFile"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -698,6 +781,27 @@ export interface components {
                 height: number;
             } | null;
         };
+        VisitDocument: {
+            document_id: string;
+            session_id: string;
+            /** @enum {string} */
+            type: "prescription" | "lab" | "discharge" | "imaging" | "unknown";
+            /** @enum {string} */
+            ocr_status: "queued" | "processing" | "done" | "failed";
+            page_count: number | null;
+            quality_score: number | null;
+            /** Format: date-time */
+            created_at: string;
+            extractions: {
+                id: string;
+                field: string;
+                value: string;
+                confidence: number | null;
+                bounding_box: Record<string, never> | null;
+                entity_type: string;
+                confirmed_by: string | null;
+            }[];
+        };
         DocumentStatus: {
             /** @enum {string} */
             status: "queued" | "processing" | "done" | "failed";
@@ -721,7 +825,23 @@ export interface components {
             /** @enum {string} */
             priority: "routine" | "priority" | "urgent";
             waiting_minutes: number;
+            patient: components["schemas"]["PatientBrief"];
+            /** @description The visit's latest intake session — what a document upload on the patient's behalf attaches to. */
+            session_id?: string | null;
+            /**
+             * @description The visit's own status — `ready` once the patient has completed intake.
+             * @enum {string}
+             */
+            intake_status: "waiting" | "in_intake" | "ready" | "consulting" | "closed";
             red_flags: components["schemas"]["RedFlag"][];
+        };
+        /** @description What the registration desk recorded. Nulls are real — they mean "not recorded", never a placeholder name. */
+        PatientBrief: {
+            name: string | null;
+            age_years: number | null;
+            sex: string | null;
+            /** @description Last 4 digits only, e.g. ••••••3210. */
+            phone_masked: string | null;
         };
         SummaryField: {
             field_path: string;
@@ -742,6 +862,13 @@ export interface components {
         };
         VisitSummary: {
             visit_id: string;
+            patient: components["schemas"]["PatientBrief"];
+            token_no: string | null;
+            department: string | null;
+            /** @enum {string} */
+            intake_status: "waiting" | "in_intake" | "ready" | "consulting" | "closed";
+            /** Format: date-time */
+            started_at: string;
             session_id: components["schemas"]["SessionId"];
             fields: components["schemas"]["SummaryField"][];
             signed: boolean;
@@ -1065,6 +1192,15 @@ export interface operations {
                 "application/json": {
                     /** @description Defaults to `general`. */
                     department?: string;
+                    /** @description Registration-desk details for the patient this token slip is for. Name, phone and ABHA number are stored AES-GCM encrypted (field-level, docs/09). All optional — a walk-in started from the patient's own phone has none. `age_years` is turned into an approximate date of birth (same day and month, so the age is exact today); the Vaidya can correct it in Vaya. */
+                    patient?: {
+                        name: string;
+                        age_years?: number;
+                        /** @enum {string} */
+                        sex?: "male" | "female" | "other" | "unknown";
+                        phone?: string;
+                        abha_number?: string;
+                    };
                 };
             };
         };
@@ -1082,7 +1218,37 @@ export interface operations {
                         qr_url: string;
                         department: string;
                         ayush_mode: boolean;
+                        /** @description The number printed on the slip. */
+                        token_no: string;
+                        visit_id: string;
+                        /** @description PNG data URL of `qr_url`, rendered server-side so the slip prints with no CDN and no network beyond the gateway (CLAUDE.md rule 9). */
+                        qr_data_url: string;
                     };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    listDepartments: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Departments */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        id: string;
+                        label: string;
+                        ayush_mode: boolean;
+                    }[];
                 };
             };
             default: components["responses"]["Error"];
@@ -1484,6 +1650,87 @@ export interface operations {
                         /** @constant */
                         status: "queued";
                     };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    listVisitDocuments: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: components["parameters"]["VisitIdParam"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Documents, oldest first */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VisitDocument"][];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    confirmExtraction: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    actor_id: string;
+                    actor_role: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Confirmed */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        id: string;
+                        confirmed_by: string;
+                        /** Format: date-time */
+                        confirmed_at: string;
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    getDocumentFile: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The stored bytes, with their original content type */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/octet-stream": string;
                 };
             };
             default: components["responses"]["Error"];

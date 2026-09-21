@@ -9,6 +9,7 @@ import { AyurvedaService } from "../ayurveda/ayurveda.service";
 import type { AbdmClient } from "../abdm/abdm-client.interface";
 import type { SummaryLeaf, SummariseStructured } from "../ai/ai-service.client";
 import { AppException } from "../common/app-exception";
+import { FieldCipher } from "../common/crypto";
 import type { Env } from "../common/env";
 import { rootLogger } from "../common/logger";
 import { HisAdapterService } from "../his/his-adapter.service";
@@ -39,7 +40,17 @@ interface RedFlagPayload {
   acknowledged_at: string | null;
 }
 
+interface PatientBriefPayload {
+  name: string | null;
+  age_years: number | null;
+  sex: string | null;
+  phone_masked: string | null;
+}
+
 interface QueueTokenPayload {
+  session_id: string | null;
+  patient: PatientBriefPayload;
+  intake_status: string;
   visit_id: string;
   token_no: string;
   patient_id: string;
@@ -98,6 +109,8 @@ function toObservationValue(value: unknown): number | string | boolean {
 
 @Injectable()
 export class VisitsService {
+  private readonly cipher: FieldCipher;
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly events: EventsGateway,
@@ -106,7 +119,37 @@ export class VisitsService {
     private readonly terminology: TerminologyServiceClient,
     private readonly hisAdapter: HisAdapterService,
     private readonly ayurveda: AyurvedaService,
-  ) {}
+  ) {
+    this.cipher = new FieldCipher(config.get("FIELD_ENCRYPTION_KEY", { infer: true }));
+  }
+
+  /** What the registration desk recorded, decrypted for the clinician. Nulls stay null — "not
+   * recorded" is shown as such, never as a placeholder name. The phone is masked to its last 4
+   * digits here, so the full number never leaves this service. */
+  private toPatientBrief(patient: { name: string | null; phone: string | null; sex: string | null; dob: Date | null }): PatientBriefPayload {
+    const safeDecrypt = (v: string | null) => {
+      if (!v) return null;
+      try {
+        return this.cipher.decrypt(v);
+      } catch {
+        return null; // a value written under another key is unreadable, not a reason to fail the queue
+      }
+    };
+    const phone = safeDecrypt(patient.phone);
+    let age: number | null = null;
+    if (patient.dob) {
+      const now = new Date();
+      age = now.getUTCFullYear() - patient.dob.getUTCFullYear();
+      if (now.getUTCMonth() < patient.dob.getUTCMonth() || (now.getUTCMonth() === patient.dob.getUTCMonth() && now.getUTCDate() < patient.dob.getUTCDate())) age -= 1;
+      if (age < 0) age = null;
+    }
+    return {
+      name: safeDecrypt(patient.name),
+      age_years: age,
+      sex: patient.sex && patient.sex !== "unknown" ? patient.sex : null,
+      phone_masked: phone ? `${"•".repeat(Math.max(0, phone.length - 4))}${phone.slice(-4)}` : null,
+    };
+  }
 
   /** NAMASTE + ICD-11 TM2/MMS codings for the chief complaint, docs/07-ayush-terminology.md's
    * dual coding — best-effort: any failure (service down, or simply no data loaded yet, which
@@ -261,7 +304,7 @@ export class VisitsService {
   async getQueue(department?: string): Promise<QueueTokenPayload[]> {
     const visits = await this.prisma.visit.findMany({
       where: { status: { not: "closed" }, ...(department ? { department } : {}) },
-      include: { sessions: { include: { redFlags: true } } },
+      include: { patient: true, sessions: { include: { redFlags: true } } },
       orderBy: [{ priority: "desc" }, { tokenNo: "asc" }],
     });
 
@@ -275,6 +318,9 @@ export class VisitsService {
         department: visit.department ?? "general",
         priority: visit.priority,
         waiting_minutes: Math.max(0, Math.floor((now - visit.startedAt.getTime()) / 60_000)),
+        patient: this.toPatientBrief(visit.patient),
+        session_id: [...visit.sessions].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())[0]?.id ?? null,
+        intake_status: visit.status,
         red_flags: redFlags.map((f) => toRedFlagPayload(f, visit.tokenNo ?? visit.id)),
       };
     });
@@ -405,12 +451,17 @@ this is a structured history draft the physician has signed.</small></p>
       orderBy: { createdAt: "desc" },
       select: { id: true },
     });
-    const visit = await this.prisma.visit.findUniqueOrThrow({ where: { id: visitId } });
+    const visit = await this.prisma.visit.findUniqueOrThrow({ where: { id: visitId }, include: { patient: true } });
     const unacknowledged = session
       ? await this.prisma.redFlag.findMany({ where: { sessionId: session.id, acknowledgedAt: null } })
       : [];
     return {
       visit_id: visitId,
+      patient: this.toPatientBrief(visit.patient),
+      token_no: visit.tokenNo,
+      department: visit.department,
+      intake_status: visit.status,
+      started_at: visit.startedAt.toISOString(),
       session_id: session?.id ?? null,
       fields: flattenStructured(summary.structured as unknown as SummariseStructured),
       signed: summary.status === "signed",

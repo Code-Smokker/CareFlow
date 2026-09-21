@@ -6,13 +6,15 @@ import {
   HttpCode,
   Param,
   Post,
+  Res,
   UploadedFile,
   UseInterceptors,
 } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
+import type { Response } from "express";
 import { ZodValidationPipe } from "../common/zod-validation.pipe";
 import { DocumentsService } from "./documents.service";
-import { type ProcessCallbackDto, ProcessCallbackSchema, UploadDocumentBodySchema } from "./dto/document.dto";
+import { ConfirmExtractionSchema, type ProcessCallbackDto, ProcessCallbackSchema, UploadDocumentBodySchema } from "./dto/document.dto";
 
 @Controller()
 export class DocumentsController {
@@ -36,6 +38,28 @@ export class DocumentsController {
   @Get("documents/:id")
   getStatus(@Param("id") id: string) {
     return this.documents.getStatus(id);
+  }
+
+  @Get("visits/:id/documents")
+  listForVisit(@Param("id") visitId: string) {
+    return this.documents.listForVisit(visitId);
+  }
+
+  @Post("extractions/:id/confirm")
+  @HttpCode(200)
+  confirm(
+    @Param("id") id: string,
+    @Body(new ZodValidationPipe(ConfirmExtractionSchema)) body: { actor_id: string; actor_role: string },
+  ) {
+    return this.documents.confirmExtraction(id, body.actor_id, body.actor_role);
+  }
+
+  @Get("documents/:id/file")
+  async file(@Param("id") id: string, @Res() res: Response) {
+    const { body, contentType } = await this.documents.getFile(id);
+    res.setHeader("Content-Type", contentType ?? "application/octet-stream");
+    res.setHeader("Cache-Control", "private, max-age=300");
+    res.send(body);
   }
 
   @Get("sessions/:id/timeline")

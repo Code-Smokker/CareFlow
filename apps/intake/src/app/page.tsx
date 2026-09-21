@@ -39,7 +39,9 @@ export default function RootPage() {
     setStartingFresh(true);
     setError(null);
     try {
-      const session = await startSession();
+      // Staff configure a desk or kiosk with /?dept=ayurveda; a patient's own phone never sets it.
+      const department = new URLSearchParams(window.location.search).get("dept") ?? undefined;
+      const session = await startSession(department);
       router.replace(`/s/${session.session_id}?token=${encodeURIComponent(session.resume_token)}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));

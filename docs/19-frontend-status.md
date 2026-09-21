@@ -135,7 +135,30 @@ Bound via `doctorwebapp/careflow-live.js` and `doctorwebapp/careflow-ayurveda.js
 | Patient Profile | `w05` | `GET /v1/visits/{id}/summary`, `GET /v1/visits/queue` | **LIVE**: Displays patient concern, structured HPI chips with provenance, red flag alert banners, and re-points the primary action button to the Ayurvedic Case Record (`a01`). |
 | Care Summary | `w11` | `GET /v1/visits/{id}/summary`, `GET /v1/ayurveda/vocabulary` | **LIVE**: Renders HPI questionnaire review and appends the "Ayurvediya Rugna Pariksha" card with complete case sheet rows and Vaidya chips. |
 | Red Flag Alerts | `w13` | `GET /v1/visits/queue`, `POST /v1/redflags/{id}/acknowledge` | **LIVE**: Displays unacknowledged red flags; one-tap acknowledge updates the queue and records an audit log row. |
+| Register patient + token slip | modal on `w03`/`w04` | `GET /v1/departments`, `POST /v1/sessions` (with `patient`) | **LIVE** (replaces the old sample-data modal, which only showed a toast). Name, phone and ABHA number are stored AES-GCM encrypted; age becomes an approximate DOB. Returns the token number and a server-rendered QR (PNG data URL, no CDN) that encodes `apps/intake`'s `/s/{id}?token=`. Verified in the browser: the QR decodes to that link, the patient appears in the queue by name immediately, and their age feeds the Vaya band. Print opens a slip window. |
+| Documents (list + upload) | `w09` | `GET /v1/visits/{id}/documents`, `POST /v1/sessions/{id}/documents` | **LIVE**: real counts, per-document OCR status and extractions, upload by browse / camera / drag-and-drop attached to the visit's session. Verified: upload succeeds and shows "Queued". **OCR does not complete in this environment** — see "Known environment blocker" below. |
+| Document review | `w10` | `GET /v1/documents/{id}/file`, `POST /v1/extractions/{id}/confirm` | **LIVE**: original image beside the extracted values; each value needs a person's Confirm (audited, refused twice) — handwritten output is never auto-accepted (CLAUDE.md rule 5). Not exercised against real OCR output yet (blocked as above). |
+| Intake overview / Symptoms / Questionnaire / Read-back | `w06`–`w08`, `w12` | `GET /v1/visits/{id}/summary`, `GET /v1/visits/{id}/ayurveda` | **LIVE**: the patient's own answers with provenance chips; a visit whose patient is still answering shows "intake in progress" rather than an error. Read-back speaks the summary with the browser voice. |
+| Handoff / Session complete | `w14`, `w15` | `POST /v1/visits/{id}/sign`, `GET /v1/visits/{id}/printable-summary` | **LIVE**: sign from the doctor UI. Verified: signed bundle has 77 Observations + 2 Conditions, **0 HAPI errors** (304 warnings: unknown code systems, best-practice), 71 Ayurvedic Observations all flagged NAMASTE `PLACEHOLDER`; the print view carries every Ayurvedic section. |
+| Analytics | `w17` | `GET /v1/analytics/summary` | **LIVE**: throughput, red-flag rate, average intake time, top complaints. |
+| System status | `w18` | `GET /health`, `GET /v1/audit-log`, `GET /v1/integration-events`, `GET /v1/ayurveda/vocabulary` | **LIVE**, but it replaces the design's Settings screen: there is no clinician login or per-user setting to show. |
+| Appointments | `w16` | — | **No backend.** The page states this instead of showing invented appointments. |
+| Login / Landing | `w02`, `w01` | — | **Not connected.** No authentication exists yet (actions are recorded under a shared identifier); these two static pages still contain design sample content. |
+| Search palette (Cmd+K) | all pages | queue, `GET /v1/terminology/search` | **LIVE** — its hardcoded fake patients and invented "NAMASTE" codes were removed. Terminology results are listed alphabetically, never ranked. |
 | Ayurvedic Case Record | `a01` | `GET /v1/ayurveda/vocabulary`, `GET/PUT /v1/visits/{id}/ayurveda`, `GET /v1/terminology/search`, `POST /v1/terminology/translate`, `POST /v1/visits/{id}/sign`, `GET /v1/visits/{id}/printable-summary` | **LIVE**: Step 1 renders read-only Prashna (43 questions) + Prakriti score chart. Steps 2–4 render dynamic forms with patient-reported pre-fills and Mala override. Computes BMI and Vaya age band in real time. Step 5 provides NAMASTE diagnosis search and ICD-11 TM2 translation. Step 6 displays case sheet, executes HAPI FHIR-validated signing, and links to the A4 print view. Post-sign saves are locked (409). |
+
+### Known environment blocker: OCR does not run
+
+Documents upload and store, but stay "Queued". `localhost:6379` is served by a native Homebrew
+`redis-server` that cannot persist to disk (`MISCONF`), shadowing the healthy Docker Redis, so the
+docai Celery broker refuses writes; the docai worker is also not running. Fix: stop the native
+Redis (`brew services stop redis`) so Docker's is used, then start the docai worker (`make dev`).
+
+### Where mock data is deliberately gone
+
+Every card the design filled with sample patients, documents, appointments, notes and voice
+recordings on `w03`, `w05`, `w11`, `w13` is now either bound to real data or removed. A scan of all
+19 rendered pages for the design's sample strings finds none except on `w01` and `w02`.
 
 ---
 

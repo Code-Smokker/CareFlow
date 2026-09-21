@@ -79,16 +79,10 @@
 <!-- Top Brand & Navigation -->
 <div class="flex flex-col">
 <!-- Logo Header -->
-<div class="h-16 px-5 flex items-center justify-between border-b border-slate-100">
-<div class="flex items-center gap-3">
-<div class="w-10 h-10 rounded-xl bg-[#0D6E6E] flex items-center justify-center text-white shadow-sm">
-<span class="material-symbols-outlined fill text-[22px]">volunteer_activism</span>
-</div>
-<div class="flex flex-col">
-<span class="font-bold text-[18px] tracking-tight text-[#0F1E36] leading-none">CareFlow</span>
-<span class="text-[11px] font-medium text-slate-500 mt-0.5">Clinical Care Team</span>
-</div>
-</div>
+<div class="h-16 px-4 flex items-center justify-between border-b border-slate-100">
+<a href="../careflow_website_w03_care_team_dashboard/code.html" class="flex items-center gap-2 hover:opacity-95 transition-opacity" title="CareFlow Clinical Dashboard">
+<img src="../logo.png" alt="CareFlow Logo" class="h-11 sm:h-12 w-auto object-contain max-w-[180px] transition-all">
+</a>
 <span class="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded-md bg-[#E6F7F2] text-[#0D6E6E] border border-[#0D6E6E]/20">OPD</span>
 </div>
 <!-- Navigation Menu Items -->
@@ -147,7 +141,7 @@
 <span>Help &amp; Support</span>
 </a>
 <!-- Clinician Profile Card -->
-<div class="mt-2 p-2.5 rounded-xl bg-slate-50 border border-slate-200/70 flex items-center justify-between">
+<div onclick="CareFlow.navigate(18)" class="mt-2 p-2.5 rounded-xl bg-slate-50 border border-slate-200/70 flex items-center justify-between cursor-pointer hover:border-[#0D6E6E] transition-colors" title="Doctor Profile & Settings (Dr. Ananya Iyer)">
 <div class="flex items-center gap-2.5 min-w-0">
 <div class="relative w-9 h-9 rounded-full bg-[#0D6E6E] text-white flex items-center justify-center font-bold text-xs shrink-0">
             AI
@@ -169,25 +163,25 @@
 <!-- 2. PERSISTENT TOP APP BAR -->
 <header class="sticky top-0 z-30 h-16 bg-white/95 backdrop-blur border-b border-slate-200 px-8 flex items-center justify-between">
 <!-- Search Input with Keyboard Shortcut -->
-<div class="w-96 max-w-md relative">
+<div onclick="CareFlow.openSearchModal()" class="w-96 max-w-md relative cursor-pointer" title="Search patients, UHID, ABHA... (⌘K)">
 <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[18px]">search</span>
-<input class="w-full h-10 pl-9 pr-12 rounded-xl bg-slate-50 border border-slate-200 text-sm text-[#0F1E36] placeholder-slate-400 focus:outline-none focus:border-[#0D6E6E] focus:ring-1 focus:ring-[#0D6E6E] transition-all" placeholder="Search patients, UHID, ABHA... ⌘K" type="text">
+<input class="w-full h-10 pl-9 pr-12 rounded-xl bg-slate-50 border border-slate-200 text-sm text-[#0F1E36] placeholder-slate-400 focus:outline-none focus:border-[#0D6E6E] focus:ring-1 focus:ring-[#0D6E6E] transition-all pointer-events-none" placeholder="Search patients, UHID, ABHA... ⌘K" type="text" readonly>
 <kbd class="absolute right-2.5 top-1/2 -translate-y-1/2 px-1.5 py-0.5 text-[10px] font-semibold text-slate-400 bg-white border border-slate-200 rounded shadow-2xs">⌘K</kbd>
 </div>
 <!-- Right Side Controls -->
 <div class="flex items-center gap-3">
 <!-- Language Selector Pill -->
-<button class="h-9 px-3 rounded-full bg-slate-50 border border-slate-200 text-slate-700 hover:bg-slate-100 text-xs font-semibold flex items-center gap-1.5 transition-colors" type="button">
+<button onclick="CareFlow.openLanguageMenu(this)" class="h-9 px-3 rounded-full bg-slate-50 border border-slate-200 text-slate-700 hover:bg-slate-100 text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer" type="button" title="Select Language / भाषा चुनें">
 <span class="material-symbols-outlined text-[#0D6E6E] text-[16px]">language</span>
 <span>English (हिन्दी) ▼</span>
 </button>
 <!-- Notification Bell with Red Badge -->
-<button class="relative w-9 h-9 rounded-full bg-slate-50 border border-slate-200 text-slate-600 hover:bg-slate-100 flex items-center justify-center transition-colors" type="button">
+<button onclick="CareFlow.navigate(13)" class="relative w-9 h-9 rounded-full bg-slate-50 border border-slate-200 text-slate-600 hover:bg-slate-100 flex items-center justify-center transition-colors cursor-pointer" type="button" title="Red Flag Alerts">
 <span class="material-symbols-outlined text-[20px]">notifications</span>
 <span class="absolute top-1 right-1 w-2 h-2 rounded-full bg-red-500 ring-2 ring-white"></span>
 </button>
 <!-- Clinician Profile Avatar -->
-<button class="w-9 h-9 rounded-full bg-[#0D6E6E] text-white flex items-center justify-center font-bold text-xs ring-2 ring-[#E6F7F2] transition-transform hover:scale-105" type="button">
+<button onclick="CareFlow.navigate(18)" class="w-9 h-9 rounded-full bg-[#0D6E6E] text-white flex items-center justify-center font-bold text-xs ring-2 ring-[#E6F7F2] transition-transform hover:scale-105 cursor-pointer" type="button" title="Doctor Profile & Settings (Dr. Ananya Iyer)">
           AI
         </button>
 </div>

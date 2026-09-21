@@ -39,3 +39,8 @@ export const UploadDocumentBodySchema = z.object({
   doc_type_hint: z.string().nullable().optional(),
 });
 export type UploadDocumentBodyDto = z.infer<typeof UploadDocumentBodySchema>;
+
+export const ConfirmExtractionSchema = z.object({
+  actor_id: z.string().min(1),
+  actor_role: z.string().min(1),
+});

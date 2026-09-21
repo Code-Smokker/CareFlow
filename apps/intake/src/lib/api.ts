@@ -5,8 +5,11 @@ function idempotencyKey(sessionId: string, slotId: string) {
   return `${sessionId}:${slotId}:${Date.now()}`;
 }
 
-export async function startSession() {
-  const { data, error } = await gateway.POST("/v1/sessions", {});
+/** `department` is set by whoever configured this check-in screen (the `?dept=` in its URL),
+ * never chosen by the patient. Whether that department runs in AYUSH mode is the gateway's
+ * visit config — this app does not know or care, it just renders the questions it is sent. */
+export async function startSession(department?: string) {
+  const { data, error } = await gateway.POST("/v1/sessions", { body: department ? { department } : {} });
   if (error) throw new Error(error.error.message);
   return data;
 }

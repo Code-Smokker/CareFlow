@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"name": "doctorwebapp",
+			"path": "../../../../../Downloads/doctorwebapp"
+		},
+		{
+			"name": "CareFlow",
+			"path": "../../../.."
+		}
+	],
+	"settings": {}
+}

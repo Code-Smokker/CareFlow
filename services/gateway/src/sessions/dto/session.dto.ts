@@ -1,8 +1,20 @@
 import { z } from "zod";
 
 /** POST /v1/sessions — the body is optional; `department` is staff-configured, not patient-chosen. */
+export const RegistrationPatientSchema = z.object({
+  name: z.string().trim().min(1).max(120),
+  age_years: z.number().int().min(0).max(120).optional(),
+  sex: z.enum(["male", "female", "other", "unknown"]).optional(),
+  phone: z.string().trim().min(5).max(20).optional(),
+  abha_number: z.string().trim().min(5).max(40).optional(),
+});
+export type RegistrationPatientDto = z.infer<typeof RegistrationPatientSchema>;
+
 export const CreateSessionSchema = z
-  .object({ department: z.string().regex(/^[a-z][a-z0-9_-]{0,31}$/).optional() })
+  .object({
+    department: z.string().regex(/^[a-z][a-z0-9_-]{0,31}$/).optional(),
+    patient: RegistrationPatientSchema.optional(),
+  })
   .default({});
 export type CreateSessionDto = z.infer<typeof CreateSessionSchema>;
 

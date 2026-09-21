@@ -1,6 +1,6 @@
 import { Injectable, type OnModuleInit } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { CreateBucketCommand, HeadBucketCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { CreateBucketCommand, GetObjectCommand, HeadBucketCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import type { Env } from "./env";
 import { rootLogger } from "./logger";
 
@@ -22,6 +22,14 @@ export class S3StorageClient implements OnModuleInit {
       },
       forcePathStyle: true, // MinIO — path-style, not virtual-hosted-style buckets
     });
+  }
+
+  /** Bytes of an object previously stored by putObject, addressed by its `s3://bucket/key` uri. */
+  async getObject(storageUri: string): Promise<{ body: Buffer; contentType: string | undefined }> {
+    const prefix = `s3://${this.bucket}/`;
+    if (!storageUri.startsWith(prefix)) throw new Error("storage_uri is not in this bucket");
+    const out = await this.client.send(new GetObjectCommand({ Bucket: this.bucket, Key: storageUri.slice(prefix.length) }));
+    return { body: Buffer.from(await out.Body!.transformToByteArray()), contentType: out.ContentType };
   }
 
   async onModuleInit() {

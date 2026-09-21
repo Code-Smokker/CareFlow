@@ -44,7 +44,7 @@
       throw new Error('The gateway could not be reached at ' + API + '. Check that it is running.');
     }
     const body = res.status === 204 ? null : await res.json().catch(() => null);
-    if (!res.ok) throw new Error((body && body.error && body.error.message) || 'Request failed (' + res.status + ')');
+    if (!res.ok) { const err = new Error((body && body.error && body.error.message) || 'Request failed (' + res.status + ')'); err.status = res.status; throw err; }
     return body;
   }
 
@@ -141,16 +141,22 @@
     const label = source === 'clinician' ? 'Vaidya' + (extra ? ' · ' + extra : '') : source === 'computed' ? 'Calculated' : source + (confidence == null ? '' : ' · ' + Math.round(confidence * 100) + '%');
     return '<span class="shrink-0 px-1.5 py-0.5 rounded ' + cls + ' text-[10px] font-semibold capitalize" title="' + esc(label) + '">' + esc(label) + '</span>';
   };
+  const initialsOf = (n) => n.split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0].toUpperCase()).join('');
+  /** The patient as the registration desk recorded them; a token number stands in only when no name was entered. */
+  const who = (t) => {
+    const p = (t && t.patient) || {};
+    return {
+      name: p.name || (t ? t.token_no : 'Unknown'),
+      initials: p.name ? initialsOf(p.name) : t ? t.token_no.slice(-2) : '?',
+      demo: [p.age_years != null ? p.age_years + ' y' : null, p.sex ? p.sex.charAt(0).toUpperCase() + p.sex.slice(1) : null].filter(Boolean).join(', ') || 'Age and sex not recorded',
+    };
+  };
+  const STATUS_LABEL = { waiting: 'Waiting', in_intake: 'Intake in progress', ready: 'Ready for review', consulting: 'With doctor', closed: 'Closed' };
   const statusOf = (t, sm) => (
-    sm && sm.signed
-      ? 'Signed'
-      : t && t.red_flags && t.red_flags.some((f) => !f.acknowledged_by)
-      ? 'Important'
-      : t && t.priority === 'urgent'
-      ? 'Urgent'
-      : sm && sm.fields && sm.fields.length > 0
-      ? 'Ready for review'
-      : 'Waiting'
+    sm && sm.signed ? 'Signed'
+      : t && t.red_flags && t.red_flags.some((f) => !f.acknowledged_by) ? 'Important'
+      : t && t.priority === 'urgent' ? 'Urgent'
+      : (t && STATUS_LABEL[t.intake_status]) || (sm && sm.fields && sm.fields.length > 0 ? 'Ready for review' : 'Waiting')
   );
 
   // ---------------------------------------------------------------- w03 dashboard
@@ -187,9 +193,9 @@
         const urgent = t.red_flags.some((f) => !f.acknowledged_by);
         const row = (urgent ? tplPriority : tplNormal).cloneNode(true);
         const s = leafSpans(row);
-        setText(row.children[0] && row.children[0].children[0], t.token_no.slice(-2));
-        setText(s[0], t.token_no); setText(s[1], '#' + short(t.visit_id));
-        setText(s[2], t.department + ' • ' + t.priority);
+        setText(row.children[0] && row.children[0].children[0], who(t).initials);
+        setText(s[0], who(t).name); setText(s[1], t.token_no);
+        setText(s[2], who(t).demo + ' • ' + t.department);
         setText(s[3], 'Waiting ' + t.waiting_minutes + ' min'); setText(s[4], t.department);
         setPill(s[5] && s[5].parentElement.tagName === 'DIV' ? s[5] : s[5], statusOf(t));
         row.removeAttribute('onclick'); row.onclick = () => goto(urgent ? 'w13' : 'w05', t.visit_id);
@@ -207,7 +213,7 @@
       container.innerHTML = '';
       flags.slice(0, 5).forEach((f) => {
         const row = tpl.cloneNode(true); const s = leafSpans(row);
-        setText(s[0], f.visit.token_no); setText(s[1], '“' + f.quote + '”');
+        setText(s[0], who(f.visit).name); setText(s[1], '“' + f.quote + '”');
         const b = $('button', row); b.removeAttribute('onclick'); b.onclick = () => goto('w13', f.visit.visit_id);
         container.appendChild(row);
       });
@@ -229,8 +235,8 @@
         const sm = summaries[i]; const urgent = t.red_flags.some((f) => !f.acknowledged_by);
         const tr = (urgent ? tplAttn : tplNormal).cloneNode(true);
         const tds = $$(':scope > td', tr);
-        const s0 = leafSpans(tds[0]); setText($('div > div', tds[0]), t.token_no.slice(-2));
-        setText(s0[0], t.token_no); setText(s0[1], '#' + short(t.visit_id)); setText(s0[s0.length - 1], 'Age and sex not recorded');
+        const s0 = leafSpans(tds[0]); setText($('div > div', tds[0]), who(t).initials);
+        setText(s0[0], who(t).name); setText(s0[1], t.token_no); setText(s0[s0.length - 1], who(t).demo);
         const complaint = sm && fieldMap(sm).chief_complaint; const s1 = leafSpans(tds[1]);
         setText(s1[0], complaint ? human(complaint.value) : 'Intake in progress'); setText(s1[1], sm ? hpi(sm).length + ' answers recorded' : 'No summary yet');
         const s2 = leafSpans(tds[2]); setText(s2[0], 'Waiting ' + t.waiting_minutes + ' min'); setText(s2[1], t.priority);
@@ -259,10 +265,10 @@
   // ---------------------------------------------------------------- w05 profile
   async function bindW05(summary, token) {
     const f = fieldMap(summary); const complaint = f.chief_complaint ? human(f.chief_complaint.value) : 'Not recorded yet';
-    const name = token ? token.token_no : 'Visit ' + short(summary.visit_id);
+    const name = token ? who(token).name : 'Visit ' + short(summary.visit_id);
     const h1 = $('main h1'); setText(h1, name); if (h1 && h1.nextElementSibling) setText(h1.nextElementSibling, '');
-    setText(byText('span', /^\s*#CF-\d+/), '#' + short(summary.visit_id));
-    setText(byText('span', /^Male • \d+ years/), 'Age and sex not recorded');
+    setText(byText('span', /^\s*#CF-\d+/), token ? token.token_no : '#' + short(summary.visit_id));
+    setText(byText('span', /^Male • \d+ years/), token ? who(token).demo : 'Age and sex not recorded');
     setText(byText('span', /^Last intake:/), (summary && summary.fields && summary.fields.length > 0 ? 'Intake complete' : 'Intake in progress') + (token ? ' • Waiting ' + token.waiting_minutes + ' min' : ''));
     setText(byText('span', /^Aarav Sharma$/), name); setText(byText('span', /^मरीज \/ आरव/), '');
     $$('main span').filter((s) => /^ABHA Sync/.test(s.textContent)).forEach((s) => setText(s, 'ABHA: not linked'));
@@ -270,8 +276,8 @@
     const status = statusOf(token, summary);
     setPill(byText('span', /Ready for review/), status);
     const value = (label) => { const l = byText('span', new RegExp('^' + label + '$')); return l && l.nextElementSibling; };
-    [['Full Name', name], ['Patient ID', short(summary.visit_id)], ['Date of Birth', 'Not recorded'], ['Gender', 'Not recorded'], ['Preferred Language', 'Not recorded']].forEach(([l, v]) => { const el = value(l); if (el) setText(el, v); });
-    const phone = value('Phone Number'); if (phone) { setText($('span', phone), 'Not recorded'); $$('.material-symbols-outlined', phone).forEach(hide); }
+    [['Full Name', token && token.patient.name ? name : 'Not recorded'], ['Patient ID', token ? token.token_no : short(summary.visit_id)], ['Date of Birth', token && token.patient.age_years != null ? 'Age ' + token.patient.age_years + ' (entered at registration)' : 'Not recorded'], ['Gender', token && token.patient.sex ? token.patient.sex : 'Not recorded'], ['Preferred Language', 'Not recorded']].forEach(([l, v]) => { const el = value(l); if (el) setText(el, v); });
+    const phone = value('Phone Number'); if (phone) { setText($('span', phone), token && token.patient.phone_masked ? token.patient.phone_masked : 'Not recorded'); $$('.material-symbols-outlined', phone).forEach(hide); }
     const em = value('Emergency Contact'); if (em) { const s = leafSpans(em); setText(s[0], 'Not recorded'); s.slice(1).forEach(hide); }
     // Current concern
     setText(byText('span', /^Fever & cough \(3 days\)$/), complaint);
@@ -315,9 +321,9 @@
 
   async function bindW11(summary, token) {
     const f = fieldMap(summary); const complaint = f.chief_complaint ? human(f.chief_complaint.value) : 'Not recorded yet';
-    const name = token ? token.token_no : 'Visit ' + short(summary.visit_id); const h = hpi(summary);
+    const name = token ? who(token).name : 'Visit ' + short(summary.visit_id); const h = hpi(summary);
     $$('main').forEach((m) => $$('span, h2', m).filter((s) => !s.children.length && /^(Aarav Sharma|UHID: CF-1024)$/.test(s.textContent.trim())).forEach((s) => setText(s, /UHID/.test(s.textContent) ? 'Visit #' + short(summary.visit_id) : name)));
-    $$('main span').filter((s) => /^(28 Y \/ M|Intake: Today|ABHA: 91-|ABHA ID: 91-|ABHA Sync: Active)/.test(s.textContent.trim()) && !s.querySelector('span')).forEach((s) => setText(s, /^ABHA/.test(s.textContent.trim()) ? 'ABHA: not linked' : /^28/.test(s.textContent.trim()) ? 'Age and sex not recorded' : 'Intake: ' + (summary && summary.fields && summary.fields.length > 0 ? 'complete' : 'in progress') + (token ? ' • waiting ' + token.waiting_minutes + ' min' : '')));
+    $$('main span').filter((s) => /^(28 Y \/ M|Intake: Today|ABHA: 91-|ABHA ID: 91-|ABHA Sync: Active)/.test(s.textContent.trim()) && !s.querySelector('span')).forEach((s) => setText(s, /^ABHA/.test(s.textContent.trim()) ? 'ABHA: not linked' : /^28/.test(s.textContent.trim()) ? (token ? who(token).demo : 'Age and sex not recorded') : 'Intake: ' + (summary && summary.fields && summary.fields.length > 0 ? 'complete' : 'in progress') + (token ? ' • waiting ' + token.waiting_minutes + ' min' : '')));
     setText(byText('span', /^Intake ID: #INK/), 'Visit #' + short(summary.visit_id));
     const glance = (label, v, note) => { const l = byText('span', new RegExp('^' + label + '$')); if (!l) return; const c = l.parentElement.parentElement; const ps = $$('p', c); setText(ps[0], v); if (ps[1]) setText(ps[1], note); };
     glance('Chief Complaint', complaint, 'Patient-reported');
@@ -365,8 +371,8 @@
 
   // ---------------------------------------------------------------- w13 red flags
   async function bindW13(summary, token) {
-    const name = token ? token.token_no : 'Visit ' + short(summary.visit_id);
-    $$('main span, main h2').filter((s) => !s.children.length && /^(Aarav Sharma|UHID: CF-1024|28 Y \/ M|ABHA: 91-|ABHA ID: 91-|ABHA Sync: Active|Intake completed:)/.test(s.textContent.trim())).forEach((s) => { const t = s.textContent.trim(); setText(s, /^UHID/.test(t) ? 'Visit #' + short(summary.visit_id) : /^ABHA/.test(t) ? 'ABHA: not linked' : /^28/.test(t) ? 'Age and sex not recorded' : /^Intake/.test(t) ? 'Intake completed' : name); });
+    const name = token ? who(token).name : 'Visit ' + short(summary.visit_id);
+    $$('main span, main h2').filter((s) => !s.children.length && /^(Aarav Sharma|UHID: CF-1024|28 Y \/ M|ABHA: 91-|ABHA ID: 91-|ABHA Sync: Active|Intake completed:)/.test(s.textContent.trim())).forEach((s) => { const t = s.textContent.trim(); setText(s, /^UHID/.test(t) ? 'Visit #' + short(summary.visit_id) : /^ABHA/.test(t) ? 'ABHA: not linked' : /^28/.test(t) ? (token ? who(token).demo : 'Age and sex not recorded') : /^Intake/.test(t) ? (summary.pending ? 'Intake in progress' : 'Intake completed') : name); });
     const all = token ? token.red_flags : []; const open = all.filter((x) => !x.acknowledged_by); const done = all.filter((x) => x.acknowledged_by);
     const a1 = $('article[data-purpose="alert-card-01"]'), a2 = $('article[data-purpose="alert-card-02"]');
     if (a1) {
@@ -404,22 +410,124 @@
     ['Review assigned to', 'Review note'].forEach((t) => markDemo(new RegExp(t)));
   }
 
+
+  // ---------------------------------------------------------------- Add patient → token slip → QR
+  const MODAL_ID = 'careflow-patient-modal';
+  const inputCls = 'w-full px-3.5 py-2 text-xs rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#0D6E6E]/20 focus:border-[#0D6E6E]';
+  const field = (id, label, control) => '<div><label for="' + id + '" class="block text-xs font-semibold text-slate-700 mb-1">' + label + '</label>' + control + '</div>';
+
+  function slipHtml(r, p) {
+    return '<div style="font-family:system-ui,sans-serif;width:300px;border:2px dashed #0D6E6E;border-radius:16px;padding:16px;text-align:center">' +
+      '<div style="font-weight:800;font-size:16px;color:#0B192C">CareFlow OPD token</div><div style="font-size:11px;color:#475569">' + esc(r.department) + (r.ayush_mode ? ' • AYUSH intake' : '') + '</div>' +
+      '<div style="font-size:44px;font-weight:800;letter-spacing:1px;margin:8px 0;color:#0D6E6E">' + esc(r.token_no) + '</div>' +
+      '<div style="font-size:14px;font-weight:700">' + esc(p.name) + '</div><div style="font-size:11px;color:#475569">' + esc(p.demo) + '</div>' +
+      '<img alt="QR code: scan with any phone to start the history" src="' + esc(r.qr_data_url) + '" width="220" height="220" style="margin:10px auto;display:block">' +
+      '<div style="font-size:12px;font-weight:700">Scan with your phone to give your history while you wait</div>' +
+      '<div style="font-size:11px;color:#475569;margin-top:4px">अपने फ़ोन से स्कैन करें • बारी आने से पहले अपना इतिहास बताएँ</div>' +
+      '<div style="font-size:10px;color:#94a3b8;margin-top:8px">No Aadhaar is stored. ABHA is optional.</div></div>';
+  }
+  function printSlip(r, p) {
+    const w = window.open('', '_blank', 'width=420,height=640');
+    if (!w) { banner('Allow pop-ups for this page to print the slip, or use the browser print on the slip shown.'); return; }
+    w.document.write('<!doctype html><title>Token ' + esc(r.token_no) + '</title><body style="margin:16px;display:flex;justify-content:center">' + slipHtml(r, p) + '</body>');
+    w.document.close(); w.focus(); setTimeout(() => { w.print(); }, 250);
+  }
+
+  async function openAddPatientModal() {
+    const old = document.getElementById(MODAL_ID); if (old) old.remove();
+    const modal = document.createElement('div');
+    modal.id = MODAL_ID;
+    modal.setAttribute('role', 'dialog'); modal.setAttribute('aria-modal', 'true'); modal.setAttribute('aria-label', 'Register patient and issue token');
+    modal.className = 'fixed inset-0 z-[100000] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-auto';
+    document.body.appendChild(modal);
+    const close = (reload) => { modal.remove(); if (reload) location.reload(); };
+    const shell = (title, sub, body) => '<div class="bg-white rounded-3xl shadow-2xl border border-slate-200 max-w-lg w-full p-6 sm:p-7 flex flex-col gap-4"><div class="flex items-center justify-between border-b border-slate-100 pb-3"><div class="flex items-center gap-2.5"><div class="w-9 h-9 rounded-xl bg-[#E6F7F2] text-[#0D6E6E] flex items-center justify-center"><span class="material-symbols-outlined text-[20px]">person_add</span></div><div><h3 class="text-base font-bold text-slate-900">' + title + '</h3><p class="text-xs text-slate-500">' + sub + '</p></div></div><button type="button" data-close aria-label="Close" class="p-1 text-slate-400 hover:text-slate-700"><span class="material-symbols-outlined">close</span></button></div>' + body + '</div>';
+
+    let departments = [];
+    try { departments = await api('/v1/departments'); } catch (e) { banner(e.message); }
+
+    modal.innerHTML = shell('Register patient', 'नया मरीज पंजीकृत करें • issues a token slip with a QR', '<form id="cf-reg" class="space-y-3" novalidate>' +
+      field('cf-name', 'Full name • पूरा नाम', '<input id="cf-name" required maxlength="120" autocomplete="off" class="' + inputCls + '">') +
+      '<div class="grid grid-cols-2 gap-3">' + field('cf-age', 'Age (years) • आयु', '<input id="cf-age" type="number" min="0" max="120" inputmode="numeric" class="' + inputCls + '">') +
+      field('cf-sex', 'Sex • लिंग', '<select id="cf-sex" class="' + inputCls + '"><option value="">Not recorded</option><option value="female">Female</option><option value="male">Male</option><option value="other">Other</option></select>') + '</div>' +
+      '<div class="grid grid-cols-2 gap-3">' + field('cf-phone', 'Phone (optional)', '<input id="cf-phone" type="tel" inputmode="tel" autocomplete="off" class="' + inputCls + '">') +
+      field('cf-abha', 'ABHA number (optional)', '<input id="cf-abha" autocomplete="off" class="' + inputCls + '">') + '</div>' +
+      field('cf-dept', 'Department • विभाग', '<select id="cf-dept" class="' + inputCls + '">' + departments.map((d) => '<option value="' + esc(d.id) + '">' + esc(d.label) + '</option>').join('') + '</select>') +
+      '<p class="text-[11px] text-slate-500">Name, phone and ABHA are stored encrypted. AYUSH departments run the Ayurvedic Prashna questions after the complaint. Aadhaar is never stored.</p>' +
+      '<p id="cf-reg-err" role="alert" class="text-xs text-red-700 hidden"></p>' +
+      '<div class="pt-2 flex items-center justify-end gap-2.5"><button type="button" data-close class="px-4 py-2 rounded-full border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-slate-50">Cancel</button><button type="submit" id="cf-reg-go" class="px-5 py-2 rounded-full bg-[#0D6E6E] hover:bg-[#005454] text-white text-xs font-bold shadow-sm disabled:opacity-50">Issue token & QR</button></div></form>');
+    modal.querySelectorAll('[data-close]').forEach((b) => (b.onclick = () => close(false)));
+    setTimeout(() => { const n = document.getElementById('cf-name'); if (n) n.focus(); }, 30);
+
+    document.getElementById('cf-reg').onsubmit = async (e) => {
+      e.preventDefault();
+      const name = document.getElementById('cf-name').value.trim(); const err = document.getElementById('cf-reg-err'); const go = document.getElementById('cf-reg-go');
+      if (!name) { err.textContent = 'Enter the patient’s name.'; err.classList.remove('hidden'); return; }
+      const ageRaw = document.getElementById('cf-age').value; const sex = document.getElementById('cf-sex').value; const phone = document.getElementById('cf-phone').value.trim(); const abha = document.getElementById('cf-abha').value.trim();
+      const patient = { name };
+      if (ageRaw !== '') patient.age_years = Number(ageRaw); if (sex) patient.sex = sex; if (phone) patient.phone = phone; if (abha) patient.abha_number = abha;
+      go.disabled = true; go.textContent = 'Issuing…'; err.classList.add('hidden');
+      try {
+        const r = await api('/v1/sessions', { method: 'POST', body: JSON.stringify({ department: document.getElementById('cf-dept').value, patient }) });
+        queueCache = null;
+        const p = { name, demo: [patient.age_years != null ? patient.age_years + ' y' : null, sex ? sex.charAt(0).toUpperCase() + sex.slice(1) : null].filter(Boolean).join(', ') || 'Age and sex not recorded' };
+        modal.innerHTML = shell('Token issued', r.token_no + ' is now in the doctor’s queue', '<div class="flex justify-center">' + slipHtml(r, p) + '</div><p class="text-[11px] text-slate-500 text-center">The patient scans this QR with any phone. Their answers appear on the doctor’s screens as they give them.</p><div class="flex flex-wrap items-center justify-center gap-2 pt-1"><button type="button" id="cf-print" class="px-4 py-2 rounded-full bg-[#0D6E6E] text-white text-xs font-bold">Print slip</button><button type="button" id="cf-open" class="px-4 py-2 rounded-full border border-slate-200 text-xs font-semibold text-slate-700">Open patient</button><button type="button" id="cf-another" class="px-4 py-2 rounded-full border border-slate-200 text-xs font-semibold text-slate-700">Register another</button><button type="button" data-close class="px-4 py-2 rounded-full border border-slate-200 text-xs font-semibold text-slate-700">Done</button></div>');
+        modal.querySelectorAll('[data-close]').forEach((b) => (b.onclick = () => close(true)));
+        document.getElementById('cf-print').onclick = () => printSlip(r, p);
+        document.getElementById('cf-open').onclick = () => goto('w05', r.visit_id);
+        document.getElementById('cf-another').onclick = () => openAddPatientModal();
+      } catch (ex) { go.disabled = false; go.textContent = 'Issue token & QR'; err.textContent = ex.message; err.classList.remove('hidden'); }
+    };
+  }
+  CFN.openAddPatientModal = openAddPatientModal;
+  CFN.handlePatientRegister = openAddPatientModal;
+
   // ---------------------------------------------------------------- boot
   async function boot() {
     addSidebarLink();
     try {
-      if (PAGE === 'w03' || PAGE === 'w04') { const q = await queue(); ctxVisit = await visitId(); return PAGE === 'w03' ? bindW03(q) : bindW04(q); }
+      if (PAGES_LAYER.indexOf(PAGE) !== -1) {
+        ctxVisit = await visitId().catch(() => null);
+        if (!ctxVisit && NO_VISIT_OK.indexOf(PAGE) === -1) { banner('No visit to show yet — register a patient from the dashboard first.'); return; }
+        await loadPages();
+        return window.CareFlowPages[PAGE]({ visit: ctxVisit });
+      }
+      if (PAGE === 'w03' || PAGE === 'w04') { const q = await queue(); ctxVisit = await visitId(); await (PAGE === 'w03' ? bindW03(q) : bindW04(q)); return finishPage({ q, visit: ctxVisit }); }
       if (PAGE === 'w05' || PAGE === 'w11' || PAGE === 'w13') {
         ctxVisit = await visitId();
         if (!ctxVisit) { banner('No visit to show yet — start an intake from the patient app first.'); return; }
-        const [summary, q] = await Promise.all([api('/v1/visits/' + ctxVisit + '/summary'), queue()]);
+        const q = await queue();
         const token = q.find((t) => t.visit_id === ctxVisit) || null;
-        return PAGE === 'w05' ? bindW05(summary, token) : PAGE === 'w11' ? bindW11(summary, token) : bindW13(summary, token);
+        let summary;
+        try { summary = await api('/v1/visits/' + ctxVisit + '/summary'); }
+        catch (e) {
+          if (e.status !== 404) throw e;
+          // Registered, but the patient has not finished intake — no summary exists yet. Show what IS known.
+          summary = { visit_id: ctxVisit, fields: [], red_flags: token ? token.red_flags.filter((f) => !f.acknowledged_by) : [], signed: false, ayurveda_sections: [], session_id: null, pending: true };
+        }
+        await (PAGE === 'w05' ? bindW05(summary, token) : PAGE === 'w11' ? bindW11(summary, token) : bindW13(summary, token));
+        return finishPage({ q, visit: ctxVisit, token, summary });
       }
       ctxVisit = await visitId().catch(() => null);
       if (PAGE === 'a01') return window.CareFlowAyurveda && window.CareFlowAyurveda.mount({ api, API, ACTOR, visit: ctxVisit, esc, human, chip, banner, goto });
     } catch (e) { banner(e.message); }
   }
-  window.CareFlowLive = { api, goto, chip, esc, human, caseSheetHtml };
+  const PAGES_LAYER = ['w06', 'w07', 'w08', 'w09', 'w10', 'w12', 'w14', 'w15', 'w16', 'w17', 'w18'];
+  const NO_VISIT_OK = ['w16', 'w17', 'w18'];
+  /** careflow-pages.js holds the bodies of the remaining pages; loaded only when a page needs it. */
+  function loadPages() {
+    if (window.CareFlowPages) return Promise.resolve();
+    return new Promise((resolve, reject) => {
+      const el = document.createElement('script');
+      el.src = new URL('careflow-pages.js', document.querySelector('script[src*="careflow-live.js"]').src).href;
+      el.onload = resolve; el.onerror = () => reject(new Error('careflow-pages.js could not be loaded.'));
+      document.head.appendChild(el);
+    });
+  }
+  async function finishPage(ctx) { await loadPages(); return window.CareFlowPages.finish(PAGE, ctx); }
+  window.CareFlowLive = {
+    api, goto, chip, esc, human, caseSheetHtml,
+    u: { api, API, ACTOR, esc, human, short, who, statusOf, fieldMap, hpi, hpiLabel, chip, banner, goto, queue },
+  };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
 })();

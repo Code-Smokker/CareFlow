@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
 import { Prisma, type DocumentType } from "@prisma/client";
 import { PrismaService } from "../prisma/prisma.service";
 import { S3StorageClient } from "../common/s3.client";
@@ -72,6 +72,57 @@ export class DocumentsService {
     await this.docai.process(document.id, [storageUri]);
 
     return { document_id: document.id, status: "queued" };
+  }
+
+  /** Every document uploaded across all of a visit's sessions, oldest first. */
+  async listForVisit(visitId: string) {
+    const visit = await this.prisma.visit.findUnique({ where: { id: visitId }, select: { id: true } });
+    if (!visit) throw new NotFoundException(`Visit ${visitId} not found`);
+    const documents = await this.prisma.document.findMany({
+      where: { session: { visitId } },
+      include: { extractions: true },
+      orderBy: { createdAt: "asc" },
+    });
+    return documents.map((d) => ({
+      document_id: d.id,
+      session_id: d.sessionId,
+      type: d.type,
+      ocr_status: d.ocrStatus,
+      page_count: d.pageCount,
+      quality_score: d.qualityScore,
+      created_at: d.createdAt.toISOString(),
+      extractions: d.extractions.map((e) => ({
+        id: e.id,
+        field: String((e.payload as Prisma.JsonObject).field ?? e.entityType),
+        value: String((e.payload as Prisma.JsonObject).value ?? ""),
+        confidence: e.confidence,
+        bounding_box: e.bbox,
+        entity_type: e.entityType,
+        confirmed_by: e.confirmedBy,
+      })),
+    }));
+  }
+
+  /** A human accepts one extracted value. The extraction row and its audit row land in one
+   * transaction: an acceptance with no trace, or a trace of an acceptance that rolled back, cannot exist. */
+  async confirmExtraction(extractionId: string, actorId: string, actorRole: string) {
+    const extraction = await this.prisma.extraction.findUnique({ where: { id: extractionId } });
+    if (!extraction) throw new NotFoundException(`Extraction ${extractionId} not found`);
+    if (extraction.confirmedAt) throw new ConflictException("This value was already confirmed.");
+    const confirmedAt = new Date();
+    await this.prisma.$transaction([
+      this.prisma.extraction.update({ where: { id: extractionId }, data: { confirmedBy: actorId, confirmedAt } }),
+      this.prisma.auditLog.create({
+        data: { actorId, actorRole, action: "extraction.confirm", resource: "extraction", resourceId: extractionId, reason: `document ${extraction.documentId}` },
+      }),
+    ]);
+    return { id: extractionId, confirmed_by: actorId, confirmed_at: confirmedAt.toISOString() };
+  }
+
+  async getFile(documentId: string) {
+    const document = await this.prisma.document.findUnique({ where: { id: documentId } });
+    if (!document) throw new NotFoundException(`Document ${documentId} not found`);
+    return this.s3.getObject(document.storageUri);
   }
 
   async getStatus(documentId: string) {

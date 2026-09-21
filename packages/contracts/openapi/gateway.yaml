@@ -33,6 +33,21 @@ paths:
                   type: string
                   pattern: "^[a-z][a-z0-9_-]{0,31}$"
                   description: Defaults to `general`.
+                patient:
+                  description: >
+                    Registration-desk details for the patient this token slip is for. Name, phone and
+                    ABHA number are stored AES-GCM encrypted (field-level, docs/09). All optional — a
+                    walk-in started from the patient's own phone has none. `age_years` is turned into an
+                    approximate date of birth (same day and month, so the age is exact today); the
+                    Vaidya can correct it in Vaya.
+                  type: object
+                  required: [name]
+                  properties:
+                    name: { type: string, minLength: 1, maxLength: 120 }
+                    age_years: { type: integer, minimum: 0, maximum: 120 }
+                    sex: { type: string, enum: [male, female, other, unknown] }
+                    phone: { type: string, minLength: 5, maxLength: 20 }
+                    abha_number: { type: string, minLength: 5, maxLength: 40 }
       responses:
         "201":
           description: Session created
@@ -40,13 +55,44 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [session_id, resume_token, qr_url, department, ayush_mode]
+                required: [session_id, resume_token, qr_url, department, ayush_mode, token_no, visit_id, qr_data_url]
                 properties:
                   session_id: { $ref: "#/components/schemas/SessionId" }
                   resume_token: { type: string }
                   qr_url: { type: string, format: uri }
                   department: { type: string }
                   ayush_mode: { type: boolean }
+                  token_no: { type: string, description: The number printed on the slip. }
+                  visit_id: { type: string }
+                  qr_data_url:
+                    type: string
+                    description: >
+                      PNG data URL of `qr_url`, rendered server-side so the slip prints with no CDN and
+                      no network beyond the gateway (CLAUDE.md rule 9).
+        default: { $ref: "#/components/responses/Error" }
+
+  /v1/departments:
+    get:
+      operationId: listDepartments
+      summary: Departments a token slip can be issued for
+      tags: [sessions]
+      description: >
+        `general` plus every department in the gateway's `AYUSH_DEPARTMENTS` visit config. AYUSH mode
+        is a property of the department, never of the patient.
+      responses:
+        "200":
+          description: Departments
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  required: [id, label, ayush_mode]
+                  properties:
+                    id: { type: string }
+                    label: { type: string }
+                    ayush_mode: { type: boolean }
         default: { $ref: "#/components/responses/Error" }
 
   /v1/sessions/{id}:
@@ -381,6 +427,83 @@ paths:
                 properties:
                   document_id: { type: string }
                   status: { type: string, const: queued }
+        default: { $ref: "#/components/responses/Error" }
+
+  /v1/visits/{id}/documents:
+    parameters:
+      - $ref: "#/components/parameters/VisitIdParam"
+    get:
+      operationId: listVisitDocuments
+      summary: Every document uploaded for this visit, with OCR status and extractions
+      tags: [documents]
+      description: >
+        Handwritten extractions are never auto-accepted (CLAUDE.md rule 5): each carries
+        `confirmed_by` — null until a human confirms it — and a dictionary-matched shortlist is a
+        separate follow-up, not invented here.
+      responses:
+        "200":
+          description: Documents, oldest first
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/VisitDocument" }
+        default: { $ref: "#/components/responses/Error" }
+
+  /v1/extractions/{id}/confirm:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema: { type: string }
+    post:
+      operationId: confirmExtraction
+      summary: A human confirms one extracted value (CLAUDE.md rule 5)
+      tags: [documents]
+      description: >
+        Handwritten OCR output is never auto-accepted; this is the human acceptance. Idempotent
+        refusal: confirming an already-confirmed value returns 409. Writes an append-only audit row
+        in the same transaction. `actor_id` is a plain identifier until RBAC lands (Day 4).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [actor_id, actor_role]
+              properties:
+                actor_id: { type: string, minLength: 1 }
+                actor_role: { type: string, minLength: 1 }
+      responses:
+        "200":
+          description: Confirmed
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [id, confirmed_by, confirmed_at]
+                properties:
+                  id: { type: string }
+                  confirmed_by: { type: string }
+                  confirmed_at: { type: string, format: date-time }
+        default: { $ref: "#/components/responses/Error" }
+
+  /v1/documents/{id}/file:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema: { type: string }
+    get:
+      operationId: getDocumentFile
+      summary: The original uploaded image or PDF
+      tags: [documents]
+      responses:
+        "200":
+          description: The stored bytes, with their original content type
+          content:
+            application/octet-stream:
+              schema: { type: string, format: binary }
         default: { $ref: "#/components/responses/Error" }
 
   /v1/documents/{id}:
@@ -1060,6 +1183,31 @@ components:
             width: { type: number }
             height: { type: number }
 
+    VisitDocument:
+      type: object
+      required: [document_id, session_id, type, ocr_status, page_count, quality_score, created_at, extractions]
+      properties:
+        document_id: { type: string }
+        session_id: { type: string }
+        type: { type: string, enum: [prescription, lab, discharge, imaging, unknown] }
+        ocr_status: { type: string, enum: [queued, processing, done, failed] }
+        page_count: { type: [integer, "null"] }
+        quality_score: { type: [number, "null"] }
+        created_at: { type: string, format: date-time }
+        extractions:
+          type: array
+          items:
+            type: object
+            required: [id, field, value, confidence, bounding_box, entity_type, confirmed_by]
+            properties:
+              id: { type: string }
+              field: { type: string }
+              value: { type: string }
+              confidence: { type: [number, "null"] }
+              bounding_box: { type: [object, "null"] }
+              entity_type: { type: string }
+              confirmed_by: { type: [string, "null"] }
+
     DocumentStatus:
       type: object
       required: [status, extractions, quality_score]
@@ -1097,6 +1245,8 @@ components:
           priority,
           waiting_minutes,
           red_flags,
+          patient,
+          intake_status,
         ]
       properties:
         visit_id: { type: string }
@@ -1105,9 +1255,27 @@ components:
         department: { type: string }
         priority: { type: string, enum: [routine, priority, urgent] }
         waiting_minutes: { type: number, minimum: 0 }
+        patient: { $ref: "#/components/schemas/PatientBrief" }
+        session_id:
+          type: [string, "null"]
+          description: The visit's latest intake session — what a document upload on the patient's behalf attaches to.
+        intake_status:
+          type: string
+          enum: [waiting, in_intake, ready, consulting, closed]
+          description: The visit's own status — `ready` once the patient has completed intake.
         red_flags:
           type: array
           items: { $ref: "#/components/schemas/RedFlag" }
+
+    PatientBrief:
+      type: object
+      required: [name, age_years, sex, phone_masked]
+      description: What the registration desk recorded. Nulls are real — they mean "not recorded", never a placeholder name.
+      properties:
+        name: { type: [string, "null"] }
+        age_years: { type: [integer, "null"] }
+        sex: { type: [string, "null"] }
+        phone_masked: { type: [string, "null"], description: "Last 4 digits only, e.g. ••••••3210." }
 
     SummaryField:
       type: object
@@ -1135,9 +1303,14 @@ components:
 
     VisitSummary:
       type: object
-      required: [visit_id, session_id, fields, signed, red_flags]
+      required: [visit_id, session_id, fields, signed, red_flags, patient, token_no, department, intake_status, started_at]
       properties:
         visit_id: { type: string }
+        patient: { $ref: "#/components/schemas/PatientBrief" }
+        token_no: { type: [string, "null"] }
+        department: { type: [string, "null"] }
+        intake_status: { type: string, enum: [waiting, in_intake, ready, consulting, closed] }
+        started_at: { type: string, format: date-time }
         session_id: { $ref: "#/components/schemas/SessionId" }
         fields:
           type: array
