@@ -198,7 +198,7 @@
 <!-- BEGIN: DualPaneMessagingContainer -->
 <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 flex-1 items-start min-h-[660px]">
 <!-- LEFT PANE: Conversations List (lg:col-span-5 xl:col-span-4) -->
-<section aria-label="Conversation Threads List" class="lg:col-span-5 xl:col-span-4 bg-white rounded-2xl border border-[#E2E8F0] shadow-xs flex flex-col h-full overflow-hidden">
+<section id="chat-left-pane" aria-label="Conversation Threads List" class="lg:col-span-5 xl:col-span-4 bg-white rounded-2xl border border-[#E2E8F0] shadow-xs flex flex-col h-full overflow-hidden">
 <!-- Top Search Bar -->
 <div class="p-3.5 border-b border-[#E2E8F0] bg-slate-50/50">
 <div class="relative">
@@ -334,11 +334,15 @@ Care Team Available
 </div>
 </section>
 <!-- RIGHT PANE: Active Conversation View (lg:col-span-7 xl:col-span-8) -->
-<section aria-label="Active Messaging Thread" class="lg:col-span-7 xl:col-span-8 bg-white rounded-2xl border border-[#E2E8F0] shadow-xs flex flex-col h-full min-h-[680px]">
+<section id="chat-right-pane" aria-label="Active Messaging Thread" class="hidden lg:flex lg:col-span-7 xl:col-span-8 bg-white rounded-2xl border border-[#E2E8F0] shadow-xs flex-col h-full min-h-[680px]">
 <!-- Active Clinician Header -->
 <header class="p-4 sm:px-5 border-b border-[#E2E8F0] bg-white rounded-t-2xl">
 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
 <div class="flex items-center space-x-3">
+<button onclick="backToConversationList()" class="lg:hidden p-1.5 -ml-1 text-slate-600 hover:text-navy-900 rounded-lg hover:bg-slate-100 transition-colors flex items-center gap-1 text-xs font-semibold" aria-label="Back to conversations">
+<svg class="w-4 h-4 text-brand-teal" fill="none" stroke="currentColor" stroke-width="2.5" viewbox="0 0 24 24"><path d="M15 19l-7-7 7-7" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+<span>Chats</span>
+</button>
 <div class="relative">
 <div id="active-avatar" class="w-12 h-12 rounded-full bg-brand-teal text-white font-bold flex items-center justify-center text-base shadow-xs">
 PS
@@ -644,7 +648,7 @@ Cancel
         </div>
 <div class="flex flex-wrap items-center space-x-4">
 <a class="hover:text-brand-teal" href="../careflow_patient_web_p18_privacy_consent/code.html">Privacy Policy (गोपनीयता नीति)</a>
-<a class="hover:text-brand-teal" href="#">Terms of Use (उपयोग की शर्तें)</a>
+<a class="hover:text-brand-teal" href="../careflow_patient_web_p18_privacy_consent/code.html">Terms of Use (उपयोग की शर्तें)</a>
 <a class="hover:text-brand-teal" href="../careflow_patient_web_p18_privacy_consent/code.html">ABDM Consent Matrix</a>
 <a class="hover:text-brand-teal" href="../careflow_patient_web_p20_help_support/code.html">Help &amp; Support</a>
 </div>
@@ -721,7 +725,40 @@ function selectConversation(key) {
   document.getElementById('chat-msg-input').placeholder = `Write a message to ${data.name.split(',')[0]}... • संदेश लिखें...`;
 
   renderMessages(data.messages);
+
+  // Responsive switch on small screens (< 1024px)
+  if (window.innerWidth < 1024) {
+    const leftPane = document.getElementById('chat-left-pane');
+    const rightPane = document.getElementById('chat-right-pane');
+    if (leftPane) leftPane.classList.add('hidden');
+    if (rightPane) {
+      rightPane.classList.remove('hidden');
+      rightPane.classList.add('flex');
+    }
+  }
 }
+
+function backToConversationList() {
+  const leftPane = document.getElementById('chat-left-pane');
+  const rightPane = document.getElementById('chat-right-pane');
+  if (leftPane) leftPane.classList.remove('hidden');
+  if (rightPane) {
+    rightPane.classList.add('hidden');
+    rightPane.classList.remove('flex');
+  }
+}
+
+window.addEventListener('resize', () => {
+  const leftPane = document.getElementById('chat-left-pane');
+  const rightPane = document.getElementById('chat-right-pane');
+  if (window.innerWidth >= 1024) {
+    if (leftPane) leftPane.classList.remove('hidden');
+    if (rightPane) {
+      rightPane.classList.remove('hidden');
+      rightPane.classList.add('flex');
+    }
+  }
+});
 
 function renderMessages(messages) {
   const container = document.getElementById('chat-messages-container');

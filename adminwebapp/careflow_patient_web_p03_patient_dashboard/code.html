@@ -46,7 +46,7 @@
 <div class="flex items-center justify-between h-16 sm:h-20">
 <!-- Left: CareFlow Logo & Badge -->
 <div class="flex items-center gap-3">
-<a class="flex items-center gap-2.5 focus:outline-none focus:ring-2 focus:ring-brand-teal rounded-lg p-1" href="#">
+<a class="flex items-center gap-2.5 focus:outline-none focus:ring-2 focus:ring-brand-teal rounded-lg p-1" href="../careflow_patient_web_p03_patient_dashboard/code.html">
 <!-- Authentic CareFlow Heart in Hands Logo Icon -->
 <div class="w-10 h-10 rounded-xl bg-brand-teal flex items-center justify-center shadow-sm">
 <svg aria-hidden="true" class="w-6 h-6 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -64,23 +64,23 @@
 </div>
 <!-- Center: Web Navigation Links (Desktop) -->
 <nav aria-label="Main Navigation" class="hidden md:flex items-center space-x-1 lg:space-x-2">
-<a aria-current="page" class="px-3.5 py-2 rounded-full text-sm font-bold text-brand-teal bg-brand-mint border border-brand-teal/20 flex items-center gap-1.5" href="#">
+<a aria-current="page" class="px-3.5 py-2 rounded-full text-sm font-bold text-brand-teal bg-brand-mint border border-brand-teal/20 flex items-center gap-1.5" href="../careflow_patient_web_p03_patient_dashboard/code.html">
 <span>Home</span>
 <span class="text-[11px] font-normal text-brand-teal/80">गृह</span>
 </a>
-<a class="px-3.5 py-2 rounded-full text-sm font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors flex items-center gap-1.5" href="#">
+<a class="px-3.5 py-2 rounded-full text-sm font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors flex items-center gap-1.5" href="../careflow_patient_web_p05_my_health_overview/code.html">
 <span>My Health</span>
 <span class="text-[11px] font-normal text-slate-400">स्वास्थ्य</span>
 </a>
-<a class="px-3.5 py-2 rounded-full text-sm font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors flex items-center gap-1.5" href="#">
+<a class="px-3.5 py-2 rounded-full text-sm font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors flex items-center gap-1.5" href="../careflow_patient_web_p11_my_appointments/code.html">
 <span>Appointments</span>
 <span class="text-[11px] font-normal text-slate-400">अपॉइंटमेंट</span>
 </a>
-<a class="px-3.5 py-2 rounded-full text-sm font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors flex items-center gap-1.5" href="#">
+<a class="px-3.5 py-2 rounded-full text-sm font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors flex items-center gap-1.5" href="../careflow_patient_web_p08_my_documents/code.html">
 <span>Documents</span>
 <span class="text-[11px] font-normal text-slate-400">दस्तावेज़</span>
 </a>
-<a class="px-3.5 py-2 rounded-full text-sm font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors flex items-center gap-1.5" href="#">
+<a class="px-3.5 py-2 rounded-full text-sm font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors flex items-center gap-1.5" href="../careflow_patient_web_p09_my_care_summary/code.html">
 <span>Care Summary</span>
 <span class="text-[11px] font-normal text-slate-400">सारांश</span>
 </a>
@@ -89,11 +89,11 @@
 <div class="flex items-center gap-2 sm:gap-3">
 <!-- Language Toggle -->
 <div class="hidden sm:flex items-center bg-slate-100 rounded-full p-0.5 border border-slate-200 text-xs font-medium">
-<button class="px-2.5 py-1 bg-white rounded-full text-slate-900 font-semibold shadow-xs" type="button">English</button>
-<button class="px-2.5 py-1 text-slate-500 hover:text-slate-800" type="button">हिन्दी</button>
+<button class="px-2.5 py-1 bg-white rounded-full text-slate-900 font-semibold shadow-xs" type="button" onclick="CareFlow.showToast('Language preference: English', 'info')">English</button>
+<button class="px-2.5 py-1 text-slate-500 hover:text-slate-800" type="button" onclick="CareFlow.showToast('भाषा प्राथमिकता: हिन्दी', 'info')">हिन्दी</button>
 </div>
 <!-- Notification Bell -->
-<button aria-label="Notifications" class="relative p-2 rounded-full text-slate-600 hover:text-slate-900 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-brand-teal" type="button">
+<a aria-label="Notifications" class="relative p-2 rounded-full text-slate-600 hover:text-slate-900 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-brand-teal" href="../careflow_patient_web_p16_notifications/code.html">
 <span class="absolute top-1.5 right-1.5 flex h-2.5 w-2.5">
 <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
 <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-rose-500 border border-white"></span>
@@ -101,9 +101,9 @@
 <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
 <path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" stroke-linecap="round" stroke-linejoin="round"></path>
 </svg>
-</button>
+</a>
 <!-- Patient Identity Chip -->
-<div class="flex items-center gap-2.5 pl-1.5 pr-2.5 py-1.5 rounded-full bg-slate-50 border border-slate-200 hover:border-slate-300 transition-colors">
+<a class="flex items-center gap-2.5 pl-1.5 pr-2.5 py-1.5 rounded-full bg-slate-50 border border-slate-200 hover:border-slate-300 transition-colors" href="../careflow_patient_web_p04_my_profile/code.html">
 <div class="w-8 h-8 rounded-full bg-brand-teal text-white flex items-center justify-center font-bold text-xs tracking-wider">
               AS
             </div>
@@ -114,13 +114,8 @@
 </div>
 <span class="text-[10px] font-mono text-slate-500">ABHA: 91-8472-3021-9920</span>
 </div>
-<button aria-label="Account Settings" class="text-slate-400 hover:text-slate-600 focus:outline-none ml-0.5" type="button">
-<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-<path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" stroke-linecap="round" stroke-linejoin="round"></path>
-<path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round"></path>
-</svg>
-</button>
-</div>
+<span class="material-symbols-outlined text-slate-400 hover:text-slate-600 text-sm ml-0.5">settings</span>
+</a>
 </div>
 </div>
 </div>
@@ -610,10 +605,10 @@
 <span>© 2026 CareFlow Health Inc. All rights reserved.</span>
 </div>
 <div class="flex flex-wrap gap-4 text-xs font-medium">
-<a class="hover:text-slate-900 transition-colors" href="#">Privacy Policy</a>
-<a class="hover:text-slate-900 transition-colors" href="#">Patient Rights &amp; Consent</a>
-<a class="hover:text-slate-900 transition-colors" href="#">Terms of Service</a>
-<a class="hover:text-slate-900 transition-colors" href="#">Clinical Support 24/7</a>
+<a class="hover:text-slate-900 transition-colors" href="../careflow_patient_web_p18_privacy_consent/code.html">Privacy Policy</a>
+<a class="hover:text-slate-900 transition-colors" href="../careflow_patient_web_p18_privacy_consent/code.html">Patient Rights &amp; Consent</a>
+<a class="hover:text-slate-900 transition-colors cursor-pointer" onclick="CareFlow.openModal('<p class=\'text-sm text-slate-700 leading-relaxed\'>Terms of Service: CareFlow Patient Portal operates in strict accordance with the Telemedicine Guidelines 2020 and National Health Authority data protection directives.</p>', 'Terms of Service • उपयोग की शर्तें'); return false;" href="#">Terms of Service</a>
+<a class="hover:text-slate-900 transition-colors" href="../careflow_patient_web_p20_help_support/code.html">Clinical Support 24/7</a>
 </div>
 </div>
 </div>
