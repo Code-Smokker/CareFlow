@@ -1,10 +1,15 @@
 /**
- * CareFlow Patient Experience - Universal Navigation & Interactivity System
- * Connects all 20 pages (P01 - P20), injects the Quick Navigator Dock,
- * provides toast notifications, modal dialogs, and interactive flows.
+ * CareFlow Admin & Patient Experience - Universal Navigation & Interactivity System
+ * Refined for high-fidelity SaaS healthcare UX:
+ * - Responsive non-colliding floating dock with auto-minimize on mobile (<640px)
+ * - Accessible, smooth-animated modal dialog system with ESC & outside click handling
+ * - Polished stackable toast notification system
+ * - Universal link wiring and page switcher
  */
 
 (function () {
+  'use strict';
+
   const CAREFLOW_PAGES = [
     { id: 'p01', num: 'P01', name: 'Patient Landing & Welcome', dir: 'careflow_patient_web_p01_patient_landing_welcome', category: 'Getting Started', icon: 'home', hindi: 'स्वागत' },
     { id: 'p02', num: 'P02', name: 'Patient Login & OTP Access', dir: 'careflow_patient_web_p02_patient_login_access', category: 'Getting Started', icon: 'lock', hindi: 'लॉग इन' },
@@ -42,22 +47,16 @@
 
   // Get relative path to target page
   function getPageUrl(targetPageId) {
-    const target = CAREFLOW_PAGES.find(p => p.id === targetPageId || p.num.toLowerCase() === targetPageId.toLowerCase() || p.dir.includes(targetPageId));
+    const target = CAREFLOW_PAGES.find(p => p.id === targetPageId || p.num.toLowerCase() === String(targetPageId).toLowerCase() || p.dir.includes(targetPageId));
     if (!target) return '#';
 
-    // If inside master iframe, we can navigate smoothly or via parent router
     const currentPath = window.location.pathname;
     const isInPageDir = CAREFLOW_PAGES.some(p => currentPath.includes(p.dir));
 
-    if (isInPageDir) {
-      return `../${target.dir}/code.html`;
-    } else {
-      return `./${target.dir}/code.html`;
-    }
+    return isInPageDir ? `../${target.dir}/code.html` : `./${target.dir}/code.html`;
   }
 
   function navigateTo(targetPageId) {
-    // Notify parent master frame if embedded
     if (window.parent && window.parent !== window) {
       try {
         window.parent.postMessage({ type: 'CAREFLOW_NAVIGATE', pageId: targetPageId }, '*');
@@ -70,43 +69,72 @@
   }
 
   // Toast Notification System
-  function showToast(message, type = 'success', duration = 3200) {
+  function showToast(message, type = 'success', duration = 3400) {
     let container = document.getElementById('careflow-toast-container');
     if (!container) {
       container = document.createElement('div');
       container.id = 'careflow-toast-container';
-      container.style.cssText = 'position:fixed;bottom:80px;right:24px;z-index:99999;display:flex;flex-direction:column;gap:10px;pointer-events:none;';
+      container.style.cssText = `
+        position: fixed;
+        top: 24px;
+        right: 24px;
+        z-index: 100000;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        pointer-events: none;
+        max-width: min(420px, calc(100vw - 32px));
+      `;
       document.body.appendChild(container);
     }
 
     const toast = document.createElement('div');
     const isError = type === 'error';
     const isInfo = type === 'info';
-    const bgColor = isError ? '#BA1A1A' : isInfo ? '#015362' : '#0D6E6E';
-    
+    const isWarning = type === 'warning';
+
+    const bgColors = {
+      success: 'linear-gradient(135deg, #0D6E6E 0%, #005454 100%)',
+      error: 'linear-gradient(135deg, #BA1A1A 0%, #93000A 100%)',
+      info: 'linear-gradient(135deg, #015362 0%, #083344 100%)',
+      warning: 'linear-gradient(135deg, #B45309 0%, #78350F 100%)'
+    };
+
+    const icons = {
+      success: 'check_circle',
+      error: 'error',
+      info: 'info',
+      warning: 'warning'
+    };
+
+    const chosenType = isError ? 'error' : isWarning ? 'warning' : isInfo ? 'info' : 'success';
+
     toast.style.cssText = `
-      background:${bgColor};
-      color:#ffffff;
-      padding:12px 18px;
-      border-radius:12px;
-      font-family:'Plus Jakarta Sans', system-ui, sans-serif;
-      font-size:13.5px;
-      font-weight:600;
-      box-shadow:0 10px 25px -5px rgba(13,110,110,0.3), 0 8px 10px -6px rgba(0,0,0,0.1);
-      display:flex;
-      align-items:center;
-      gap:10px;
-      pointer-events:auto;
-      transform:translateY(20px) scale(0.95);
-      opacity:0;
-      transition:all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-      border: 1px solid rgba(255,255,255,0.2);
+      background: ${bgColors[chosenType]};
+      color: #ffffff;
+      padding: 12px 16px;
+      border-radius: 14px;
+      font-family: 'Plus Jakarta Sans', Inter, system-ui, sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      line-height: 1.4;
+      box-shadow: 0 14px 30px -6px rgba(13, 110, 110, 0.25), 0 4px 12px -2px rgba(15, 23, 42, 0.12);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      pointer-events: auto;
+      transform: translateY(-12px) scale(0.96);
+      opacity: 0;
+      transition: all 0.26s cubic-bezier(0.16, 1, 0.3, 1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
     `;
 
-    const icon = isError ? 'error' : isInfo ? 'info' : 'check_circle';
     toast.innerHTML = `
-      <span class="material-symbols-outlined" style="font-size:20px;">${icon}</span>
-      <span>${message}</span>
+      <span class="material-symbols-outlined" style="font-size: 20px; flex-shrink: 0;">${icons[chosenType]}</span>
+      <span style="flex: 1;">${message}</span>
+      <button style="background: none; border: none; color: rgba(255,255,255,0.7); cursor: pointer; padding: 2px; display: flex; align-items: center;" onclick="this.parentElement.remove()">
+        <span class="material-symbols-outlined" style="font-size: 16px;">close</span>
+      </button>
     `;
 
     container.appendChild(toast);
@@ -116,9 +144,9 @@
     });
 
     setTimeout(() => {
-      toast.style.transform = 'translateY(-10px) scale(0.95)';
+      toast.style.transform = 'translateY(-12px) scale(0.96)';
       toast.style.opacity = '0';
-      setTimeout(() => toast.remove(), 250);
+      setTimeout(() => toast.remove(), 260);
     }, duration);
   }
 
@@ -128,43 +156,52 @@
     const overlay = document.createElement('div');
     overlay.id = 'careflow-modal-overlay';
     overlay.style.cssText = `
-      position:fixed;top:0;left:0;right:0;bottom:0;
-      background:rgba(15,23,42,0.6);
-      backdrop-filter:blur(4px);
-      z-index:99998;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:20px;
-      opacity:0;
-      transition:opacity 0.2s ease;
+      position: fixed;
+      inset: 0;
+      background: rgba(11, 25, 44, 0.65);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      z-index: 99998;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      opacity: 0;
+      transition: opacity 0.22s ease-out;
     `;
 
     const dialog = document.createElement('div');
     dialog.id = 'careflow-modal-dialog';
     dialog.style.cssText = `
-      background:#ffffff;
-      border-radius:20px;
-      max-width:540px;
-      width:100%;
-      max-height:85vh;
-      overflow-y:auto;
-      box-shadow:0 25px 50px -12px rgba(15,23,42,0.25);
-      font-family:'Plus Jakarta Sans', system-ui, sans-serif;
-      transform:scale(0.95);
-      transition:transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-      position:relative;
-      border:1px solid #E2E8F0;
+      background: #FFFFFF;
+      border-radius: 20px;
+      max-width: 580px;
+      width: 100%;
+      max-height: min(88vh, 760px);
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 24px 60px -12px rgba(11, 25, 44, 0.35);
+      font-family: 'Plus Jakarta Sans', Inter, system-ui, sans-serif;
+      transform: translateY(16px) scale(0.97);
+      transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+      border: 1px solid #E2E8F0;
+      overflow: hidden;
     `;
 
     dialog.innerHTML = `
-      <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid #F1F5F9;">
-        <h3 style="margin:0;font-size:17px;font-weight:700;color:#0F172A;flex:1;">${title}</h3>
-        <button id="careflow-modal-close-btn" style="background:none;border:none;cursor:pointer;color:#64748B;padding:4px;border-radius:8px;display:flex;align-items:center;">
-          <span class="material-symbols-outlined" style="font-size:22px;">close</span>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 22px;border-bottom:1px solid #F1F5F9;background:#FAFCFB;flex-shrink:0;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="width:30px;height:30px;border-radius:10px;background:#E6F7F2;color:#0D6E6E;display:flex;align-items:center;justify-content:center;">
+            <span class="material-symbols-outlined" style="font-size:18px;">admin_panel_settings</span>
+          </div>
+          <h3 style="margin:0;font-size:16px;font-weight:700;color:#0B192C;letter-spacing:-0.01em;">${title}</h3>
+        </div>
+        <button id="careflow-modal-close-btn" aria-label="Close dialog" style="background:#F1F5F9;border:1px solid #E2E8F0;cursor:pointer;color:#64748B;padding:5px;border-radius:10px;display:flex;align-items:center;justify-content:center;transition:all 0.15s;" onmouseover="this.style.background='#E6F7F2';this.style.color='#0D6E6E'" onmouseout="this.style.background='#F1F5F9';this.style.color='#64748B'">
+          <span class="material-symbols-outlined" style="font-size:18px;">close</span>
         </button>
       </div>
-      <div style="padding:20px;">
+      <div style="padding:22px;overflow-y:auto;flex:1;-webkit-overflow-scrolling:touch;">
         ${contentHtml}
       </div>
     `;
@@ -174,7 +211,7 @@
 
     requestAnimationFrame(() => {
       overlay.style.opacity = '1';
-      dialog.style.transform = 'scale(1)';
+      dialog.style.transform = 'translateY(0) scale(1)';
     });
 
     const closeBtn = dialog.querySelector('#careflow-modal-close-btn');
@@ -198,109 +235,130 @@
     if (overlay) {
       overlay.style.opacity = '0';
       const dialog = overlay.querySelector('#careflow-modal-dialog');
-      if (dialog) dialog.style.transform = 'scale(0.95)';
+      if (dialog) dialog.style.transform = 'translateY(12px) scale(0.97)';
       setTimeout(() => overlay.remove(), 200);
     }
   }
 
-  // Build the Floating CareFlow Quick Navigator Dock
+  // Floating CareFlow Quick Navigator Dock (Responsive & Auto-minimizing on mobile)
   function injectQuickNavigatorDock(currentPage) {
     if (document.getElementById('careflow-quick-dock')) return;
 
+    const isMobile = window.innerWidth < 768;
     const dock = document.createElement('div');
     dock.id = 'careflow-quick-dock';
-    dock.style.cssText = `
-      position:fixed;
-      bottom:20px;
-      left:50%;
-      transform:translateX(-50%);
-      z-index:99990;
-      background:rgba(255, 255, 255, 0.96);
-      backdrop-filter:blur(16px);
-      border:1px solid rgba(13, 110, 110, 0.25);
-      border-radius:9999px;
-      padding:6px 14px;
-      display:flex;
-      align-items:center;
-      gap:10px;
-      box-shadow:0 12px 36px -4px rgba(13, 110, 110, 0.2), 0 4px 12px -2px rgba(15, 23, 42, 0.08);
-      font-family:'Plus Jakarta Sans', system-ui, sans-serif;
-      transition:all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    `;
 
     const currentIndex = CAREFLOW_PAGES.findIndex(p => p.id === currentPage.id);
     const prevPage = currentIndex > 0 ? CAREFLOW_PAGES[currentIndex - 1] : CAREFLOW_PAGES[CAREFLOW_PAGES.length - 1];
     const nextPage = currentIndex < CAREFLOW_PAGES.length - 1 ? CAREFLOW_PAGES[currentIndex + 1] : CAREFLOW_PAGES[0];
 
-    dock.innerHTML = `
-      <a href="${getPageUrl(prevPage.id)}" title="Previous: ${prevPage.num} ${prevPage.name}" style="width:32px;height:32px;border-radius:50%;background:#F1F5F9;display:flex;align-items:center;justify-content:center;color:#0D6E6E;text-decoration:none;transition:background 0.2s;" onmouseover="this.style.background='#E6F7F2'" onmouseout="this.style.background='#F1F5F9'">
-        <span class="material-symbols-outlined" style="font-size:18px;">chevron_left</span>
-      </a>
-
-      <button id="careflow-dock-switcher-btn" style="background:#E6F7F2;border:1px solid rgba(13,110,110,0.25);border-radius:9999px;padding:5px 14px;display:flex;align-items:center;gap:8px;cursor:pointer;color:#0D6E6E;font-size:12.5px;font-weight:700;">
-        <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#0D6E6E;box-shadow:0 0 0 3px rgba(13,110,110,0.2);"></span>
-        <span>${currentPage.num}: ${currentPage.name}</span>
-        <span class="material-symbols-outlined" style="font-size:16px;">unfold_more</span>
-      </button>
-
-      <a href="${getPageUrl(nextPage.id)}" title="Next: ${nextPage.num} ${nextPage.name}" style="width:32px;height:32px;border-radius:50%;background:#F1F5F9;display:flex;align-items:center;justify-content:center;color:#0D6E6E;text-decoration:none;transition:background 0.2s;" onmouseover="this.style.background='#E6F7F2'" onmouseout="this.style.background='#F1F5F9'">
-        <span class="material-symbols-outlined" style="font-size:18px;">chevron_right</span>
-      </a>
-
-      <div style="width:1px;height:20px;background:#CBD5E1;"></div>
-
-      <a href="${getPageUrl('admin')}" title="Admin & Operations Control Center" style="background:#0D6E6E;color:#fff;border:none;border-radius:9999px;padding:4px 12px;font-size:11.5px;font-weight:700;display:flex;align-items:center;gap:5px;cursor:pointer;text-decoration:none;" onmouseover="this.style.background='#005454'" onmouseout="this.style.background='#0D6E6E'">
-        <span class="material-symbols-outlined" style="font-size:15px;">admin_panel_settings</span>
-        <span>Admin</span>
-      </a>
-
-      <button id="careflow-dock-flows-btn" style="background:none;border:none;cursor:pointer;color:#475569;font-size:12px;font-weight:600;display:flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;" onmouseover="this.style.color='#0D6E6E'" onmouseout="this.style.color='#475569'">
-        <span class="material-symbols-outlined" style="font-size:16px;">route</span>
-        <span class="hidden sm:inline">Flows</span>
-      </button>
-
-      <button id="careflow-dock-minimize-btn" title="Minimize Dock" style="background:none;border:none;cursor:pointer;color:#94A3B8;padding:2px;display:flex;align-items:center;">
-        <span class="material-symbols-outlined" style="font-size:16px;">visibility_off</span>
-      </button>
-    `;
-
-    document.body.appendChild(dock);
-
-    // Minimize toggle
-    let isMinimized = false;
-    const minimizeBtn = dock.querySelector('#careflow-dock-minimize-btn');
-    minimizeBtn.onclick = () => {
-      isMinimized = !isMinimized;
-      if (isMinimized) {
-        dock.style.padding = '4px 8px';
-        dock.style.bottom = '10px';
-        dock.style.left = 'auto';
-        dock.style.right = '16px';
-        dock.style.transform = 'none';
+    function applyDockStyles(minimized) {
+      if (minimized) {
+        dock.style.cssText = `
+          position: fixed;
+          bottom: 84px;
+          right: 16px;
+          z-index: 99990;
+          background: rgba(255, 255, 255, 0.98);
+          backdrop-filter: blur(14px);
+          -webkit-backdrop-filter: blur(14px);
+          border: 1px solid rgba(13, 110, 110, 0.3);
+          border-radius: 9999px;
+          padding: 4px;
+          box-shadow: 0 10px 30px -4px rgba(13, 110, 110, 0.22), 0 4px 10px -2px rgba(15, 23, 42, 0.08);
+          font-family: 'Plus Jakarta Sans', Inter, system-ui, sans-serif;
+          transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        `;
         dock.innerHTML = `
-          <button id="careflow-dock-expand-btn" style="background:#0D6E6E;color:#fff;border:none;border-radius:9999px;padding:6px 12px;font-size:11px;font-weight:700;display:flex;align-items:center;gap:6px;cursor:pointer;">
-            <span class="material-symbols-outlined" style="font-size:14px;">apps</span>
-            <span>${currentPage.num} Pages ▾</span>
+          <button id="careflow-dock-expand-btn" title="Open CareFlow Page Directory" style="background:#0D6E6E;color:#FFFFFF;border:none;border-radius:9999px;padding:7px 14px;font-size:11.5px;font-weight:700;display:flex;align-items:center;gap:6px;cursor:pointer;box-shadow:0 2px 6px rgba(13,110,110,0.3);">
+            <span class="material-symbols-outlined" style="font-size:16px;">explore</span>
+            <span>${currentPage.num} Directory</span>
           </button>
         `;
-        dock.querySelector('#careflow-dock-expand-btn').onclick = () => {
-          dock.remove();
-          injectQuickNavigatorDock(currentPage);
-        };
+        const expandBtn = dock.querySelector('#careflow-dock-expand-btn');
+        if (expandBtn) {
+          expandBtn.onclick = () => {
+            applyDockStyles(false);
+          };
+        }
+      } else {
+        dock.style.cssText = `
+          position: fixed;
+          bottom: ${isMobile ? '80px' : '20px'};
+          left: 50%;
+          transform: translateX(-50%);
+          z-index: 99990;
+          background: rgba(255, 255, 255, 0.98);
+          backdrop-filter: blur(16px);
+          -webkit-backdrop-filter: blur(16px);
+          border: 1px solid rgba(13, 110, 110, 0.25);
+          border-radius: 9999px;
+          padding: 5px 12px;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          box-shadow: 0 14px 40px -6px rgba(13, 110, 110, 0.22), 0 4px 14px -2px rgba(15, 23, 42, 0.08);
+          font-family: 'Plus Jakarta Sans', Inter, system-ui, sans-serif;
+          transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+          max-width: calc(100vw - 24px);
+        `;
+
+        dock.innerHTML = `
+          <a href="${getPageUrl(prevPage.id)}" title="Previous: ${prevPage.num} ${prevPage.name}" style="width:30px;height:30px;border-radius:50%;background:#F1F5F9;border:1px solid #E2E8F0;display:flex;align-items:center;justify-content:center;color:#0D6E6E;text-decoration:none;transition:all 0.15s;flex-shrink:0;" onmouseover="this.style.background='#E6F7F2';this.style.borderColor='#0D6E6E'" onmouseout="this.style.background='#F1F5F9';this.style.borderColor='#E2E8F0'">
+            <span class="material-symbols-outlined" style="font-size:17px;">chevron_left</span>
+          </a>
+
+          <button id="careflow-dock-switcher-btn" style="background:#E6F7F2;border:1px solid rgba(13,110,110,0.3);border-radius:9999px;padding:4px 12px;display:flex;align-items:center;gap:6px;cursor:pointer;color:#0D6E6E;font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:210px;">
+            <span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#0D6E6E;box-shadow:0 0 0 2.5px rgba(13,110,110,0.2);flex-shrink:0;"></span>
+            <span style="overflow:hidden;text-overflow:ellipsis;">${currentPage.num}: ${currentPage.name}</span>
+            <span class="material-symbols-outlined" style="font-size:15px;flex-shrink:0;">unfold_more</span>
+          </button>
+
+          <a href="${getPageUrl(nextPage.id)}" title="Next: ${nextPage.num} ${nextPage.name}" style="width:30px;height:30px;border-radius:50%;background:#F1F5F9;border:1px solid #E2E8F0;display:flex;align-items:center;justify-content:center;color:#0D6E6E;text-decoration:none;transition:all 0.15s;flex-shrink:0;" onmouseover="this.style.background='#E6F7F2';this.style.borderColor='#0D6E6E'" onmouseout="this.style.background='#F1F5F9';this.style.borderColor='#E2E8F0'">
+            <span class="material-symbols-outlined" style="font-size:17px;">chevron_right</span>
+          </a>
+
+          <div style="width:1px;height:18px;background:#E2E8F0;flex-shrink:0;"></div>
+
+          <a href="${getPageUrl('admin')}" title="Admin & Operations Control Center" style="background:${currentPage.id === 'admin' ? '#005454' : '#0D6E6E'};color:#FFFFFF;border:none;border-radius:9999px;padding:4px 10px;font-size:11px;font-weight:700;display:flex;align-items:center;gap:4px;cursor:pointer;text-decoration:none;flex-shrink:0;" onmouseover="this.style.background='#005454'" onmouseout="this.style.background='${currentPage.id === 'admin' ? '#005454' : '#0D6E6E'}'">
+            <span class="material-symbols-outlined" style="font-size:14px;">admin_panel_settings</span>
+            <span class="hidden sm:inline">Admin</span>
+          </a>
+
+          <button id="careflow-dock-flows-btn" style="background:none;border:none;cursor:pointer;color:#475569;font-size:11.5px;font-weight:600;display:flex;align-items:center;gap:3px;padding:4px 6px;border-radius:8px;flex-shrink:0;" onmouseover="this.style.color='#0D6E6E'" onmouseout="this.style.color='#475569'">
+            <span class="material-symbols-outlined" style="font-size:15px;">route</span>
+            <span class="hidden sm:inline">Flows</span>
+          </button>
+
+          <button id="careflow-dock-minimize-btn" title="Minimize Dock" style="background:none;border:none;cursor:pointer;color:#94A3B8;padding:2px;display:flex;align-items:center;flex-shrink:0;" onmouseover="this.style.color='#0D6E6E'" onmouseout="this.style.color='#94A3B8'">
+            <span class="material-symbols-outlined" style="font-size:16px;">visibility_off</span>
+          </button>
+        `;
+
+        const minBtn = dock.querySelector('#careflow-dock-minimize-btn');
+        if (minBtn) minBtn.onclick = () => applyDockStyles(true);
+
+        const switcherBtn = dock.querySelector('#careflow-dock-switcher-btn');
+        if (switcherBtn) switcherBtn.onclick = () => openPageSwitcherModal(currentPage);
+
+        const flowsBtn = dock.querySelector('#careflow-dock-flows-btn');
+        if (flowsBtn) flowsBtn.onclick = openFlowsModal;
       }
-    };
+    }
 
-    // Open Page Switcher Drawer
-    dock.querySelector('#careflow-dock-switcher-btn').onclick = () => {
-      openPageSwitcherModal(currentPage);
-    };
+    // Default to minimized on mobile to never obstruct content
+    applyDockStyles(isMobile);
+    document.body.appendChild(dock);
 
-    // Open Flows Drawer
-    dock.querySelector('#careflow-dock-flows-btn').onclick = () => {
-      openFlowsModal();
-    };
+    // Re-evaluate on resize
+    window.addEventListener('resize', () => {
+      if (window.innerWidth < 768 && !dock.querySelector('#careflow-dock-expand-btn')) {
+        applyDockStyles(true);
+      }
+    });
   }
 
+  // Page Switcher Modal with Search
   function openPageSwitcherModal(currentPage) {
     const categories = {};
     CAREFLOW_PAGES.forEach(p => {
@@ -309,22 +367,39 @@
     });
 
     let html = `
-      <div style="margin-bottom:16px;">
-        <p style="font-size:13px;color:#64748B;margin:0 0 12px 0;">Jump directly to any page across the CareFlow Patient Experience suite:</p>
+      <div style="margin-bottom:14px;">
+        <div style="position:relative;margin-bottom:14px;">
+          <input type="text" id="careflow-dir-search" placeholder="Search pages, workflows or keywords..." style="
+            width:100%;
+            padding:9px 12px 9px 34px;
+            border-radius:12px;
+            border:1px solid #CBD5E1;
+            font-size:12.5px;
+            font-family:'Plus Jakarta Sans', Inter, system-ui, sans-serif;
+            background:#F8FAFC;
+            outline:none;
+            transition:all 0.15s;
+          " onfocus="this.style.borderColor='#0D6E6E';this.style.background='#FFFFFF';this.style.boxShadow='0 0 0 3px rgba(13,110,110,0.1)'" onblur="this.style.borderColor='#CBD5E1';this.style.boxShadow='none'">
+          <span class="material-symbols-outlined" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:17px;color:#94A3B8;pointer-events:none;">search</span>
+        </div>
+        <p style="font-size:12px;color:#64748B;margin:0;">CareFlow Suite Directory (21 Live Operational Interfaces):</p>
       </div>
-      <div style="display:flex;flex-direction:column;gap:18px;">
+      <div id="careflow-dir-list" style="display:flex;flex-direction:column;gap:16px;">
     `;
 
     for (let [cat, pages] of Object.entries(categories)) {
       html += `
-        <div>
-          <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.05em;color:#0D6E6E;margin-bottom:8px;">${cat}</div>
+        <div class="dir-category-block">
+          <div style="font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:0.06em;color:#0D6E6E;margin-bottom:8px;display:flex;align-items:center;gap:6px;">
+            <span style="width:4px;height:4px;border-radius:50%;background:#0D6E6E;"></span>
+            <span>${cat}</span>
+          </div>
           <div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(230px, 1fr));gap:8px;">
       `;
       for (let p of pages) {
         const isCurrent = p.id === currentPage.id;
         html += `
-          <a href="${getPageUrl(p.id)}" style="
+          <a href="${getPageUrl(p.id)}" class="dir-page-item" data-search="${p.num.toLowerCase()} ${p.name.toLowerCase()} ${p.hindi.toLowerCase()}" style="
             display:flex;
             align-items:center;
             gap:10px;
@@ -336,14 +411,16 @@
             color:${isCurrent ? '#0D6E6E' : '#1E293B'};
             transition:all 0.15s;
           " onmouseover="if(!${isCurrent}) this.style.background='#F1F5F9'" onmouseout="if(!${isCurrent}) this.style.background='#F8FAFC'">
-            <span class="material-symbols-outlined" style="font-size:18px;color:${isCurrent ? '#0D6E6E' : '#64748B'};">${p.icon}</span>
+            <div style="width:28px;height:28px;border-radius:8px;background:${isCurrent ? '#0D6E6E' : '#E6F7F2'};color:${isCurrent ? '#fff' : '#0D6E6E'};display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <span class="material-symbols-outlined" style="font-size:16px;">${p.icon}</span>
+            </div>
             <div style="flex:1;min-width:0;">
-              <div style="font-size:12.5px;font-weight:700;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+              <div style="font-size:12px;font-weight:700;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
                 <span style="color:#0D6E6E;margin-right:4px;">${p.num}</span> ${p.name}
               </div>
-              <div style="font-size:10.5px;color:#94A3B8;margin-top:2px;">${p.hindi}</div>
+              <div style="font-size:10px;color:#94A3B8;margin-top:2px;">${p.hindi}</div>
             </div>
-            ${isCurrent ? '<span style="font-size:10px;font-weight:700;background:#0D6E6E;color:#fff;padding:2px 6px;border-radius:9999px;">Current</span>' : ''}
+            ${isCurrent ? '<span style="font-size:9.5px;font-weight:700;background:#0D6E6E;color:#fff;padding:2px 6px;border-radius:9999px;">Current</span>' : ''}
           </a>
         `;
       }
@@ -351,84 +428,81 @@
     }
     html += `</div>`;
 
-    openModal(html, 'CareFlow Patient Portal — 20 Pages Directory');
+    openModal(html, 'CareFlow Operations Directory');
+
+    // Wire real-time search
+    setTimeout(() => {
+      const searchInput = document.getElementById('careflow-dir-search');
+      if (searchInput) {
+        searchInput.focus();
+        searchInput.addEventListener('input', (e) => {
+          const q = e.target.value.toLowerCase().trim();
+          document.querySelectorAll('.dir-page-item').forEach(item => {
+            const match = item.getAttribute('data-search').includes(q);
+            item.style.display = match ? 'flex' : 'none';
+          });
+          document.querySelectorAll('.dir-category-block').forEach(block => {
+            const hasVisible = Array.from(block.querySelectorAll('.dir-page-item')).some(it => it.style.display !== 'none');
+            block.style.display = hasVisible ? 'block' : 'none';
+          });
+        });
+      }
+    }, 50);
   }
 
   function openFlowsModal() {
     const flows = [
       {
-        title: 'Patient Sign-in & Dashboard Onboarding',
-        desc: 'New/returning patient welcomes, verifies via OTP, and lands in primary care dashboard.',
+        title: 'Live OPD Queue & Triage Handoff',
+        desc: 'Review waiting patients, examine deterministic red flags, acknowledge clinical risks, and inspect append-only audit trail.',
         steps: [
-          { num: 'P01', name: 'Landing & Welcome', id: 'p01' },
-          { num: 'P02', name: 'Login & OTP Access', id: 'p02' },
-          { num: 'P03', name: 'Patient Dashboard', id: 'p03' }
+          { num: 'ADM', name: 'Operations Control', id: 'admin' },
+          { num: 'P16', name: 'Notifications', id: 'p16' },
+          { num: 'P17', name: 'Care Team Chat', id: 'p17' },
+          { num: 'P09', name: 'Care Summary', id: 'p09' }
         ]
       },
       {
-        title: 'Book an Appointment & View Details',
-        desc: 'Select specialist doctor, pick clinic/teleconsult slot, confirm booking, and review appointment directions.',
+        title: 'Patient Intake & Token Generation',
+        desc: 'Patient logs symptoms, completes questionnaire, and receives official OPD check-in token.',
         steps: [
-          { num: 'P03', name: 'Dashboard', id: 'p03' },
-          { num: 'P13', name: 'Book Appointment', id: 'p13' },
-          { num: 'P12', name: 'Appointment Details', id: 'p12' },
-          { num: 'P11', name: 'Appointments Hub', id: 'p11' }
-        ]
-      },
-      {
-        title: 'Pre-Visit Intake & Triage Flow',
-        desc: 'Complete health questionnaire before consultation and receive intake confirmation check-in token.',
-        steps: [
-          { num: 'P12', name: 'Appointment Details', id: 'p12' },
+          { num: 'P01', name: 'Landing Welcome', id: 'p01' },
+          { num: 'P02', name: 'Login Access', id: 'p02' },
           { num: 'P07', name: 'Health Questionnaire', id: 'p07' },
-          { num: 'P10', name: 'Intake Complete', id: 'p10' },
-          { num: 'P03', name: 'Back to Dashboard', id: 'p03' }
+          { num: 'P10', name: 'Intake Complete', id: 'p10' }
         ]
       },
       {
-        title: 'Symptom Logger & Care Team Chat',
-        desc: 'Patient reports acute symptoms, selects body regions, logs severity, and chats with Dr. Priya Nair.',
-        steps: [
-          { num: 'P03', name: 'Dashboard', id: 'p03' },
-          { num: 'P05', name: 'Health Overview', id: 'p05' },
-          { num: 'P06', name: 'Symptoms Logger', id: 'p06' },
-          { num: 'P17', name: 'Messages & Care Team', id: 'p17' }
-        ]
-      },
-      {
-        title: 'Prescriptions, Lab Results & Vault',
-        desc: 'Access verified diagnostic reports, active prescriptions, refill requests, and chronological visit history.',
+        title: 'Clinical Document Extraction & Vault',
+        desc: 'Upload prescription or lab report, verify OCR extraction data, and file in ABDM-linked health vault.',
         steps: [
           { num: 'P03', name: 'Dashboard', id: 'p03' },
           { num: 'P08', name: 'Documents & Vault', id: 'p08' },
           { num: 'P14', name: 'Prescriptions & Labs', id: 'p14' },
-          { num: 'P09', name: 'Care Summary', id: 'p09' },
           { num: 'P15', name: 'Health Timeline', id: 'p15' }
         ]
       },
       {
-        title: 'Patient Profile, ABDM Consent & Settings',
-        desc: 'Review ABHA card, grant or revoke doctor data-sharing consent, update notification toggles, and help support.',
+        title: 'Specialist Appointments & Teleconsultation',
+        desc: 'Find doctor, schedule slot, view consultation details, and enter video consultation.',
         steps: [
-          { num: 'P03', name: 'Dashboard', id: 'p03' },
-          { num: 'P04', name: 'My Profile & ABHA', id: 'p04' },
-          { num: 'P18', name: 'Privacy & Consent', id: 'p18' },
-          { num: 'P19', name: 'My Settings', id: 'p19' },
-          { num: 'P20', name: 'Help & FAQs', id: 'p20' }
+          { num: 'P11', name: 'Appointments Hub', id: 'p11' },
+          { num: 'P13', name: 'Book Appointment', id: 'p13' },
+          { num: 'P12', name: 'Appointment Video', id: 'p12' }
         ]
       }
     ];
 
     let html = `
-      <p style="font-size:13px;color:#64748B;margin:0 0 16px 0;">Select an end-to-end patient journey to walk through:</p>
-      <div style="display:flex;flex-direction:column;gap:14px;">
+      <p style="font-size:12.5px;color:#64748B;margin:0 0 16px 0;">Select an end-to-end CareFlow operational flow to navigate:</p>
+      <div style="display:flex;flex-direction:column;gap:12px;">
     `;
 
     flows.forEach(flow => {
       html += `
         <div style="padding:14px;border-radius:14px;background:#F8FAFC;border:1px solid #E2E8F0;">
-          <div style="font-size:14px;font-weight:700;color:#0F172A;margin-bottom:4px;">${flow.title}</div>
-          <div style="font-size:12px;color:#64748B;margin-bottom:10px;">${flow.desc}</div>
+          <div style="font-size:13.5px;font-weight:700;color:#0B192C;margin-bottom:3px;">${flow.title}</div>
+          <div style="font-size:11.5px;color:#64748B;margin-bottom:10px;">${flow.desc}</div>
           <div style="display:flex;align-items:center;flex-wrap:wrap;gap:6px;">
       `;
       flow.steps.forEach((step, idx) => {
@@ -437,41 +511,39 @@
             display:inline-flex;
             align-items:center;
             gap:4px;
-            padding:4px 10px;
+            padding:3px 9px;
             border-radius:9999px;
-            background:#ffffff;
+            background:#FFFFFF;
             border:1px solid #CBD5E1;
-            font-size:11.5px;
-            font-weight:600;
+            font-size:11px;
+            font-weight:700;
             color:#0D6E6E;
             text-decoration:none;
             transition:all 0.15s;
-          " onmouseover="this.style.borderColor='#0D6E6E';this.style.background='#E6F7F2'" onmouseout="this.style.borderColor='#CBD5E1';this.style.background='#ffffff'">
+          " onmouseover="this.style.borderColor='#0D6E6E';this.style.background='#E6F7F2'" onmouseout="this.style.borderColor='#CBD5E1';this.style.background='#FFFFFF'">
             <span>${step.num}</span> <span>${step.name}</span>
           </a>
         `;
         if (idx < flow.steps.length - 1) {
-          html += `<span style="color:#94A3B8;font-size:12px;">→</span>`;
+          html += `<span style="color:#94A3B8;font-size:11px;">→</span>`;
         }
       });
       html += `</div></div>`;
     });
     html += `</div>`;
 
-    openModal(html, 'CareFlow Guided Patient Journeys');
+    openModal(html, 'CareFlow Guided Workflows');
   }
 
   // Universal Link and Header Wireup
   function wireUniversalLinks() {
     const currentPage = getCurrentPage();
 
-    // Wire all <a> tags with data-path or specific hrefs
     document.querySelectorAll('a').forEach(link => {
       const href = link.getAttribute('href');
       const dataPath = link.getAttribute('data-path');
       const text = (link.textContent || '').trim().toLowerCase();
 
-      // Check data-path mappings
       if (dataPath) {
         const pathMap = {
           'patient-portal-home': 'p01',
@@ -503,15 +575,12 @@
         }
       }
 
-      // If href is "#" or empty, wire by context/text
       if (!href || href === '#' || href === 'javascript:void(0)') {
-        // Logo / Brand
         if (link.querySelector('svg') && (link.textContent.includes('CareFlow') || link.getAttribute('aria-label')?.includes('CareFlow'))) {
           link.href = (currentPage.id === 'p01' || currentPage.id === 'p02') ? getPageUrl('p01') : getPageUrl('p03');
           return;
         }
 
-        // Top Navigation Links
         if (text.startsWith('home') || text.includes('गृह')) {
           link.href = (currentPage.id === 'p01' || currentPage.id === 'p02') ? getPageUrl('p01') : getPageUrl('p03');
         } else if (text.startsWith('my health') || text.includes('स्वास्थ्य') || text.startsWith('health')) {
@@ -553,12 +622,6 @@
       btn.style.cursor = 'pointer';
     });
 
-    // Wire Profile avatar/pill
-    document.querySelectorAll('header div:has(> div:contains("Aarav Sharma")), header [aria-label*="Account Settings"]').forEach(el => {
-      el.style.cursor = 'pointer';
-      el.onclick = () => navigateTo('p04');
-    });
-
     // Wire Language Switcher
     document.querySelectorAll('header button').forEach(btn => {
       const text = (btn.textContent || '').trim();
@@ -570,16 +633,17 @@
     });
   }
 
-  // Initialize once DOM is ready
   function init() {
     const currentPage = getCurrentPage();
     injectQuickNavigatorDock(currentPage);
     wireUniversalLinks();
 
-    // Ensure document is scrollable (fix any inherited fixed sizes)
+    // Ensure document is smooth-scrolling without horizontal overflow
+    document.documentElement.style.overflowX = 'hidden';
     document.documentElement.style.overflowY = 'auto';
     document.documentElement.style.height = 'auto';
     document.documentElement.style.width = '100%';
+    document.body.style.overflowX = 'hidden';
     document.body.style.overflowY = 'auto';
     document.body.style.height = 'auto';
     document.body.style.minHeight = '100vh';
