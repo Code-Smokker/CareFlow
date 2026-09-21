@@ -1,272 +1,359 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"><title>CareFlow</title><link href="https://fonts.googleapis.com" rel="preconnect"><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&amp;display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"><style>@layer base{html,body{width:100%;margin:0;padding:0;min-height:100%;background-color:#faf8ff;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script src="../shared_careflow.js"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "tertiary-container": "#006c7f", "on-secondary-fixed": "#00201c", "on-background": "#131b2e", "primary-container": "#0d6e6e", "on-error": "#ffffff", "on-surface-variant": "#3e4948", "surface-container": "#eaedff", "tertiary-fixed-dim": "#4cd7f6", "secondary-fixed-dim": "#4fdbc8", "surface-container-highest": "#dae2fd", "on-primary": "#ffffff", "secondary": "#006b5f", "surface-bright": "#faf8ff", "surface": "#faf8ff", "inverse-on-surface": "#eef0ff", "surface-container-high": "#e2e7ff", "tertiary": "#005261", "surface-container-lowest": "#ffffff", "tertiary-fixed": "#acedff", "primary": "#005454", "background": "#faf8ff", "on-primary-fixed-variant": "#004f50", "on-tertiary": "#ffffff", "on-surface": "#131b2e", "on-primary-fixed": "#002020", "surface-dim": "#d2d9f4", "primary-fixed": "#a0f0f0", "outline": "#6e7979", "on-error-container": "#93000a", "surface-variant": "#dae2fd", "primary-fixed-dim": "#84d4d3", "on-primary-container": "#9dedec", "inverse-primary": "#84d4d3", "error": "#ba1a1a", "on-tertiary-fixed-variant": "#004e5c", "secondary-container": "#6df5e1", "secondary-fixed": "#71f8e4", "error-container": "#ffdad6", "on-tertiary-container": "#9eeaff", "surface-container-low": "#f2f3ff", "outline-variant": "#bec9c8", "on-secondary": "#ffffff", "surface-tint": "#016a6a", "on-secondary-container": "#006f64", "on-tertiary-fixed": "#001f26", "inverse-surface": "#283044", "on-secondary-fixed-variant": "#005048" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "margin-mobile": "1.25rem", "space-2xl": "3rem", "space-md": "1rem", "space-lg": "1.5rem", "space-xl": "2rem", "space-xxs": "0.25rem", "space-xs": "0.5rem", "gutter-desktop": "1.5rem", "space-3xl": "4rem", "margin-desktop": "2.5rem", "gutter-mobile": "1rem", "space-sm": "0.75rem" }, "fontFamily": { "title-md": ["Plus Jakarta Sans"], "display-lg": ["Plus Jakarta Sans"], "headline-md": ["Plus Jakarta Sans"], "headline-lg-mobile": ["Plus Jakarta Sans"], "headline-lg": ["Plus Jakarta Sans"], "body-lg": ["Plus Jakarta Sans"], "label-md": ["Plus Jakarta Sans"], "headline-sm": ["Plus Jakarta Sans"], "display-lg-mobile": ["Plus Jakarta Sans"], "body-md": ["Plus Jakarta Sans"], "label-sm": ["Plus Jakarta Sans"] }, "fontSize": { "title-md": ["18px", { "lineHeight": "24px", "fontWeight": "600" }], "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }], "headline-lg-mobile": ["26px", { "lineHeight": "34px", "letterSpacing": "-0.01em", "fontWeight": "600" }], "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.015em", "fontWeight": "600" }], "body-lg": ["16px", { "lineHeight": "26px", "fontWeight": "400" }], "label-md": ["13px", { "lineHeight": "18px", "letterSpacing": "0.01em", "fontWeight": "600" }], "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }], "display-lg-mobile": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "body-md": ["14px", { "lineHeight": "22px", "fontWeight": "400" }], "label-sm": ["11px", { "lineHeight": "16px", "letterSpacing": "0.04em", "fontWeight": "600" }] } } } }</script><style>
-    body {
-      min-height: max(884px, 100dvh);
+<!DOCTYPE html>
+<html class="bg-[#FAF8FF] h-full" lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport">
+  <title>CareFlow — Care Team Handoff Consent</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script src="../shared_careflow.js"></script>
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
+  <link rel="preload" href="../material-symbols-outlined.woff2" as="font" type="font/woff2" crossorigin>
+  <style id="careflow-material-symbols-core">
+    @font-face {
+      font-family: "Material Symbols Outlined";
+      font-style: normal;
+      font-weight: 100 700;
+      font-display: block;
+      src: url("../material-symbols-outlined.woff2") format("woff2"),
+           url("/material-symbols-outlined.woff2") format("woff2"),
+           url("https://fonts.gstatic.com/s/materialsymbolsoutlined/v373/kJEhBvYX7BgnkSrUwT8OhrdQw4oELdPIeeII9v6oFsLjBuVY.woff2") format("woff2");
+    }
+    .material-symbols-outlined {
+      font-family: "Material Symbols Outlined" !important;
+      font-weight: normal;
+      font-style: normal;
+      font-size: 24px;
+      line-height: 1;
+      letter-spacing: normal;
+      text-transform: none;
+      display: inline-block;
+      white-space: nowrap;
+      word-wrap: normal;
+      direction: ltr;
+      -webkit-font-smoothing: antialiased;
+      vertical-align: middle;
     }
   </style>
-  
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
 
-<link rel="preload" href="../material-symbols-outlined.woff2" as="font" type="font/woff2" crossorigin>
-<style id="careflow-material-symbols-core">
-  @font-face {
-    font-family: "Material Symbols Outlined";
-    font-style: normal;
-    font-weight: 100 700;
-    font-display: block;
-    src: url("../material-symbols-outlined.woff2") format("woff2"),
-         url("/material-symbols-outlined.woff2") format("woff2"),
-         url("https://fonts.gstatic.com/s/materialsymbolsoutlined/v373/kJEhBvYX7BgnkSrUwT8OhrdQw4oELdPIeeII9v6oFsLjBuVY.woff2") format("woff2");
-  }
-  .material-symbols-outlined {
-    font-family: "Material Symbols Outlined" !important;
-    font-weight: normal;
-    font-style: normal;
-    font-size: 24px;
-    line-height: 1;
-    letter-spacing: normal;
-    text-transform: none;
-    display: inline-block;
-    white-space: nowrap;
-    word-wrap: normal;
-    direction: ltr;
-    -webkit-font-feature-settings: "liga";
-    -moz-font-feature-settings: "liga";
-    font-feature-settings: "liga";
-    -webkit-font-smoothing: antialiased;
-    vertical-align: middle;
-  }
-</style>
-</head><body class="bg-surface text-on-surface font-body-md min-h-screen relative flex flex-col selection:bg-secondary-container selection:text-on-secondary-container"><div class="fixed inset-0 pointer-events-none z-0 overflow-hidden"><div class="absolute -top-32 -right-24 w-96 h-96 rounded-full bg-secondary-fixed-dim/20 blur-3xl"></div><div class="absolute top-1/4 -left-32 w-80 h-80 rounded-full bg-primary-fixed-dim/15 blur-3xl"></div><div class="absolute bottom-10 right-0 w-80 h-80 rounded-full bg-tertiary-fixed-dim/15 blur-3xl"></div></div><header class="fixed top-0 inset-x-0 z-50 pt-safe bg-surface/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(13,110,110,0.04)]"><div class="h-16 px-margin-mobile flex items-center justify-between"><div class="flex items-center gap-space-xs"><button id="handoff1-back-btn" class="w-10 h-10 rounded-xl bg-surface-container-low hover:bg-surface-container flex items-center justify-center text-primary transition-colors" type="button" aria-label="Go back"><span class="material-symbols-outlined text-[20px]">arrow_back</span></button><div class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center shadow-[0_2px_8px_-2px_rgba(13,110,110,0.25)]"><span class="material-symbols-outlined text-on-primary text-[22px]">volunteer_activism</span></div><div class="flex flex-col"><span class="font-title-md text-title-md text-primary tracking-tight">CareFlow</span></div></div><div class="flex items-center gap-space-xs"><button class="h-11 px-space-sm rounded-full bg-surface-container-low text-on-surface-variant font-label-md text-label-md flex items-center gap-space-xxs hover:bg-surface-container transition-colors" type="button"><span class="material-symbols-outlined text-[18px] text-primary">language</span><span>English</span><span class="material-symbols-outlined text-[16px]">arrow_drop_down</span></button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="relative z-10 flex flex-col flex-1 w-full pt-16 pb-safe bg-surface"><div class="flex flex-col w-full">
-<div class="w-full max-w-xl md:max-w-2xl mx-auto px-margin-mobile pb-space-2xl space-y-space-md">
-<!-- 1. PROGRESS & STEPPER SECTION -->
-<div class="bg-surface-container-lowest rounded-2xl p-space-md shadow-[0_2px_8px_-2px_rgba(13,110,110,0.04)] flex flex-col gap-space-sm">
-<div class="flex items-center justify-between">
-<div class="flex items-center gap-space-xxs">
-<span class="px-space-xs py-0.5 rounded-full bg-secondary-container/40 text-primary font-label-sm text-label-sm tracking-wide uppercase font-semibold">
-            READY FOR CARE
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              teal: '#0D6E6E',
+              'teal-dark': '#0A5656',
+              'teal-light': '#E6F7F5',
+              'teal-subtle': '#F0FDFA',
+              navy: '#0F1E36',
+              slate: '#475569',
+              muted: '#64748B',
+              border: '#E2E8F0',
+              surface: '#FAF8FF',
+              card: '#FFFFFF',
+              mint: '#E8F7F5'
+            }
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', '"Noto Sans Devanagari"', 'sans-serif'],
+            hindi: ['"Noto Sans Devanagari"', '"Plus Jakarta Sans"', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #FAF8FF;
+      font-family: 'Plus Jakarta Sans', 'Noto Sans Devanagari', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+      margin: 0;
+      padding: 0;
+    }
+    .safe-bottom {
+      padding-bottom: max(1.25rem, env(safe-area-inset-bottom, 1rem));
+    }
+    .safe-top {
+      padding-top: env(safe-area-inset-top, 0px);
+    }
+  </style>
+</head>
+<body class="w-full min-h-screen bg-[#FAF8FF] text-brand-navy antialiased flex flex-col">
+
+  <!-- CareFlow Master Sticky Header -->
+  <header class="sticky top-0 z-40 bg-[#FAF8FF]/95 backdrop-blur-md border-b border-slate-100 safe-top">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <button id="handoff1-back-btn" aria-label="Go back" class="w-10 h-10 rounded-full bg-white border border-slate-200/80 flex items-center justify-center text-brand-navy hover:bg-slate-100 active:scale-95 transition-all shadow-sm">
+          <span class="material-symbols-outlined text-[20px]">arrow_back</span>
+        </button>
+        <div class="flex items-center gap-2.5">
+          <div class="w-10 h-10 rounded-xl bg-brand-teal flex items-center justify-center text-white shadow-sm shadow-brand-teal/20">
+            <span class="material-symbols-outlined text-[22px]">volunteer_activism</span>
+          </div>
+          <div class="flex flex-col">
+            <span class="text-base sm:text-lg font-bold tracking-tight text-brand-navy leading-none">CareFlow</span>
+            <span class="text-[10px] font-medium text-brand-teal uppercase tracking-wider mt-0.5">Clinical Intake</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <button id="lang-modal-btn" class="h-9 px-3 rounded-full bg-white border border-slate-200/80 text-xs font-semibold text-brand-navy flex items-center gap-1.5 hover:bg-slate-50 transition-colors shadow-sm">
+          <span class="material-symbols-outlined text-[16px] text-brand-teal">language</span>
+          <span>English / हिंदी</span>
+        </button>
+        <div class="w-8 h-8 rounded-full bg-brand-teal-light text-brand-teal flex items-center justify-center text-xs font-bold border border-teal-100 shadow-sm" title="Patient Intake">
+          <span class="material-symbols-outlined text-[18px]">person</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Scrollable Content Container -->
+  <main class="flex-1 w-full max-w-4xl mx-auto px-4 sm:px-6 pt-4 pb-32 flex flex-col gap-4">
+
+    <!-- Progress Stepper Component -->
+    <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 flex flex-col gap-2">
+      <div class="flex items-center justify-between text-xs">
+        <div class="flex items-center gap-2">
+          <span class="px-2.5 py-0.5 rounded-full bg-brand-teal-light text-brand-teal font-bold uppercase tracking-wider text-[10px]">
+            CARE TEAM HANDOFF
           </span>
-<span class="px-space-xs py-0.5 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-label-sm">
-            Care triage
-          </span>
-</div>
-<span class="font-label-md text-label-md text-secondary font-semibold">
-          100% Completed
+          <span class="text-brand-slate font-medium text-[11px]">Final Step • अंतिम चरण</span>
+        </div>
+        <span class="text-brand-teal font-bold text-[11px] tracking-tight bg-teal-50 px-2 py-0.5 rounded-full border border-teal-100 flex items-center gap-1">
+          <span class="material-symbols-outlined text-[14px]">check_circle</span>
+          100% Ready
         </span>
-</div>
-<div class="flex items-center justify-between text-on-surface-variant font-label-md text-label-md">
-<span>Step 8 of 8 • Care Team</span>
-<span class="font-label-sm text-label-sm text-on-surface-variant/70">चरण 8/8</span>
-</div>
-<!-- Full Progress Bar Track -->
-<div class="w-full h-2 rounded-full bg-surface-container overflow-hidden">
-<div class="h-full rounded-full bg-primary-container transition-all duration-700 ease-out" style="width: 100%;"></div>
-</div>
-<!-- Stage indicators -->
-<div class="flex items-center justify-between pt-space-xxs text-on-surface-variant font-label-sm text-label-sm">
-<span class="flex items-center gap-0.5 text-secondary font-semibold">
-<span class="material-symbols-outlined text-[15px]" style="font-variation-settings: 'FILL' 1;">check_circle</span> Basics
+      </div>
+      <div class="flex items-center justify-between text-xs font-semibold text-brand-navy pt-0.5">
+        <span>Step 8 of 8 • Care Team Handoff</span>
+        <span class="text-brand-teal font-bold text-[11px]">Consent (सहमति)</span>
+      </div>
+      <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+        <div class="bg-brand-teal h-full rounded-full transition-all duration-500 ease-out w-full"></div>
+      </div>
+      <div class="flex justify-between items-center text-[10px] text-brand-muted pt-0.5 font-medium">
+        <span class="text-brand-teal font-semibold flex items-center gap-0.5">✓ Basics</span>
+        <span class="text-brand-teal font-semibold flex items-center gap-0.5">✓ Symptoms</span>
+        <span class="text-brand-teal font-semibold flex items-center gap-0.5">✓ Docs</span>
+        <span class="text-brand-teal font-semibold flex items-center gap-0.5">✓ Review</span>
+        <span class="text-brand-teal font-bold flex items-center gap-1">
+          <span class="w-1.5 h-1.5 rounded-full bg-brand-teal inline-block animate-pulse"></span>Complete
         </span>
-<span class="flex items-center gap-0.5 text-secondary font-semibold">
-<span class="material-symbols-outlined text-[15px]" style="font-variation-settings: 'FILL' 1;">check_circle</span> Symptoms
-        </span>
-<span class="flex items-center gap-0.5 text-secondary font-semibold">
-<span class="material-symbols-outlined text-[15px]" style="font-variation-settings: 'FILL' 1;">check_circle</span> Documents
-        </span>
-<span class="flex items-center gap-0.5 text-secondary font-semibold">
-<span class="material-symbols-outlined text-[15px]" style="font-variation-settings: 'FILL' 1;">check_circle</span> Review
-        </span>
-<span class="flex items-center gap-1 text-primary font-bold">
-<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span> Complete
-        </span>
-</div>
-</div>
-<!-- 2. PAGE INTRODUCTION & AUDIO ACCESSIBILITY -->
-<div class="flex flex-col gap-space-xxs pt-space-xs">
-<div class="flex items-center justify-between">
-<div class="flex items-center gap-1.5 text-secondary font-label-md text-label-md">
-<span class="material-symbols-outlined text-[18px]">verified_user</span>
-<span class="tracking-wide uppercase font-semibold">Ready for care review</span>
-</div>
-<button class="h-8 px-space-xs rounded-full bg-surface-container text-primary font-label-sm text-label-sm flex items-center gap-1 hover:bg-surface-container-high transition-colors active:scale-95" id="audioToggleBtn" type="button">
-<span class="material-symbols-outlined text-[16px]">volume_up</span>
-<span>Hear / सुनें</span>
-</button>
-</div>
-<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface tracking-tight mt-1">
-        Your care team is ready
-      </h1>
-<p class="font-headline-sm text-headline-sm text-primary font-semibold">
-        आपकी देखभाल टीम तैयार है
-      </p>
-<p class="font-body-md text-body-md text-on-surface-variant mt-1">
-        Your information has been reviewed and is ready to securely share with your care team.
-      </p>
-<p class="font-body-md text-body-md text-on-surface-variant/80 italic">
-        आपकी जानकारी की समीक्षा हो चुकी है और अब इसे आपकी देखभाल टीम के साथ सुरक्षित रूप से साझा किया जा सकता है।
-      </p>
-</div>
-<!-- 3. MAIN STATUS CARD -->
-<div class="bg-surface-container-lowest rounded-2xl p-space-md shadow-[0_2px_8px_-2px_rgba(13,110,110,0.06)] flex flex-col gap-space-sm">
-<div class="flex items-center justify-between">
-<div class="inline-flex items-center gap-1.5 px-space-xs py-1 rounded-full bg-surface-container text-secondary font-label-sm text-label-sm font-semibold">
-<span class="w-2 h-2 rounded-full bg-secondary animate-ping"></span>
-<span>READY TO SHARE · साझा करने के लिए तैयार</span>
-</div>
-<div class="w-8 h-8 rounded-full bg-secondary-container/40 flex items-center justify-center">
-<span class="material-symbols-outlined text-primary text-[20px]" style="font-variation-settings: 'FILL' 1;">verified</span>
-</div>
-</div>
-<div class="flex items-start gap-space-sm mt-space-xxs">
-<div class="w-12 h-12 rounded-xl bg-surface-container flex items-center justify-center flex-shrink-0">
-<span class="material-symbols-outlined text-primary text-[28px]" style="font-variation-settings: 'FILL' 1;">clinical_notes</span>
-</div>
-<div class="flex flex-col min-w-0">
-<h2 class="font-title-md text-title-md text-on-surface leading-tight">
-            Your health information is complete.
-          </h2>
-<p class="font-body-md text-body-md text-on-surface-variant mt-0.5">
-            Your answers and uploaded documents are ready for your care team to review.
-          </p>
-<p class="font-label-md text-label-md text-on-surface-variant/80 mt-1 italic">
-            आपके उत्तर और अपलोड किए गए दस्तावेज़ आपकी देखभाल टीम की समीक्षा के लिए तैयार हैं।
-          </p>
-</div>
-</div>
-<div class="p-space-xs rounded-xl bg-surface-container-low flex items-center gap-space-xs text-on-surface-variant font-label-sm text-label-sm">
-<span class="material-symbols-outlined text-secondary text-[18px]">task_alt</span>
-<span class="leading-tight">All 8 intake sections verified • Clinical triage summary generated</span>
-</div>
-</div>
-<!-- 4. WHAT WILL BE SHARED CARD -->
-<div class="bg-surface-container-lowest rounded-2xl p-space-md shadow-[0_2px_8px_-2px_rgba(13,110,110,0.04)] flex flex-col gap-space-sm">
-<div class="flex flex-col">
-<span class="font-label-md text-label-md font-bold text-on-surface tracking-wider uppercase">
-          WHAT YOUR CARE TEAM WILL SEE
-        </span>
-<span class="font-label-sm text-label-sm text-on-surface-variant">
-          आपकी देखभाल टीम क्या देखेगी
-        </span>
-</div>
-<div class="flex flex-col divide-y divide-surface-container">
-<!-- Row 1: Symptoms -->
-<div class="flex items-center gap-space-sm py-space-xs first:pt-0">
-<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center flex-shrink-0 text-primary">
-<span class="material-symbols-outlined text-[20px]">stethoscope</span>
-</div>
-<div class="flex flex-col min-w-0 flex-1">
-<div class="flex items-center justify-between">
-<span class="font-title-md text-title-md text-on-surface text-[15px]">Symptoms &amp; answers</span>
-<span class="font-label-sm text-label-sm text-secondary font-medium">लक्षण और उत्तर</span>
-</div>
-<span class="font-body-md text-body-md text-on-surface-variant text-[13px] leading-tight">
-              Your health questions and responses • 4 key points
-            </span>
-</div>
-</div>
-<!-- Row 2: Pain Scale -->
-<div class="flex items-center gap-space-sm py-space-xs">
-<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center flex-shrink-0 text-primary">
-<span class="material-symbols-outlined text-[20px]">timer</span>
-</div>
-<div class="flex flex-col min-w-0 flex-1">
-<div class="flex items-center justify-between">
-<span class="font-title-md text-title-md text-on-surface text-[15px]">Pain &amp; duration</span>
-<span class="font-label-sm text-label-sm text-secondary font-medium">दर्द और अवधि</span>
-</div>
-<span class="font-body-md text-body-md text-on-surface-variant text-[13px] leading-tight">
-              Severity (6/10 Moderate-Severe) &amp; duration (2 days)
-            </span>
-</div>
-</div>
-<!-- Row 3: Documents -->
-<div class="flex items-center gap-space-sm py-space-xs last:pb-0">
-<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center flex-shrink-0 text-primary">
-<span class="material-symbols-outlined text-[20px]">prescriptions</span>
-</div>
-<div class="flex flex-col min-w-0 flex-1">
-<div class="flex items-center justify-between">
-<span class="font-title-md text-title-md text-on-surface text-[15px]">Medical documents</span>
-<span class="font-label-sm text-label-sm text-secondary font-medium">मेडिकल दस्तावेज़</span>
-</div>
-<span class="font-body-md text-body-md text-on-surface-variant text-[13px] leading-tight truncate">
-              Prescription_scan_01.jpg • 4 extracted details
-            </span>
-</div>
-</div>
-</div>
-</div>
-<!-- 5. PATIENT CONTROL REASSURANCE CARD -->
-<div class="rounded-2xl p-space-md bg-surface-container-low shadow-sm flex items-start gap-space-sm">
-<div class="w-9 h-9 rounded-xl bg-surface-container flex items-center justify-center flex-shrink-0 text-primary">
-<span class="material-symbols-outlined text-[22px]" style="font-variation-settings: 'FILL' 1;">shield_person</span>
-</div>
-<div class="flex flex-col min-w-0">
-<div class="flex items-center gap-space-xxs flex-wrap">
-<h3 class="font-title-md text-title-md text-primary text-[15px] leading-tight">
-            You're still in control
-          </h3>
-<span class="font-label-sm text-label-sm text-secondary font-semibold">
-            · नियंत्रण आपके हाथ में है
-          </span>
-</div>
-<p class="font-body-md text-body-md text-on-surface-variant text-[13px] mt-0.5">
-          You can review or change your information before it is shared with the doctor.
+      </div>
+    </div>
+
+    <!-- Screen Title & Bilingual Introduction -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5 pt-1">
+      <div>
+        <div class="flex items-center gap-1.5 text-brand-teal text-xs font-bold uppercase tracking-wider mb-0.5">
+          <span class="material-symbols-outlined text-[16px]">verified_user</span>
+          <span>Ready for care review • देखभाल समीक्षा</span>
+        </div>
+        <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-brand-navy">Your care team is ready</h1>
+        <p class="text-sm font-semibold text-brand-teal font-hindi mt-0.5">आपकी देखभाल टीम तैयार है</p>
+        <p class="text-xs text-brand-slate leading-relaxed mt-1 max-w-xl">
+          Your information has been reviewed and is ready to securely share with your doctor and clinic care team.
         </p>
-<p class="font-body-md text-body-md text-on-surface-variant/80 text-[12px] italic mt-0.5">
-          साझा करने से पहले आप अपनी जानकारी की समीक्षा या बदलाव कर सकते हैं।
-        </p>
-</div>
-</div>
-<!-- 6. SHARING CONFIRMATION CHECKBOX -->
-<label class="cursor-pointer bg-surface-container-lowest rounded-2xl p-space-md shadow-[0_2px_8px_-2px_rgba(13,110,110,0.04)] flex items-start gap-space-sm select-none transition-all active:scale-[0.99]">
-<input checked="" class="peer sr-only" id="consentCheckbox" type="checkbox">
-<div class="w-6 h-6 rounded-md bg-surface-container flex items-center justify-center peer-checked:bg-primary-container transition-colors flex-shrink-0 mt-0.5">
-<span class="material-symbols-outlined text-on-primary text-[18px] opacity-0 peer-checked:opacity-100 transition-opacity">check</span>
-</div>
-<div class="flex flex-col min-w-0">
-<span class="font-title-md text-title-md text-on-surface text-[14px] leading-snug">
-          I've reviewed my information and want to share it with my care team.
-        </span>
-<span class="font-body-md text-body-md text-on-surface-variant text-[12px] mt-1 leading-snug italic">
-          मैंने अपनी जानकारी की समीक्षा कर ली है और इसे अपनी देखभाल टीम के साथ साझा करना चाहता/चाहती हूँ।
-        </span>
-</div>
-</label>
-<!-- 7. PRIVACY & SECURITY CARD -->
-<div class="bg-surface-container-low rounded-2xl p-space-sm flex items-start gap-space-xs text-on-surface-variant">
-<span class="material-symbols-outlined text-primary text-[20px] flex-shrink-0 mt-0.5">lock</span>
-<div class="flex flex-col min-w-0">
-<span class="font-label-md text-label-md text-on-surface font-semibold">
-          Private &amp; secure · निजी और सुरक्षित
-        </span>
-<p class="font-body-md text-body-md text-[12px] text-on-surface-variant leading-relaxed mt-0.5">
-          Your health information is encrypted and securely shared only as part of your care journey under ABDM standards.
-        </p>
-<p class="font-body-md text-body-md text-[11px] text-on-surface-variant/80 italic mt-0.5">
-          आपकी स्वास्थ्य जानकारी एन्क्रिप्टेड है और केवल आपकी देखभाल प्रक्रिया के हिस्से के रूप में सुरक्षित रूप से साझा की जाती है।
-        </p>
-</div>
-</div>
-<!-- 8. BOTTOM PRIMARY CTA -->
-<div class="flex flex-col gap-space-xs pt-space-xs">
-<button class="w-full h-14 rounded-full bg-primary text-on-primary font-headline-sm text-headline-sm flex flex-col items-center justify-center shadow-lg hover:bg-primary-container active:scale-[0.98] transition-all" id="shareTeamBtn" type="button">
-<span class="flex items-center justify-center gap-2">
-<span>Share with Care Team</span>
-<span class="material-symbols-outlined text-[20px]">arrow_forward</span>
-</span>
-<span class="font-label-sm text-label-sm font-normal text-on-primary/90 -mt-1">
-          केयर टीम के साथ साझा करें
-        </span>
-</button>
-<div class="text-center font-label-sm text-label-sm text-on-surface-variant/80 flex items-center justify-center gap-1 py-space-xxs">
-<span class="material-symbols-outlined text-[14px] text-secondary">lock</span>
-<span>Private &amp; Secure • ABDM Compliant • आपके उत्तर सुरक्षित हैं</span>
-</div>
-</div>
-</div>
-</div>
-<script>
+      </div>
+
+      <!-- Listen Button -->
+      <button id="audioToggleBtn" class="self-start sm:self-center shrink-0 px-3.5 py-2 rounded-full bg-brand-teal-light text-brand-teal text-xs font-bold flex items-center gap-1.5 shadow-sm hover:bg-teal-100 transition-colors active:scale-95" type="button">
+        <span class="material-symbols-outlined text-[18px]">volume_up</span>
+        <span>Hear / सुनें</span>
+      </button>
+    </div>
+
+    <!-- Responsive Desktop 2-Column Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-start">
+
+      <!-- Column 1: Main Status Card & What Care Team Will See (7 cols on md) -->
+      <div class="md:col-span-7 flex flex-col gap-4">
+
+        <!-- Main Status Card -->
+        <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 flex flex-col gap-3">
+          <div class="flex items-center justify-between">
+            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 text-xs font-bold border border-emerald-100">
+              <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+              <span>READY TO SHARE · साझा करने के लिए तैयार</span>
+            </div>
+            <div class="w-8 h-8 rounded-full bg-teal-50 text-brand-teal flex items-center justify-center">
+              <span class="material-symbols-outlined text-[18px]">verified</span>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-3 mt-1">
+            <div class="w-12 h-12 rounded-xl bg-brand-teal-light text-brand-teal flex items-center justify-center shrink-0">
+              <span class="material-symbols-outlined text-[26px]">clinical_notes</span>
+            </div>
+            <div class="flex flex-col min-w-0">
+              <h2 class="text-sm sm:text-base font-bold text-brand-navy leading-tight">
+                Your health information is complete.
+              </h2>
+              <p class="text-xs text-brand-slate mt-0.5 leading-relaxed">
+                Your answers and uploaded documents are formatted for rapid clinical triage.
+              </p>
+              <p class="text-[11px] text-slate-400 font-hindi mt-0.5">
+                आपके उत्तर और दस्तावेज़ क्लिनिक दल की समीक्षा के लिए तैयार हैं।
+              </p>
+            </div>
+          </div>
+
+          <div class="p-3 rounded-xl bg-slate-50/90 border border-slate-100 flex items-center gap-2 text-slate-600 text-xs font-medium">
+            <span class="material-symbols-outlined text-brand-teal text-[18px]">task_alt</span>
+            <span>All 8 intake sections verified • Clinical triage summary generated</span>
+          </div>
+        </div>
+
+        <!-- What Your Care Team Will See Card -->
+        <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 flex flex-col gap-3">
+          <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+            <div>
+              <span class="text-xs font-bold uppercase tracking-wider text-brand-navy">WHAT YOUR CARE TEAM WILL SEE</span>
+              <span class="text-[10px] text-slate-400 block font-hindi">आपकी देखभाल टीम क्या देखेगी</span>
+            </div>
+            <span class="px-2.5 py-0.5 rounded-full bg-teal-50 border border-teal-100 text-brand-teal text-[11px] font-semibold">3 items</span>
+          </div>
+
+          <div class="divide-y divide-slate-100">
+            <!-- Row 1: Symptoms -->
+            <div class="py-3 flex items-start gap-3 first:pt-0">
+              <div class="w-9 h-9 rounded-xl bg-teal-50 text-brand-teal flex items-center justify-center shrink-0 border border-teal-100/50 mt-0.5">
+                <span class="material-symbols-outlined text-[18px]">stethoscope</span>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs sm:text-sm font-bold text-brand-navy">Symptoms & answers</span>
+                  <span class="text-[11px] text-brand-teal font-medium font-hindi">लक्षण और उत्तर</span>
+                </div>
+                <p id="handoff-symptoms-summary" class="text-xs text-brand-slate mt-0.5 truncate">
+                  Your health questions and responses • 4 key points
+                </p>
+              </div>
+            </div>
+
+            <!-- Row 2: Pain Scale -->
+            <div class="py-3 flex items-start gap-3">
+              <div class="w-9 h-9 rounded-xl bg-teal-50 text-brand-teal flex items-center justify-center shrink-0 border border-teal-100/50 mt-0.5">
+                <span class="material-symbols-outlined text-[18px]">timer</span>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs sm:text-sm font-bold text-brand-navy">Pain & duration</span>
+                  <span class="text-[11px] text-brand-teal font-medium font-hindi">दर्द और अवधि</span>
+                </div>
+                <p id="handoff-pain-summary" class="text-xs text-brand-slate mt-0.5 truncate">
+                  Severity (6/10 Moderate) & duration (2 days)
+                </p>
+              </div>
+            </div>
+
+            <!-- Row 3: Documents -->
+            <div class="py-3 flex items-start gap-3 last:pb-0">
+              <div class="w-9 h-9 rounded-xl bg-teal-50 text-brand-teal flex items-center justify-center shrink-0 border border-teal-100/50 mt-0.5">
+                <span class="material-symbols-outlined text-[18px]">description</span>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs sm:text-sm font-bold text-brand-navy">Medical documents</span>
+                  <span class="text-[11px] text-brand-teal font-medium font-hindi">मेडिकल दस्तावेज़</span>
+                </div>
+                <p id="handoff-doc-summary" class="text-xs text-brand-slate mt-0.5 truncate">
+                  Prescription_scan_01.jpg • 4 extracted details
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Column 2: Patient Control, Checkbox, Security (5 cols on md) -->
+      <div class="md:col-span-5 flex flex-col gap-4">
+
+        <!-- Patient Control Reassurance Card -->
+        <div class="rounded-2xl p-4 bg-brand-teal-subtle border border-teal-100 flex items-start gap-3">
+          <div class="w-9 h-9 rounded-xl bg-brand-teal text-white flex items-center justify-center shrink-0 shadow-sm shadow-brand-teal/20">
+            <span class="material-symbols-outlined text-[20px]">shield_person</span>
+          </div>
+          <div class="flex flex-col min-w-0">
+            <div class="flex items-center gap-1.5 flex-wrap">
+              <h3 class="text-xs sm:text-sm font-bold text-brand-navy">You're still in control</h3>
+              <span class="text-[11px] text-brand-teal font-semibold font-hindi">· नियंत्रण आपके हाथ में है</span>
+            </div>
+            <p class="text-xs text-brand-slate mt-0.5 leading-relaxed">
+              You can review or change your information at any time before it is finalized with the doctor.
+            </p>
+          </div>
+        </div>
+
+        <!-- Sharing Confirmation Checkbox Card -->
+        <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 flex flex-col gap-2">
+          <label class="cursor-pointer flex items-start gap-3 select-none">
+            <div class="relative flex items-center justify-center mt-0.5">
+              <input checked="" class="sr-only peer" id="consentCheckbox" type="checkbox">
+              <div class="w-5 h-5 rounded-md border border-slate-300 bg-white flex items-center justify-center peer-checked:bg-brand-teal peer-checked:border-brand-teal transition-colors">
+                <span class="material-symbols-outlined text-white text-[16px] font-bold">check</span>
+              </div>
+            </div>
+            <div class="flex flex-col min-w-0">
+              <span class="text-xs sm:text-sm font-bold text-brand-navy leading-snug">
+                I've reviewed my information and want to share it with my care team.
+              </span>
+              <span class="text-[11px] text-slate-500 font-hindi mt-1">
+                मैंने अपनी जानकारी की समीक्षा कर ली है और इसे अपनी देखभाल टीम के साथ साझा करना चाहता/चाहती हूँ।
+              </span>
+            </div>
+          </label>
+        </div>
+
+        <!-- Privacy & Security Card -->
+        <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 flex items-start gap-3">
+          <div class="w-8 h-8 rounded-full bg-slate-100 text-brand-teal flex items-center justify-center shrink-0 mt-0.5">
+            <span class="material-symbols-outlined text-[18px]">lock</span>
+          </div>
+          <div class="flex flex-col min-w-0">
+            <span class="text-xs font-bold text-brand-navy">Private & secure · निजी और सुरक्षित</span>
+            <p class="text-xs text-brand-slate leading-relaxed mt-0.5">
+              Your health information is encrypted and securely shared only as part of your care journey under ABDM standards.
+            </p>
+            <div class="mt-2">
+              <span class="inline-flex items-center gap-1 bg-slate-50 border border-slate-200 text-slate-600 text-[10px] font-semibold px-2 py-0.5 rounded-full">
+                🔒 ABDM Compliant • 256-bit Encrypted
+              </span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Sticky Bottom Primary Action Bar -->
+  <footer class="fixed bottom-0 inset-x-0 bg-white/95 backdrop-blur-md border-t border-slate-200/80 z-30 shadow-lg safe-bottom">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 pt-3 pb-2 flex flex-col gap-2">
+      <!-- Full-Width Primary Teal Pill Button -->
+      <button id="shareTeamBtn" class="w-full h-13 py-3.5 px-6 rounded-full bg-brand-teal hover:bg-brand-teal-dark active:scale-[0.99] text-white font-bold text-sm tracking-wide shadow-md shadow-brand-teal/20 flex items-center justify-center gap-2 transition-all" type="button">
+        <span>Share with Care Team</span>
+        <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+        <span class="text-xs font-normal text-teal-100 font-hindi">(केयर टीम के साथ साझा करें)</span>
+      </button>
+      <!-- ABDM Security Footnote -->
+      <div class="flex items-center justify-center gap-1.5 text-[11px] text-brand-muted font-medium text-center">
+        <span class="material-symbols-outlined text-[14px] text-brand-teal">lock</span>
+        <span>Private & Secure • ABDM Compliant • आपके उत्तर सुरक्षित हैं</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
   (function() {
     const state = CareFlow.getState();
 
@@ -277,27 +364,29 @@
       });
     }
 
-    // Hydrate displayed rows
-    const rows = document.querySelectorAll('.divide-y > div');
-    if (rows[0] && state.chiefComplaint) {
-      const detailEl = rows[0].querySelector('.font-body-md');
-      if (detailEl) {
-        detailEl.textContent = state.chiefComplaint + (state.symptoms ? ' • ' + state.symptoms.length + ' symptoms noted' : '');
-      }
+    // Hydrate displayed rows from state
+    if (state.chiefComplaint) {
+      const el = document.getElementById('handoff-symptoms-summary');
+      if (el) el.textContent = state.chiefComplaint + (state.symptoms ? ' • ' + state.symptoms.length + ' symptoms noted' : '');
     }
-    if (rows[1] && (state.painScore !== undefined || state.duration)) {
-      const detailEl = rows[1].querySelector('.font-body-md');
-      if (detailEl) {
-        detailEl.textContent = "Severity (" + (state.painScore !== undefined ? state.painScore : "6") + "/10 " + (state.painLabel || 'Moderate') + ") & duration (" + (state.duration || '2 days') + ")";
-      }
+    if (state.painScore !== undefined || state.duration) {
+      const el = document.getElementById('handoff-pain-summary');
+      if (el) el.textContent = "Severity (" + (state.painScore !== undefined ? state.painScore : "6") + "/10 " + (state.painLabel || 'Moderate') + ") & duration (" + (state.duration || '2 days') + ")";
     }
-    if (rows[2] && state.capturedDocument) {
-      const detailEl = rows[2].querySelector('.font-body-md');
-      if (detailEl) {
-        detailEl.textContent = state.capturedDocument.name + " • 4 extracted details";
-      }
+    if (state.capturedDocument) {
+      const el = document.getElementById('handoff-doc-summary');
+      if (el) el.textContent = state.capturedDocument.name + " • 4 extracted details";
     }
 
+    // Language modal
+    const langBtn = document.getElementById('lang-modal-btn');
+    if (langBtn) {
+      langBtn.addEventListener('click', () => {
+        CareFlow.ui.openLanguageModal();
+      });
+    }
+
+    // Audio Hear
     const audioBtn = document.getElementById('audioToggleBtn');
     let isSpeaking = false;
     if (audioBtn) {
@@ -305,24 +394,20 @@
         if (isSpeaking) {
           window.speechSynthesis && window.speechSynthesis.cancel();
           isSpeaking = false;
-          const icon = audioBtn.querySelector('.material-symbols-outlined');
-          if (icon) icon.textContent = 'volume_up';
-          audioBtn.classList.remove('bg-secondary-container');
+          audioBtn.classList.remove('bg-teal-200');
         } else {
           isSpeaking = true;
-          const icon = audioBtn.querySelector('.material-symbols-outlined');
-          if (icon) icon.textContent = 'volume_off';
-          audioBtn.classList.add('bg-secondary-container');
+          audioBtn.classList.add('bg-teal-200');
           const speechMsg = "Your care team is ready. Your information has been reviewed and is ready to securely share with your care team.";
           CareFlow.speak(speechMsg, state.language || 'en', function() {
             isSpeaking = false;
-            if (icon) icon.textContent = 'volume_up';
-            audioBtn.classList.remove('bg-secondary-container');
+            audioBtn.classList.remove('bg-teal-200');
           });
         }
       });
     }
 
+    // Checkbox and Share CTA
     const checkbox = document.getElementById('consentCheckbox');
     const shareBtn = document.getElementById('shareTeamBtn');
     if (checkbox && shareBtn) {
@@ -340,12 +425,13 @@
           handoffStatus: 'Initiated'
         });
         CareFlow.showToast("Transmitting data to clinical team...");
-        const originalContent = shareBtn.innerHTML;
-        shareBtn.innerHTML = '<span class="flex items-center justify-center gap-2"><span>Connecting to Team...</span><span class="material-symbols-outlined animate-spin text-[20px]">progress_activity</span></span>';
+        shareBtn.innerHTML = '<span>Connecting to Team...</span><span class="material-symbols-outlined animate-spin text-[18px]">progress_activity</span>';
         setTimeout(function() {
           CareFlow.navigate('../careflow_care_team_handoff_2/code.html');
-        }, 500);
+        }, 450);
       });
     }
   })();
-</script></main></body></html>
+  </script>
+</body>
+</html>

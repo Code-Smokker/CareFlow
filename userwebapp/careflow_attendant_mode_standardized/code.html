@@ -1,445 +1,298 @@
-<!DOCTYPE html><html lang="en"><head>
-<meta charset="utf-8">
-<meta content="width=390, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
-<title>CareFlow Attendant Mode</title>
-<link href="https://fonts.googleapis.com" rel="preconnect">
-<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
-<script src="../shared_careflow.js"></script>
-<script src="https://cdn.tailwindcss.com"></script>
-<script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport">
+  <title>CareFlow — Intake Assistance Mode</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="../shared_careflow.js"></script>
+  <script>
     tailwind.config = {
       theme: {
         extend: {
-          fontFamily: {
-            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
-          },
           colors: {
-            brand: {
-              teal: '#0D6E6E',
-              tealDark: '#084C4C',
-              tealLight: '#E6F4F4',
-              turquoise: '#14B8A6',
-              navy: '#0F1E36',
-              navyLight: '#334155',
-              navyMuted: '#64748B',
-              bgLight: '#F7FAFC',
-              aquaSubtle: '#F0F9F9',
-              cardBorder: '#E2E8F0',
-              accentAqua: '#CCFBF1'
-            }
+            primary: '#0D6E6E',
+            'primary-dark': '#0A5656',
+            'primary-light': '#14B8A6',
+            secondary: '#14B8A6',
+            'secondary-container': '#F0FDFA',
+            surface: '#FAF8FF',
+            'on-surface': '#0F1E36',
+            'on-surface-variant': '#4A5B73'
           }
         }
       }
     }
   </script>
-<style>
+  <style>
     body {
-      background-color: #faf8ff;
-      display: flex;
-      justify-content: center;
-      min-height: 100vh;
-      margin: 0;
-      padding: 0;
+      background-color: #FAF8FF;
       font-family: 'Plus Jakarta Sans', sans-serif;
-    }
-    .mobile-frame {
-      width: 100%;
-      max-width: 440px;
-      min-height: 100vh;
-      background: #FAFCFD;
-      background-image: 
-        radial-gradient(circle at 100% 0%, rgba(204, 251, 241, 0.45) 0%, transparent 45%),
-        radial-gradient(circle at 0% 100%, rgba(240, 249, 249, 0.65) 0%, transparent 50%);
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
-    /* Hide scrollbars */
-    .no-scrollbar::-webkit-scrollbar {
-      display: none;
-    }
-    .no-scrollbar {
-      -ms-overflow-style: none;
-      scrollbar-width: none;
+      -webkit-tap-highlight-color: transparent;
     }
   </style>
-
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
-
-<link rel="preload" href="../material-symbols-outlined.woff2" as="font" type="font/woff2" crossorigin>
-<style id="careflow-material-symbols-core">
-  @font-face {
-    font-family: "Material Symbols Outlined";
-    font-style: normal;
-    font-weight: 100 700;
-    font-display: block;
-    src: url("../material-symbols-outlined.woff2") format("woff2"),
-         url("/material-symbols-outlined.woff2") format("woff2"),
-         url("https://fonts.gstatic.com/s/materialsymbolsoutlined/v373/kJEhBvYX7BgnkSrUwT8OhrdQw4oELdPIeeII9v6oFsLjBuVY.woff2") format("woff2");
-  }
-  .material-symbols-outlined {
-    font-family: "Material Symbols Outlined" !important;
-    font-weight: normal;
-    font-style: normal;
-    font-size: 24px;
-    line-height: 1;
-    letter-spacing: normal;
-    text-transform: none;
-    display: inline-block;
-    white-space: nowrap;
-    word-wrap: normal;
-    direction: ltr;
-    -webkit-font-feature-settings: "liga";
-    -moz-font-feature-settings: "liga";
-    font-feature-settings: "liga";
-    -webkit-font-smoothing: antialiased;
-    vertical-align: middle;
-  }
-</style>
 </head>
-<body class="antialiased select-none text-brand-navy" style="background-color: #FAFCFD; margin: 0; padding: 0; min-height: 100vh; font-family: 'Plus Jakarta Sans', sans-serif;">
-<div class="mobile-frame" style="width: 100%; max-width: 420px; min-height: 100vh; margin: 0 auto; border: none; border-radius: 0; box-shadow: none;">
-<!-- Top System Header / CareFlow Header -->
-<header class="px-5 pt-4 pb-3 bg-white/80 backdrop-blur-md sticky top-0 z-30 border-b border-slate-100/80">
-<!-- Status bar simulation -->
-<div class="flex justify-between items-center text-xs font-semibold text-slate-500 mb-2 px-1">
-<span>9:41</span>
-<div class="flex items-center space-x-1.5">
-<svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3c-4.97 0-9 4.03-9 9 0 2.12.74 4.07 1.97 5.61L12 22l7.03-4.39C20.26 16.07 21 14.12 21 12c0-4.97-4.03-9-9-9z"></path></svg>
-<svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14h2v2h-2v-2zm0-10h2v8h-2V6z"></path></svg>
-<div class="w-5 h-2.5 border border-slate-400 rounded-sm p-0.5 flex items-center">
-<div class="w-full h-full bg-slate-600 rounded-2xs"></div>
-</div>
-</div>
-</div>
-<!-- Main Navigation Bar -->
-<div class="flex items-center justify-between">
-<!-- Back Button -->
-<button id="attendant-back-btn" aria-label="Go back" class="w-9 h-9 rounded-full bg-slate-100/90 flex items-center justify-center text-brand-navy hover:bg-slate-200/80 active:scale-95 transition-all" type="button">
-<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
-<path d="M15 19l-7-7 7-7" stroke-linecap="round" stroke-linejoin="round"></path>
-</svg>
-</button>
-<!-- CareFlow Logo & Wordmark (Strict continuity) -->
-<div class="flex items-center space-x-2">
-<div class="w-8 h-8 rounded-xl bg-brand-teal flex items-center justify-center text-white shadow-sm shadow-teal-900/10">
-<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
-<path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" stroke-linecap="round" stroke-linejoin="round"></path>
-<path d="M12 9v6m-3-3h6" stroke-linecap="round" stroke-linejoin="round"></path>
-</svg>
-</div>
-<span class="text-xl font-extrabold tracking-tight text-brand-navy">Care<span class="text-brand-teal">Flow</span></span>
-</div>
-<!-- Language Switcher Pill -->
-<button class="flex items-center space-x-1.5 px-2.5 py-1.5 rounded-full bg-slate-100/90 hover:bg-slate-200/70 border border-slate-200/60 text-xs font-semibold text-brand-navy">
-<svg class="w-3.5 h-3.5 text-brand-teal" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-<path d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-.778.099-1.533.284-2.253" stroke-linecap="round" stroke-linejoin="round"></path>
-</svg>
-<span>हिन्दी</span>
-<svg class="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round"></path></svg>
-</button>
-</div>
-<!-- Minimal Progress Indicator: STEP 4 OF 6 (65% completed) -->
-<div class="mt-3.5">
-<div class="flex items-center justify-between text-[11px] font-bold text-slate-500 mb-1.5">
-<div class="flex items-center space-x-1.5">
-<span class="w-2 h-2 rounded-full bg-brand-teal"></span>
-<span class="tracking-wide uppercase text-brand-navy font-extrabold text-[10px]">STEP 4 OF 6</span>
-</div>
-<span class="text-brand-teal font-semibold">65% completed</span>
-</div>
-<!-- Segmented Step Bar -->
-<div class="grid grid-cols-6 gap-1.5">
-<div class="h-1.5 rounded-full bg-brand-teal"></div>
-<div class="h-1.5 rounded-full bg-brand-teal"></div>
-<div class="h-1.5 rounded-full bg-brand-teal"></div>
-<div class="h-1.5 rounded-full bg-brand-teal relative overflow-hidden">
-<div class="absolute inset-0 bg-brand-teal"></div>
-</div>
-<div class="h-1.5 rounded-full bg-slate-200"></div>
-<div class="h-1.5 rounded-full bg-slate-200"></div>
-</div>
-<!-- Step Label Pills -->
-<div class="flex items-center justify-between text-[9.5px] font-semibold text-slate-400 mt-1.5 px-0.5">
-<span class="text-brand-teal flex items-center">✓ Lang</span>
-<span class="text-brand-teal flex items-center">✓ Consent</span>
-<span class="text-brand-teal flex items-center">✓ Identity</span>
-<span class="text-brand-teal font-bold flex items-center">Health ●</span>
-<span class="text-slate-400">Review</span>
-<span class="text-slate-400">Done</span>
-</div>
-</div>
-</header>
-<!-- Scrollable Content Body -->
-<main class="flex-1 overflow-y-auto px-5 pt-3 pb-28 no-scrollbar">
-<!-- HERO ILLUSTRATION & INTRO -->
-<div class="bg-gradient-to-b from-brand-aquaSubtle/70 to-white/90 rounded-2xl p-4 border border-teal-100/60 shadow-xs mb-5">
-<div class="flex items-center space-x-3.5">
-<!-- Caregiver + Patient Illustration SVG -->
-<div class="w-20 h-20 shrink-0 bg-white rounded-2xl shadow-sm border border-teal-100/80 flex items-center justify-center p-1.5 relative overflow-hidden">
-<svg class="w-full h-full" fill="none" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
-<!-- Gentle Background Aura -->
-<circle cx="40" cy="40" fill="#E6F4F4" r="34"></circle>
-<path d="M18 68C18 57 28 50 40 50C52 50 62 57 62 68" fill="#CCFBF1" opacity="0.6"></path>
-<!-- Patient Figure (Left) -->
-<circle cx="30" cy="30" fill="#0D6E6E" r="8.5"></circle>
-<path d="M19 56C19 46.5 24 43 30 43C36 43 41 46.5 41 56H19Z" fill="#0D6E6E" opacity="0.9"></path>
-<circle cx="30" cy="30" fill="#FDE047" opacity="0.4" r="6"></circle>
-<!-- Attendant / Caregiver Figure (Right, supportive posture) -->
-<circle cx="50" cy="27" fill="#14B8A6" r="7.5"></circle>
-<path d="M41 54C41 45.5 45.5 41.5 51 41.5C56.5 41.5 61 45.5 61 54H41Z" fill="#14B8A6"></path>
-<!-- Collaborative Care Hands / Heart Emblem -->
-<g transform="translate(32, 43)">
-<rect fill="white" filter="drop-shadow(0 2px 4px rgba(0,0,0,0.1))" height="16" rx="8" width="16"></rect>
-<path d="M8 12.5C8 12.5 4 10 4 7.2C4 5.7 5.2 4.5 6.7 4.5C7.6 4.5 8 5.1 8 5.1C8 5.1 8.4 4.5 9.3 4.5C10.8 4.5 12 5.7 12 7.2C12 10 8 12.5 8 12.5Z" fill="#0D6E6E"></path>
-</g>
-<!-- Supportive subtle arm arc connecting -->
-<path d="M48 37C44 38 38 39 34 43" stroke="#14B8A6" stroke-linecap="round" stroke-width="2"></path>
-</svg>
-</div>
-<!-- Hero Typography -->
-<div class="flex-1">
-<div class="inline-flex items-center space-x-1 px-2 py-0.5 rounded-md bg-teal-50 border border-teal-200/60 text-[10px] font-bold text-brand-teal mb-1">
-<svg class="w-3 h-3 text-brand-turquoise" fill="currentColor" viewBox="0 0 20 20">
-<path clip-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" fill-rule="evenodd"></path>
-</svg>
-<span>SUPPORTED INTAKE</span>
-</div>
-<h1 class="text-xl font-bold tracking-tight text-brand-navy leading-tight">
-              Who will answer the questions?
-            </h1>
-<p class="text-xs text-brand-navyMuted mt-1 leading-relaxed">You can answer for yourself, or someone you trust can help.<br><span class="text-[11px] text-slate-500 font-normal">आप खुद जवाब देंगे या कोई आपकी मदद करेगा?</span></p>
-</div>
-</div>
-</div>
-<!-- VOICE ACCESSIBILITY REASSURANCE BANNER (Compact) -->
-<div class="flex items-center justify-between px-3.5 py-2 rounded-xl bg-slate-100/80 border border-slate-200/70 mb-4">
-<div class="flex items-center space-x-2 text-xs text-brand-navy">
-<div class="w-6 h-6 rounded-full bg-brand-teal/10 flex items-center justify-center text-brand-teal">
-<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
-<path d="M12 18.75a6 6 0 006-6v-1.5m-6 7.5a6 6 0 01-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15a3 3 0 003-3V6a3 3 0 00-3-3 3 3 0 00-3 3v6a3 3 0 003 3z" stroke-linecap="round" stroke-linejoin="round"></path>
-</svg>
-</div>
-<span class="font-medium text-slate-700">Voice-assisted questions available</span>
-</div>
-<span class="text-[11px] font-bold text-brand-teal">Hinglish / हिन्दी</span>
-</div>
-<!-- MODE SELECTION CARDS CONTAINER -->
-<div class="space-y-3.5 mb-4">
-<!-- CARD 1: PATIENT MODE (DEFAULT SELECTED) -->
-<label class="mode-card relative block rounded-2xl p-4 cursor-pointer transition-all duration-200 border-2 bg-brand-aquaSubtle/70 border-brand-teal shadow-xs shadow-teal-900/5" id="card-patient">
-<input checked="" class="sr-only" name="attendant_mode" onchange="handleModeChange('myself')" type="radio" value="myself">
-<div class="flex items-start justify-between">
-<div class="flex items-start space-x-3.5">
-<!-- Icon Container -->
-<div class="w-11 h-11 rounded-xl bg-white border border-teal-200/80 text-brand-teal flex items-center justify-center shrink-0 shadow-xs">
-<svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-<path d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" stroke-linecap="round" stroke-linejoin="round"></path>
-</svg>
-</div>
-<!-- Text Content -->
-<div class="pr-2">
-<div class="flex items-center space-x-2">
-<span class="text-base font-bold text-brand-navy">I’ll answer for myself</span>
-<span class="px-2 py-0.5 rounded-full bg-brand-teal text-white text-[10px] font-bold tracking-wide">DEFAULT</span>
-</div>
-<p class="text-xs text-brand-navyMuted mt-1 leading-relaxed">
-                  I’ll speak or select answers during my CareFlow visit.
-                </p>
-<!-- Micro-tag list -->
-<div class="flex items-center space-x-2 mt-2.5">
-<span class="inline-flex items-center text-[11px] text-brand-teal font-semibold">
-<svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"></path></svg>
-                    Direct patient answers
-                  </span>
-<span class="text-slate-300">·</span>
-<span class="text-[11px] text-slate-500 font-medium">Voice or tap</span>
-</div>
-</div>
-</div>
-<!-- Radio Indicator -->
-<div class="radio-indicator w-6 h-6 rounded-full border-2 border-brand-teal bg-brand-teal flex items-center justify-center shrink-0 mt-0.5 shadow-xs">
-<svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
-<path d="M4.5 12.75l6 6 9-13.5" stroke-linecap="round" stroke-linejoin="round"></path>
-</svg>
-</div>
-</div>
-</label>
-<!-- CARD 2: ATTENDANT MODE -->
-<label class="mode-card relative block rounded-2xl p-4 cursor-pointer transition-all duration-200 border-2 bg-white border-slate-200 hover:border-slate-300" id="card-attendant">
-<input class="sr-only" name="attendant_mode" onchange="handleModeChange('helper')" type="radio" value="helper">
-<div class="flex items-start justify-between">
-<div class="flex items-start space-x-3.5">
-<!-- Icon Container -->
-<div class="w-11 h-11 rounded-xl bg-slate-50 border border-slate-200 text-slate-600 flex items-center justify-center shrink-0 shadow-xs">
-<svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-<path d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" stroke-linecap="round" stroke-linejoin="round"></path>
-</svg>
-</div>
-<!-- Text Content -->
-<div class="pr-2">
-<div class="flex items-center space-x-2">
-<span class="text-base font-bold text-brand-navy">Someone is helping me</span>
-</div>
-<p class="text-xs text-brand-navyMuted mt-1 leading-relaxed">
-                  A family member, caregiver, ASHA worker or health attendant will answer with me.
-                </p>
-<div class="flex flex-wrap gap-1.5 mt-2.5">
-<span class="px-2 py-0.5 rounded-md bg-slate-100 text-[10.5px] font-medium text-slate-600">Family member</span>
-<span class="px-2 py-0.5 rounded-md bg-slate-100 text-[10.5px] font-medium text-slate-600">Caregiver</span>
-<span class="px-2 py-0.5 rounded-md bg-teal-50 text-[10.5px] font-semibold text-brand-teal border border-teal-100">ASHA / Saheli</span>
-</div>
-</div>
-</div>
-<!-- Radio Indicator -->
-<div class="radio-indicator w-6 h-6 rounded-full border-2 border-slate-300 bg-white flex items-center justify-center shrink-0 mt-0.5">
-<div class="w-2.5 h-2.5 rounded-full bg-transparent"></div>
-</div>
-</div>
-</label>
-</div>
-<!-- DYNAMIC ATTENDANT DETAILS FIELD (Revealed when Attendant is selected) -->
-<div class="hidden mb-4 rounded-2xl p-4 bg-gradient-to-br from-white to-brand-aquaSubtle/50 border border-teal-200/80 shadow-xs transition-all duration-300" id="attendant-input-card">
-<div class="flex items-center justify-between mb-2">
-<label class="text-xs font-bold text-brand-navy flex items-center space-x-1.5" for="attendant-name">
-<svg class="w-4 h-4 text-brand-teal" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-<path d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" stroke-linecap="round" stroke-linejoin="round"></path>
-</svg>
-<span>Attendant name <span class="text-slate-400 font-normal">(optional)</span></span>
-</label>
-<span class="text-[10px] font-medium text-brand-teal bg-teal-50 px-2 py-0.5 rounded-full">Intake reference</span>
-</div>
-<div class="relative">
-<input class="w-full h-11 px-3.5 bg-white rounded-xl border border-slate-200 focus:border-brand-teal focus:ring-2 focus:ring-brand-teal/20 text-xs font-medium text-brand-navy placeholder:text-slate-400 outline-none transition-all shadow-2xs" id="attendant-name" placeholder="Enter name (e.g., Rajesh Sharma, Sunita Devi - ASHA)" type="text">
-</div>
-<p class="text-[11px] text-slate-500 mt-1.5 flex items-center">
-<svg class="w-3 h-3 text-slate-400 mr-1 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round"></path></svg>
-          Only needed to identify who is assisting during this CareFlow intake. No ID or phone needed.
-        </p>
-</div>
-<!-- REASSURANCE BANNER ("You're always in control") -->
-<div class="rounded-2xl p-3.5 bg-brand-aquaSubtle/80 border border-teal-200/60 shadow-2xs mb-4">
-<div class="flex items-start space-x-3">
-<div class="w-8 h-8 rounded-xl bg-white text-brand-teal flex items-center justify-center shrink-0 border border-teal-100 shadow-2xs mt-0.5">
-<svg class="w-4 h-4 text-brand-teal" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-<path d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" stroke-linecap="round" stroke-linejoin="round"></path>
-</svg>
-</div>
-<div>
-<h4 class="text-xs font-bold text-brand-navy flex items-center">
-              You’re always in control.
-            </h4>
-<p class="text-[11px] text-brand-navyMuted mt-0.5 leading-relaxed">
-              Your attendant can help, but you can correct or change any answer before it is submitted to the clinical team.
-            </p>
-</div>
-</div>
-</div>
-<!-- DEDICATED CARE NAVIGATOR FOOTNOTE -->
-<div class="flex items-center justify-between px-3 py-2 rounded-xl bg-white border border-slate-200/70 text-slate-600">
-<div class="flex items-center space-x-2.5">
-<div class="relative">
-<div class="w-7 h-7 rounded-full bg-teal-100 border border-teal-200 flex items-center justify-center text-brand-teal font-bold text-xs">
-              AR
+<body class="bg-[#FAF8FF] text-[#0F1E36] min-h-screen flex flex-col antialiased">
+
+  <!-- CareFlow Standardized Global Header -->
+  <header class="fixed top-0 inset-x-0 z-50 pt-safe bg-[#FAF8FF]/95 backdrop-blur-md border-b border-[#E2E8F0]/80 shadow-[0_1px_8px_rgba(13,110,110,0.04)]">
+    <div class="h-16 px-4 md:px-6 max-w-4xl mx-auto flex items-center justify-between">
+      <div class="flex items-center gap-2.5">
+        <button id="attendant-back-btn" aria-label="Go back" class="w-10 h-10 rounded-full bg-white border border-[#E2E8F0] flex items-center justify-center text-[#0F1E36] hover:bg-[#F8FAFC] active:scale-95 transition-all shadow-xs cursor-pointer" type="button">
+          <span class="material-symbols-outlined text-[20px]">arrow_back</span>
+        </button>
+        <div class="flex items-center gap-2 select-none">
+          <div class="w-9 h-9 rounded-xl bg-[#0D6E6E] flex items-center justify-center text-white shadow-sm">
+            <span class="material-symbols-outlined text-[20px]">volunteer_activism</span>
+          </div>
+          <span class="text-[19px] font-bold tracking-tight text-[#0F1E36]">Care<span class="text-[#0D6E6E]">Flow</span></span>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <button class="careflow-header-lang h-10 px-3 rounded-full bg-white border border-[#E2E8F0] text-[#0F1E36] text-[13px] font-medium flex items-center gap-1.5 hover:bg-[#F8FAFC] active:scale-95 transition-all shadow-xs cursor-pointer" type="button">
+          <span class="material-symbols-outlined text-[17px] text-[#0D6E6E]">language</span>
+          <span class="careflow-lang-text font-semibold">हिन्दी</span>
+          <span class="material-symbols-outlined text-[16px] text-[#4A5B73]">arrow_drop_down</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="flex-1 w-full pt-20 pb-32 px-4 md:px-6 flex flex-col items-center">
+    <div class="w-full max-w-xl md:max-w-2xl flex flex-col gap-4">
+
+      <!-- Step Progress Header -->
+      <div class="careflow-card p-4 flex flex-col gap-2">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="px-2.5 py-0.5 rounded-full bg-[#E6F7F5] text-[#0D6E6E] text-[11px] font-bold uppercase tracking-wider border border-[#99F6E4]/60">
+              Step 1 of 5
+            </span>
+            <span class="text-[12px] font-semibold text-[#0F1E36]">Assistance Mode • सहायक मोड</span>
+          </div>
+          <span class="text-[11px] font-bold text-[#0D6E6E]">20% completed</span>
+        </div>
+        <div class="w-full h-1.5 rounded-full bg-[#E2E8F0] overflow-hidden">
+          <div class="h-full bg-[#0D6E6E] rounded-full transition-all duration-500 w-[20%]"></div>
+        </div>
+      </div>
+
+      <!-- Hero Card with Caring Illustration -->
+      <div class="careflow-card p-4.5 bg-gradient-to-br from-[#F0FDFA] via-white to-white flex items-center gap-4">
+        <div class="w-18 h-18 rounded-2xl bg-[#E6F7F5] border border-[#99F6E4]/60 flex items-center justify-center shrink-0 shadow-xs">
+          <span class="material-symbols-outlined text-[#0D6E6E] text-[36px]">diversity_3</span>
+        </div>
+        <div class="flex flex-col min-w-0">
+          <div class="inline-flex items-center gap-1 text-[11px] font-bold text-[#0D6E6E] uppercase tracking-wide mb-0.5">
+            <span class="material-symbols-outlined text-[13px]">verified</span>
+            <span>Supported Intake</span>
+          </div>
+          <h1 class="text-[20px] font-bold text-[#0F1E36] tracking-tight leading-tight">
+            Who will answer the questions?
+          </h1>
+          <p class="text-[13px] text-[#4A5B73] mt-0.5">
+            You can answer for yourself, or an ASHA worker/caregiver can help.
+          </p>
+          <p class="text-[12px] text-[#0D6E6E] font-medium mt-0.5">
+            आप खुद जवाब देंगे या कोई सहायक आपकी मदद करेगा?
+          </p>
+        </div>
+      </div>
+
+      <!-- Mode Selection Cards -->
+      <div class="flex flex-col gap-3" role="radiogroup" aria-label="Assistance Mode">
+        
+        <!-- Option 1: Myself -->
+        <div id="mode-myself-card" class="p-4 rounded-2xl bg-[#0D6E6E] text-white border border-[#0D6E6E] shadow-md shadow-[#0D6E6E]/15 flex items-start justify-between cursor-pointer transition-all duration-200 select-none" role="radio" aria-checked="true" tabindex="0">
+          <div class="flex items-start gap-3.5 min-w-0">
+            <div class="w-10 h-10 rounded-xl bg-white/15 flex items-center justify-center shrink-0 text-white shadow-xs mt-0.5">
+              <span class="material-symbols-outlined text-[22px]">person</span>
             </div>
-<span class="absolute bottom-0 right-0 w-2 h-2 rounded-full bg-emerald-500 ring-2 ring-white"></span>
-</div>
-<span class="text-[11px] font-medium text-brand-navy">Care Navigator on standby for Hindi &amp; English</span>
-</div>
-<button class="text-[11px] font-bold text-brand-teal hover:underline" type="button">Help</button>
-</div>
-</main>
-<!-- STICKY BOTTOM ACTION FOOTER -->
-<footer class="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-white via-white/95 to-white/70 backdrop-blur-md border-t border-slate-100 z-30">
-<!-- Primary Action CTA Button -->
-<button class="w-full h-14 rounded-full bg-brand-teal hover:bg-brand-tealDark active:scale-[0.98] text-white font-bold text-base shadow-lg shadow-teal-900/15 flex items-center justify-center space-x-2 transition-all duration-150" id="continue-btn" type="button">
-<span>Continue</span>
-<svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2.3" viewBox="0 0 24 24">
-<path d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" stroke-linecap="round" stroke-linejoin="round"></path>
-</svg>
-</button>
-<!-- Secondary Subtext / Language Switcher Link -->
-<div class="flex items-center justify-center space-x-2 mt-2.5 text-[11px] text-slate-500">
-<svg class="w-3.5 h-3.5 text-brand-teal" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-<path d="M9 12.75L11.25 15 15 9.75m-2.179 6.879A9 9 0 1121 12a9 9 0 01-9 9z" stroke-linecap="round" stroke-linejoin="round"></path>
-</svg>
-<span>ABDM COMPLIANT · PRIVATE &amp; SECURE INTAKE</span>
-</div>
-</footer>
-</div>
-<!-- Client-side Interactive States -->
-<script>
-    let currentMode = 'myself';
-    function handleModeChange(mode) {
-      currentMode = mode;
-      const cardPatient = document.getElementById('card-patient');
-      const cardAttendant = document.getElementById('card-attendant');
-      const attendantInputCard = document.getElementById('attendant-input-card');
+            <div class="flex flex-col min-w-0">
+              <div class="flex items-center gap-2">
+                <span class="text-[16px] font-bold text-white">I’ll answer for myself</span>
+                <span class="px-2 py-0.5 rounded-full bg-white/20 text-white text-[10px] font-bold tracking-wider uppercase">DEFAULT</span>
+              </div>
+              <p class="text-[13px] text-white/90 mt-1 leading-snug">
+                I will speak or tap answers directly during this intake.
+              </p>
+              <p class="text-[12px] text-white/80 mt-0.5">
+                (मैं अपने सवालों के जवाब खुद बोलकर या चुनकर दूंगा/दूंगी।)
+              </p>
+            </div>
+          </div>
+          <div class="w-5 h-5 rounded-full bg-white flex items-center justify-center shrink-0 mt-1 shadow-xs">
+            <div class="w-2.5 h-2.5 rounded-full bg-[#0D6E6E]"></div>
+          </div>
+        </div>
+
+        <!-- Option 2: Attendant / Caregiver -->
+        <div id="mode-attendant-card" class="p-4 rounded-2xl bg-white text-[#0F1E36] border border-[#E2E8F0] shadow-xs hover:border-[#CBD5E1] flex items-start justify-between cursor-pointer transition-all duration-200 select-none" role="radio" aria-checked="false" tabindex="0">
+          <div class="flex items-start gap-3.5 min-w-0">
+            <div class="w-10 h-10 rounded-xl bg-[#F0FDFA] border border-[#99F6E4]/60 flex items-center justify-center shrink-0 text-[#0D6E6E] shadow-xs mt-0.5">
+              <span class="material-symbols-outlined text-[22px]">volunteer_activism</span>
+            </div>
+            <div class="flex flex-col min-w-0">
+              <div class="flex items-center gap-2">
+                <span class="text-[16px] font-bold text-[#0F1E36]">An attendant is assisting me</span>
+                <span class="px-2 py-0.5 rounded-full bg-[#E6F7F5] text-[#0D6E6E] text-[10px] font-bold tracking-wider uppercase">ASSISTED</span>
+              </div>
+              <p class="text-[13px] text-[#4A5B73] mt-1 leading-snug">
+                An ASHA worker, hospital volunteer, or family member will enter details.
+              </p>
+              <p class="text-[12px] text-[#4A5B73] mt-0.5">
+                (कोई आशा कार्यकर्ता, स्वयंसेवक या रिश्तेदार मदद कर रहे हैं।)
+              </p>
+            </div>
+          </div>
+          <div class="w-5 h-5 rounded-full border-2 border-[#CBD5E1] bg-white flex items-center justify-center shrink-0 mt-1">
+            <div class="w-2.5 h-2.5 rounded-full bg-transparent"></div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Attendant Details Drawer (Shown when attendant selected) -->
+      <div id="attendant-drawer" class="hidden flex-col gap-3 p-4 rounded-2xl bg-white border border-[#E2E8F0] shadow-xs transition-all duration-300">
+        <h3 class="text-sm font-bold text-[#0F1E36] flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-[#0D6E6E] text-[18px]">badge</span>
+          <span>Attendant Details • सहायक की जानकारी</span>
+        </h3>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-[#4A5B73] mb-1">Attendant Name / सहायक का नाम</label>
+            <input type="text" id="attendant-name" placeholder="e.g. Sunita Devi" class="w-full h-11 px-3 rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] text-sm text-[#0F1E36] focus:bg-white focus:border-[#0D6E6E] focus:ring-2 focus:ring-[#0D6E6E]/15 outline-none transition-all">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-[#4A5B73] mb-1">Role / भूमिका</label>
+            <select id="attendant-role" class="w-full h-11 px-3 rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] text-sm text-[#0F1E36] focus:bg-white focus:border-[#0D6E6E] focus:ring-2 focus:ring-[#0D6E6E]/15 outline-none transition-all">
+              <option value="ASHA Worker">ASHA Worker (आशा कार्यकर्ता)</option>
+              <option value="Hospital Volunteer">Hospital Volunteer (अस्पताल स्वयंसेवक)</option>
+              <option value="Family Member">Family Member (परिवार का सदस्य)</option>
+              <option value="Nursing Staff">Nursing Staff (नर्सिंग स्टाफ)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Sticky Bottom Action Bar -->
+  <div class="fixed bottom-0 inset-x-0 z-40 bg-gradient-to-t from-[#FAF8FF] via-[#FAF8FF]/95 to-transparent pt-3 pb-safe px-4 shadow-[0_-4px_16px_rgba(15,30,54,0.04)]">
+    <div class="max-w-xl md:max-w-2xl mx-auto flex flex-col gap-2">
+      <button class="w-full h-12 rounded-full bg-[#0D6E6E] hover:bg-[#0A5656] active:scale-[0.98] text-white text-[15px] font-semibold flex items-center justify-center gap-2 shadow-md shadow-[#0D6E6E]/20 transition-all cursor-pointer" id="continue-btn" type="button">
+        <span id="btn-label">Continue as Patient • जारी रखें</span>
+        <span class="material-symbols-outlined text-[19px]">arrow_forward</span>
+      </button>
+      <div class="flex items-center justify-center gap-1.5 text-[#4A5B73] text-[11px] font-medium py-1 select-none">
+        <span class="material-symbols-outlined text-[14px] text-[#0D6E6E]">lock</span>
+        <span>Secure Patient Intake • ABDM Compliant</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      const myselfCard = document.getElementById('mode-myself-card');
+      const attendantCard = document.getElementById('mode-attendant-card');
+      const drawer = document.getElementById('attendant-drawer');
+      const btnLabel = document.getElementById('btn-label');
       const continueBtn = document.getElementById('continue-btn');
-
-      if (mode === 'myself') {
-        // Patient Selected
-        cardPatient.className = "mode-card relative block rounded-2xl p-4 cursor-pointer transition-all duration-200 border-2 bg-brand-aquaSubtle/70 border-brand-teal shadow-xs shadow-teal-900/5";
-        cardPatient.querySelector('.radio-indicator').className = "radio-indicator w-6 h-6 rounded-full border-2 border-brand-teal bg-brand-teal flex items-center justify-center shrink-0 mt-0.5 shadow-xs";
-        cardPatient.querySelector('.radio-indicator').innerHTML = `
-          <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-          </svg>
-        `;
-
-        // Reset Attendant Card
-        cardAttendant.className = "mode-card relative block rounded-2xl p-4 cursor-pointer transition-all duration-200 border-2 bg-white border-slate-200 hover:border-slate-300";
-        cardAttendant.querySelector('.radio-indicator').className = "radio-indicator w-6 h-6 rounded-full border-2 border-slate-300 bg-white flex items-center justify-center shrink-0 mt-0.5";
-        cardAttendant.querySelector('.radio-indicator').innerHTML = `<div class="w-2.5 h-2.5 rounded-full bg-transparent"></div>`;
-
-        // Hide Attendant Name Input
-        attendantInputCard.classList.add('hidden');
-      } else {
-        // Attendant Selected
-        cardAttendant.className = "mode-card relative block rounded-2xl p-4 cursor-pointer transition-all duration-200 border-2 bg-brand-aquaSubtle/70 border-brand-teal shadow-xs shadow-teal-900/5";
-        cardAttendant.querySelector('.radio-indicator').className = "radio-indicator w-6 h-6 rounded-full border-2 border-brand-teal bg-brand-teal flex items-center justify-center shrink-0 mt-0.5 shadow-xs";
-        cardAttendant.querySelector('.radio-indicator').innerHTML = `
-          <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-          </svg>
-        `;
-
-        // Reset Patient Card
-        cardPatient.className = "mode-card relative block rounded-2xl p-4 cursor-pointer transition-all duration-200 border-2 bg-white border-slate-200 hover:border-slate-300";
-        cardPatient.querySelector('.radio-indicator').className = "radio-indicator w-6 h-6 rounded-full border-2 border-slate-300 bg-white flex items-center justify-center shrink-0 mt-0.5";
-        cardPatient.querySelector('.radio-indicator').innerHTML = `<div class="w-2.5 h-2.5 rounded-full bg-transparent"></div>`;
-
-        // Show Attendant Name Input
-        attendantInputCard.classList.remove('hidden');
-      }
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
       const backBtn = document.getElementById('attendant-back-btn');
+      const attendantNameInput = document.getElementById('attendant-name');
+      const attendantRoleSelect = document.getElementById('attendant-role');
+
+      let isAttendant = CareFlow.getState().isAttendant || false;
+
       if (backBtn) {
         backBtn.addEventListener('click', () => {
           CareFlow.navigate('../careflow_language_selection/code.html', 'backward');
         });
       }
 
-      const continueBtn = document.getElementById('continue-btn');
-      if (continueBtn) {
-        continueBtn.addEventListener('click', () => {
-          const attendantInput = document.querySelector('#attendant-input-card input');
-          const attendantName = attendantInput ? attendantInput.value.trim() : '';
-          CareFlow.saveState({
-            isAttendant: currentMode === 'attendant',
-            attendantName: currentMode === 'attendant' ? (attendantName || 'ASHA Worker Sunita Devi') : ''
-          });
-          CareFlow.showToast(currentMode === 'attendant' ? 'Attendant mode enabled' : 'Self-intake mode active', 'check_circle');
-          CareFlow.navigate('../careflow_qr_welcome_landing/code.html', 'forward');
+      function updateMode(attendant) {
+        isAttendant = attendant;
+        if (isAttendant) {
+          // Attendant selected
+          myselfCard.className = 'p-4 rounded-2xl bg-white text-[#0F1E36] border border-[#E2E8F0] shadow-xs hover:border-[#CBD5E1] flex items-start justify-between cursor-pointer transition-all duration-200 select-none';
+          myselfCard.setAttribute('aria-checked', 'false');
+          myselfCard.querySelector('.flex-col span').className = 'text-[16px] font-bold text-[#0F1E36]';
+          myselfCard.querySelector('.flex-col p').className = 'text-[13px] text-[#4A5B73] mt-1 leading-snug';
+          myselfCard.querySelectorAll('.flex-col p')[1].className = 'text-[12px] text-[#4A5B73] mt-0.5';
+          myselfCard.querySelector('.w-10').className = 'w-10 h-10 rounded-xl bg-[#F1F5F9] flex items-center justify-center shrink-0 text-[#4A5B73] shadow-xs mt-0.5';
+          const r1 = myselfCard.querySelector('.w-5');
+          r1.className = 'w-5 h-5 rounded-full border-2 border-[#CBD5E1] bg-white flex items-center justify-center shrink-0 mt-1';
+          r1.innerHTML = '<div class="w-2.5 h-2.5 rounded-full bg-transparent"></div>';
+
+          attendantCard.className = 'p-4 rounded-2xl bg-[#0D6E6E] text-white border border-[#0D6E6E] shadow-md shadow-[#0D6E6E]/15 flex items-start justify-between cursor-pointer transition-all duration-200 select-none';
+          attendantCard.setAttribute('aria-checked', 'true');
+          attendantCard.querySelector('.flex-col span').className = 'text-[16px] font-bold text-white';
+          attendantCard.querySelector('.flex-col p').className = 'text-[13px] text-white/90 mt-1 leading-snug';
+          attendantCard.querySelectorAll('.flex-col p')[1].className = 'text-[12px] text-white/80 mt-0.5';
+          attendantCard.querySelector('.w-10').className = 'w-10 h-10 rounded-xl bg-white/15 flex items-center justify-center shrink-0 text-white shadow-xs mt-0.5';
+          const r2 = attendantCard.querySelector('.w-5');
+          r2.className = 'w-5 h-5 rounded-full bg-white flex items-center justify-center shrink-0 mt-1 shadow-xs';
+          r2.innerHTML = '<div class="w-2.5 h-2.5 rounded-full bg-[#0D6E6E]"></div>';
+
+          drawer.classList.remove('hidden');
+          drawer.classList.add('flex');
+          btnLabel.textContent = 'Continue as Attendant • सहायक रूप में जारी रखें';
+        } else {
+          // Myself selected
+          myselfCard.className = 'p-4 rounded-2xl bg-[#0D6E6E] text-white border border-[#0D6E6E] shadow-md shadow-[#0D6E6E]/15 flex items-start justify-between cursor-pointer transition-all duration-200 select-none';
+          myselfCard.setAttribute('aria-checked', 'true');
+          myselfCard.querySelector('.flex-col span').className = 'text-[16px] font-bold text-white';
+          myselfCard.querySelector('.flex-col p').className = 'text-[13px] text-white/90 mt-1 leading-snug';
+          myselfCard.querySelectorAll('.flex-col p')[1].className = 'text-[12px] text-white/80 mt-0.5';
+          myselfCard.querySelector('.w-10').className = 'w-10 h-10 rounded-xl bg-white/15 flex items-center justify-center shrink-0 text-white shadow-xs mt-0.5';
+          const r1 = myselfCard.querySelector('.w-5');
+          r1.className = 'w-5 h-5 rounded-full bg-white flex items-center justify-center shrink-0 mt-1 shadow-xs';
+          r1.innerHTML = '<div class="w-2.5 h-2.5 rounded-full bg-[#0D6E6E]"></div>';
+
+          attendantCard.className = 'p-4 rounded-2xl bg-white text-[#0F1E36] border border-[#E2E8F0] shadow-xs hover:border-[#CBD5E1] flex items-start justify-between cursor-pointer transition-all duration-200 select-none';
+          attendantCard.setAttribute('aria-checked', 'false');
+          attendantCard.querySelector('.flex-col span').className = 'text-[16px] font-bold text-[#0F1E36]';
+          attendantCard.querySelector('.flex-col p').className = 'text-[13px] text-[#4A5B73] mt-1 leading-snug';
+          attendantCard.querySelectorAll('.flex-col p')[1].className = 'text-[12px] text-[#4A5B73] mt-0.5';
+          attendantCard.querySelector('.w-10').className = 'w-10 h-10 rounded-xl bg-[#F0FDFA] border border-[#99F6E4]/60 flex items-center justify-center shrink-0 text-[#0D6E6E] shadow-xs mt-0.5';
+          const r2 = attendantCard.querySelector('.w-5');
+          r2.className = 'w-5 h-5 rounded-full border-2 border-[#CBD5E1] bg-white flex items-center justify-center shrink-0 mt-1';
+          r2.innerHTML = '<div class="w-2.5 h-2.5 rounded-full bg-transparent"></div>';
+
+          drawer.classList.remove('flex');
+          drawer.classList.add('hidden');
+          btnLabel.textContent = 'Continue as Patient • जारी रखें';
+        }
+
+        CareFlow.saveState({
+          isAttendant: isAttendant,
+          attendantName: attendantNameInput ? attendantNameInput.value : '',
+          attendantRole: attendantRoleSelect ? attendantRoleSelect.value : 'ASHA Worker'
         });
       }
-    });
-</script>
 
+      myselfCard.addEventListener('click', () => updateMode(false));
+      attendantCard.addEventListener('click', () => updateMode(true));
 
-</body></html>
+      // Initial state sync
+      updateMode(isAttendant);
+
+      continueBtn.addEventListener('click', () => {
+        CareFlow.saveState({
+          isAttendant: isAttendant,
+          attendantName: attendantNameInput ? attendantNameInput.value : '',
+          attendantRole: attendantRoleSelect ? attendantRoleSelect.value : 'ASHA Worker'
+        });
+        CareFlow.showToast(isAttendant ? 'Assisted mode activated' : 'Patient self-service mode', 'check_circle');
+        CareFlow.navigate('../careflow_qr_welcome_landing/code.html', 'forward');
+      });
+    })();
+  </script>
+</body>
+</html>
