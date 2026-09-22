@@ -54,3 +54,12 @@ async def _post_callback(result: dict[str, Any]) -> None:
     except httpx.HTTPError as exc:
         log.error("gateway callback failed", document_id=result["document_id"], error=str(exc))
         raise
+
+
+@celery_app.task(name="docai.purge_expired_audio")
+def purge_expired_audio() -> dict[str, int]:
+    """Celery beat, every 15 minutes: delete voice notes older than the retention window or belonging to a
+    signed visit, plus orphaned uploads. See app/audio_retention.py."""
+    from app.audio_retention import purge_expired_audio as sweep
+
+    return asyncio.run(sweep())

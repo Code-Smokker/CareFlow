@@ -6,6 +6,7 @@ import type { RedFlag, Summary, VisitPriority } from "@prisma/client";
 import QRCode from "qrcode";
 import { ABDM_CLIENT } from "../abdm/abdm.tokens";
 import { AyurvedaService } from "../ayurveda/ayurveda.service";
+import { AudioService } from "../voice/audio.service";
 import type { AbdmClient } from "../abdm/abdm-client.interface";
 import type { SummaryLeaf, SummariseStructured } from "../ai/ai-service.client";
 import { AppException } from "../common/app-exception";
@@ -119,6 +120,7 @@ export class VisitsService {
     private readonly terminology: TerminologyServiceClient,
     private readonly hisAdapter: HisAdapterService,
     private readonly ayurveda: AyurvedaService,
+    private readonly audio: AudioService,
   ) {
     this.cipher = new FieldCipher(config.get("FIELD_ENCRYPTION_KEY", { infer: true }));
   }
@@ -270,6 +272,8 @@ export class VisitsService {
       data: { status: "signed", signedBy, signedAt: new Date(), fhirBundle: bundle as never },
     });
     rootLogger.info({ visit_id: visitId, fhir_bundle_id: bundle.id }, "visit signed, bundle validated against HAPI");
+    // The patient's voice notes exist so the doctor can hear their words BEFORE signing. Signed → deleted.
+    await this.audio.deleteForVisit(visitId, "visit signed", signedBy, "clinician");
 
     // docs/08-abdm-fhir.md: "After the physician signs, link the care context to the patient's
     // ABHA so the record appears in their PHR app." care_context_status is what the UI must
@@ -324,6 +328,17 @@ export class VisitsService {
         red_flags: redFlags.map((f) => toRedFlagPayload(f, visit.tokenNo ?? visit.id)),
       };
     });
+  }
+
+  /** Pushes the department's current queue to every staff screen watching it (`queue.updated`). Best-effort: a
+   * broadcast that fails must never fail the request that caused it. */
+  async broadcastQueue(department: string): Promise<void> {
+    try {
+      const tokens = await this.getQueue(department);
+      this.events.emitToDepartment(department, "queue.updated", { tokens: tokens as never });
+    } catch (err) {
+      rootLogger.warn({ department, error: String(err) }, "queue broadcast failed");
+    }
   }
 
   /** Called after a turn fires one or more new red flags (SessionsService.submitAnswer). Bumps

@@ -77,12 +77,12 @@
     const docs = await u.api('/v1/visits/' + visit + '/documents').catch(() => []);
     return { token, summary, docs, q };
   }
-  const fieldRows = (fields, u) => fields.length ? fields.map((f) => '<div class="flex items-start justify-between gap-3 py-1.5 border-b border-slate-50 last:border-0"><div><div class="text-[11px] text-slate-500">' + u.esc(u.hpiLabel(f)) + '</div><div class="text-xs font-semibold text-[#0c1b33]">' + u.esc(u.human(f.value)) + '</div></div>' + u.chip(f.source, f.confidence) + '</div>').join('') : empty('Nothing recorded yet.');
+  const fieldRows = (fields, u) => fields.length ? fields.map((f) => '<div class="flex items-start justify-between gap-3 py-1.5 border-b border-slate-50 last:border-0"><div><div class="text-[11px] text-slate-500">' + u.esc(u.hpiLabel(f)) + '</div><div class="text-xs font-semibold text-[#0c1b33]">' + u.esc(u.human(f.value)) + '</div></div><div class="flex items-center gap-1.5">' + u.chip(f.source, f.confidence) + (f.source === 'voice' ? u.playBtn(f.field_path.split('.').pop()) : '') + '</div></div>').join('') : empty('Nothing recorded yet.');
   const pendingNote = (d) => d.summary.pending ? '<div class="rounded-xl border border-amber-200 bg-amber-50 px-4 py-2.5 text-xs text-amber-900 font-semibold">Intake is in progress — the patient has not finished answering, so there is no summary yet. This page fills in as they answer.</div>' : '';
 
   // ------------------------------------------------------------------ w06 / w07 / w08 / w12: the patient's own answers
   async function answers(ctx, kind) {
-    const u = L().u; const d = await load(ctx); const h = u.hpi(d.summary); const f = u.fieldMap(d.summary);
+    const u = L().u; const d = await load(ctx); await u.loadVoiceNotes(ctx.visit); const h = u.hpi(d.summary); const f = u.fieldMap(d.summary);
     const complaint = f.chief_complaint ? u.human(f.chief_complaint.value) : 'Not recorded yet';
     const ay = await u.api('/v1/visits/' + ctx.visit + '/ayurveda').catch(() => null);
     const prashna = ay ? ay.prashna.groups.filter((g) => g.id !== 'pradhana_vedana' && g.items.length) : [];
@@ -91,7 +91,7 @@
     html += card('Chief complaint • मुख्य समस्या', 'Patient-reported', '<div class="text-sm font-bold text-[#0c1b33]">' + u.esc(complaint) + '</div>', f.chief_complaint ? u.chip(f.chief_complaint.source, f.chief_complaint.confidence) : '');
     html += card('History of present illness • वर्तमान बीमारी', h.length + ' answers, each with how it was given and how confident the system is', fieldRows(h, u));
     if (kind !== 'w07') {
-      html += prashna.length ? prashna.map((g) => card(u.esc(g.label) + ' • ' + u.esc(g.gloss), 'Ayurvedic Prashna — patient-reported', g.items.map((i) => '<div class="flex items-start justify-between gap-3 py-1.5 border-b border-slate-50 last:border-0"><div><div class="text-[11px] text-slate-500">' + u.esc(i.question) + '</div><div class="text-xs font-semibold text-[#0c1b33]">' + u.esc(i.value_label) + '</div></div>' + u.chip(i.source, i.confidence) + '</div>').join(''))).join('') : '';
+      html += prashna.length ? prashna.map((g) => card(u.esc(g.label) + ' • ' + u.esc(g.gloss), 'Ayurvedic Prashna — patient-reported', g.items.map((i) => '<div class="flex items-start justify-between gap-3 py-1.5 border-b border-slate-50 last:border-0"><div><div class="text-[11px] text-slate-500">' + u.esc(i.question) + '</div><div class="text-xs font-semibold text-[#0c1b33]">' + u.esc(i.value_label) + '</div></div><div class="flex items-center gap-1.5">' + u.chip(i.source, i.confidence) + (i.source === 'voice' ? u.playBtn(i.slot_id) : '') + '</div></div>').join(''))).join('') : '';
       if (ay && ay.prashna.prakriti_score) { const sc = ay.prashna.prakriti_score; html += card(u.esc(sc.label), 'Reference only — the Vaidya decides Prakriti', sc.counts.map((c) => '<div class="flex items-center gap-3 text-xs"><span class="w-12">' + u.esc(c.label) + '</span><span class="flex-1 h-2 rounded-full bg-slate-200"><span class="block h-2 rounded-full bg-[#0D6E6E]" style="width:' + (sc.total ? (c.count / sc.total) * 100 : 0) + '%"></span></span><span class="w-10 text-right font-mono">' + c.count + '/' + sc.total + '</span></div>').join('') + '<p class="text-[11px] text-amber-800">' + u.esc(sc.caveat) + '</p>'); }
     }
     if (kind === 'w12') {

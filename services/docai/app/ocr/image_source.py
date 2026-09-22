@@ -13,21 +13,16 @@ from __future__ import annotations
 import asyncio
 from urllib.parse import urlsplit
 
-import boto3
 
 from app.cascade import ProviderUnavailable
 from app.config import settings
+from app.storage import s3_client
 
 _S3_SCHEME = "s3://"
 
 
 def _s3_client():
-    return boto3.client(
-        "s3",
-        endpoint_url=settings.s3_endpoint,
-        aws_access_key_id=settings.s3_access_key,
-        aws_secret_access_key=settings.s3_secret_key,
-    )
+    return s3_client()
 
 
 def _fetch_s3_sync(bucket: str, key: str) -> bytes:

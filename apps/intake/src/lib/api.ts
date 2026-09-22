@@ -1,5 +1,5 @@
 import { gateway } from "./gateway-client";
-import type { AnsweredLine, NextQuestion, RedFlag } from "./machine";
+import type { AnsweredLine, EndReason, NextQuestion, RedFlag } from "./machine";
 
 function idempotencyKey(sessionId: string, slotId: string) {
   return `${sessionId}:${slotId}:${Date.now()}`;
@@ -44,11 +44,13 @@ export async function submitAnswer(
   value: unknown,
   inputMode: "voice" | "tap" | "bodymap" | "proxy" | "ocr",
   confidence: number,
-  audioUri?: string | null,
+  voiceId?: string | null,
+  /** True when changing an answer given earlier (tap a chip). */
+  replaces = false,
 ): Promise<AnswerResult> {
   const { data, error, response } = await gateway.POST("/v1/sessions/{id}/answer", {
     params: { path: { id: sessionId }, header: { "Idempotency-Key": idempotencyKey(sessionId, slotId) } },
-    body: { slot_id: slotId, value: value as never, input_mode: inputMode, confidence, audio_uri: audioUri ?? null },
+    body: { slot_id: slotId, value: value as never, input_mode: inputMode, confidence, voice_id: voiceId ?? null, replaces },
   });
   if (error) throw new Error(`${error.error.message} (${response.status})`);
 
@@ -61,7 +63,7 @@ export async function submitAnswer(
   };
 }
 
-export async function uploadDocument(sessionId: string, file: File) {
+export async function uploadDocument(sessionId: string, file: File, docTypeHint?: string) {
   const base64 = await new Promise<string>((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = () => resolve((reader.result as string).split(",")[1]);
@@ -73,7 +75,7 @@ export async function uploadDocument(sessionId: string, file: File) {
     params: { path: { id: sessionId } },
     // openapi-fetch sends this as multipart/form-data per the contract; the generated client
     // types this body as the decoded JSON shape (file: base64 string) matching the schema.
-    body: { file: base64, doc_type_hint: null } as never,
+    body: { file: base64, doc_type_hint: docTypeHint ?? null } as never,
     bodySerializer: (body: { file: string; doc_type_hint?: string | null }) => {
       const form = new FormData();
       form.append("file", file);
@@ -117,4 +119,73 @@ export async function completeSession(sessionId: string) {
   });
   if (error) throw new Error(error.error.message);
   return data;
+}
+
+
+export type LoadedSession =
+  | { kind: "fresh" }
+  | { kind: "resumed"; language: string; question: NextQuestion | null; answered: AnsweredLine[]; progressPercent: number }
+  | { kind: "ended"; reason: EndReason };
+
+/** What the slip's QR opens. Asks the gateway where this session is (POST /resume, which needs the slip's token):
+ * new → start; part-way → carry on exactly where any device left off; spent → a kind message. */
+export async function loadSession(sessionId: string, token: string | null): Promise<LoadedSession> {
+  if (!token) throw new Error("Please scan the QR code on your token slip to begin.");
+  const { data, error, response } = await gateway.POST("/v1/sessions/{id}/resume", {
+    params: { path: { id: sessionId } },
+    body: { resume_token: token },
+  });
+  if (error) {
+    if (response.status === 410) return { kind: "ended", reason: "expired" };
+    if (response.status === 404) throw new Error("We couldn't find this visit. Please ask the desk for a new token.");
+    throw new Error("This link doesn't match your token. Please scan the QR code on your slip again.");
+  }
+  if (data.status === "completed") return { kind: "ended", reason: "finished" };
+  if (data.status === "withdrawn") return { kind: "ended", reason: "withdrawn" };
+
+  const answered: AnsweredLine[] = (data.answered ?? []).map((a) => ({
+    slot_id: a.slot_id,
+    question_text: a.question.text,
+    question: a.question as NextQuestion,
+    value: a.value,
+    value_label: a.value_label,
+    input_mode: a.input_mode as AnsweredLine["input_mode"],
+    confidence: a.confidence,
+    editable: a.editable,
+  }));
+  if (answered.length === 0 && !data.next_question) return { kind: "fresh" };
+  const nq = data.next_question;
+  return {
+    kind: "resumed",
+    language: data.language ?? "hi",
+    question: nq && nq.slot_id ? (nq as NextQuestion) : null,
+    answered,
+    progressPercent: data.progress?.percent ?? 0,
+  };
+}
+
+/** "Withdraw my consent": stops the session, wipes it (the gateway's TTL-wipe path, which also deletes any kept voice
+ * notes) and writes the withdrawal to the audit log. */
+export async function withdrawSession(sessionId: string) {
+  const { error } = await gateway.DELETE("/v1/sessions/{id}", { params: { path: { id: sessionId } } });
+  if (error) throw new Error(error.error.message);
+}
+
+export interface DocumentFinding {
+  field: string;
+  value: string;
+  confidence: number | null;
+}
+export interface DocumentReading {
+  status: "queued" | "processing" | "done" | "failed";
+  findings: DocumentFinding[];
+}
+
+export async function getDocumentReading(documentId: string): Promise<DocumentReading> {
+  const { data, error } = await gateway.GET("/v1/documents/{id}", { params: { path: { id: documentId } } });
+  if (error) throw new Error(error.error.message);
+  return {
+    status: data.status as DocumentReading["status"],
+    findings: (data.extractions ?? []).map((e) => ({ field: e.field, value: e.value, confidence: e.confidence ?? null })),
+  };
 }

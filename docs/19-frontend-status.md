@@ -1,4 +1,4 @@
-# 19 — Frontend status (`apps/console`, `apps/intake`)
+# 19 — Frontend status (`apps/console`, `apps/intake`, `doctorwebapp`, `userwebapp`)
 
 Route/screen-by-screen LIVE/MOCK status for both patient-facing and staff frontends, as of the
 PS-26047 scope cut described in `apps/README.md`. "LIVE" means the page fetches real data from
@@ -162,20 +162,53 @@ recordings on `w03`, `w05`, `w11`, `w13` is now either bound to real data or rem
 
 ---
 
-## `userwebapp` — Patient Self-Intake
+## `userwebapp` — Patient app (the primary patient frontend)
 
-Bound via `userwebapp/shared_careflow.js` with full `CareFlow.api` and `CareFlow.qrScanner` integration.
+`apps/intake` (Next.js) is now a **frozen reference**, like `apps/console`: the patient app is this folder. The
+design's screens are unchanged; `careflow-live.js` (loaded after `shared_careflow.js`) binds them to the gateway.
+`scripts/serve-userwebapp.mjs` serves it on :3030 and proxies `/api/v1/*` → gateway and `/api/fill-slot` → ai, so a
+phone (or a tunnel) needs a single origin. The browser never holds a key — only `/api/*` on its own origin.
 
-| Screen | File | Wired to | Status & Notes |
-|---|---|---|---|
-| Scan / Check-in | `02_scan_qr_code/code.html` | Live QR Scanner (Camera + BarcodeDetector + File fallback) | **LIVE**: Scans OPD QR codes and initializes session via `POST /v1/sessions`. |
-| Language | `04_language_selection/code.html` | `POST /v1/sessions/{id}/language` | **LIVE**: Sets preferred intake language (English, Hindi, etc.). |
-| Consent | `05_consent_and_permissions/code.html` | `POST /v1/sessions/{id}/consent` | **LIVE**: Records patient consent with valid scopes. |
-| Symptoms / Complaint | `07_symptoms_and_chief_complaint/code.html` | `POST /v1/sessions/{id}/answer` | **LIVE**: Submits `chief_complaint` slot. |
-| Health Questionnaire | `08_health_questionnaire/code.html` | `POST /v1/sessions/{id}/answer` | **LIVE**: Drives sequential question answering with voice and tap inputs. |
-| Documents Upload | `09_clinical_documents_upload/code.html` | `POST /v1/sessions/{id}/documents` | **LIVE**: Uploads patient clinical records and lab reports. |
-| Summary Review | `11_summary_and_review/code.html` | `GET /v1/visits/{id}/summary` | **LIVE**: Displays structured read-back summary with provenance chips. |
-| Session Complete | `24_session_complete/code.html` | `POST /v1/sessions/{id}/complete` | **LIVE**: Finalizes intake session and returns token and next steps in queue. |
+The interview is server-driven: the gateway says what to ask; the screen for the question's *kind* renders it
+(`chips` → single choice · `multi` → multi-select · `bodymap` → body map · `facescale` → face scale · `duration` →
+duration). Question order, completeness and red flags are never decided in this folder (CLAUDE.md rules 1 and 3).
+
+| Beat | Screen(s) | Status |
+|---|---|---|
+| Token slip QR → session | `qr_welcome_landing` (+ `/s/<id>?token=` redirect) | **LIVE** — slip QR resumes on any device; a spent slip says so kindly (expired / withdrawn / finished). No token *number* alone opens a visit. |
+| Language | `language_selection` | **LIVE** — `POST …/language`. Hindi and English question text exist; the other four offered languages fall back to English text. |
+| Consent | `patient_consent` | **LIVE** — scopes `history`, `documents`, `audio_recording`, `abha_lookup`, and **`voice_note_share` (default OFF)**. |
+| Withdraw | every screen (bottom bar) | **LIVE** — `DELETE …/sessions/{id}`: answers + recordings deleted, audited (`session.withdraw`, `audio.delete`). |
+| ABHA | `abha_qr_identity`, `abha_otp_identity` | **MOCK gateway**, said on screen. Skip always available. Link result is not yet attached to the session server-side (known gap). |
+| Who answers | `attendant_mode_standardized` | **LIVE** — proxy answers are stored with `input_mode: proxy`. |
+| Chief complaint | `chief_complaint_standardized` | **LIVE** — chips (tap path) + mic + optional typing (fitted to the same options; never submitted silently). |
+| Questions | `question_09/10/11/12/13` | **LIVE** — options, Hindi/English text and the small Ayurvedic label (`Nidana`, `Ahara`, `Agni`, …) come from the gateway; answered chips can be tapped to change (`replaces: true`, latest wins, history kept). |
+| Voice | mic / **Speak** on every question | **LIVE pipeline, mic unverified** — record → VAD auto-stop → gateway (Sarvam ASR, ≈1.8 s) → `fill-slot` (≈1.7 s) → option **selected** for the patient to confirm. Verified end to end with a real speech clip (macOS `say` → WAV) through the gateway and Supabase Storage. **Not verified with a human microphone.** Needs HTTPS/localhost. |
+| Voice note → doctor | consent-gated | **LIVE** — stored in `intake-audio` *before* transcription; ▶ in the doctor app (5-min signed URL, `audio.play` audited); deleted on sign, after 24 h (Celery beat), or on withdraw (`audio.delete` audited). |
+| Red flag | `red_flag_instruction` | **LIVE** — rule fires server-side; screen quotes the patient's own answers, reads the rule's calm text aloud in their language. Triage board update measured **479–498 ms** after the answer is sent (8/8, `redflag.fired` over Socket.IO). |
+| Documents | `document_capture` → `document_tray_processing` → `document_review_extraction` | **LIVE** — camera in the design's scan frame (secure context) with a file fallback; **Use this page / Retake** before upload; multi-page; polls OCR; *We found…* rows all say **Doctor will confirm** (CLAUDE.md rule 5), low confidence is demoted, never hidden. First document after a cold start ≈ 50 s (model load). |
+| Read-back | `read_back_summary` | **LIVE** — every answer in the patient's words; tap one to change it; must tick to confirm. |
+| Done | `session_complete` | **LIVE** — the real queue token and hospital name. No invented room or wait time. |
+| Not wired | `new_patient_identity`, `health_summary`, `care_team_handoff_1/2`, `patient_experience`, `voice_fallback`, `ayush_dashavidha_pariksha` | Design-only. The flow never routes to them (registration happens at the desk; the Ayurvedic questions use the same single/multi screens). |
+
+**Design fixes made while binding** (behaviour, not look): the body-map image had a red "pain" spot baked into the
+chest — removed and the image is now a local asset (`assets/body-map.png`, works offline); the face scale, duration,
+single-choice and body-map screens no longer arrive with an answer pre-selected; the ABHA screen no longer shows
+"verified" before anything is scanned or fakes success on error; the attendant screen's script no longer overwrites
+its own icons; "Simulate scan", the typed-token box and every sample patient/token/room/wait were removed.
+
+**Test switch:** `?cam=0` on `document_capture` skips the camera request (for automated runs; a permission prompt
+cannot be clicked by a driver).
+
+**Verified by driving the real screens in a browser against Supabase:** slip → language → consent (voice-share on) →
+ABHA skip → attendant → chest-pain chips → body map (tap + chip) → chips → duration → multi-select → face scale →
+red flag (rule `acs_suspected`, quote in Hindi) → AYUSH Prashna (Nidana/Ahara/Vihara/Agni…, Sanskrit label) →
+document upload (real synthetic prescription → 20 OCR values) → read-back → complete → token. Withdraw and expired
+token messages checked. Layout checked at 390 px width.
+
+**Not verified:** a human speaking into a phone; a real phone camera (only file upload was driven); Marathi,
+Gujarati, Tamil, Telugu question text (English fallback); the time to walk the flow at human pace — the tap count on
+the chest-pain red-flag path is ≈ 27, which at ~2 s per tap is *about* a minute, an estimate, not a stopwatch.
 
 ---
 

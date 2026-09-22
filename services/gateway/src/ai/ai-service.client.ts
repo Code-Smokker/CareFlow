@@ -8,6 +8,7 @@ import type { FiredRedFlag } from "../ontology/ontology.types";
 export class AiServiceUnavailable extends Error {}
 
 const EVALUATE_FLAGS_TIMEOUT_MS = 800; // leaves headroom inside the 1.2s p95 turn budget
+const TRANSCRIBE_TIMEOUT_MS = 25000; // a spoken answer, ASR may fall through to a local tier
 const SUMMARISE_TIMEOUT_MS = 5000; // once per session, at /complete — not on the hot turn path
 
 type ContractSeverity = "info" | "warning" | "critical";
@@ -92,6 +93,31 @@ export class AiServiceClient {
         severity: toNumericSeverity(f.severity),
         quote: f.quote,
       }));
+    } catch (err) {
+      if (err instanceof AiServiceUnavailable) throw err;
+      throw new AiServiceUnavailable(err instanceof Error ? err.message : String(err));
+    } finally {
+      clearTimeout(timeout);
+    }
+  }
+
+  /** Speech → text. The audio travels inline (base64): the ai service needs no shared filesystem, and the
+   * bytes are never written to its disk. */
+  async transcribe(sessionId: string, audio: Buffer, language: string): Promise<{ text: string; confidence: number }> {
+    const baseUrl = this.config.get("AI_SERVICE_URL", { infer: true });
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), TRANSCRIBE_TIMEOUT_MS);
+    try {
+      const response = await fetch(`${baseUrl}/transcribe`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "X-Session-Id": sessionId },
+        body: JSON.stringify({ audio_base64: audio.toString("base64"), language, streaming: false }),
+        signal: controller.signal,
+      });
+      if (!response.ok) throw new AiServiceUnavailable(`ai service /transcribe responded ${response.status}`);
+      const body = (await response.json()) as { text: string; confidence: number };
+      if (!body.text?.trim()) throw new AiServiceUnavailable("empty transcript");
+      return { text: body.text, confidence: body.confidence };
     } catch (err) {
       if (err instanceof AiServiceUnavailable) throw err;
       throw new AiServiceUnavailable(err instanceof Error ? err.message : String(err));

@@ -9,6 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="../shared_careflow.js"></script>
+  <script src="../careflow-live.js"></script>
   <script>
     tailwind.config = {
       theme: {
@@ -222,7 +223,7 @@
           // Attendant selected
           myselfCard.className = 'p-4 rounded-2xl bg-white text-[#0F1E36] border border-[#E2E8F0] shadow-xs hover:border-[#CBD5E1] flex items-start justify-between cursor-pointer transition-all duration-200 select-none';
           myselfCard.setAttribute('aria-checked', 'false');
-          myselfCard.querySelector('.flex-col span').className = 'text-[16px] font-bold text-[#0F1E36]';
+          myselfCard.querySelector('.flex-col span:not(.material-symbols-outlined)').className = 'text-[16px] font-bold text-[#0F1E36]';
           myselfCard.querySelector('.flex-col p').className = 'text-[13px] text-[#4A5B73] mt-1 leading-snug';
           myselfCard.querySelectorAll('.flex-col p')[1].className = 'text-[12px] text-[#4A5B73] mt-0.5';
           myselfCard.querySelector('.w-10').className = 'w-10 h-10 rounded-xl bg-[#F1F5F9] flex items-center justify-center shrink-0 text-[#4A5B73] shadow-xs mt-0.5';
@@ -232,7 +233,7 @@
 
           attendantCard.className = 'p-4 rounded-2xl bg-[#0D6E6E] text-white border border-[#0D6E6E] shadow-md shadow-[#0D6E6E]/15 flex items-start justify-between cursor-pointer transition-all duration-200 select-none';
           attendantCard.setAttribute('aria-checked', 'true');
-          attendantCard.querySelector('.flex-col span').className = 'text-[16px] font-bold text-white';
+          attendantCard.querySelector('.flex-col span:not(.material-symbols-outlined)').className = 'text-[16px] font-bold text-white';
           attendantCard.querySelector('.flex-col p').className = 'text-[13px] text-white/90 mt-1 leading-snug';
           attendantCard.querySelectorAll('.flex-col p')[1].className = 'text-[12px] text-white/80 mt-0.5';
           attendantCard.querySelector('.w-10').className = 'w-10 h-10 rounded-xl bg-white/15 flex items-center justify-center shrink-0 text-white shadow-xs mt-0.5';
@@ -247,7 +248,7 @@
           // Myself selected
           myselfCard.className = 'p-4 rounded-2xl bg-[#0D6E6E] text-white border border-[#0D6E6E] shadow-md shadow-[#0D6E6E]/15 flex items-start justify-between cursor-pointer transition-all duration-200 select-none';
           myselfCard.setAttribute('aria-checked', 'true');
-          myselfCard.querySelector('.flex-col span').className = 'text-[16px] font-bold text-white';
+          myselfCard.querySelector('.flex-col span:not(.material-symbols-outlined)').className = 'text-[16px] font-bold text-white';
           myselfCard.querySelector('.flex-col p').className = 'text-[13px] text-white/90 mt-1 leading-snug';
           myselfCard.querySelectorAll('.flex-col p')[1].className = 'text-[12px] text-white/80 mt-0.5';
           myselfCard.querySelector('.w-10').className = 'w-10 h-10 rounded-xl bg-white/15 flex items-center justify-center shrink-0 text-white shadow-xs mt-0.5';
@@ -257,7 +258,7 @@
 
           attendantCard.className = 'p-4 rounded-2xl bg-white text-[#0F1E36] border border-[#E2E8F0] shadow-xs hover:border-[#CBD5E1] flex items-start justify-between cursor-pointer transition-all duration-200 select-none';
           attendantCard.setAttribute('aria-checked', 'false');
-          attendantCard.querySelector('.flex-col span').className = 'text-[16px] font-bold text-[#0F1E36]';
+          attendantCard.querySelector('.flex-col span:not(.material-symbols-outlined)').className = 'text-[16px] font-bold text-[#0F1E36]';
           attendantCard.querySelector('.flex-col p').className = 'text-[13px] text-[#4A5B73] mt-1 leading-snug';
           attendantCard.querySelectorAll('.flex-col p')[1].className = 'text-[12px] text-[#4A5B73] mt-0.5';
           attendantCard.querySelector('.w-10').className = 'w-10 h-10 rounded-xl bg-[#F0FDFA] border border-[#99F6E4]/60 flex items-center justify-center shrink-0 text-[#0D6E6E] shadow-xs mt-0.5';

@@ -55,8 +55,9 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [session_id, resume_token, qr_url, department, ayush_mode, token_no, visit_id, qr_data_url]
+                required: [session_id, resume_token, qr_url, department, ayush_mode, token_no, visit_id, qr_data_url, hospital_name]
                 properties:
+                  hospital_name: { type: string, description: Printed at the top of the token slip (HOSPITAL_NAME). }
                   session_id: { $ref: "#/components/schemas/SessionId" }
                   resume_token: { type: string }
                   qr_url: { type: string, format: uri }
@@ -102,6 +103,9 @@ paths:
       operationId: getSession
       summary: Full session state and progress
       tags: [sessions]
+      description: >
+        410 `session_expired` once the token's 24 h have passed — the message tells the patient to ask the desk for a
+        new one. A completed or withdrawn session is returned as such (status), never as an error.
       responses:
         "200":
           description: Session state
@@ -261,6 +265,105 @@ paths:
                   red_flags:
                     type: array
                     items: { $ref: "#/components/schemas/RedFlag" }
+        default: { $ref: "#/components/responses/Error" }
+
+  /v1/sessions/{id}/voice:
+    parameters:
+      - $ref: "#/components/parameters/SessionIdParam"
+    post:
+      operationId: transcribeVoice
+      summary: Transcribe one spoken answer; keep the audio only if the patient consented
+      tags: [interview]
+      description: >
+        The gateway receives the audio, and — only if the session holds a live `voice_note_share` consent —
+        stores it privately as `intake-audio/<visit_id>/<voice_id>.<ext>` BEFORE transcription. Without that
+        consent the audio is used for transcription and never stored. The transcript is returned either way.
+        If no provider can transcribe it the response is 503 and any stored audio is deleted.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [audio]
+              properties:
+                audio: { type: string, format: binary, description: "audio/webm, audio/ogg, audio/mp4 or audio/wav, at most 10 MB" }
+                language: { type: string, description: BCP-47 tag; defaults to the session language }
+      responses:
+        "200":
+          description: Transcript
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [voice_id, stored, text, confidence]
+                properties:
+                  voice_id: { type: string, format: uuid }
+                  stored:
+                    type: boolean
+                    description: True only if the audio was kept for the doctor (consent given).
+                  text: { type: string }
+                  confidence: { type: number }
+        default: { $ref: "#/components/responses/Error" }
+
+  /v1/visits/{id}/voice-notes:
+    parameters:
+      - $ref: "#/components/parameters/VisitIdParam"
+    get:
+      operationId: listVoiceNotes
+      summary: Which answers have a playable voice note
+      tags: [clinician]
+      responses:
+        "200":
+          description: One entry per answer whose audio is still stored and still consented
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  required: [answer_id, slot_id, answered_at]
+                  properties:
+                    answer_id: { type: string, format: uuid }
+                    slot_id: { type: string }
+                    answered_at: { type: string, format: date-time }
+        default: { $ref: "#/components/responses/Error" }
+
+  /v1/answers/{id}/audio-playback:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema: { type: string, format: uuid }
+    post:
+      operationId: playAnswerAudio
+      summary: A five-minute signed link to the patient's own words
+      tags: [clinician]
+      description: >
+        Every call is written to the append-only audit log (who, which answer, when). 410 once the audio is
+        gone (visit signed, consent revoked, or 24 h passed). The link is never longer than 300 seconds and
+        is the only way the doctor's screen reaches storage.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [actor_id, actor_role]
+              properties:
+                actor_id: { type: string, minLength: 1 }
+                actor_role: { type: string, minLength: 1 }
+      responses:
+        "200":
+          description: Signed URL
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [url, expires_in_seconds]
+                properties:
+                  url: { type: string, format: uri }
+                  expires_in_seconds: { type: integer, maximum: 300 }
         default: { $ref: "#/components/responses/Error" }
 
   /v1/sessions/{id}/complete:
@@ -1036,6 +1139,10 @@ components:
       enum: [voice, chips, multi, bodymap, facescale, duration]
 
     ConsentScope:
+      description: >
+        `voice_note_share` is separate from `audio_recording` and OFF by default: without it the patient's
+        audio is used for transcription only and deleted straight after; with it the audio is kept in a
+        private bucket for the doctor to play, until the visit is signed, consent is revoked, or 24 hours.
       type: string
       enum:
         [
@@ -1044,6 +1151,7 @@ components:
           documents,
           abha_lookup,
           research_deidentified,
+          voice_note_share,
         ]
 
     AbdmStatus:
@@ -1099,6 +1207,11 @@ components:
         options:
           type: array
           items: { $ref: "#/components/schemas/QuestionOption" }
+        module_label:
+          type: [string, "null"]
+          description: >
+            For an Ayurvedic Prashna question, the classical term of its section (e.g. "Agni (digestion)"), shown as
+            a small caption above the plain-language question. Null for every other question.
 
     AnswerValue:
       description: Typed per the slot schema declared in packages/ontology.
@@ -1125,6 +1238,19 @@ components:
         audio_uri:
           type: [string, "null"]
           format: uri
+        replaces:
+          type: boolean
+          default: false
+          description: >
+            True = the patient is CHANGING an earlier answer to `slot_id`. The new answer is stored beside the old one
+            (the latest wins), red flags are re-evaluated, and the interview continues from where it was — or moves if
+            the change makes different questions apply. Not allowed for the chief complaint.
+        voice_id:
+          type: [string, "null"]
+          format: uuid
+          description: >
+            From POST /v1/sessions/{id}/voice. Links this answer to the stored voice note (only exists if the
+            patient consented). The gateway resolves the storage key itself — a client never supplies a path.
 
     RedFlag:
       type: object
@@ -1137,8 +1263,11 @@ components:
           }
         rule_id: { type: string }
         severity: { type: string, enum: [info, warning, critical] }
-        quote: { type: string }
+        quote: { type: string, description: The PATIENT'S words — the answers the rule read — not the rule's rationale. }
         token_no: { type: string }
+        speak:
+          type: [string, "null"]
+          description: The calm instruction to read aloud to the patient, in their language (from the rule's own `speak`). Only on the answer response.
         acknowledged_by: { type: [string, "null"] }
         acknowledged_at: { type: [string, "null"], format: date-time }
 
@@ -1156,6 +1285,35 @@ components:
           type: array
           items: { $ref: "#/components/schemas/ConsentScope" }
         patient_id: { type: [string, "null"] }
+        token_no:
+          type: [string, "null"]
+          description: The queue token printed on the slip (e.g. AYURVEDA-001) — what the patient app shows as "your token".
+        hospital_name: { type: string }
+        next_question:
+          description: >
+            The question this session is waiting on, so a SECOND device that opens the same token slip resumes
+            exactly here instead of starting over. Null while the chief complaint is still to be chosen.
+          oneOf:
+            - $ref: "#/components/schemas/NextQuestion"
+            - { type: "null" }
+        answered:
+          type: array
+          description: Every slot answered so far, in order, each with the question that was asked — enough to show them back and to re-answer one.
+          items: { $ref: "#/components/schemas/AnsweredSlot" }
+
+    AnsweredSlot:
+      type: object
+      required: [slot_id, question, value, value_label, input_mode, confidence, editable]
+      properties:
+        slot_id: { type: string }
+        question: { $ref: "#/components/schemas/NextQuestion" }
+        value: { $ref: "#/components/schemas/AnswerValue" }
+        value_label: { type: string, description: The answer as the patient saw it (option labels, in the session language). }
+        input_mode: { $ref: "#/components/schemas/InputMode" }
+        confidence: { type: number }
+        editable:
+          type: boolean
+          description: False for the chief complaint — changing it would restart the interview.
 
     Demographics:
       type: object

@@ -20,6 +20,7 @@ import { OntologyService } from "../ontology/ontology.service";
 import type { Slot } from "../ontology/ontology.types";
 import { PrismaService } from "../prisma/prisma.service";
 import { VisitsService } from "../visits/visits.service";
+import { AudioService } from "../voice/audio.service";
 import { EventsGateway } from "../websocket/events.gateway";
 import type {
   AnswerSubmissionDto,
@@ -59,9 +60,11 @@ interface NextQuestionPayload {
   tts_url: string | null;
   input_modes: string[];
   options: QuestionOptionPayload[];
+  module_label: string | null;
 }
 
 interface RedFlagPayload {
+  speak: string | null;
   id: string;
   rule_id: string;
   severity: "info" | "warning" | "critical";
@@ -81,6 +84,7 @@ export class SessionsService {
     private readonly visits: VisitsService,
     private readonly deid: DeidService,
     private readonly config: ConfigService<Env, true>,
+    private readonly audio: AudioService,
   ) {
     this.cipher = new FieldCipher(config.get("FIELD_ENCRYPTION_KEY", { infer: true }));
   }
@@ -184,6 +188,8 @@ export class SessionsService {
       },
     });
     sessionLogger(session.id).info({ visit_id: visit.id, department, ayush_mode: ayushMode }, "session created");
+    // A new token is in the queue: every staff screen watching this department hears about it at once.
+    void this.visits.broadcastQueue(department);
     const qrUrl = `${publicWebUrl}/s/${session.id}?token=${rawToken}`;
     return {
       session_id: session.id,
@@ -191,6 +197,7 @@ export class SessionsService {
       department,
       ayush_mode: ayushMode,
       token_no: tokenNo,
+      hospital_name: (this.config.get("HOSPITAL_NAME", { infer: true }) as string | undefined) ?? "CareFlow OPD",
       visit_id: visit.id,
       // Rendered here so the slip prints with no CDN and no network beyond the gateway (rule 9).
       qr_data_url: await QRCode.toDataURL(qrUrl, { margin: 1, width: 360, errorCorrectionLevel: "M" }),
@@ -202,13 +209,25 @@ export class SessionsService {
     };
   }
 
+  /** A token is good for 24 h. A finished or withdrawn session is reported as such (never an error); one that simply
+   * ran out of time is 410 with a message a patient can act on. */
+  private assertNotExpired(session: IntakeSession) {
+    if (session.status !== "completed" && session.status !== "withdrawn" && session.expiresAt.getTime() < Date.now()) {
+      throw new AppException(410, "session_expired", "This token has expired. Please ask the desk for a new one.");
+    }
+  }
+
   async get(sessionId: string) {
     const session = await this.findSessionOrThrow(sessionId);
-    return this.toSessionPayload(session);
+    this.assertNotExpired(session);
+    // Progress only. The answers and the current question are what the patient told us, so they are returned
+    // ONLY by resume (which needs the token from the slip) — knowing a session id alone must not reveal them.
+    return this.toSessionPayload(session, false);
   }
 
   async resume(sessionId: string, body: ResumeBodyDto) {
     const session = await this.findSessionOrThrow(sessionId);
+    this.assertNotExpired(session);
     if (hashResumeToken(body.resume_token) !== session.resumeTokenHash) {
       throw new AppException(
         401,
@@ -225,7 +244,7 @@ export class SessionsService {
       device_id: deviceId,
     });
     sessionLogger(sessionId).info({ device_id: deviceId }, "session resumed");
-    return this.toSessionPayload(updated);
+    return this.toSessionPayload(updated, true);
   }
 
   async setLanguage(sessionId: string, body: LanguageBodyDto) {
@@ -289,6 +308,10 @@ export class SessionsService {
         ]);
       }
     }
+    // Withdrawing the voice-note scope deletes the stored audio NOW, not at the next sweep.
+    if (requested.has("voice_note_share")) {
+      await this.audio.deleteForSession(sessionId, "consent revoked: voice_note_share");
+    }
     sessionLogger(sessionId).info({ scopes }, "consent scope(s) revoked");
   }
 
@@ -350,14 +373,22 @@ export class SessionsService {
       // double-advance the interview.
       const state = parseSessionState(session.state);
       return {
-        next_question: this.buildNextQuestion(state),
+        next_question: this.buildNextQuestion(state, session.language ?? "en"),
         progress: this.currentProgress(session),
         red_flags: [] as RedFlagPayload[],
       };
     }
 
     const state = parseSessionState(session.state);
-    if (body.slot_id !== state.current_slot_id) {
+    const isEdit = body.replaces === true;
+    if (isEdit) {
+      if (this.ontology.isChiefComplaintSlot(body.slot_id)) {
+        throw new AppException(409, "chief_complaint_locked", "Changing the main problem would restart the questions. Please ask the desk.");
+      }
+      if (!(body.slot_id in state.filled)) {
+        throw new AppException(409, "slot_not_answered", `Slot '${body.slot_id}' has not been answered yet, so there is nothing to change.`);
+      }
+    } else if (body.slot_id !== state.current_slot_id) {
       throw new AppException(
         409,
         "slot_mismatch",
@@ -365,23 +396,34 @@ export class SessionsService {
       );
     }
 
-    const slot = this.currentSlot(state);
+    const slot = isEdit ? this.ontology.slotInOrder(state.module_order ?? [state.module_id!], body.slot_id)! : this.currentSlot(state);
     this.validateSlotValue(slot, body.value);
+
+    // A voice note is linked ONLY through a `voice_id` the gateway itself issued (POST /voice) and only while
+    // the patient's voice_note_share consent is live. The client-supplied `audio_uri` is never trusted: a
+    // stored key is what a doctor's playback link gets signed for.
+    let audioUri: string | null = null;
+    let answerId: string | undefined;
+    if (body.voice_id && (await this.audio.hasConsent(sessionId))) {
+      audioUri = await this.audio.findStored(session.visitId, body.voice_id);
+      if (audioUri) answerId = body.voice_id;
+    }
 
     await this.prisma.answer.create({
       data: {
+        ...(answerId ? { id: answerId } : {}),
         sessionId,
         slotId: slot.id,
         value: body.value as never,
         inputMode: body.input_mode,
         source: body.input_mode,
         confidence: body.confidence ?? null,
-        audioUri: body.audio_uri ?? null,
+        audioUri,
         idempotencyKey,
       },
     });
 
-    const nextState = this.advanceState(state, slot.id, body.value);
+    const nextState = isEdit ? this.applyEdit(state, slot.id, body.value) : this.advanceState(state, slot.id, body.value);
 
     // Red flags belong to the complaint module; `filled` spans every module of the interview.
     const flagModuleId = complaintModuleId(nextState);
@@ -393,7 +435,7 @@ export class SessionsService {
       : [];
     const existingRuleIds = new Set(existingRedFlags.map((f) => f.ruleId));
     const fired = flagModuleId
-      ? await this.evaluateRedFlagsPreferringAiService(sessionId, flagModuleId, nextState.filled)
+      ? await this.evaluateRedFlagsPreferringAiService(sessionId, flagModuleId, nextState.filled, session.language ?? "en")
       : [];
     const newlyFired = fired.filter((f) => !existingRuleIds.has(f.rule_id));
 
@@ -438,6 +480,7 @@ export class SessionsService {
       where: { id: session.visitId },
     });
     const redFlagPayloads: RedFlagPayload[] = newlyFiredRows.map((row) => ({
+      speak: flagModuleId ? this.ontology.ruleSpeak(flagModuleId, row.ruleId, session.language ?? "en") : null,
       id: row.id,
       rule_id: row.ruleId,
       severity: severityToContract(row.severity),
@@ -445,7 +488,7 @@ export class SessionsService {
       token_no: visit.tokenNo ?? sessionId,
     }));
 
-    const nextQuestion = this.buildNextQuestion(nextState);
+    const nextQuestion = this.buildNextQuestion(nextState, session.language ?? "en");
     this.events.emitToSession(sessionId, "slot.filled", {
       slot_id: slot.id,
       value: body.value,
@@ -555,6 +598,7 @@ export class SessionsService {
       { summary_id: summary.id },
       "session completed",
     );
+    void this.visits.broadcastQueue(visit.department ?? "general");
     return { summary_id: summary.id };
   }
 
@@ -565,6 +609,8 @@ export class SessionsService {
     const actorRole = options.actorRole ?? "patient";
     const reason = options.reason ?? "patient-initiated withdrawal";
     await this.findSessionOrThrow(sessionId);
+    // The stored voice notes go first, while the answer rows that link them still exist.
+    await this.audio.deleteForSession(sessionId, reason, actorRole, actorRole);
     await this.prisma.$transaction([
       this.prisma.redFlag.deleteMany({ where: { sessionId } }),
       this.prisma.answer.deleteMany({ where: { sessionId } }),
@@ -613,19 +659,22 @@ export class SessionsService {
     sessionId: string,
     moduleId: string,
     filled: Record<string, unknown>,
+    language: string,
   ) {
+    let fired: Awaited<ReturnType<AiServiceClient["evaluateFlags"]>>;
     try {
-      const fired = await this.aiService.evaluateFlags(sessionId, moduleId, filled);
+      fired = await this.aiService.evaluateFlags(sessionId, moduleId, filled);
       sessionLogger(sessionId).debug({ module_id: moduleId }, "red flags evaluated via ai service");
-      return fired;
     } catch (err) {
       if (!(err instanceof AiServiceUnavailable)) throw err;
       sessionLogger(sessionId).warn(
         { module_id: moduleId, error: err.message },
         "ai service unavailable, falling back to local ontology red-flag evaluation",
       );
-      return this.ontology.evaluateRedFlags(moduleId, filled);
+      fired = this.ontology.evaluateRedFlags(moduleId, filled);
     }
+    // Whichever path fired it, the quote is the PATIENT'S words (the answers the rule read), not the rule's rationale.
+    return fired.map((f) => ({ ...f, quote: this.ontology.patientWords(moduleId, f.rule_id, filled, language) ?? f.quote }));
   }
 
   private async findSessionOrThrow(sessionId: string): Promise<IntakeSession> {
@@ -696,6 +745,23 @@ export class SessionsService {
     };
   }
 
+  /** The patient changed an earlier answer. The interview continues from where it was — unless the change makes
+   * different questions apply (an `ask_if` flips), in which case the first unanswered eligible slot wins. */
+  private applyEdit(state: SessionState, slotId: string, value: unknown): SessionState {
+    const filled = { ...state.filled, [slotId]: value };
+    const order = state.module_order ?? [state.module_id!];
+    const next = this.ontology.nextInOrder(order, 0, filled);
+    return {
+      ...state,
+      phase: next ? INTERVIEW_PHASE : READY_TO_COMPLETE_PHASE,
+      module_id: next?.moduleId ?? state.module_id,
+      current_slot_id: next?.slot.id ?? null,
+      filled,
+      module_order: order,
+      module_index: next?.moduleIndex ?? state.module_index ?? 0,
+    };
+  }
+
   private validateSlotValue(slot: Slot, value: unknown): void {
     const fail = (reason: string) => {
       throw new AppException(
@@ -757,11 +823,13 @@ export class SessionsService {
         tts_url: null,
         input_modes: ["chips"],
         options: [{ value: "complete", label: "Done", icon: null }],
+        module_label: null,
       };
     }
     const slot = this.currentSlot(state);
     return {
       slot_id: slot.id,
+      module_label: state.module_id && this.ontology.isAyushModule(state.module_id) ? this.ontology.getModule(state.module_id).label : null,
       text: slot.prompt[language] ?? slot.prompt.en,
       tts_url: null,
       input_modes: slot.input,
@@ -845,7 +913,7 @@ export class SessionsService {
     );
   }
 
-  private async toSessionPayload(session: IntakeSession) {
+  private async toSessionPayload(session: IntakeSession, includeState: boolean) {
     const [visit, consents] = await Promise.all([
       this.prisma.visit.findUniqueOrThrow({ where: { id: session.visitId } }),
       this.prisma.consent.findMany({
@@ -853,6 +921,9 @@ export class SessionsService {
         select: { scopes: true },
       }),
     ]);
+    const language = session.language ?? "en";
+    const state = parseSessionState(session.state);
+    const inInterview = state.phase !== CHIEF_COMPLAINT_PHASE && state.module_id !== null;
     return {
       session_id: session.id,
       status: session.status,
@@ -860,7 +931,55 @@ export class SessionsService {
       progress: this.currentProgress(session),
       consent_scopes: [...new Set(consents.flatMap((c) => c.scopes))],
       patient_id: visit.patientId,
+      token_no: visit.tokenNo,
+      hospital_name: (this.config.get("HOSPITAL_NAME", { infer: true }) as string | undefined) ?? "CareFlow OPD",
+      // What a second device needs to pick up exactly where the first left off.
+      next_question: includeState && inInterview && session.status !== "completed" && session.status !== "withdrawn" ? this.buildNextQuestion(state, language) : null,
+      answered: includeState && inInterview ? await this.answeredSlots(session, state, language) : [],
     };
+  }
+
+  /** Every slot answered so far (latest answer per slot), each with the question that was asked. */
+  private async answeredSlots(session: IntakeSession, state: SessionState, language: string) {
+    const rows = await this.prisma.answer.findMany({ where: { sessionId: session.id }, orderBy: { answeredAt: "asc" } });
+    const latest = new Map(rows.map((r) => [r.slotId, r] as const));
+    const order = state.module_order ?? [state.module_id!];
+    const out = [];
+    for (const [slotId, row] of latest) {
+      if (this.ontology.isChiefComplaintSlot(slotId)) {
+        // Shown first, but locked: changing the main problem would restart the questions.
+        const complaint = this.ontology.chiefComplaintSlot();
+        out.unshift({
+          slot_id: slotId,
+          question: { slot_id: slotId, text: complaint.prompt[language] ?? complaint.prompt.en, tts_url: null, input_modes: complaint.input, options: [], module_label: null },
+          value: row.value,
+          value_label: this.ontology.listModules().find((m) => m.id === row.value)?.label ?? String(row.value),
+          input_mode: row.inputMode,
+          confidence: row.confidence ?? 1,
+          editable: false,
+        });
+        continue;
+      }
+      const slot = this.ontology.slotInOrder(order, slotId);
+      if (!slot) continue;
+      out.push({
+        slot_id: slotId,
+        question: {
+          slot_id: slot.id,
+          text: slot.prompt[language] ?? slot.prompt.en,
+          tts_url: null,
+          input_modes: slot.input,
+          options: (slot.options ?? []).map((o) => ({ value: o.value, label: o.label[language] ?? o.label.en, icon: o.icon ?? null })),
+          module_label: null,
+        },
+        value: row.value,
+        value_label: this.ontology.answerLabel(slot, row.value, language),
+        input_mode: row.inputMode,
+        confidence: row.confidence ?? (["tap", "bodymap", "proxy"].includes(row.inputMode) ? 1 : 0.5),
+        editable: true,
+      });
+    }
+    return out;
   }
 }
 

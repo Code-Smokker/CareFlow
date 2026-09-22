@@ -21,10 +21,27 @@ class Settings(BaseSettings):
     database_url: str = Field(alias="DATABASE_URL")
     redis_url: str = Field(default="redis://localhost:6379", alias="REDIS_URL")
 
+    # Object storage: Supabase Storage (S3 protocol) or local MinIO — the same code path, only the endpoint,
+    # region and keys differ (rule 9). The two `*_id` / `*_secret_access_key` names are canonical; the older
+    # S3_ACCESS_KEY / S3_SECRET_KEY are still read as a fallback so an existing .env keeps working.
     s3_endpoint: str = Field(default="http://localhost:9000", alias="S3_ENDPOINT")
-    s3_access_key: str = Field(default="careflow", alias="S3_ACCESS_KEY")
-    s3_secret_key: str = Field(default="careflow123", alias="S3_SECRET_KEY")
-    s3_bucket: str = Field(default="careflow-documents", alias="S3_BUCKET")
+    s3_region: str = Field(default="us-east-1", alias="S3_REGION")
+    s3_access_key_id: str | None = Field(default=None, alias="S3_ACCESS_KEY_ID")
+    s3_secret_access_key: str | None = Field(default=None, alias="S3_SECRET_ACCESS_KEY")
+    s3_access_key: str | None = Field(default=None, alias="S3_ACCESS_KEY")
+    s3_secret_key: str | None = Field(default=None, alias="S3_SECRET_KEY")
+    s3_bucket_documents: str = Field(default="intake-documents", alias="S3_BUCKET_DOCUMENTS")
+    s3_bucket_audio: str = Field(default="intake-audio", alias="S3_BUCKET_AUDIO")
+    # Voice notes are kept only with consent, and never longer than this (or until the visit is signed).
+    audio_retention_hours: float = Field(default=24, alias="AUDIO_RETENTION_HOURS")
+
+    @property
+    def resolved_s3_access_key_id(self) -> str:
+        return self.s3_access_key_id or self.s3_access_key or "careflow"
+
+    @property
+    def resolved_s3_secret_access_key(self) -> str:
+        return self.s3_secret_access_key or self.s3_secret_key or "careflow123"
 
     # Gateway owns the Socket.IO server (docs/01-architecture.md) — this worker can't emit a WS
     # event itself, so it calls back here when a job finishes and the gateway emits

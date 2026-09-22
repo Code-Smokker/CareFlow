@@ -24,7 +24,9 @@ export const AnswerSubmissionSchema = z.object({
   value: z.unknown(),
   input_mode: z.enum(["voice", "tap", "bodymap", "proxy", "ocr"]),
   confidence: z.number().min(0).max(1).nullable().optional(),
-  audio_uri: z.url().nullable().optional(),
+  audio_uri: z.url().nullable().optional(), // accepted for wire compatibility, IGNORED — see SessionsService.submitAnswer
+  voice_id: z.uuid().nullable().optional(),
+  replaces: z.boolean().optional(),
 });
 export type AnswerSubmissionDto = z.infer<typeof AnswerSubmissionSchema>;
 
@@ -42,6 +44,7 @@ export const ConsentBodySchema = z.object({
         "documents",
         "abha_lookup",
         "research_deidentified",
+        "voice_note_share",
       ]),
     )
     .min(1),
@@ -58,6 +61,7 @@ export const RevokeConsentBodySchema = z.object({
         "documents",
         "abha_lookup",
         "research_deidentified",
+        "voice_note_share",
       ]),
     )
     .min(1),

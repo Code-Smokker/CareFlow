@@ -22,9 +22,13 @@ paths:
           application/json:
             schema:
               type: object
-              required: [audio_ref, language, streaming]
+              required: [language, streaming]
+              description: >
+                Exactly one of `audio_ref` (a readable local path) or `audio_base64` (the bytes, inline —
+                what the gateway sends, so no shared filesystem is needed and audio never touches disk here).
               properties:
                 audio_ref: { type: string }
+                audio_base64: { type: string, description: Base64 of the audio bytes. Max ~10 MB decoded. }
                 language: { type: string, description: BCP-47 language tag }
                 streaming: { type: boolean }
                 retain_audio:

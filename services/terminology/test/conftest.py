@@ -4,6 +4,23 @@ Skipped automatically if no database is reachable — pure-logic tests never dep
 
 from __future__ import annotations
 
+# --- tests must never touch the Supabase project (see docai/test/conftest.py) ---
+import os
+
+_LOCAL_DB = "postgresql://careflow:careflow@localhost:5433/careflow"
+_url = os.environ.get("TEST_DATABASE_URL", _LOCAL_DB)
+if "supabase." in _url and os.environ.get("ALLOW_TESTS_ON_REMOTE_DB") != "1":
+    raise RuntimeError("Refusing to run tests against a Supabase database. Unset TEST_DATABASE_URL to use local Docker Postgres.")
+os.environ["DATABASE_URL"] = _url
+os.environ["DIRECT_URL"] = os.environ.get("TEST_DIRECT_URL", _url)
+if not os.environ.get("TEST_S3_ENDPOINT"):
+    os.environ.update(S3_ENDPOINT="http://localhost:9000", S3_REGION="us-east-1", S3_ACCESS_KEY_ID="careflow", S3_SECRET_ACCESS_KEY="careflow123")
+    os.environ.pop("S3_ACCESS_KEY", None)
+    os.environ.pop("S3_SECRET_KEY", None)
+else:
+    os.environ["S3_ENDPOINT"] = os.environ["TEST_S3_ENDPOINT"]
+
+
 import asyncpg
 import pytest
 import pytest_asyncio

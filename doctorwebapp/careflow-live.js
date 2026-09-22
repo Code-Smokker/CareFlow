@@ -15,6 +15,7 @@
   'use strict';
   const CFN = window.CareFlow;
   if (!CFN) return;
+  const SELF_SRC = document.currentScript && document.currentScript.src;
   const API = (function () { try { return localStorage.getItem('cfApi'); } catch (e) { return null; } })() || 'http://localhost:4000';
   const ACTOR = 'doctorwebapp-user'; // no RBAC until Day 4 — same convention as signed_by elsewhere
   const PAGE = CFN.currentPage.key;
@@ -71,6 +72,37 @@
     pill.textContent = 'Demo data';
     h.appendChild(pill);
   }
+
+  // ---------------------------------------------------------------- patient voice notes (consent-gated)
+  // A spoken answer the patient agreed to share gets a play button. The audio is never fetched by this page
+  // directly from storage: the gateway hands out a five-minute signed link and writes the playback to the audit log.
+  let voiceMap = null;
+  let currentAudio = null;
+  async function loadVoiceNotes(visit) {
+    if (voiceMap) return voiceMap;
+    try { voiceMap = Object.fromEntries((await api('/v1/visits/' + visit + '/voice-notes')).map((n) => [n.slot_id, n.answer_id])); }
+    catch (e) { voiceMap = {}; }
+    return voiceMap;
+  }
+  const playBtn = (slotId) => (voiceMap && voiceMap[slotId]
+    ? '<button type="button" data-play="' + esc(voiceMap[slotId]) + '" title="Hear the patient say this" aria-label="Play the patient’s own voice for this answer" class="shrink-0 w-7 h-7 rounded-full bg-[#0D6E6E] text-white inline-flex items-center justify-center hover:bg-[#005454]"><span class="material-symbols-outlined text-[16px] leading-none" aria-hidden="true">play_arrow</span></button>'
+    : '');
+  document.addEventListener('click', async (e) => {
+    const b = e.target.closest && e.target.closest('[data-play]'); if (!b) return;
+    e.preventDefault(); e.stopPropagation();
+    const icon = b.querySelector('.material-symbols-outlined');
+    if (currentAudio && b.getAttribute('data-playing')) { currentAudio.pause(); return; }
+    b.disabled = true;
+    try {
+      const r = await api('/v1/answers/' + b.getAttribute('data-play') + '/audio-playback', { method: 'POST', body: JSON.stringify({ actor_id: ACTOR, actor_role: 'clinician' }) });
+      if (currentAudio) currentAudio.pause();
+      const audio = new Audio(r.url); currentAudio = audio;
+      const reset = () => { b.removeAttribute('data-playing'); if (icon) icon.textContent = 'play_arrow'; };
+      audio.onended = reset; audio.onpause = reset; audio.onerror = () => { reset(); banner('This voice note could not be played.'); };
+      await audio.play(); b.setAttribute('data-playing', '1'); if (icon) icon.textContent = 'pause';
+    } catch (err) { banner(err.status === 410 ? 'This voice note is no longer available — it is deleted when the visit is signed, after 24 hours, or if the patient withdraws consent.' : err.message); }
+    finally { b.disabled = false; }
+  });
 
   // ---------------------------------------------------------------- visit context
   let queueCache = null;
@@ -320,6 +352,7 @@
   }
 
   async function bindW11(summary, token) {
+    await loadVoiceNotes(summary.visit_id);
     const f = fieldMap(summary); const complaint = f.chief_complaint ? human(f.chief_complaint.value) : 'Not recorded yet';
     const name = token ? who(token).name : 'Visit ' + short(summary.visit_id); const h = hpi(summary);
     $$('main').forEach((m) => $$('span, h2', m).filter((s) => !s.children.length && /^(Aarav Sharma|UHID: CF-1024)$/.test(s.textContent.trim())).forEach((s) => setText(s, /UHID/.test(s.textContent) ? 'Visit #' + short(summary.visit_id) : name)));
@@ -342,7 +375,7 @@
     const qh = byText('h3', /^Health questionnaire/); if (qh) {
       const card = qh.closest('div.p-5'); setText($('p', card), h.length + ' questions answered'); setText(byText('span', /^\s*100%\s*$/, card), h.length ? '100%' : '0%');
       const grid = $('div.grid', card); const tpl = grid.children[0].cloneNode(true); grid.innerHTML = '';
-      h.slice(0, 8).forEach((x) => { const cell = tpl.cloneNode(true); const s = leafSpans(cell); setText(s[0], hpiLabel(x) + ':'); s[1].outerHTML = '<span class="flex items-center gap-1.5"><span class="text-xs font-bold text-[#0c1b33]">' + esc(human(x.value)) + '</span>' + chip(x.source, x.confidence) + '</span>'; grid.appendChild(cell); });
+      h.slice(0, 8).forEach((x) => { const cell = tpl.cloneNode(true); const s = leafSpans(cell); setText(s[0], hpiLabel(x) + ':'); s[1].outerHTML = '<span class="flex items-center gap-1.5"><span class="text-xs font-bold text-[#0c1b33]">' + esc(human(x.value)) + '</span>' + chip(x.source, x.confidence) + (x.source === 'voice' ? playBtn(x.field_path.split('.').pop()) : '') + '</span>'; grid.appendChild(cell); });
     }
     // Needs attention → red flags
     const nh = byText('h4', /^\s*Needs attention/); if (nh) {
@@ -416,21 +449,27 @@
   const inputCls = 'w-full px-3.5 py-2 text-xs rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#0D6E6E]/20 focus:border-[#0D6E6E]';
   const field = (id, label, control) => '<div><label for="' + id + '" class="block text-xs font-semibold text-slate-700 mb-1">' + label + '</label>' + control + '</div>';
 
+  /** The slip, laid out for an 80 mm thermal roll: monospace, one narrow column, no colour that needs ink. */
   function slipHtml(r, p) {
-    return '<div style="font-family:system-ui,sans-serif;width:300px;border:2px dashed #0D6E6E;border-radius:16px;padding:16px;text-align:center">' +
-      '<div style="font-weight:800;font-size:16px;color:#0B192C">CareFlow OPD token</div><div style="font-size:11px;color:#475569">' + esc(r.department) + (r.ayush_mode ? ' • AYUSH intake' : '') + '</div>' +
-      '<div style="font-size:44px;font-weight:800;letter-spacing:1px;margin:8px 0;color:#0D6E6E">' + esc(r.token_no) + '</div>' +
-      '<div style="font-size:14px;font-weight:700">' + esc(p.name) + '</div><div style="font-size:11px;color:#475569">' + esc(p.demo) + '</div>' +
-      '<img alt="QR code: scan with any phone to start the history" src="' + esc(r.qr_data_url) + '" width="220" height="220" style="margin:10px auto;display:block">' +
-      '<div style="font-size:12px;font-weight:700">Scan with your phone to give your history while you wait</div>' +
-      '<div style="font-size:11px;color:#475569;margin-top:4px">अपने फ़ोन से स्कैन करें • बारी आने से पहले अपना इतिहास बताएँ</div>' +
-      '<div style="font-size:10px;color:#94a3b8;margin-top:8px">No Aadhaar is stored. ABHA is optional.</div></div>';
+    const now = new Date();
+    const when = now.toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: 'numeric' }) + ' ' + now.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
+    return '<div class="cf-slip" style="font-family:ui-monospace,Menlo,Consolas,monospace;width:72mm;padding:3mm;color:#000;background:#fff;text-align:center;line-height:1.25">' +
+      '<div style="font-size:14px;font-weight:800;text-transform:uppercase">' + esc(r.hospital_name) + '</div>' +
+      '<div style="font-size:11px;border-bottom:1px dashed #000;padding-bottom:2mm;margin-bottom:2mm">OPD TOKEN • ' + esc(r.department).toUpperCase() + (r.ayush_mode ? ' • AYUSH' : ' • GENERAL') + '</div>' +
+      '<div style="font-size:34px;font-weight:800;letter-spacing:1px;margin:1mm 0">' + esc(r.token_no) + '</div>' +
+      '<div style="font-size:12px;font-weight:700">' + esc(p.name) + '</div><div style="font-size:11px">' + esc(p.demo) + '</div>' +
+      '<div style="font-size:11px;margin-top:1mm">' + esc(when) + '</div>' +
+      '<img alt="QR code: scan with any phone to start your history" src="' + esc(r.qr_data_url) + '" style="width:52mm;height:52mm;margin:2mm auto;display:block;image-rendering:pixelated">' +
+      '<div style="font-size:11px;font-weight:700">Scan with your phone — tell us your history while you wait</div>' +
+      '<div style="font-size:11px">फ़ोन से स्कैन करें • बारी से पहले अपना इतिहास बताएँ</div>' +
+      '<div style="font-size:9px;border-top:1px dashed #000;margin-top:2mm;padding-top:1mm">No Aadhaar is stored. ABHA is optional. Your doctor sees this before you walk in.</div></div>';
   }
   function printSlip(r, p) {
-    const w = window.open('', '_blank', 'width=420,height=640');
+    const w = window.open('', '_blank', 'width=420,height=760');
     if (!w) { banner('Allow pop-ups for this page to print the slip, or use the browser print on the slip shown.'); return; }
-    w.document.write('<!doctype html><title>Token ' + esc(r.token_no) + '</title><body style="margin:16px;display:flex;justify-content:center">' + slipHtml(r, p) + '</body>');
-    w.document.close(); w.focus(); setTimeout(() => { w.print(); }, 250);
+    // @page sets the paper to an 80 mm roll with a continuous length, so a thermal printer prints exactly the slip.
+    w.document.write('<!doctype html><title>Token ' + esc(r.token_no) + '</title><style>@page{size:80mm auto;margin:0}html,body{margin:0;background:#fff}@media screen{body{display:flex;justify-content:center;padding:12px;background:#eee}}</style><body>' + slipHtml(r, p) + '</body>');
+    w.document.close(); w.focus(); setTimeout(() => { w.print(); }, 300);
   }
 
   async function openAddPatientModal() {
@@ -471,7 +510,7 @@
         const r = await api('/v1/sessions', { method: 'POST', body: JSON.stringify({ department: document.getElementById('cf-dept').value, patient }) });
         queueCache = null;
         const p = { name, demo: [patient.age_years != null ? patient.age_years + ' y' : null, sex ? sex.charAt(0).toUpperCase() + sex.slice(1) : null].filter(Boolean).join(', ') || 'Age and sex not recorded' };
-        modal.innerHTML = shell('Token issued', r.token_no + ' is now in the doctor’s queue', '<div class="flex justify-center">' + slipHtml(r, p) + '</div><p class="text-[11px] text-slate-500 text-center">The patient scans this QR with any phone. Their answers appear on the doctor’s screens as they give them.</p><div class="flex flex-wrap items-center justify-center gap-2 pt-1"><button type="button" id="cf-print" class="px-4 py-2 rounded-full bg-[#0D6E6E] text-white text-xs font-bold">Print slip</button><button type="button" id="cf-open" class="px-4 py-2 rounded-full border border-slate-200 text-xs font-semibold text-slate-700">Open patient</button><button type="button" id="cf-another" class="px-4 py-2 rounded-full border border-slate-200 text-xs font-semibold text-slate-700">Register another</button><button type="button" data-close class="px-4 py-2 rounded-full border border-slate-200 text-xs font-semibold text-slate-700">Done</button></div>');
+        modal.innerHTML = shell('Token issued', r.token_no + ' is now in the doctor’s queue', '<div class="flex justify-center overflow-auto" style="max-height:52vh">' + slipHtml(r, p) + '</div><p class="text-[11px] text-slate-500 text-center">The patient scans this QR with any phone. Their answers appear on the doctor’s screens as they give them.</p><div class="flex flex-wrap items-center justify-center gap-2 pt-1"><button type="button" id="cf-print" class="px-4 py-2 rounded-full bg-[#0D6E6E] text-white text-xs font-bold">Print slip</button><button type="button" id="cf-open" class="px-4 py-2 rounded-full border border-slate-200 text-xs font-semibold text-slate-700">Open patient</button><button type="button" id="cf-another" class="px-4 py-2 rounded-full border border-slate-200 text-xs font-semibold text-slate-700">Register another</button><button type="button" data-close class="px-4 py-2 rounded-full border border-slate-200 text-xs font-semibold text-slate-700">Done</button></div>');
         modal.querySelectorAll('[data-close]').forEach((b) => (b.onclick = () => close(true)));
         document.getElementById('cf-print').onclick = () => printSlip(r, p);
         document.getElementById('cf-open').onclick = () => goto('w05', r.visit_id);
@@ -481,6 +520,48 @@
   }
   CFN.openAddPatientModal = openAddPatientModal;
   CFN.handlePatientRegister = openAddPatientModal;
+
+  // ---------------------------------------------------------------- live channel (Socket.IO)
+  // The dashboard, patient list and alerts hear about a red flag, a new token or a finished intake the moment the
+  // gateway does — not on the next refresh. The client is vendored (doctorwebapp/vendor) so it works without internet.
+  window.__cfLive = { events: [], connected: false };
+  const LIVE_PAGES = ['w03', 'w04', 'w13'];
+  function liveDot(state) {
+    let el = $('#cf-live-dot');
+    if (!el) {
+      el = document.createElement('div'); el.id = 'cf-live-dot'; el.setAttribute('role', 'status');
+      el.className = 'fixed bottom-4 left-4 z-[60] px-3 py-1.5 rounded-full text-[11px] font-bold shadow-md flex items-center gap-1.5';
+      document.body.appendChild(el);
+    }
+    el.className = el.className.replace(/bg-\S+|text-\S+|border\S*/g, '') + (state ? ' bg-white text-[#0D6E6E] border border-[#0D6E6E]/30' : ' bg-amber-50 text-amber-800 border border-amber-300');
+    el.innerHTML = '<span class="w-2 h-2 rounded-full ' + (state ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500') + '"></span>' + (state ? 'Live' : 'Reconnecting…');
+  }
+  function redFlagBanner(f) {
+    let el = $('#cf-redflag-banner');
+    if (!el) {
+      el = document.createElement('div'); el.id = 'cf-redflag-banner'; el.setAttribute('role', 'alert');
+      el.className = 'fixed top-20 left-1/2 -translate-x-1/2 z-[70] max-w-xl w-[92%] px-4 py-3 rounded-2xl bg-red-600 text-white shadow-2xl';
+      document.body.appendChild(el);
+    }
+    el.innerHTML = '<div class="flex items-center gap-2 text-sm font-bold"><span class="material-symbols-outlined text-[20px]">emergency</span>Red flag — ' + esc(f.token_no) + '</div><div class="text-xs mt-0.5">“' + esc(f.quote) + '”</div>';
+  }
+  function connectLive() {
+    if (LIVE_PAGES.indexOf(PAGE) === -1 || !SELF_SRC) return;
+    const el = document.createElement('script');
+    el.src = new URL('vendor/socket.io.min.js', SELF_SRC).href;
+    el.onload = async () => {
+      let depts = 'general';
+      try { depts = (await api('/v1/departments')).map((d) => d.id).join(','); } catch (e) { /* watch the default */ }
+      const sock = window.io(API, { query: { department: depts }, transports: ['websocket', 'polling'] });
+      let timer = null;
+      const refresh = () => { clearTimeout(timer); timer = setTimeout(() => { if (!$('#careflow-patient-modal') && !$('#careflow-search-modal:not(.hidden)')) location.reload(); }, 900); };
+      sock.on('connect', () => { window.__cfLive.connected = true; liveDot(true); });
+      sock.on('disconnect', () => { window.__cfLive.connected = false; liveDot(false); });
+      sock.on('redflag.fired', (f) => { window.__cfLive.events.push({ type: 'redflag.fired', token: f.token_no, receivedAt: Date.now() }); redFlagBanner(f); refresh(); });
+      sock.on('queue.updated', () => { window.__cfLive.events.push({ type: 'queue.updated', receivedAt: Date.now() }); refresh(); });
+    };
+    document.head.appendChild(el);
+  }
 
   // ---------------------------------------------------------------- boot
   async function boot() {
@@ -527,7 +608,8 @@
   async function finishPage(ctx) { await loadPages(); return window.CareFlowPages.finish(PAGE, ctx); }
   window.CareFlowLive = {
     api, goto, chip, esc, human, caseSheetHtml,
-    u: { api, API, ACTOR, esc, human, short, who, statusOf, fieldMap, hpi, hpiLabel, chip, banner, goto, queue },
+    u: { api, API, ACTOR, esc, human, short, who, statusOf, fieldMap, hpi, hpiLabel, chip, banner, goto, queue, loadVoiceNotes, playBtn },
   };
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
+  const start = () => { connectLive(); boot(); };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
 })();

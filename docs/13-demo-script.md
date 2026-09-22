@@ -23,6 +23,36 @@ with the triage board and clinician console side by side on a second screen.
 - A real crumpled handwritten prescription and a printed lab report
 - **Backup video downloaded on two laptops**
 
+## Patient side on a real phone — the manual test (`userwebapp`)
+
+The patient app is `userwebapp/` (the design's screens, bound to the gateway by `careflow-live.js`) served by
+`scripts/serve-userwebapp.mjs` on **:3030** — one origin that also proxies `/api/v1/*` to the gateway. `make dev`
+starts it. A phone's microphone only works on **HTTPS** (or `localhost` on the same device), so for a real phone:
+
+1. `make dev` — wait for every health check. (First document after a cold start takes ~50 s while the OCR models
+   load; run one throwaway document before the audience arrives.)
+2. `make tunnel` — prints an `https://….trycloudflare.com` URL and records it where the gateway looks. Token slips
+   issued **after** this encode that URL. (`INTAKE_PUBLIC_URL` in `.env` overrides it with a permanent origin.)
+3. Doctor app (`doctorwebapp`, `w03`): **Add patient** → pick the department → **Issue token & QR**. Print the
+   80 mm slip or leave the QR on screen.
+4. Phone: scan the QR with the camera (no app, no login). You land on **language**; pick Hindi.
+5. **Consent**: three switches. *Share my voice recording with the doctor* is **off by default** — switch it on for
+   this test. Tap **Agree & continue**. "Withdraw my consent" (bottom of every screen) deletes everything.
+6. ABHA: **Skip**. Who is answering: **I'll answer for myself**.
+7. **Speak** — this is the one step only a human with a real microphone can verify: tap the mic on any question and
+   say the answer. It records, stops itself when you pause, transcribes (Sarvam), fits the words to the options and
+   **selects** the matching one for you to confirm. If it does not hear you, the taps are right there.
+8. Chest pain → answer *pressure*, *sweating*, severity ≥ 7. The red-flag screen appears, is read aloud, and quotes
+   your own answers. On the second screen the triage board turns red (measured: **≈ 0.5 s** after the tap).
+9. Documents: point the camera at a prescription (or **Choose from gallery**), **Use this page**, wait for
+   *We found…* — every value says **Doctor will confirm**.
+10. Read-back → tick the box → **Continue**. The token appears. On the doctor app open the patient: a **▶** beside
+    a voice-sourced fact plays *your* recording (each play is audited). **Sign** the summary and the recording is
+    deleted; so it is after 24 h, or the moment you withdraw consent.
+
+What automation could and could not prove is in `docs/19-frontend-status.md` — a real microphone is **not** marked
+verified there until a person has done step 7.
+
 ## Beats
 
 | Time | Beat |

@@ -39,10 +39,25 @@ export const envSchema = z.object({
     .default("false")
     .transform((v) => v === "true"),
   DATABASE_URL: z.string().min(1, "DATABASE_URL is required"),
+  // Object storage — Supabase Storage (S3 protocol) by default, MinIO for local/offline dev. Both are
+  // plain S3, so one client serves both. STORAGE_PROVIDER is inferred from the endpoint when unset.
+  STORAGE_PROVIDER: z.enum(["supabase", "minio"]).optional(),
   S3_ENDPOINT: z.url().default("http://localhost:9000"),
-  S3_ACCESS_KEY: z.string().default("careflow"),
-  S3_SECRET_KEY: z.string().default("careflow123"),
-  S3_BUCKET: z.string().default("careflow-documents"),
+  S3_REGION: z.string().default("us-east-1"),
+  S3_ACCESS_KEY_ID: z.string().optional(),
+  S3_SECRET_ACCESS_KEY: z.string().optional(),
+  // Older names, still read as a fallback so an existing .env keeps working.
+  S3_ACCESS_KEY: z.string().optional(),
+  S3_SECRET_KEY: z.string().optional(),
+  S3_BUCKET_DOCUMENTS: z.string().default("intake-documents"),
+  S3_BUCKET_AUDIO: z.string().default("intake-audio"),
+  // Voice notes are kept only with the patient's consent, and never longer than this (or until the
+  // visit is signed, whichever comes first).
+  AUDIO_RETENTION_HOURS: z.coerce.number().positive().default(24),
+  // Printed at the top of the token slip.
+  HOSPITAL_NAME: z.string().default("CareFlow OPD"),
+  // The public HTTPS origin of the patient app — token-slip QR codes encode this (`make tunnel`).
+  INTAKE_PUBLIC_URL: z.url().optional(),
   FIELD_ENCRYPTION_KEY: z
     .string()
     .min(1, "FIELD_ENCRYPTION_KEY is required")

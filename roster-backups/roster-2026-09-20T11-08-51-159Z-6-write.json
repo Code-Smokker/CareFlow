@@ -1,0 +1,48 @@
+{
+  "version": 1,
+  "savedAt": "2026-09-20T10:08:59.892Z",
+  "agents": [
+    {
+      "id": "god",
+      "name": "Michael",
+      "character": "michael",
+      "accent": "lemon",
+      "description": "god — runs the floor, triages requests, escalates only critical calls to you",
+      "project": "hive",
+      "tmuxTarget": "",
+      "cwd": "/Users/codesmoker/CareFlow",
+      "status": "idle",
+      "action": "running the floor",
+      "progress": 0,
+      "currentStation": "desk",
+      "ptyId": "pty-god",
+      "command": "claude --model claude-opus-4-8[1m]",
+      "provider": "claude",
+      "model": "claude-opus-4-8[1m]",
+      "isGod": true
+    },
+    {
+      "id": "jim-mu9cbsko",
+      "name": "Jim",
+      "character": "jim",
+      "accent": "sky",
+      "description": "a fresh harness",
+      "project": "SehatNxt-dev",
+      "tmuxTarget": "",
+      "cwd": "/Users/codesmoker/projects/SehatNxt-dev",
+      "status": "idle",
+      "action": "starting up",
+      "progress": 0,
+      "currentStation": "desk",
+      "ptyId": "pty-jim-mu9cbsko",
+      "command": "claude --model claude-fable-5",
+      "provider": "claude",
+      "model": "claude-fable-5",
+      "archived": false
+    }
+  ],
+  "archived": [],
+  "restorable": [],
+  "queues": {},
+  "selectedId": "god"
+}

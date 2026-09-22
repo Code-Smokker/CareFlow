@@ -53,7 +53,10 @@ export interface paths {
             };
             cookie?: never;
         };
-        /** Full session state and progress */
+        /**
+         * Full session state and progress
+         * @description 410 `session_expired` once the token's 24 h have passed — the message tells the patient to ask the desk for a new one. A completed or withdrawn session is returned as such (status), never as an error.
+         */
         get: operations["getSession"];
         put?: never;
         post?: never;
@@ -172,6 +175,69 @@ export interface paths {
         put?: never;
         /** Submit an answer to the current slot and receive the next question in the same response. Hot path — must not require a second round trip (p95 budget 1.2s, docs/03-api-contracts.md). */
         post: operations["submitAnswer"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/sessions/{id}/voice": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: components["parameters"]["SessionIdParam"];
+            };
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Transcribe one spoken answer; keep the audio only if the patient consented
+         * @description The gateway receives the audio, and — only if the session holds a live `voice_note_share` consent — stores it privately as `intake-audio/<visit_id>/<voice_id>.<ext>` BEFORE transcription. Without that consent the audio is used for transcription and never stored. The transcript is returned either way. If no provider can transcribe it the response is 503 and any stored audio is deleted.
+         */
+        post: operations["transcribeVoice"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/visits/{id}/voice-notes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: components["parameters"]["VisitIdParam"];
+            };
+            cookie?: never;
+        };
+        /** Which answers have a playable voice note */
+        get: operations["listVoiceNotes"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/answers/{id}/audio-playback": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * A five-minute signed link to the patient's own words
+         * @description Every call is written to the append-only audit log (who, which answer, when). 410 once the audio is gone (visit signed, consent revoked, or 24 h passed). The link is never longer than 300 seconds and is the only way the doctor's screen reaches storage.
+         */
+        post: operations["playAnswerAudio"];
         delete?: never;
         options?: never;
         head?: never;
@@ -696,8 +762,11 @@ export interface components {
          * @enum {string}
          */
         QuestionInputMode: "voice" | "chips" | "multi" | "bodymap" | "facescale" | "duration";
-        /** @enum {string} */
-        ConsentScope: "history" | "audio_recording" | "documents" | "abha_lookup" | "research_deidentified";
+        /**
+         * @description `voice_note_share` is separate from `audio_recording` and OFF by default: without it the patient's audio is used for transcription only and deleted straight after; with it the audio is kept in a private bucket for the doctor to play, until the visit is signed, consent is revoked, or 24 hours.
+         * @enum {string}
+         */
+        ConsentScope: "history" | "audio_recording" | "documents" | "abha_lookup" | "research_deidentified" | "voice_note_share";
         /** @enum {string} */
         AbdmStatus: "mocked" | "submitted" | "acknowledged" | "failed";
         Error: {
@@ -729,6 +798,8 @@ export interface components {
             tts_url: string | null;
             input_modes: components["schemas"]["QuestionInputMode"][];
             options: components["schemas"]["QuestionOption"][];
+            /** @description For an Ayurvedic Prashna question, the classical term of its section (e.g. "Agni (digestion)"), shown as a small caption above the plain-language question. Null for every other question. */
+            module_label?: string | null;
         };
         /** @description Typed per the slot schema declared in packages/ontology. */
         AnswerValue: string | number | boolean | string[] | {
@@ -741,6 +812,16 @@ export interface components {
             confidence?: number | null;
             /** Format: uri */
             audio_uri?: string | null;
+            /**
+             * @description True = the patient is CHANGING an earlier answer to `slot_id`. The new answer is stored beside the old one (the latest wins), red flags are re-evaluated, and the interview continues from where it was — or moves if the change makes different questions apply. Not allowed for the chief complaint.
+             * @default false
+             */
+            replaces: boolean;
+            /**
+             * Format: uuid
+             * @description From POST /v1/sessions/{id}/voice. Links this answer to the stored voice note (only exists if the patient consented). The gateway resolves the storage key itself — a client never supplies a path.
+             */
+            voice_id?: string | null;
         };
         RedFlag: {
             /** @description The fired red_flag row's id — acknowledge it via POST /v1/redflags/{id}/acknowledge. */
@@ -748,8 +829,11 @@ export interface components {
             rule_id: string;
             /** @enum {string} */
             severity: "info" | "warning" | "critical";
+            /** @description The PATIENT'S words — the answers the rule read — not the rule's rationale. */
             quote: string;
             token_no: string;
+            /** @description The calm instruction to read aloud to the patient, in their language (from the rule's own `speak`). Only on the answer response. */
+            speak?: string | null;
             acknowledged_by?: string | null;
             /** Format: date-time */
             acknowledged_at?: string | null;
@@ -762,6 +846,24 @@ export interface components {
             progress: components["schemas"]["Progress"];
             consent_scopes: components["schemas"]["ConsentScope"][];
             patient_id?: string | null;
+            /** @description The queue token printed on the slip (e.g. AYURVEDA-001) — what the patient app shows as "your token". */
+            token_no?: string | null;
+            hospital_name?: string;
+            /** @description The question this session is waiting on, so a SECOND device that opens the same token slip resumes exactly here instead of starting over. Null while the chief complaint is still to be chosen. */
+            next_question?: components["schemas"]["NextQuestion"] | null;
+            /** @description Every slot answered so far, in order, each with the question that was asked — enough to show them back and to re-answer one. */
+            answered?: components["schemas"]["AnsweredSlot"][];
+        };
+        AnsweredSlot: {
+            slot_id: string;
+            question: components["schemas"]["NextQuestion"];
+            value: components["schemas"]["AnswerValue"];
+            /** @description The answer as the patient saw it (option labels */
+            value_label: string;
+            input_mode: components["schemas"]["InputMode"];
+            confidence: number;
+            /** @description False for the chief complaint — changing it would restart the interview. */
+            editable: boolean;
         };
         Demographics: {
             name: string;
@@ -1212,6 +1314,8 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
+                        /** @description Printed at the top of the token slip (HOSPITAL_NAME). */
+                        hospital_name: string;
                         session_id: components["schemas"]["SessionId"];
                         resume_token: string;
                         /** Format: uri */
@@ -1467,6 +1571,111 @@ export interface operations {
                         next_question: components["schemas"]["NextQuestion"];
                         progress: components["schemas"]["Progress"];
                         red_flags: components["schemas"]["RedFlag"][];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    transcribeVoice: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: components["parameters"]["SessionIdParam"];
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": {
+                    /**
+                     * Format: binary
+                     * @description audio/webm, audio/ogg, audio/mp4 or audio/wav, at most 10 MB
+                     */
+                    audio: string;
+                    /** @description BCP-47 tag; defaults to the session language */
+                    language?: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Transcript */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** Format: uuid */
+                        voice_id: string;
+                        /** @description True only if the audio was kept for the doctor (consent given). */
+                        stored: boolean;
+                        text: string;
+                        confidence: number;
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    listVoiceNotes: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: components["parameters"]["VisitIdParam"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description One entry per answer whose audio is still stored and still consented */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** Format: uuid */
+                        answer_id: string;
+                        slot_id: string;
+                        /** Format: date-time */
+                        answered_at: string;
+                    }[];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    playAnswerAudio: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    actor_id: string;
+                    actor_role: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Signed URL */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** Format: uri */
+                        url: string;
+                        expires_in_seconds: number;
                     };
                 };
             };

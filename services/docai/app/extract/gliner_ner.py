@@ -67,6 +67,11 @@ def _load_model():
     return _model
 
 
+def warm() -> None:
+    """Load the model now rather than on the first document — a cold first page took ~50 s in a live demo."""
+    _load_model()
+
+
 def _predict(text: str, labels: list[str]) -> list[GlinerEntity]:
     model = _load_model()
     try:

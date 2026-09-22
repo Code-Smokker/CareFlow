@@ -77,3 +77,21 @@ Specification and compliance audit for the Ayurvedic Case Record module (PS-2604
     - Step 1 (Prashna): Read-only patient history + Prakriti score visualization.
     - Steps 2–5: Trividha, Ashtavidha, Dashavidha, and Vyadhi Vinishchaya forms generated dynamically from vocabulary.
     - Step 6: Case sheet review, signing, and A4 print view link.
+
+---
+
+## 7. Patient Web Application (`userwebapp`)
+
+- **Architecture**: the design's static screens, bound to the gateway by `careflow-live.js`; served with an `/api`
+  proxy by `scripts/serve-userwebapp.mjs` (one origin — required for a phone microphone over an HTTPS tunnel).
+- **Voice and tap on every question** (rule 6): each question screen has real chips/cards/figure/faces *and* a mic;
+  typing is optional and never the only path.
+- **Provenance** (rule 4): every answer carries `input_mode` (`voice | tap | bodymap | proxy`), confidence, and — for
+  a consented spoken answer — the voice-note link. Low-confidence chips are shown demoted, never hidden.
+- **Consent-gated recording**: the voice note is stored only if the patient switched on *Share my voice recording with
+  the doctor* (default off), is deleted on signing, after 24 h, or on withdrawal, and every play and delete is audited.
+- **OCR** (rule 5): extracted values are shown as *We found…* with **Doctor will confirm** — never auto-accepted.
+- **Red flags** (rule 3): deterministic, evaluated by the gateway from the ontology rules; the patient app only shows
+  and reads the result, quoting the patient's own answers.
+- **Honest limits**: ABDM is the local mock registry (said on screen); Marathi/Gujarati/Tamil/Telugu fall back to English
+  question text; a human microphone test is still owed (see `docs/19-frontend-status.md`).

@@ -23,6 +23,7 @@ describe("SessionsService.purgeExpiredSessions — real Postgres, docs/09 'sessi
       {} as never, // visits
       {} as never, // deid
       fakeConfig({ FIELD_ENCRYPTION_KEY: Buffer.alloc(32).toString("base64") }),
+      { deleteForSession: async () => 0 } as never, // audio
     );
   });
 

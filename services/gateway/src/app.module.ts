@@ -21,6 +21,7 @@ import { RedFlagsModule } from "./redflags/redflags.module";
 import { SessionsModule } from "./sessions/sessions.module";
 import { TerminologyModule } from "./terminology/terminology.module";
 import { VisitsModule } from "./visits/visits.module";
+import { VoiceModule } from "./voice/voice.module";
 import { WebsocketModule } from "./websocket/websocket.module";
 
 @Module({
@@ -52,6 +53,7 @@ import { WebsocketModule } from "./websocket/websocket.module";
     IntegrationsModule,
     AnalyticsModule,
     AyurvedaModule,
+    VoiceModule,
   ],
 })
 export class AppModule {}

@@ -59,7 +59,7 @@ export class DocumentsService {
     await this.prisma.intakeSession.findUniqueOrThrow({ where: { id: sessionId } });
 
     const key = `${sessionId}/${randomUUID()}-${file.originalname}`;
-    const storageUri = await this.s3.putObject(key, file.buffer, file.mimetype);
+    const storageUri = await this.s3.putObject("documents", key, file.buffer, file.mimetype);
 
     const docType = body.doc_type_hint ? (DOC_TYPE_HINTS[body.doc_type_hint] ?? "unknown") : "unknown";
     const document = await this.prisma.document.create({

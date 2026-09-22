@@ -23,8 +23,8 @@ describe("desk registration → queue, and extraction confirmation — real Post
     await prisma.$connect();
     const ontology = new OntologyService();
     ontology.onModuleInit();
-    sessions = new SessionsService(prisma, ontology, {} as never, {} as never, {} as never, {} as never, config());
-    visits = new VisitsService(prisma, {} as never, config(), {} as never, {} as never, {} as never, {} as never);
+    sessions = new SessionsService(prisma, ontology, {} as never, {} as never, { broadcastQueue: async () => undefined } as never, {} as never, config(), {} as never);
+    visits = new VisitsService(prisma, {} as never, config(), {} as never, {} as never, {} as never, {} as never, {} as never);
   });
 
   afterAll(async () => {

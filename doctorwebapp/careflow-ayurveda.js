@@ -23,6 +23,7 @@
   function mount(ctx) {
     const { api, esc, human, chip, banner, goto } = ctx;
     const live = window.CareFlowLive;
+    const playBtn = live.u.playBtn;
     const $ = (s, r) => (r || document).querySelector(s);
     const navEl = $('#cf-a01-nav');
     const contentEl = $('#cf-a01-content');
@@ -32,7 +33,7 @@
 
     // ------------------------------------------------------------------ data
     async function load() {
-      const [vocab, record] = await Promise.all([api('/v1/ayurveda/vocabulary'), api('/v1/visits/' + ctx.visit + '/ayurveda')]);
+      const [vocab, record] = await Promise.all([api('/v1/ayurveda/vocabulary'), api('/v1/visits/' + ctx.visit + '/ayurveda'), live.u.loadVoiceNotes(ctx.visit)]);
       S.vocab = vocab; S.record = record;
     }
     const fields = (step) => step.sections.flatMap((s) => s.fields);
@@ -73,7 +74,7 @@
       const p = S.record.prashna; const v = S.vocab.prashna;
       let html = '<div><h2 class="text-lg font-bold text-[#0F1E36]">Step 1 · ' + esc(v.label) + '</h2><p class="text-xs text-slate-500">' + esc(v.gloss) + ' — read-only. ' + p.answered + ' of ' + p.total + ' questions answered. Chips show how each answer was given: <b>voice</b>, <b>tap</b> or <b>proxy</b> (answered by an attendant), with confidence.</p></div>';
       html += p.groups.map((g) => '<div class="' + CARD + ' space-y-2"><div class="border-b border-slate-200 pb-2"><h3 class="text-sm font-bold text-[#0c1b33]">' + esc(g.label) + '</h3><p class="text-[11px] text-slate-500">' + esc(g.gloss) + '</p></div>' +
-        (g.items.length ? g.items.map((i) => '<div class="flex items-start justify-between gap-3 py-1 rounded-lg ' + (i.confidence < 0.6 ? 'bg-amber-50 px-2' : '') + '"><div><div class="text-[11px] text-slate-500">' + esc(i.question) + '</div><div class="text-xs font-semibold text-[#0c1b33]">' + esc(i.value_label) + '</div></div>' + chip(i.source, i.confidence) + '</div>').join('') : '<p class="text-xs text-slate-400">Not answered by the patient.</p>') + '</div>').join('');
+        (g.items.length ? g.items.map((i) => '<div class="flex items-start justify-between gap-3 py-1 rounded-lg ' + (i.confidence < 0.6 ? 'bg-amber-50 px-2' : '') + '"><div><div class="text-[11px] text-slate-500">' + esc(i.question) + '</div><div class="text-xs font-semibold text-[#0c1b33]">' + esc(i.value_label) + '</div></div>' + '<div class="flex items-center gap-1.5">' + chip(i.source, i.confidence) + (i.source === 'voice' ? playBtn(i.slot_id) : '') + '</div></div>').join('') : '<p class="text-xs text-slate-400">Not answered by the patient.</p>') + '</div>').join('');
       html += p.prakriti_score ? prakritiPanel(p.prakriti_score) : '<p class="text-xs text-slate-500">No Prakriti questionnaire answers to score.</p>';
       contentEl.innerHTML = html;
     }

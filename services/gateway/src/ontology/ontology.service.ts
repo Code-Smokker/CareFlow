@@ -219,6 +219,47 @@ export class OntologyService implements OnModuleInit {
     );
   }
 
+  /** How an answer reads to the patient: the option's label in their language (several joined), or the raw value. */
+  answerLabel(slot: Slot, value: unknown, language = "en"): string {
+    const one = (v: unknown) => slot.options?.find((o) => o.value === v)?.label[language] ?? slot.options?.find((o) => o.value === v)?.label.en ?? String(v);
+    return Array.isArray(value) ? value.map(one).join(", ") : one(value);
+  }
+
+  /**
+   * The patient's OWN words for what fired a red flag — the labels of the answers the rule reads
+   * ("Chest pain · Sweating"), not the rule's clinical rationale. A red-flag screen quotes the person,
+   * and the nurse sees what they said. Null when the rule reads no answered slot.
+   */
+  patientWords(moduleId: string, ruleId: string, filled: Record<string, unknown>, language = "en"): string | null {
+    const module_ = this.getModule(moduleId);
+    const rule = module_.red_flags?.find((r) => r.id === ruleId);
+    if (!rule) return null;
+    const referenced = new Set(rule.when.match(/[a-z][a-z0-9_]*/g) ?? []);
+    const parts: string[] = [];
+    for (const slot of module_.slots) {
+      if (!referenced.has(slot.id) || !(slot.id in filled)) continue;
+      const value = filled[slot.id];
+      parts.push(typeof value === "number" ? `${slot.id.replace(/_/g, " ")} ${value}${slot.range?.max ? `/${slot.range.max}` : ""}` : this.answerLabel(slot, value, language));
+    }
+    return parts.length > 0 ? parts.join(" · ") : null;
+  }
+
+  /** What the patient hears when the rule fires, in their language (the rule's own calm text, never a paraphrase). */
+  ruleSpeak(moduleId: string, ruleId: string, language = "en"): string | null {
+    const rule = this.getModule(moduleId).red_flags?.find((r) => r.id === ruleId);
+    return rule?.speak ? (rule.speak[language] ?? rule.speak.en ?? null) : null;
+  }
+
+  /** The slot definition for `slotId` within the modules THIS interview walks — slot ids repeat across
+   * complaint modules (`duration` is in several), so the global first match would be the wrong module's. */
+  slotInOrder(order: string[], slotId: string): Slot | undefined {
+    for (const id of order) {
+      const slot = this.getModule(id).slots.find((s) => s.id === slotId);
+      if (slot) return slot;
+    }
+    return undefined;
+  }
+
   /** Deterministic predicates only, evaluated over filled slots — CLAUDE.md rule 3. `quote`
    * falls back to the rule's rationale: there is no ASR transcript to quote verbatim until
    * voice lands (Day 2), and a red flag response can never be empty in the meantime. */

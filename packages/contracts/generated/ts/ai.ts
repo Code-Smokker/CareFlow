@@ -190,7 +190,9 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": {
-                    audio_ref: string;
+                    audio_ref?: string;
+                    /** @description Base64 of the audio bytes. Max ~10 MB decoded. */
+                    audio_base64?: string;
                     /** @description BCP-47 language tag */
                     language: string;
                     streaming: boolean;

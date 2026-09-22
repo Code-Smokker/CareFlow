@@ -12,6 +12,24 @@ from app.config import settings
 from app.speech.base import SynthesisResult, TranscriptResult, TranscriptSegment
 
 
+# Sarvam only accepts BCP-47 codes with the region ("hi-IN"); the rest of CareFlow (session language, ontology
+# prompts, the patient app) uses bare ISO 639-1 codes ("hi"). A bare code is a 400 from Sarvam — i.e. no voice at all.
+_SARVAM_LANGUAGES = {
+    "hi": "hi-IN", "en": "en-IN", "bn": "bn-IN", "ta": "ta-IN", "te": "te-IN", "mr": "mr-IN", "gu": "gu-IN",
+    "kn": "kn-IN", "ml": "ml-IN", "pa": "pa-IN", "od": "od-IN", "or": "od-IN", "as": "as-IN", "ur": "ur-IN",
+}
+
+
+def sarvam_language(language: str | None) -> str:
+    """`hi` → `hi-IN`; an already-qualified code passes through; anything unrecognised lets Sarvam detect it."""
+    if not language:
+        return "unknown"
+    code = language.strip()
+    if "-" in code:
+        return code
+    return _SARVAM_LANGUAGES.get(code.lower(), "unknown")
+
+
 def _client():
     if not settings.sarvam_api_key:
         raise ProviderUnavailable("SARVAM_API_KEY is not set")
@@ -29,7 +47,7 @@ async def transcribe(audio_bytes: bytes, language: str) -> TranscriptResult:
             file=("audio.wav", audio_bytes, "audio/wav"),
             model=settings.sarvam_stt_model,
             mode=settings.sarvam_stt_mode,
-            language_code=language or "unknown",
+            language_code=sarvam_language(language),
             with_timestamps=True,
         )
     except Exception as exc:  # noqa: BLE001 - any transport/API failure means "try the next tier"
@@ -51,7 +69,7 @@ async def synthesise(text: str, language: str, voice: str | None) -> SynthesisRe
     try:
         response = await client.text_to_speech.convert(
             text=text,
-            language_code=language,
+            language_code=sarvam_language(language),
             model=settings.sarvam_tts_model,
             speaker=voice or settings.sarvam_tts_speaker or None,
         )

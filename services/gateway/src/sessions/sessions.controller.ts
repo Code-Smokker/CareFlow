@@ -10,6 +10,7 @@ import {
 } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import type { Env } from "../common/env";
+import { resolveIntakeUrl } from "./intake-url";
 import { AppException } from "../common/app-exception";
 import { ZodValidationPipe } from "../common/zod-validation.pipe";
 import {
@@ -37,7 +38,7 @@ export class SessionsController {
   @HttpCode(201)
   create(@Body(new ZodValidationPipe(CreateSessionSchema)) body: CreateSessionDto) {
     return this.sessions.create(
-      this.config.get("PUBLIC_WEB_URL", { infer: true }),
+      resolveIntakeUrl(this.config),
       body.department,
       body.patient,
     );

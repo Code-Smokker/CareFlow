@@ -2,8 +2,8 @@
 to call `open(image_ref, "rb")` directly, which only ever worked because test fixtures happened
 to sit on local disk — every real upload gets an `s3://{bucket}/{key}` ref from
 services/gateway/src/common/s3.client.ts, and that path was never exercised by a test. This
-pushes a real object to the real MinIO container (docker-compose's `minio` service, same one
-`make dev` starts) and reads it back through an s3:// ref, the same way a real upload would.
+pushes a real object to the configured object store (Supabase Storage's S3 endpoint by default, or the
+local MinIO container when STORAGE_PROVIDER=minio) and reads it back through an s3:// ref, the same way a real upload would.
 """
 
 from __future__ import annotations
@@ -11,12 +11,12 @@ from __future__ import annotations
 import base64
 import uuid
 
-import boto3
 import pytest
 
 from app.config import settings
 from app.ocr import hosted
 from app.ocr.image_source import read_bytes
+from app.storage import s3_client
 
 # A real, minimal, valid 1x1 white-pixel JPEG (~125 bytes) — needs to actually decode as an
 # image for the live-Gemini test below to exercise a real API round trip rather than an
@@ -31,12 +31,7 @@ _FAKE_JPEG_BYTES = base64.b64decode(
 
 
 def _s3_client():
-    return boto3.client(
-        "s3",
-        endpoint_url=settings.s3_endpoint,
-        aws_access_key_id=settings.s3_access_key,
-        aws_secret_access_key=settings.s3_secret_key,
-    )
+    return s3_client()
 
 
 @pytest.fixture
@@ -45,9 +40,9 @@ def uploaded_s3_ref():
     after — mirrors exactly what S3StorageClient.putObject hands docai in production."""
     client = _s3_client()
     key = f"test/{uuid.uuid4()}.jpg"
-    client.put_object(Bucket=settings.s3_bucket, Key=key, Body=_FAKE_JPEG_BYTES, ContentType="image/jpeg")
-    yield f"s3://{settings.s3_bucket}/{key}"
-    client.delete_object(Bucket=settings.s3_bucket, Key=key)
+    client.put_object(Bucket=settings.s3_bucket_documents, Key=key, Body=_FAKE_JPEG_BYTES, ContentType="image/jpeg")
+    yield f"s3://{settings.s3_bucket_documents}/{key}"
+    client.delete_object(Bucket=settings.s3_bucket_documents, Key=key)
 
 
 async def test_read_bytes_fetches_from_real_minio_via_s3_ref(uploaded_s3_ref):

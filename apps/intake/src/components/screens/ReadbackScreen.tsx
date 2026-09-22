@@ -1,19 +1,14 @@
 "use client";
 
 import { BigButton, ProvenanceChip, SpeakerButton } from "@careflow/ui/patient";
-import type { AnsweredLine } from "@/lib/machine";
-
-function formatValue(value: unknown): string {
-  if (Array.isArray(value)) return value.join(", ");
-  return String(value);
-}
+import { type AnsweredLine, lineLabel } from "@/lib/machine";
 
 /** Read-back before submit — the AI speaks the summary; docs/10. Review-and-confirm, not
  * review-and-edit: see machine.ts's readback state comment for why "tap to fix" isn't wired. */
 export function ReadbackScreen({ answered, onSubmit }: { answered: AnsweredLine[]; onSubmit: () => void }) {
   const speakAll = () => {
     if (!("speechSynthesis" in window)) return;
-    const text = answered.map((a) => `${a.question_text} ${formatValue(a.value)}`).join(". ");
+    const text = answered.map((a) => `${a.question_text} ${lineLabel(a)}`).join(". ");
     window.speechSynthesis.speak(new SpeechSynthesisUtterance(text));
   };
 
@@ -32,7 +27,7 @@ export function ReadbackScreen({ answered, onSubmit }: { answered: AnsweredLine[
               <p className="font-question text-support text-muted">{line.question_text}</p>
               <ProvenanceChip source={line.input_mode} confidence={line.confidence} />
             </div>
-            <p className="font-question text-answer font-bold text-ink">{formatValue(line.value)}</p>
+            <p className="font-question text-answer font-bold text-ink">{lineLabel(line)}</p>
           </div>
         ))}
       </div>

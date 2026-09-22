@@ -37,7 +37,8 @@ export class EventsGateway implements OnGatewayConnection {
     const sessionId = firstQueryValue(client.handshake.query.session_id);
     const department = firstQueryValue(client.handshake.query.department);
     if (sessionId) client.join(sessionRoom(sessionId));
-    if (department) client.join(departmentRoom(department));
+    // A staff screen can watch several departments at once: `department=general,ayurveda`.
+    for (const code of (department ?? "").split(",").map((d) => d.trim()).filter(Boolean)) client.join(departmentRoom(code));
     rootLogger.debug(
       { session_id: sessionId, department, socket_id: client.id },
       "ws connected",

@@ -80,20 +80,26 @@ echo "→ starting services"
 start gateway bash -lc 'cd services/gateway && exec pnpm dev'
 start ai bash -lc 'exec services/ai/.venv/bin/uvicorn app.main:app --app-dir services/ai --port 8001'
 start docai bash -lc 'exec services/docai/.venv/bin/uvicorn app.main:app --app-dir services/docai --port 8002'
-start docai-worker bash -lc 'cd services/docai && exec .venv/bin/celery -A app.celery_app worker --loglevel=info'
+start docai-worker bash -lc 'cd services/docai && exec .venv/bin/celery -A app.celery_app worker --loglevel=info --concurrency=2'
+# Celery beat: the 24-hour / after-signing deletion of patient voice notes (app/audio_retention.py)
+start docai-beat bash -lc 'cd services/docai && exec .venv/bin/celery -A app.celery_app beat --loglevel=info --schedule=/tmp/careflow-celerybeat-schedule'
 start terminology bash -lc 'exec services/terminology/.venv/bin/uvicorn app.main:app --app-dir services/terminology --port 8003'
+# The patient app: userwebapp/ served with /api proxied to the gateway — one origin, so a tunnel can give it HTTPS.
+start patient bash -lc 'exec node scripts/serve-userwebapp.mjs'
 
 echo "→ waiting for services..."
 wait_for gateway "http://localhost:4000/health"
 wait_for ai "http://localhost:8001/health"
 wait_for docai "http://localhost:8002/health"
 wait_for terminology "http://localhost:8003/health"
+wait_for patient "http://localhost:3030/health"
 
 cat <<'URLS'
 
 ================================================================
 CareFlow dev stack is up.
 
+  Patient app        http://localhost:3030        (userwebapp; token slips open here)
   Gateway API        http://localhost:4000        (health: /health)
   Gateway WebSocket   ws://localhost:4000          (?session_id=...&department=...)
   ai service docs     http://localhost:8001/docs
