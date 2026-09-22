@@ -52,6 +52,11 @@ test-results/
 .dev-logs/
 .dev-pids/
 
+# local agent-orchestration tool state — not part of this project
+/hive/
+/roster.json
+/roster-backups/
+
 # os / editor
 .DS_Store
 Thumbs.db
