@@ -66,6 +66,52 @@ verified there until a person has done step 7.
 | **1:20** | **Sign.** Physician edits one field, hits *Accept & sign*. FHIR OPConsultRecord bundle appears, validates, links to the ABHA record. |
 | **1:28** | **The kicker.** Pull the network cable. Start a new intake. It keeps working on the local model, then syncs when you plug back in. Close on the metrics dashboard. |
 
+## Live status — dry run 2026-09-22
+
+Stack: local Supabase-backed (`make dev` — Postgres/S3 on Supabase, Redis/HAPI FHIR local via
+Docker/colima; `STORAGE_PROVIDER` inferred as `supabase` from `S3_ENDPOINT`). `make demo-reset`
+ran clean (all operational rows truncated, reference data intact).
+
+Two real breaks found and fixed this pass — both were silent (no console error visible to a
+demo driver) until walked step by step:
+
+- **Boolean-type ontology slots had zero tap chips.** `joint_pain.symmetry`/`trauma_history` and
+  `cough_breathlessness.tb_contact` rendered no Yes/No options at all (CLAUDE.md rule 6 broken) —
+  confirmed by walking the Joint pain complaint module to Question 7 in the patient app. Fixed in
+  `services/gateway/src/ontology/ontology.service.ts` + `sessions.service.ts`.
+- **A token-slip QR / `/s/<id>` resume link crashed to a dead "service is not answering" screen**
+  instead of the language-selection screen, on every load — `shared_careflow.js`'s `initCommon()`
+  used an invalid `:contains()` CSS selector that threw before the session-resolution code ran.
+  Fixed; resume now lands on Language Selection correctly.
+
+Confirmed working live, this session:
+- Patient app: language → consent → ABHA skip → chief complaint → body map → several follow-up
+  questions (tap path) for the **Joint pain** module, including the boolean question above after
+  the fix.
+- Doctor console `/visit/[id]/ayurveda`: full step nav (Prashna/Trividha/Ashtavidha/Dashavidha/
+  Vyadhi Vinishchaya/Summary); saved Nadi, Jihva colour, Drik on Ashtavidha Pariksha, reloaded,
+  values and Vaidya provenance chips persisted correctly. Also fixed a hydration-mismatch console
+  error there (exam-form timestamp used the server locale, not `en-IN`).
+- `GET/PUT /v1/visits/{id}/ayurveda` (single endpoint, JSON, `source: clinician`, audit log row
+  per save) — confirmed via direct API calls and via the UI.
+- `GET /v1/terminology/search` (NAMASTE) — works, but the **first** call after a cold start takes
+  ~3 s and can hit the gateway's 3 s upstream timeout (`terminology_unavailable`). **Do one
+  throwaway search before the audience arrives**, same as the OCR cold-start note above.
+
+**Not exercised this pass** (not confirmed broken — just not walked this session; needs a human
+rehearsal per the rules below): 0:00 reframe/token slip, 0:10 real ABHA QR camera scan, 0:25 real
+microphone capture + Hindi TTS (per this doc, only a human with a phone can verify that step),
+0:40 red-flag escalation + triage board, 0:50 document OCR/timeline, the clinician console
+dossier/timeline/summary screens and voice-provenance playback, 1:20 FHIR sign, 1:28 offline
+kicker.
+
+**Known gap, not fixed:** `scripts/supabase/demo_reset.py` clears all operational DB rows
+correctly (visits/answers/documents/audio/audit — confirmed), but the storage-bucket cleanup step
+after it fails (`DeleteObjects` against Supabase Storage's S3 API returns an empty error). Stale
+files are left in the `intake-documents`/`intake-audio` buckets; nothing in the DB references
+them post-reset, so this should not be visible in the demo itself, but it means storage usage
+grows across resets.
+
 ## Rehearsal rules
 
 - Run it **five times** on Day 5. If it fails once, fix and reset the count.
