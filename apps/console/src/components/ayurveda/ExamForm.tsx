@@ -97,7 +97,7 @@ export function ExamForm({
       <div className="mt-space-xs flex flex-wrap items-center gap-1 font-metadata-micro text-metadata-micro text-on-surface-variant">
         <VaidyaChip disposition={s.disposition} />
         <span>
-          {s.recorded_by} · {new Date(s.recorded_at).toLocaleString()}
+          {s.recorded_by} · {new Date(s.recorded_at).toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })}
         </span>
         {s.original && (
           <span className="flex items-center gap-1">
