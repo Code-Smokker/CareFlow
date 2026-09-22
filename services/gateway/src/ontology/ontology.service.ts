@@ -219,8 +219,22 @@ export class OntologyService implements OnModuleInit {
     );
   }
 
+  /** `type: boolean` slots carry no `options` in the YAML (unlike enum) — this is the one place
+   * that shape is decided, so the tap chips, the answered-answer label and voice parsing all
+   * agree on the same two values (CLAUDE.md rule 6: every question needs a tap path). Wire values
+   * are the strings "true"/"false", not JS booleans — every other slot type's option value is a
+   * string (SlotOptionSchema, the QuestionOption contract), and reusing that shape means nothing
+   * downstream (the WebSocket event payload, the frontend chip renderer) needs a special case. */
+  booleanOptions(language = "en"): { value: "true" | "false"; label: string; icon: string }[] {
+    return [
+      { value: "true", label: language === "hi" ? "हाँ" : "Yes", icon: "check_circle" },
+      { value: "false", label: language === "hi" ? "नहीं" : "No", icon: "cancel" },
+    ];
+  }
+
   /** How an answer reads to the patient: the option's label in their language (several joined), or the raw value. */
   answerLabel(slot: Slot, value: unknown, language = "en"): string {
+    if (slot.type === "boolean") return this.booleanOptions(language).find((o) => o.value === String(value))?.label ?? String(value);
     const one = (v: unknown) => slot.options?.find((o) => o.value === v)?.label[language] ?? slot.options?.find((o) => o.value === v)?.label.en ?? String(v);
     return Array.isArray(value) ? value.map(one).join(", ") : one(value);
   }

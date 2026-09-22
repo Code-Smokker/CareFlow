@@ -801,7 +801,9 @@ export class SessionsService {
         return;
       }
       case "boolean":
-        if (typeof value !== "boolean") fail("must be a boolean");
+        // Wire value is "true"/"false" (OntologyService.booleanOptions) — a real JS boolean is
+        // also accepted since nothing stops a future caller (e.g. a FHIR import) from sending one.
+        if (typeof value !== "boolean" && value !== "true" && value !== "false") fail("must be a boolean");
         return;
       case "string":
       case "duration":
@@ -833,12 +835,19 @@ export class SessionsService {
       text: slot.prompt[language] ?? slot.prompt.en,
       tts_url: null,
       input_modes: slot.input,
-      options: (slot.options ?? []).map((o) => ({
-        value: o.value,
-        label: o.label[language] ?? o.label.en,
-        icon: o.icon ?? null,
-      })),
+      options: this.optionsFor(slot, language),
     };
+  }
+
+  /** `slot.options` as the frontend needs them — `type: boolean` slots have none in the YAML
+   * (see OntologyService.booleanOptions), so they are synthesized here rather than left empty. */
+  private optionsFor(slot: Slot, language: string): QuestionOptionPayload[] {
+    if (slot.type === "boolean") return this.ontology.booleanOptions(language);
+    return (slot.options ?? []).map((o) => ({
+      value: o.value,
+      label: o.label[language] ?? o.label.en,
+      icon: o.icon ?? null,
+    }));
   }
 
   private static readonly LOW_CONFIDENCE_THRESHOLD = 0.6;
@@ -969,7 +978,7 @@ export class SessionsService {
           text: slot.prompt[language] ?? slot.prompt.en,
           tts_url: null,
           input_modes: slot.input,
-          options: (slot.options ?? []).map((o) => ({ value: o.value, label: o.label[language] ?? o.label.en, icon: o.icon ?? null })),
+          options: this.optionsFor(slot, language),
           module_label: null,
         },
         value: row.value,

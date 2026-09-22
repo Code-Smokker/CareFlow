@@ -645,10 +645,10 @@
      */
     initCommon() {
       // Remove simulated 9:41 status bars
-      document.querySelectorAll('[data-purpose="ios-status-bar"], .ios-status-bar, header:has(span:first-child:contains("9:41"))').forEach(el => el.remove());
+      document.querySelectorAll('[data-purpose="ios-status-bar"], .ios-status-bar').forEach(el => el.remove());
 
       // Bind all language triggers
-      document.querySelectorAll('.careflow-header-lang, button:has(span:contains("language"))').forEach(btn => {
+      document.querySelectorAll('.careflow-header-lang').forEach(btn => {
         if (!btn._careflowBound) {
           btn._careflowBound = true;
           btn.addEventListener('click', (e) => {
