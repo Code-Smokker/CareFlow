@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
   <link rel="preload" href="../material-symbols-outlined.woff2" as="font" type="font/woff2" crossorigin>
   <script src="../shared_careflow.js"></script>
+  <script src="../document-scanner.js"></script>
   <script src="../careflow-live.js"></script>
   <style>
     @font-face {
@@ -217,17 +218,20 @@
 
       <!-- Camera / Document Scanner Viewfinder Card -->
       <div class="rounded-2xl bg-surface-container-lowest border border-outline-variant/40 p-4 shadow-xs">
-        <div class="relative w-full h-[220px] rounded-xl bg-surface-container-low border border-outline-variant/50 overflow-hidden flex flex-col items-center justify-between p-4">
-          <div class="z-10 inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-surface-container-lowest text-primary-container border border-outline-variant/40 shadow-xs">
+        <div id="scan-viewfinder" class="relative w-full h-[220px] rounded-xl bg-surface-container-low border border-outline-variant/50 overflow-hidden flex flex-col items-center justify-between p-4">
+          <video id="scan-video" class="absolute inset-0 w-full h-full object-cover hidden" autoplay playsinline muted></video>
+          <canvas id="scan-overlay" class="absolute inset-0 w-full h-full hidden pointer-events-none"></canvas>
+
+          <div id="scan-status-pill" class="z-10 inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-surface-container-lowest text-primary-container border border-outline-variant/40 shadow-xs">
             <span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
-            <span>Ready to scan · स्कैन के लिए तैयार</span>
+            <span id="scan-status-text">Ready to scan · स्कैन के लिए तैयार</span>
           </div>
 
-          <!-- Pulsing scanning beam -->
-          <div class="scan-beam absolute inset-x-8 top-1/2 h-8 bg-gradient-to-b from-transparent via-primary-container/20 to-transparent pointer-events-none"></div>
+          <!-- Pulsing scanning beam (mock/no-camera state only) -->
+          <div id="scan-beam" class="scan-beam absolute inset-x-8 top-1/2 h-8 bg-gradient-to-b from-transparent via-primary-container/20 to-transparent pointer-events-none"></div>
 
-          <!-- Viewfinder frame with 4 prominent corners -->
-          <div class="relative w-[210px] h-[125px] border border-dashed border-primary-container/50 rounded-lg flex flex-col items-center justify-center bg-surface-container-lowest/80 backdrop-blur-xs shadow-xs">
+          <!-- Static placeholder frame, shown until the camera starts (or if it never can) -->
+          <div id="scan-placeholder" class="relative w-[210px] h-[125px] border border-dashed border-primary-container/50 rounded-lg flex flex-col items-center justify-center bg-surface-container-lowest/80 backdrop-blur-xs shadow-xs">
             <div class="scanner-corner corner-tl"></div>
             <div class="scanner-corner corner-tr"></div>
             <div class="scanner-corner corner-bl"></div>
@@ -239,9 +243,9 @@
             <span class="text-[10px] text-on-surface-variant font-medium">दस्तावेज़ को फ्रेम के अंदर रखें</span>
           </div>
 
-          <div class="z-10 flex items-center gap-1 text-xs font-medium text-on-surface-variant">
+          <div id="scan-footer-hint" class="z-10 flex items-center gap-1 text-xs font-medium text-on-surface-variant">
             <span class="material-symbols-outlined text-[15px] text-primary-container">center_focus_strong</span>
-            <span>Auto-detect active</span>
+            <span id="scan-footer-text">Auto-detect active</span>
           </div>
         </div>
       </div>
@@ -352,22 +356,22 @@
         });
       }
 
-      async function saveAndProceed(fileObj) {
+      async function saveAndProceed(fileObj, wasCropped) {
         CareFlow.saveState({
           document: {
             captured: true,
             type: selectedDocType,
             fileName: docName,
+            autoCropped: !!wasCropped,
             timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
           }
         });
-        CareFlow.showToast("Uploading & processing document...");
+        CareFlow.showToast(wasCropped ? "Edges detected — cropped & uploading…" : "Uploading & processing document...");
 
         const curState = CareFlow.getState();
-        if (curState.sessionId) {
+        if (curState.sessionId && fileObj) {
           try {
-            const uploadFile = fileObj || new File(["CareFlow sample prescription scan content"], docName, { type: "image/jpeg" });
-            await CareFlow.api.uploadDocument(curState.sessionId, uploadFile, selectedDocType.toLowerCase());
+            await CareFlow.api.uploadDocument(curState.sessionId, fileObj, selectedDocType.toLowerCase());
           } catch(e) {
             console.warn("Document upload error", e);
           }
@@ -378,6 +382,112 @@
         }, 400);
       }
 
+      /** Runs the edge-detection → 4-corner → perspective-deskew pipeline on `source` (a <video>
+       * frame or an <img>), uploads the result. Never throws past this point — a detection
+       * failure falls back to the untouched photo (DocumentScanner.autoCrop already does this
+       * internally), so the patient is never blocked by a bad lighting/background. */
+      async function processAndUpload(source) {
+        let result;
+        try {
+          result = DocumentScanner.autoCrop(source);
+        } catch (e) {
+          console.warn('DocumentScanner.autoCrop failed', e);
+        }
+        let file;
+        if (result) {
+          file = await DocumentScanner.canvasToJpegFile(result.canvas, docName.replace(/\.\w+$/, '') + '.jpg');
+        }
+        await saveAndProceed(file, !!(result && result.cropped));
+      }
+
+      // ── camera: live preview + live corner overlay ───────────────────────────────────────────
+      const video = document.getElementById('scan-video');
+      const overlay = document.getElementById('scan-overlay');
+      const placeholder = document.getElementById('scan-placeholder');
+      const beam = document.getElementById('scan-beam');
+      const statusText = document.getElementById('scan-status-text');
+      const footerText = document.getElementById('scan-footer-text');
+      let cameraStream = null;
+      let liveDetectTimer = null;
+      let lastLiveCorners = null;
+
+      /** Maps a point in the video's native pixel space to the overlay canvas's CSS pixel space,
+       * accounting for `object-fit: cover` centring/cropping (the video element and the overlay
+       * canvas occupy the same box, but the video's native frame is scaled up and center-cropped
+       * to fill it — a plain scale-by-ratio mapping would misplace the corners). */
+      function videoPointToOverlay(pt, box) {
+        const scale = Math.max(box.width / video.videoWidth, box.height / video.videoHeight);
+        const offsetX = (video.videoWidth * scale - box.width) / 2;
+        const offsetY = (video.videoHeight * scale - box.height) / 2;
+        return { x: pt.x * scale - offsetX, y: pt.y * scale - offsetY };
+      }
+
+      function drawOverlay(corners) {
+        const box = overlay.getBoundingClientRect();
+        overlay.width = box.width; overlay.height = box.height;
+        const ctx = overlay.getContext('2d');
+        ctx.clearRect(0, 0, overlay.width, overlay.height);
+        if (!corners) return;
+        const pts = ['tl', 'tr', 'br', 'bl'].map((k) => videoPointToOverlay(corners[k], box));
+        ctx.strokeStyle = '#6DF5E1';
+        ctx.lineWidth = 3;
+        ctx.lineJoin = 'round';
+        ctx.beginPath();
+        ctx.moveTo(pts[0].x, pts[0].y);
+        for (let i = 1; i < 4; i++) ctx.lineTo(pts[i].x, pts[i].y);
+        ctx.closePath();
+        ctx.stroke();
+        pts.forEach((p) => {
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, 5, 0, Math.PI * 2);
+          ctx.fillStyle = '#6DF5E1';
+          ctx.fill();
+        });
+      }
+
+      function runLiveDetection() {
+        if (!cameraStream || video.readyState < 2) return;
+        try {
+          lastLiveCorners = DocumentScanner.detectCorners(video, DocumentScanner.PREVIEW_MAX_DIM);
+        } catch (e) {
+          lastLiveCorners = null;
+        }
+        drawOverlay(lastLiveCorners);
+        if (statusText) statusText.textContent = lastLiveCorners
+          ? 'Document detected ✓ · दस्तावेज़ मिल गया'
+          : 'Looking for document edges… · किनारे ढूंढ रहे हैं';
+      }
+
+      async function startCamera() {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return false;
+        try {
+          cameraStream = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 960 } },
+            audio: false,
+          });
+        } catch (e) {
+          console.warn('Camera unavailable, falling back to gallery upload', e);
+          return false;
+        }
+        video.srcObject = cameraStream;
+        await video.play().catch(() => {});
+        video.classList.remove('hidden');
+        overlay.classList.remove('hidden');
+        placeholder.classList.add('hidden');
+        beam.classList.add('hidden');
+        if (footerText) footerText.textContent = 'Live edge detection active';
+        liveDetectTimer = setInterval(runLiveDetection, 500);
+        return true;
+      }
+
+      function stopCamera() {
+        if (liveDetectTimer) { clearInterval(liveDetectTimer); liveDetectTimer = null; }
+        if (cameraStream) { cameraStream.getTracks().forEach((t) => t.stop()); cameraStream = null; }
+      }
+      window.addEventListener('pagehide', stopCamera);
+
+      const cameraReady = startCamera();
+
       const choosePhotosBtn = document.getElementById('choose-photos-btn');
       const fileInput = document.getElementById('doc-file-input');
       if (choosePhotosBtn && fileInput) {
@@ -385,18 +495,32 @@
           fileInput.click();
         });
         fileInput.addEventListener('change', (e) => {
-          if (e.target.files && e.target.files[0]) {
-            const selectedFile = e.target.files[0];
-            docName = selectedFile.name;
-            CareFlow.showToast(`Selected: ${docName}`);
-            saveAndProceed(selectedFile);
-          }
+          if (!e.target.files || !e.target.files[0]) return;
+          const selectedFile = e.target.files[0];
+          docName = selectedFile.name;
+          CareFlow.showToast(`Selected: ${docName} — finding edges…`);
+          const img = new Image();
+          const url = URL.createObjectURL(selectedFile);
+          img.onload = () => {
+            processAndUpload(img).finally(() => URL.revokeObjectURL(url));
+          };
+          img.onerror = () => {
+            URL.revokeObjectURL(url);
+            saveAndProceed(selectedFile, false); // not an image canvas can read (e.g. a PDF) — upload as-is
+          };
+          img.src = url;
         });
       }
 
       const captureBtn = document.getElementById('doc-capture-cta');
       if (captureBtn) {
-        captureBtn.addEventListener('click', () => {
+        captureBtn.addEventListener('click', async () => {
+          const usingCamera = await cameraReady;
+          if (!usingCamera) {
+            // No working camera stream — "Capture" falls back to the file picker rather than a dead end.
+            if (fileInput) fileInput.click();
+            return;
+          }
           const flash = document.createElement('div');
           flash.className = 'fixed inset-0 bg-white z-50 pointer-events-none transition-opacity duration-300 opacity-90';
           document.body.appendChild(flash);
@@ -405,7 +529,11 @@
             setTimeout(() => flash.remove(), 250);
           }, 80);
 
-          saveAndProceed();
+          docName = `${selectedDocType.replace(/\s+/g, '_')}_Scan.jpg`;
+          // Capture the frame BEFORE stopping tracks — some browsers blank <video>'s rendered
+          // output the instant its MediaStreamTrack stops, which would draw a black frame.
+          await processAndUpload(video);
+          stopCamera();
         });
       }
 

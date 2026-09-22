@@ -6,7 +6,7 @@ Five stages. One of them is admitting uncertainty.
 
 | Stage | What happens | Where |
 |---|---|---|
-| **1 Capture** | Live edge detection, auto-crop, deskew, glare and blur scoring. Below threshold the patient is asked to retake, with the problem named on screen. | OpenCV.js, on device |
+| **1 Capture** | Live edge detection, auto-crop, deskew. Glare/blur scoring and the retake prompt are not built yet. | Canvas 2D, on device (`userwebapp/document-scanner.js`) — no OpenCV.js/WASM dependency |
 | **2 Classify** | prescription / lab report / discharge summary / imaging / unknown → routes to the right extraction schema. | docai |
 | **3 Read** | Printed and tabular content through PaddleOCR; handwritten regions through the VLM. Both paths keep bounding boxes. | docai |
 | **4 Extract** | Typed entities: diagnoses; drug + dose + frequency + duration; analyte + value + unit + reference range; procedures; dates. Fuzzy-matched against a drug dictionary and a lab-analyte dictionary. | docai |

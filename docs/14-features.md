@@ -68,7 +68,10 @@ document scanning.
 
 ## 4. Documents
 
-- [ ] **P1** Guided camera with live edge detection, auto-crop, deskew (jscanify)
+- [x] **P1** Guided camera with live edge detection, auto-crop, deskew — `userwebapp/document-scanner.js`.
+      Dependency-free (Sobel edge map → flood-fill enclosed-region → 4-corner extraction →
+      homography perspective warp) instead of jscanify/OpenCV.js, so there is nothing to vendor
+      and it keeps working with the network cable pulled. No on-device quality gate yet (below).
 - [ ] **P1** On-device quality gate: blur, glare, coverage — tells the patient what's wrong in words, asks for a retake
 - [ ] **P1** Multi-page capture
 - [ ] **P1** Document type classifier: prescription / lab / discharge / imaging / unknown
