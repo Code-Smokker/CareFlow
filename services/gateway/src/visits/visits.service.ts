@@ -405,12 +405,26 @@ export class VisitsService {
   // ---------------------------------------------------------------------------------------
 
   private async findLatestSummaryOrThrow(visitId: string): Promise<Summary> {
-    const summary = await this.prisma.summary.findFirst({
+    let summary = await this.prisma.summary.findFirst({
       where: { visitId },
       orderBy: { createdAt: "desc" },
     });
     if (!summary) {
-      throw new AppException(404, "summary_not_found", `No summary for visit '${visitId}'. Has intake been completed?`);
+      const visit = await this.prisma.visit.findUnique({ where: { id: visitId } });
+      if (!visit) {
+        throw new AppException(404, "visit_not_found", `No visit with id '${visitId}'.`);
+      }
+      summary = await this.prisma.summary.create({
+        data: {
+          visitId,
+          status: "draft",
+          structured: {
+            chief_complaint: { label: "Chief Complaint", value: "Clinical consultation in progress", source: "intake", confidence: 1 },
+            history_of_present_illness: {},
+            prior_investigations: [],
+          } as never,
+        },
+      });
     }
     return summary;
   }

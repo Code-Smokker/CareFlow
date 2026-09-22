@@ -640,4 +640,174 @@ export class AyurvedaService {
     }
     return null;
   }
+
+  async getPrescription(visitId: string) {
+    const visit = await this.prisma.visit.findUniqueOrThrow({
+      where: { id: visitId },
+      include: {
+        patient: true,
+        vitals: true,
+        prescription: {
+          include: {
+            items: {
+              orderBy: { sortOrder: "asc" },
+            },
+          },
+        },
+      },
+    });
+
+    return {
+      visit_id: visit.id,
+      patient: {
+        id: visit.patient.id,
+        name: visit.patient.name,
+        age_years: visit.patient.dob ? ageFromDob(visit.patient.dob) : null,
+        sex: visit.patient.sex,
+        uhid: visit.tokenNo || `CF-${visit.patient.id.slice(0, 6).toUpperCase()}`,
+        token_no: visit.tokenNo,
+        department: visit.department,
+      },
+      vitals: visit.vitals ? {
+        bp: visit.vitals.bp,
+        pulse_bpm: visit.vitals.pulseBpm,
+        temperature_c: visit.vitals.temperatureC,
+        respiratory_rate: visit.vitals.respiratoryRate,
+        spo2: visit.vitals.spo2,
+        height_cm: visit.vitals.heightCm,
+        weight_kg: visit.vitals.weightKg,
+        pain_score: visit.vitals.painScore,
+        pain_location: visit.vitals.painLocation,
+        mobility: visit.vitals.mobility,
+        recorded_by: visit.vitals.recordedBy,
+        recorded_at: visit.vitals.recordedAt.toISOString(),
+      } : null,
+      prescription: visit.prescription ? {
+        id: visit.prescription.id,
+        status: visit.prescription.status,
+        chief_complaints: visit.prescription.chiefComplaints,
+        complaint_duration_days: visit.prescription.complaintDurationDays,
+        gpe_findings: visit.prescription.gpeFindings,
+        chikitsa_notes: visit.prescription.chikitsaNotes,
+        pathya: visit.prescription.pathya,
+        apathya: visit.prescription.apathya,
+        procedures: visit.prescription.procedures,
+        sent_to_lab: visit.prescription.sentToLab,
+        follow_up_date: visit.prescription.followUpDate?.toISOString() ?? null,
+        follow_up_interval_days: visit.prescription.followUpIntervalDays,
+        follow_up_instructions: visit.prescription.followUpInstructions,
+        recorded_by: visit.prescription.recordedBy,
+        updated_at: visit.prescription.updatedAt.toISOString(),
+        items: visit.prescription.items.map((it) => ({
+          id: it.id,
+          dictionary_entry_id: it.dictionaryEntryId,
+          formulation_name: it.formulationName,
+          dosage_form: it.dosageForm,
+          strength: it.strength,
+          dose: it.dose,
+          frequency: it.frequency,
+          timing: it.timing,
+          duration: it.duration,
+          route: it.route,
+          anupana: it.anupana,
+          instructions: it.instructions,
+          quantity: it.quantity,
+          sort_order: it.sortOrder,
+        })),
+      } : null,
+    };
+  }
+
+  async savePrescription(visitId: string, payload: any) {
+    const visit = await this.prisma.visit.findUniqueOrThrow({ where: { id: visitId } });
+
+    if (payload.vitals) {
+      const v = payload.vitals;
+      await this.prisma.vitals.upsert({
+        where: { visitId },
+        create: {
+          visitId,
+          bp: v.bp ?? null,
+          pulseBpm: v.pulse ? Number(v.pulse) : (v.pulse_bpm ? Number(v.pulse_bpm) : null),
+          heightCm: v.height ? Number(v.height) : (v.height_cm ? Number(v.height_cm) : null),
+          weightKg: v.weight ? Number(v.weight) : (v.weight_kg ? Number(v.weight_kg) : null),
+          painScore: v.painScore != null ? Number(v.painScore) : (v.pain_score != null ? Number(v.pain_score) : null),
+          painLocation: v.painLocation ?? v.pain_location ?? null,
+          mobility: v.mobility ?? null,
+          recordedBy: payload.recorded_by || payload.doctor?.name || "Clinician",
+        },
+        update: {
+          bp: v.bp ?? undefined,
+          pulseBpm: v.pulse != null ? Number(v.pulse) : (v.pulse_bpm != null ? Number(v.pulse_bpm) : undefined),
+          heightCm: v.height != null ? Number(v.height) : (v.height_cm != null ? Number(v.height_cm) : undefined),
+          weightKg: v.weight != null ? Number(v.weight) : (v.weight_kg != null ? Number(v.weight_kg) : undefined),
+          painScore: v.painScore != null ? Number(v.painScore) : (v.pain_score != null ? Number(v.pain_score) : undefined),
+          painLocation: v.painLocation ?? v.pain_location ?? undefined,
+          mobility: v.mobility ?? undefined,
+          recordedBy: payload.recorded_by || payload.doctor?.name || undefined,
+        },
+      });
+    }
+
+    const pres = await this.prisma.prescription.upsert({
+      where: { visitId },
+      create: {
+        visitId,
+        status: payload.status || "saved",
+        chiefComplaints: payload.complaints || payload.chief_complaints || null,
+        complaintDurationDays: payload.duration_days ? Number(payload.duration_days) : (payload.duration ? Number(payload.duration) : (payload.sinceDays ? Number(payload.sinceDays) : null)),
+        gpeFindings: payload.gpe || payload.gpe_findings || payload.gpeFindings || null,
+        chikitsaNotes: payload.chikitsa || payload.chikitsa_notes || payload.chikitsaNotes || null,
+        pathya: payload.pathya || payload.dietPathya || null,
+        apathya: payload.apathya || payload.dietApathya || null,
+        procedures: payload.procedures || null,
+        sentToLab: !!payload.sent_to_lab,
+        followUpDate: (payload.follow_up_date || payload.followUpDate) ? new Date(payload.follow_up_date || payload.followUpDate) : null,
+        followUpIntervalDays: payload.follow_up_days ? Number(payload.follow_up_days) : null,
+        followUpInstructions: payload.follow_up_instructions || payload.followUp || payload.followUpNotes || null,
+        recordedBy: payload.recorded_by || payload.doctor?.name || "Clinician",
+      },
+      update: {
+        status: payload.status || "saved",
+        chiefComplaints: payload.complaints || payload.chief_complaints || undefined,
+        complaintDurationDays: payload.duration_days ? Number(payload.duration_days) : (payload.duration ? Number(payload.duration) : (payload.sinceDays ? Number(payload.sinceDays) : undefined)),
+        gpeFindings: payload.gpe || payload.gpe_findings || payload.gpeFindings || undefined,
+        chikitsaNotes: payload.chikitsa || payload.chikitsa_notes || payload.chikitsaNotes || undefined,
+        pathya: payload.pathya !== undefined ? payload.pathya : (payload.dietPathya !== undefined ? payload.dietPathya : undefined),
+        apathya: payload.apathya !== undefined ? payload.apathya : (payload.dietApathya !== undefined ? payload.dietApathya : undefined),
+        procedures: payload.procedures !== undefined ? payload.procedures : undefined,
+        sentToLab: payload.sent_to_lab !== undefined ? !!payload.sent_to_lab : undefined,
+        followUpDate: (payload.follow_up_date || payload.followUpDate) ? new Date(payload.follow_up_date || payload.followUpDate) : undefined,
+        followUpIntervalDays: payload.follow_up_days ? Number(payload.follow_up_days) : undefined,
+        followUpInstructions: payload.follow_up_instructions || payload.followUp || payload.followUpNotes || undefined,
+        recordedBy: payload.recorded_by || payload.doctor?.name || undefined,
+      },
+    });
+
+    const rawItems = payload.items || payload.medicines;
+    if (Array.isArray(rawItems)) {
+      await this.prisma.prescriptionItem.deleteMany({ where: { prescriptionId: pres.id } });
+      for (let i = 0; i < rawItems.length; i++) {
+        const item = rawItems[i];
+        await this.prisma.prescriptionItem.create({
+          data: {
+            prescriptionId: pres.id,
+            dictionaryEntryId: item.dictionary_entry_id || null,
+            formulationName: item.name || item.formulation_name || item.formulationName || "Unknown Medicine",
+            dosageForm: item.form || item.dosage_form || item.dosageForm || null,
+            strength: item.strength || null,
+            dose: item.dose || null,
+            frequency: item.timing || item.frequency || null,
+            timing: item.relation || item.timing || null,
+            duration: item.duration || null,
+            anupana: item.anupana || null,
+            instructions: item.instructions || null,
+            sortOrder: i,
+          },
+        });
+      }
+    }
+
+    return this.getPrescription(visitId);
+  }
 }

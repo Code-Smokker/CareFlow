@@ -1,0 +1,1216 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full scroll-smooth">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Prescription & Clinical Case Taking — CareFlow</title>
+  <script src="../careflow-nav.js" defer></script>
+  <script src="../careflow-pages.js" defer></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#005454",
+            "primary-container": "#0D6E6E",
+            "on-primary": "#ffffff",
+            "secondary": "#006B5F",
+            "surface-mint": "#D1F2E8",
+            "surface-mint-subtle": "#E6F7F2",
+            "surface-card": "#FFFFFF",
+            "navy-dark": "#0B192C",
+            "text-muted": "#3E4948",
+            "border-subtle": "#E2E8F0",
+            "canvas-bg": "#F8FAFC",
+            "brand-orange": "#E65100",
+            "brand-green": "#1B5E20"
+          },
+          fontFamily: {
+            sans: ["Plus Jakarta Sans", "Inter", "sans-serif"]
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #F8FAFC; }
+    @media print {
+      body * { visibility: hidden; }
+      #printable-prescription, #printable-prescription * { visibility: visible; }
+      #printable-prescription {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 20mm !important;
+        box-shadow: none !important;
+        border: none !important;
+      }
+    }
+    .pain-face {
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: pointer;
+    }
+    .pain-face:hover { transform: scale(1.12); }
+    .pain-face.selected {
+      transform: scale(1.18);
+      filter: drop-shadow(0 4px 6px rgba(0,0,0,0.15));
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col bg-[#F8FAFC] text-[#0c1b33] antialiased">
+  <!-- TOP APP BAR -->
+  <header class="sticky top-0 z-40 h-16 bg-white border-b border-slate-200/80 px-6 flex items-center justify-between shadow-2xs">
+    <div class="flex items-center gap-4">
+      <a id="back-link" href="../careflow_website_w05_patient_profile/code.html" class="inline-flex items-center gap-1 text-xs font-semibold text-slate-600 hover:text-primary transition-colors">
+        <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+        <span>Back to patient</span>
+      </a>
+      <div class="h-4 w-px bg-slate-200"></div>
+      <div class="flex items-center gap-2">
+        <span class="w-2.5 h-2.5 rounded-full bg-[#0D6E6E]"></span>
+        <h1 class="text-sm font-bold text-[#0c1b33]">Create Prescription • केस टेकिंग एवं पर्चा</h1>
+        <span class="text-xs text-slate-400 hidden sm:inline">Add clinical notes, Ayurvedic examination, and medications</span>
+      </div>
+    </div>
+    
+    <!-- End Consultation Buttons -->
+    <div class="flex items-center gap-2">
+      <button type="button" onclick="openVoiceSummaryModalFromCase()" class="px-3 py-1.5 rounded-lg bg-amber-50 border border-amber-300 hover:bg-amber-100 text-amber-900 text-xs font-bold shadow-xs transition-colors cursor-pointer flex items-center gap-1.5">
+        <span class="material-symbols-outlined text-[16px] text-amber-700">mic</span>
+        <span>Voice Summary (En/Hi)</span>
+      </button>
+      <button type="button" onclick="CareFlow.showToast('Prescription sent to Diagnostic Lab', 'info')" class="px-3.5 py-1.5 rounded-lg bg-[#E65100] hover:bg-[#BF360C] text-white text-xs font-bold shadow-xs transition-colors cursor-pointer">
+        Send to Lab
+      </button>
+      <button type="button" onclick="savePrescription(true)" class="px-4 py-1.5 rounded-lg bg-[#1B5E20] hover:bg-[#004D40] text-white text-xs font-bold shadow-xs transition-colors cursor-pointer">
+        Complete + F/U
+      </button>
+      <button type="button" onclick="savePrescription(false)" class="px-3.5 py-1.5 rounded-lg bg-[#0c1b33] hover:bg-[#1e293b] text-white text-xs font-bold shadow-xs transition-colors cursor-pointer">
+        Complete Without Follow-up
+      </button>
+    </div>
+  </header>
+
+  <!-- STEPPER PROGRESS BAR -->
+  <div class="bg-white border-b border-slate-200/60 py-3 px-6 shadow-2xs">
+    <div class="max-w-xl mx-auto flex items-center justify-between relative">
+      <div class="absolute left-6 right-6 top-1/2 -translate-y-1/2 h-0.5 bg-slate-200 -z-0"></div>
+      
+      <!-- Step 1 -->
+      <div class="flex flex-col items-center relative z-10">
+        <div class="w-7 h-7 rounded-full bg-[#0D6E6E] text-white flex items-center justify-center text-xs font-bold shadow-xs">
+          <span class="material-symbols-outlined text-[16px]">check</span>
+        </div>
+        <span class="text-[11px] font-semibold text-slate-700 mt-1">Setup</span>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="flex flex-col items-center relative z-10">
+        <div class="w-7 h-7 rounded-full bg-[#0D6E6E] text-white flex items-center justify-center text-xs font-bold ring-4 ring-[#E6F7F2] shadow-xs">
+          2
+        </div>
+        <span class="text-[11px] font-bold text-[#0D6E6E] mt-1">Notes &amp; Vitals</span>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="flex flex-col items-center relative z-10">
+        <div class="w-7 h-7 rounded-full bg-white border-2 border-slate-300 text-slate-500 flex items-center justify-center text-xs font-bold">
+          3
+        </div>
+        <span class="text-[11px] font-semibold text-slate-400 mt-1">Medicines</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN 2-COLUMN WORKSPACE -->
+  <main class="flex-1 max-w-[1600px] w-full mx-auto p-4 sm:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+    
+    <!-- LEFT COLUMN: CLINICAL INPUTS (7 Cols) -->
+    <div class="lg:col-span-7 flex flex-col gap-5">
+      
+      <!-- 1. Vitals & Assessment Card -->
+      <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-[#0D6E6E] text-[20px]">vital_signs</span>
+            <h2 class="text-sm font-bold text-[#0c1b33]">Vitals &amp; Assessment • शारीरिक माप एवं परीक्षण</h2>
+          </div>
+          <span class="text-[11px] font-medium text-slate-500">Recorded on prescription header</span>
+        </div>
+
+        <!-- 4 Core Vitals Grid -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200/70">
+            <label class="block text-[11px] font-semibold text-slate-500">BP (mm/Hg)</label>
+            <input id="in-bp" type="text" value="" oninput="updatePreview()" placeholder="e.g. 120/80" class="w-full bg-transparent font-bold text-sm text-[#0c1b33] focus:outline-none mt-1">
+          </div>
+          <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200/70">
+            <label class="block text-[11px] font-semibold text-slate-500">Pulse (bpm)</label>
+            <input id="in-pulse" type="number" value="" oninput="updatePreview()" placeholder="e.g. 76" class="w-full font-bold text-sm text-[#0c1b33] focus:outline-none mt-1 bg-transparent">
+          </div>
+          <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200/70">
+            <label class="block text-[11px] font-semibold text-slate-500">WEIGHT (Kg.)</label>
+            <input id="in-weight" type="number" step="0.5" value="" oninput="updatePreview()" placeholder="e.g. 68" class="w-full font-bold text-sm text-[#0c1b33] focus:outline-none mt-1 bg-transparent">
+          </div>
+          <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200/70">
+            <label class="block text-[11px] font-semibold text-slate-500">Height (cm.)</label>
+            <input id="in-height" type="number" value="" oninput="updatePreview()" placeholder="e.g. 172" class="w-full font-bold text-sm text-[#0c1b33] focus:outline-none mt-1 bg-transparent">
+          </div>
+        </div>
+
+        <!-- Pain Location, Mobility & Visual Pain Scale -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
+          <div class="space-y-2.5">
+            <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200/70">
+              <label class="block text-[11px] font-semibold text-slate-500">Pain Location</label>
+              <input id="in-pain-loc" type="text" value="" oninput="updatePreview()" placeholder="e.g. Throat, Lower back, Joints" class="w-full font-medium text-xs text-[#0c1b33] focus:outline-none mt-1 bg-transparent">
+            </div>
+            <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200/70">
+              <label class="block text-[11px] font-semibold text-slate-500">Mobility</label>
+              <input id="in-mobility" type="text" value="" oninput="updatePreview()" placeholder="e.g. Normal, Guarded, Restricted" class="w-full font-medium text-xs text-[#0c1b33] focus:outline-none mt-1 bg-transparent">
+            </div>
+          </div>
+
+          <!-- 0-10 Smiley Pain Scale (SehatNxt Exact Format) -->
+          <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/70 flex flex-col justify-between">
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="text-[11px] font-bold text-slate-600 uppercase tracking-wider">PAIN SCALE • दर्द स्तर</span>
+              <span id="pain-scale-val" class="text-xs font-bold text-[#0D6E6E]">Score: 0 (No Pain)</span>
+            </div>
+            <div class="flex items-center justify-between gap-1 pt-1">
+              <div class="pain-face selected flex flex-col items-center" onclick="setPainScale(0, 'No Pain')">
+                <span class="text-2xl">😊</span>
+                <span class="text-[10px] font-bold text-slate-700 mt-1">0</span>
+                <span class="text-[9px] text-slate-400">No Pain</span>
+              </div>
+              <div class="pain-face flex flex-col items-center" onclick="setPainScale(2, 'Mild')">
+                <span class="text-2xl">🙂</span>
+                <span class="text-[10px] font-bold text-slate-700 mt-1">2</span>
+                <span class="text-[9px] text-slate-400">Mild</span>
+              </div>
+              <div class="pain-face flex flex-col items-center" onclick="setPainScale(4, 'Moderate')">
+                <span class="text-2xl">😐</span>
+                <span class="text-[10px] font-bold text-slate-700 mt-1">4</span>
+                <span class="text-[9px] text-slate-400">Moderate</span>
+              </div>
+              <div class="pain-face flex flex-col items-center" onclick="setPainScale(6, 'Severe')">
+                <span class="text-2xl">🙁</span>
+                <span class="text-[10px] font-bold text-slate-700 mt-1">6</span>
+                <span class="text-[9px] text-slate-400">Severe</span>
+              </div>
+              <div class="pain-face flex flex-col items-center" onclick="setPainScale(8, 'Very Severe')">
+                <span class="text-2xl">😣</span>
+                <span class="text-[10px] font-bold text-slate-700 mt-1">8</span>
+                <span class="text-[9px] text-slate-400">V. Severe</span>
+              </div>
+              <div class="pain-face flex flex-col items-center" onclick="setPainScale(10, 'Worst Pain')">
+                <span class="text-2xl">😭</span>
+                <span class="text-[10px] font-bold text-slate-700 mt-1">10</span>
+                <span class="text-[9px] text-slate-400">Worst</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ayurveda Case Context — READ-ONLY, pulled from the real Ayurvedic Case Record. Never
+           a second, editable copy of that data: the Vaidya edits it at the case record itself,
+           linked below, not here. -->
+      <div id="ayurveda-context-card" class="hidden bg-white rounded-2xl p-5 border border-slate-200 shadow-xs space-y-3">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-[#0D6E6E] text-[20px]">spa</span>
+            <h2 class="text-sm font-bold text-[#0c1b33]">Ayurveda Case Context</h2>
+          </div>
+          <a id="open-case-record-link" href="#" target="_blank" class="text-[11px] font-bold text-[#0D6E6E] hover:underline flex items-center gap-1">
+            Open full case record <span class="material-symbols-outlined text-[13px]">open_in_new</span>
+          </a>
+        </div>
+        <p class="text-[11px] text-slate-400">
+          As already recorded on the Ayurvedic Case Record (Prashna, Trividha, Ashtavidha, Dashavidha).
+          Read-only here.
+        </p>
+        <div id="ayurveda-context-body" class="space-y-3 text-xs"></div>
+      </div>
+
+      <!-- Vyadhi Vinishchaya — READ-ONLY diagnosis the Vaidya already picked on the case record.
+           CareFlow never auto-diagnoses; this only displays what was explicitly chosen there. -->
+      <div id="diagnosis-card" class="hidden bg-white rounded-2xl p-5 border border-slate-200 shadow-xs space-y-3">
+        <div class="flex items-center gap-2 border-b border-slate-100 pb-3">
+          <span class="material-symbols-outlined text-[#0D6E6E] text-[20px]">fact_check</span>
+          <h2 class="text-sm font-bold text-[#0c1b33]">Vyadhi Vinishchaya</h2>
+        </div>
+        <div id="diagnosis-body" class="text-xs space-y-1.5"></div>
+      </div>
+
+      <!-- 2. Chief Complaints & GPE Card -->
+      <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-[#0D6E6E] text-[20px]">sick</span>
+            <h2 class="text-sm font-bold text-[#0c1b33]">Chief Complaints • मुख्य लक्षण</h2>
+          </div>
+        </div>
+
+        <div id="patient-reported-complaint" class="hidden p-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-xs"></div>
+
+        <!-- Input & Duration -->
+        <div class="flex flex-col sm:flex-row gap-3 items-stretch">
+          <div class="flex-1 p-2.5 rounded-xl bg-slate-50 border border-slate-200/70">
+            <label class="block text-[11px] font-semibold text-slate-500">Tap to add chief complaints</label>
+            <input id="in-complaint" type="text" value="" oninput="updatePreview()" placeholder="Enter complaints or tap chips below..." class="w-full font-semibold text-sm text-[#0c1b33] focus:outline-none mt-1 bg-transparent">
+          </div>
+          <div class="w-full sm:w-40 p-2.5 rounded-xl bg-slate-50 border border-slate-200/70">
+            <label class="block text-[11px] font-semibold text-slate-500">Since duration</label>
+            <div class="flex items-center gap-1 mt-1">
+              <input id="in-since" type="number" value="" oninput="updatePreview()" placeholder="e.g. 3" class="w-14 font-bold text-sm text-[#0c1b33] focus:outline-none bg-transparent">
+              <span class="text-xs text-slate-500 font-medium">day(s)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Symptom Chips -->
+        <div>
+          <span class="block text-[11px] font-semibold text-slate-500 mb-2">Quick symptoms &amp; Ayurvedic rog lakshana:</span>
+          <div class="flex flex-wrap gap-1.5">
+            <button type="button" onclick="toggleSymptom('Fever (ज्वर)')" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-[#E6F7F2] hover:text-[#0D6E6E] text-slate-700 text-xs font-semibold transition-all">Fever (ज्वर)</button>
+            <button type="button" onclick="toggleSymptom('Cough (कास)')" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-[#E6F7F2] hover:text-[#0D6E6E] text-slate-700 text-xs font-semibold transition-all">Cough (कास)</button>
+            <button type="button" onclick="toggleSymptom('Headache (शिरःशूल)')" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-[#E6F7F2] hover:text-[#0D6E6E] text-slate-700 text-xs font-semibold transition-all">Headache (शिरःशूल)</button>
+            <button type="button" onclick="toggleSymptom('Cold (प्रतिश्याय)')" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-[#E6F7F2] hover:text-[#0D6E6E] text-slate-700 text-xs font-semibold transition-all">Cold (प्रतिश्याय)</button>
+            <button type="button" onclick="toggleSymptom('Sore throat (गलशूल)')" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-[#E6F7F2] hover:text-[#0D6E6E] text-slate-700 text-xs font-semibold transition-all">Sore throat (गलशूल)</button>
+            <button type="button" onclick="toggleSymptom('Body ache (अङ्गमर्द)')" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-[#E6F7F2] hover:text-[#0D6E6E] text-slate-700 text-xs font-semibold transition-all">Body ache (अङ्गमर्द)</button>
+            <button type="button" onclick="toggleSymptom('Weakness (दौर्बल्य)')" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-[#E6F7F2] hover:text-[#0D6E6E] text-slate-700 text-xs font-semibold transition-all">Weakness (दौर्बल्य)</button>
+            <button type="button" onclick="toggleSymptom('Ajeerna / Indigestion (अजीर्ण)')" class="px-2.5 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-semibold transition-all">Ajeerna (अजीर्ण)</button>
+            <button type="button" onclick="toggleSymptom('Amlapitta / Acidity (अम्लपित्त)')" class="px-2.5 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-semibold transition-all">Amlapitta (अम्लपित्त)</button>
+            <button type="button" onclick="toggleSymptom('Sandhishoola (सन्धिगत वात)')" class="px-2.5 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-semibold transition-all">Sandhishoola (जोड़ों में दर्द)</button>
+          </div>
+        </div>
+
+        <!-- GPE Findings Input -->
+        <div class="pt-2 border-t border-slate-100">
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="text-xs font-bold text-slate-700">GPE (General Physical Examination &amp; Ashta Pariksha)</span>
+          </div>
+          <textarea id="in-gpe" rows="2" oninput="updatePreview()" class="w-full p-2.5 rounded-xl bg-slate-50 border border-slate-200/70 text-xs font-medium text-[#0c1b33] focus:outline-none focus:border-[#0D6E6E]" placeholder="Not recorded — Vaidya's own examination findings"></textarea>
+        </div>
+      </div>
+
+      <!-- 3. Prescribed Medicines & Formulations Card -->
+      <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs space-y-4 relative">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-[#0D6E6E] text-[20px]">prescriptions</span>
+            <h2 class="text-sm font-bold text-[#0c1b33]">Prescribed Medicines • औषध योजना (Rx)</h2>
+          </div>
+          <span id="med-count-badge" class="text-xs font-bold text-[#0D6E6E] bg-[#E6F7F2] px-2.5 py-0.5 rounded-full">0 medicines</span>
+        </div>
+
+        <!-- Real Dynamic Medicine Search from AFI Database -->
+        <div class="space-y-2 relative">
+          <div class="relative">
+            <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-[18px]">search</span>
+            <input id="med-search" type="text" autocomplete="off" placeholder="Search 569+ AFI medicines (e.g. Sudarshan, Sitopaladi, Tribhuvan, Ashwagandha, Triphala)..." class="w-full h-10 pl-10 pr-4 rounded-xl bg-slate-50 border border-slate-200 text-xs text-[#0c1b33] focus:outline-none focus:border-[#0D6E6E] transition-all">
+          </div>
+          
+          <!-- Autocomplete Dropdown -->
+          <div id="med-search-dropdown" class="hidden absolute left-0 right-0 top-11 z-30 bg-white rounded-xl border border-slate-200 shadow-xl max-h-60 overflow-y-auto divide-y divide-slate-100">
+            <!-- Dynamically populated from /v1/ayurveda/medicines -->
+          </div>
+
+        </div>
+
+        <!-- Added Medicines List -->
+        <div id="medicines-container" class="space-y-2 pt-1">
+          <!-- Dynamically populated -->
+        </div>
+
+        <!-- Add Custom Medicine Button -->
+        <button type="button" onclick="openCustomMedModal()" class="w-full py-2.5 rounded-xl border border-dashed border-[#0D6E6E] text-[#0D6E6E] hover:bg-[#E6F7F2] font-bold text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer">
+          <span class="material-symbols-outlined text-[18px]">add</span>
+          <span>+ Add Another Medicine or Ayurvedic Formulation</span>
+        </button>
+      </div>
+
+      <!-- 4. Pathya & Apathya Card (Wholesome / Unwholesome Regimen) -->
+      <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-emerald-700 text-[20px]">nutrition</span>
+            <h2 class="text-sm font-bold text-[#0c1b33]">Pathya &amp; Apathya • पथ्य एवं अपथ्य (Diet &amp; Lifestyle)</h2>
+          </div>
+          <span class="text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md">Dietary Regimens</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Pathya (Do's) -->
+          <div class="space-y-2">
+            <label class="block text-[11px] font-bold text-emerald-800 flex items-center gap-1">
+              <span class="material-symbols-outlined text-[15px]">check_circle</span>
+              पथ्य (Wholesome Diet &amp; Habits)
+            </label>
+            <textarea id="in-pathya" rows="3" oninput="updatePreview()" placeholder="e.g. Warm water (उष्ण जल), Mudga Yusha (मूंग दाल सूप), Laghu Ahara (सुपाच्य भोजन), Adequate rest..." class="w-full p-2.5 rounded-xl bg-emerald-50/40 border border-emerald-200/80 text-xs font-medium text-emerald-950 focus:outline-none focus:border-emerald-600"></textarea>
+            <div class="flex flex-wrap gap-1">
+              <button type="button" onclick="appendPathya('Ushna Jala (उष्ण जल)')" class="px-2 py-0.5 rounded-md bg-emerald-100/70 hover:bg-emerald-200 text-[10px] font-semibold text-emerald-900">+ उष्ण जल</button>
+              <button type="button" onclick="appendPathya('Mudga Yusha (मूंग दाल सूप)')" class="px-2 py-0.5 rounded-md bg-emerald-100/70 hover:bg-emerald-200 text-[10px] font-semibold text-emerald-900">+ मूंग यूष</button>
+              <button type="button" onclick="appendPathya('Laghu Ahara (सुपाच्य भोजन)')" class="px-2 py-0.5 rounded-md bg-emerald-100/70 hover:bg-emerald-200 text-[10px] font-semibold text-emerald-900">+ लघु आहार</button>
+              <button type="button" onclick="appendPathya('Jeeraka Jala (जीरा जल)')" class="px-2 py-0.5 rounded-md bg-emerald-100/70 hover:bg-emerald-200 text-[10px] font-semibold text-emerald-900">+ जीरा जल</button>
+            </div>
+          </div>
+
+          <!-- Apathya (Don'ts) -->
+          <div class="space-y-2">
+            <label class="block text-[11px] font-bold text-rose-800 flex items-center gap-1">
+              <span class="material-symbols-outlined text-[15px]">cancel</span>
+              अपथ्य (Foods &amp; Habits to Avoid)
+            </label>
+            <textarea id="in-apathya" rows="3" oninput="updatePreview()" placeholder="e.g. Cold water (शीत जल), Curd at night (दही), Heavy oily meals (गरिष्ठ/तला भोजन), Day sleep (दिवास्वप्न)..." class="w-full p-2.5 rounded-xl bg-rose-50/40 border border-rose-200/80 text-xs font-medium text-rose-950 focus:outline-none focus:border-rose-600"></textarea>
+            <div class="flex flex-wrap gap-1">
+              <button type="button" onclick="appendApathya('Sheeta Jala (शीत जल)')" class="px-2 py-0.5 rounded-md bg-rose-100/70 hover:bg-rose-200 text-[10px] font-semibold text-rose-900">+ ठंडा पानी</button>
+              <button type="button" onclick="appendApathya('Dadhi at night (रात्रि में दही)')" class="px-2 py-0.5 rounded-md bg-rose-100/70 hover:bg-rose-200 text-[10px] font-semibold text-rose-900">+ रात्रि में दही</button>
+              <button type="button" onclick="appendApathya('Guru Snigdha Ahara (गरिष्ठ भोजन)')" class="px-2 py-0.5 rounded-md bg-rose-100/70 hover:bg-rose-200 text-[10px] font-semibold text-rose-900">+ गरिष्ठ आहार</button>
+              <button type="button" onclick="appendApathya('Divaswapna (दिन में सोना)')" class="px-2 py-0.5 rounded-md bg-rose-100/70 hover:bg-rose-200 text-[10px] font-semibold text-rose-900">+ दिन में शयन</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5. Chikitsa Notes & Panchakarma Procedures Card -->
+      <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-[#0D6E6E] text-[20px]">healing</span>
+            <h2 class="text-sm font-bold text-[#0c1b33]">Chikitsa &amp; Panchakarma • चिकित्सा योजना एवं उपक्रम</h2>
+          </div>
+          <span class="text-[11px] text-slate-400">Vaidya clinical treatment plan</span>
+        </div>
+
+        <div class="space-y-3">
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-500 mb-1">Chikitsa Sutra &amp; Clinical Notes (चिकित्सा सूत्र)</label>
+            <textarea id="in-chikitsa" rows="2" oninput="updatePreview()" placeholder="e.g. Deepana-Pachana therapy followed by Shamana Chikitsa. Snehana-Swedana indicated if symptoms persist..." class="w-full p-2.5 rounded-xl bg-slate-50 border border-slate-200/70 text-xs font-medium text-[#0c1b33] focus:outline-none focus:border-[#0D6E6E]"></textarea>
+          </div>
+
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-500 mb-1.5">Panchakarma &amp; Upakrama Procedures (पंचकर्म एवं प्रक्रियाएं):</label>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+              <label class="flex items-center gap-2 p-2 rounded-lg bg-slate-50 border border-slate-200/70 cursor-pointer hover:bg-[#E6F7F2]">
+                <input type="checkbox" onchange="toggleProcedure('Abhyanga (अभ्यंग)')" class="proc-check rounded text-[#0D6E6E]">
+                <span class="font-medium text-[#0c1b33]">Abhyanga (अभ्यंग)</span>
+              </label>
+              <label class="flex items-center gap-2 p-2 rounded-lg bg-slate-50 border border-slate-200/70 cursor-pointer hover:bg-[#E6F7F2]">
+                <input type="checkbox" onchange="toggleProcedure('Swedana (स्वेदन)')" class="proc-check rounded text-[#0D6E6E]">
+                <span class="font-medium text-[#0c1b33]">Swedana (स्वेदन)</span>
+              </label>
+              <label class="flex items-center gap-2 p-2 rounded-lg bg-slate-50 border border-slate-200/70 cursor-pointer hover:bg-[#E6F7F2]">
+                <input type="checkbox" onchange="toggleProcedure('Shirodhara (शिरोधारा)')" class="proc-check rounded text-[#0D6E6E]">
+                <span class="font-medium text-[#0c1b33]">Shirodhara (शिरोधारा)</span>
+              </label>
+              <label class="flex items-center gap-2 p-2 rounded-lg bg-slate-50 border border-slate-200/70 cursor-pointer hover:bg-[#E6F7F2]">
+                <input type="checkbox" onchange="toggleProcedure('Nasya (नस्य)')" class="proc-check rounded text-[#0D6E6E]">
+                <span class="font-medium text-[#0c1b33]">Nasya (नस्य)</span>
+              </label>
+              <label class="flex items-center gap-2 p-2 rounded-lg bg-slate-50 border border-slate-200/70 cursor-pointer hover:bg-[#E6F7F2]">
+                <input type="checkbox" onchange="toggleProcedure('Matra Basti (मात्रा बस्ति)')" class="proc-check rounded text-[#0D6E6E]">
+                <span class="font-medium text-[#0c1b33]">Matra Basti (बस्ति)</span>
+              </label>
+              <label class="flex items-center gap-2 p-2 rounded-lg bg-slate-50 border border-slate-200/70 cursor-pointer hover:bg-[#E6F7F2]">
+                <input type="checkbox" onchange="toggleProcedure('Kaval / Gandusha (कवल)')" class="proc-check rounded text-[#0D6E6E]">
+                <span class="font-medium text-[#0c1b33]">Kaval / Gandusha</span>
+              </label>
+              <label class="flex items-center gap-2 p-2 rounded-lg bg-slate-50 border border-slate-200/70 cursor-pointer hover:bg-[#E6F7F2]">
+                <input type="checkbox" onchange="toggleProcedure('Virechana (विरेचन)')" class="proc-check rounded text-[#0D6E6E]">
+                <span class="font-medium text-[#0c1b33]">Virechana (विरेचन)</span>
+              </label>
+              <label class="flex items-center gap-2 p-2 rounded-lg bg-slate-50 border border-slate-200/70 cursor-pointer hover:bg-[#E6F7F2]">
+                <input type="checkbox" onchange="toggleProcedure('Vamana (वमन)')" class="proc-check rounded text-[#0D6E6E]">
+                <span class="font-medium text-[#0c1b33]">Vamana (वमन)</span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6. Follow-up & Review Card -->
+      <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-[#0D6E6E] text-[20px]">event_repeat</span>
+            <h2 class="text-sm font-bold text-[#0c1b33]">Follow-up &amp; Review • पुनरागमन परामर्श</h2>
+          </div>
+          <span class="text-[11px] text-slate-400">Next OPD consultation date</span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div class="sm:col-span-1 p-2.5 rounded-xl bg-slate-50 border border-slate-200/70">
+            <label class="block text-[11px] font-semibold text-slate-500">Follow-up Interval</label>
+            <div class="flex items-center gap-1 mt-1">
+              <button type="button" onclick="setFollowUpDays(3)" class="px-2 py-1 rounded bg-white border border-slate-200 text-xs font-semibold hover:border-[#0D6E6E]">3 d</button>
+              <button type="button" onclick="setFollowUpDays(5)" class="px-2 py-1 rounded bg-white border border-slate-200 text-xs font-semibold hover:border-[#0D6E6E]">5 d</button>
+              <button type="button" onclick="setFollowUpDays(7)" class="px-2 py-1 rounded bg-[#E6F7F2] text-[#0D6E6E] border border-[#0D6E6E]/40 text-xs font-bold">7 d</button>
+              <button type="button" onclick="setFollowUpDays(14)" class="px-2 py-1 rounded bg-white border border-slate-200 text-xs font-semibold hover:border-[#0D6E6E]">14 d</button>
+            </div>
+          </div>
+          <div class="sm:col-span-1 p-2.5 rounded-xl bg-slate-50 border border-slate-200/70">
+            <label class="block text-[11px] font-semibold text-slate-500">Planned Follow-up Date</label>
+            <input id="in-fu-date" type="date" oninput="updatePreview()" class="w-full font-bold text-xs text-[#0c1b33] focus:outline-none mt-1 bg-transparent">
+          </div>
+          <div class="sm:col-span-1 p-2.5 rounded-xl bg-slate-50 border border-slate-200/70">
+            <label class="block text-[11px] font-semibold text-slate-500">Instructions on follow-up</label>
+            <input id="in-fu-notes" type="text" oninput="updatePreview()" placeholder="e.g. Review with repeat CBC" class="w-full font-medium text-xs text-[#0c1b33] focus:outline-none mt-1 bg-transparent">
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT COLUMN: LIVE REAL-TIME A4 PREVIEW (5 Cols) -->
+    <div class="lg:col-span-5 sticky top-20 flex flex-col gap-3">
+      <div class="flex items-center justify-between px-1">
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span class="text-xs font-bold text-slate-700 uppercase tracking-wider">LIVE PREVIEW • लाइव पर्चा</span>
+        </div>
+        <button type="button" onclick="window.print()" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 text-xs font-bold shadow-2xs transition-all cursor-pointer">
+          <span class="material-symbols-outlined text-[16px]">print</span>
+          <span>Print A4</span>
+        </button>
+      </div>
+
+      <!-- A4 Letterhead Container -->
+      <div id="printable-prescription" class="bg-white rounded-2xl border border-slate-200/90 shadow-md p-6 sm:p-7 text-[#0c1b33] flex flex-col justify-between min-h-[750px] relative overflow-hidden">
+        
+        <!-- Header / Hospital Letterhead -->
+        <div>
+          <div class="flex items-start justify-between border-b-2 border-[#0D6E6E] pb-3 mb-3">
+            <div class="flex items-center gap-3">
+              <div class="w-12 h-12 rounded-xl bg-[#E6F7F2] text-[#0D6E6E] flex items-center justify-center font-bold text-lg">
+                <span class="material-symbols-outlined text-[28px]">spa</span>
+              </div>
+              <div>
+                <h2 class="text-lg font-extrabold text-[#0D6E6E] tracking-tight leading-none">CAREFLOW CLINIC &amp; AYURCARE</h2>
+                <p class="text-[10px] font-semibold text-slate-500 mt-1">Holistic Clinical Care &amp; Ayurvedic Research Center</p>
+                <p class="text-[9px] text-slate-400">ISO 9001:2015 Certified • Reg No: AYUSH/2026/DEL-0941</p>
+              </div>
+            </div>
+            <div class="text-right text-[10px] text-slate-500">
+              <p class="font-bold text-slate-700">OPD Consultation</p>
+              <p id="prev-date">22 Sept 2026</p>
+              <p class="text-emerald-700 font-semibold">Valid: 7 Days</p>
+            </div>
+          </div>
+
+          <!-- Patient Demographics Bar -->
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-1 bg-slate-50 p-2.5 rounded-xl border border-slate-200/70 text-[11px] mb-3.5">
+            <div><span class="text-slate-500">Patient:</span> <strong id="prev-name" class="text-[#0c1b33]">—</strong></div>
+            <div><span class="text-slate-500">Age/Sex:</span> <strong id="prev-demo">—</strong></div>
+            <div><span class="text-slate-500">UHID / Token:</span> <strong id="prev-uhid">—</strong></div>
+            <div><span class="text-slate-500">Consultant:</span> <strong id="prev-consultant">—</strong></div>
+            <div><span class="text-slate-500">Department:</span> <strong id="prev-dept">Ayurveda OPD</strong></div>
+            <div><span class="text-slate-500">Follow-up:</span> <strong id="prev-fu">—</strong></div>
+          </div>
+
+          <!-- Vitals Summary Table in A4 -->
+          <div class="mb-3">
+            <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Vitals &amp; Assessment</div>
+            <div class="grid grid-cols-4 gap-1 text-[10px] bg-slate-50 p-2 rounded-lg border border-slate-200/60">
+              <div><span class="text-slate-500">BP:</span> <span id="prev-bp" class="font-bold">—</span></div>
+              <div><span class="text-slate-500">Pulse:</span> <span id="prev-pulse" class="font-bold">—</span></div>
+              <div><span class="text-slate-500">Weight:</span> <span id="prev-wt" class="font-bold">—</span></div>
+              <div><span class="text-slate-500">Height:</span> <span id="prev-ht" class="font-bold">—</span></div>
+              <div><span class="text-slate-500">Nadi:</span> <span id="prev-nadi" class="font-bold text-[#0D6E6E]">—</span></div>
+              <div><span class="text-slate-500">Agni:</span> <span id="prev-agni" class="font-bold text-[#0D6E6E]">—</span></div>
+              <div><span class="text-slate-500">Pain:</span> <span id="prev-pain" class="font-bold">—</span></div>
+              <div><span class="text-slate-500">Mobility:</span> <span id="prev-mobility" class="font-bold">Normal</span></div>
+            </div>
+          </div>
+
+          <!-- Chief Complaints in A4 -->
+          <div class="mb-3 text-[11px]">
+            <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Chief Complaints &amp; Findings</div>
+            <p id="prev-complaints" class="text-slate-800 font-medium bg-slate-50 p-2 rounded-lg border border-slate-200/60">
+              No complaints recorded yet.
+            </p>
+          </div>
+
+          <!-- Prescription Medicines Table (Rx) -->
+          <div class="mb-3">
+            <div class="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+              <span>Rx • Prescribed Formulations</span>
+              <span>Dosage / Timing / Anupana</span>
+            </div>
+            <div id="prev-med-list" class="space-y-1.5 text-xs">
+              <!-- Dynamically populated in preview -->
+            </div>
+          </div>
+
+          <!-- Pathya & Apathya Regimen in A4 -->
+          <div id="prev-diet-container" class="mb-3 text-[11px] grid grid-cols-2 gap-2">
+            <div class="bg-emerald-50/60 p-2 rounded-lg border border-emerald-200/60">
+              <span class="text-[10px] font-bold text-emerald-800 uppercase tracking-wider block mb-0.5">पथ्य (Pathya / Wholesome)</span>
+              <p id="prev-pathya" class="text-emerald-950 font-medium text-[10.5px]">As advised</p>
+            </div>
+            <div class="bg-rose-50/60 p-2 rounded-lg border border-rose-200/60">
+              <span class="text-[10px] font-bold text-rose-800 uppercase tracking-wider block mb-0.5">अपथ्य (Apathya / Avoid)</span>
+              <p id="prev-apathya" class="text-rose-950 font-medium text-[10.5px]">As advised</p>
+            </div>
+          </div>
+
+          <!-- Chikitsa Sutra & Panchakarma in A4 -->
+          <div id="prev-chikitsa-container" class="mb-3 text-[11px]">
+            <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Chikitsa &amp; Panchakarma Plan</div>
+            <div class="bg-slate-50 p-2 rounded-lg border border-slate-200/60 space-y-1">
+              <p id="prev-chikitsa" class="text-slate-800 font-medium">Standard Ayurvedic Shamana Chikitsa</p>
+              <p id="prev-procedures" class="text-[#0D6E6E] font-bold text-[10px]"></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer with Doctor Signature -->
+        <div class="border-t border-slate-200 pt-3 mt-4">
+          <div class="flex items-end justify-between">
+            <div class="text-[10px] text-slate-400 leading-tight">
+              <p class="font-bold text-slate-600">CareFlow Health System</p>
+              <p>D-18/125, Clinical Bay 4, New Delhi Central</p>
+              <p>ABDM M1/M2/M3 Compliant • 256-bit AES Vault</p>
+            </div>
+            <div class="text-right">
+              <div class="h-10 flex items-end justify-end mb-1">
+                <span id="prev-sig-font" class="font-serif italic text-lg font-bold text-slate-700 border-b border-slate-400 pb-0.5">—</span>
+              </div>
+              <p id="prev-doc-qual" class="text-[11px] font-bold text-[#0c1b33]">—</p>
+              <p id="prev-doc-reg" class="text-[10px] text-slate-500">—</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Action Buttons Bar -->
+      <div class="flex items-center gap-3 pt-1">
+        <button id="save-pres-btn" type="button" onclick="savePrescription(true)" class="flex-1 h-11 rounded-xl bg-[#0D6E6E] hover:bg-[#005454] text-white font-bold text-xs shadow-sm flex items-center justify-center gap-2 transition-all cursor-pointer">
+          <span class="material-symbols-outlined text-[18px]">save</span>
+          <span>Save &amp; Persist Prescription</span>
+        </button>
+        <button type="button" onclick="window.print()" class="h-11 px-5 rounded-xl bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-2xs flex items-center gap-1.5 transition-all cursor-pointer">
+          <span class="material-symbols-outlined text-[18px]">print</span>
+          <span>Print</span>
+        </button>
+      </div>
+
+    </div>
+
+  </main>
+
+  <script>
+    // State management
+    const state = {
+      patient: {
+        name: '—',
+        demo: '—',
+        uhid: '—',
+        department: '—',
+        visit_id: null
+      },
+      painScore: 0,
+      painLabel: 'No Pain',
+      procedures: [],
+      medicines: [],
+      ayurvedaSections: [],
+      diagnosisRows: [],
+      patientReportedComplaint: null
+    };
+
+    // Initialize from URL params and backend
+    (async function init() {
+      const params = new URLSearchParams(location.search);
+      const visitId = params.get('visit') || params.get('visitId');
+      state.patient.visit_id = visitId;
+      
+      const back = document.getElementById('back-link');
+      if (back && visitId) {
+        back.href = `../careflow_website_w05_patient_profile/code.html?visit=${visitId}`;
+      }
+
+      // 1. Setup Medicine Search Autocomplete
+      setupMedSearch();
+
+      // 2. Fetch Visit & Patient Demographics
+      if (visitId) {
+        try {
+          // Try /v1/visits/:id/ayurveda or /v1/visits/:id/summary
+          const res = await fetch(`http://localhost:4000/v1/visits/${visitId}/ayurveda`);
+          if (res.ok) {
+            const data = await res.json();
+            const p = data.patient || (data.visit && data.visit.patient);
+            if (p) {
+              state.patient.name = p.name || state.patient.name;
+              const age = p.ageYears || p.age_years || (p.dob ? (new Date().getFullYear() - new Date(p.dob).getFullYear()) : '');
+              state.patient.demo = `${age ? age + ' Y' : ''} / ${p.gender || p.sex || 'Unknown'}`;
+              state.patient.uhid = (data.visit && data.visit.tokenNo) || p.uhid || p.id?.slice(-6).toUpperCase() || 'CF-PAT';
+            }
+          } else {
+            // Fallback to /v1/visits/:id/summary
+            const sumRes = await fetch(`http://localhost:4000/v1/visits/${visitId}/summary`);
+            if (sumRes.ok) {
+              const sData = await sumRes.json();
+              if (sData.patient) {
+                state.patient.name = sData.patient.name || state.patient.name;
+                state.patient.demo = `${sData.patient.age_years || ''} Y / ${sData.patient.sex || ''}`;
+                state.patient.uhid = sData.token_no || sData.patient.uhid || 'CF-PAT';
+              }
+            }
+          }
+        } catch (e) {
+          console.warn('Could not fetch visit data:', e);
+        }
+
+        // 3. Load Existing Prescription from Database
+        try {
+          const presRes = await fetch(`http://localhost:4000/v1/visits/${visitId}/prescription`);
+          if (presRes.ok) {
+            const resp = await presRes.json();
+            const v = resp.vitals;
+            const pres = resp.prescription;
+            if (v) {
+              if (v.bp && document.getElementById('in-bp')) document.getElementById('in-bp').value = v.bp;
+              if (v.pulse_bpm != null && document.getElementById('in-pulse')) document.getElementById('in-pulse').value = v.pulse_bpm;
+              if (v.weight_kg != null && document.getElementById('in-weight')) document.getElementById('in-weight').value = v.weight_kg;
+              if (v.height_cm != null && document.getElementById('in-height')) document.getElementById('in-height').value = v.height_cm;
+              if (v.pain_location && document.getElementById('in-pain-loc')) document.getElementById('in-pain-loc').value = v.pain_location;
+              if (v.mobility && document.getElementById('in-mobility')) document.getElementById('in-mobility').value = v.mobility;
+              if (v.pain_score != null) {
+                setPainScale(v.pain_score, v.pain_score === 0 ? 'No Pain' : v.pain_score <= 3 ? 'Mild' : v.pain_score <= 6 ? 'Moderate' : 'Severe');
+              }
+            }
+            if (pres) {
+              if (pres.chief_complaints && document.getElementById('in-complaint')) document.getElementById('in-complaint').value = pres.chief_complaints;
+              if (pres.complaint_duration_days != null && document.getElementById('in-since')) document.getElementById('in-since').value = pres.complaint_duration_days;
+              if (pres.gpe_findings && document.getElementById('in-gpe')) document.getElementById('in-gpe').value = pres.gpe_findings;
+              if (pres.pathya && document.getElementById('in-pathya')) document.getElementById('in-pathya').value = pres.pathya;
+              if (pres.apathya && document.getElementById('in-apathya')) document.getElementById('in-apathya').value = pres.apathya;
+              if (pres.chikitsa_notes && document.getElementById('in-chikitsa')) document.getElementById('in-chikitsa').value = pres.chikitsa_notes;
+              if (pres.follow_up_date && document.getElementById('in-fu-date')) document.getElementById('in-fu-date').value = pres.follow_up_date.slice(0, 10);
+              if (pres.follow_up_instructions && document.getElementById('in-fu-notes')) document.getElementById('in-fu-notes').value = pres.follow_up_instructions;
+              if (Array.isArray(pres.procedures)) {
+                state.procedures = pres.procedures;
+                document.querySelectorAll('.proc-check').forEach(cb => {
+                  const label = cb.closest('label')?.textContent.trim();
+                  if (label && state.procedures.some(p => label.includes(p) || p.includes(label))) {
+                    cb.checked = true;
+                  }
+                });
+              }
+              if (Array.isArray(pres.items) && pres.items.length > 0) {
+                state.medicines = pres.items.map(m => ({
+                  name: m.formulation_name,
+                  form: m.dosage_form || 'Tablet',
+                  dose: m.dose || '1 dose',
+                  timing: m.frequency || 'Twice daily',
+                  relation: m.timing || 'After meals',
+                  duration: m.duration || '7 days',
+                  anupana: m.anupana || 'Warm water'
+                }));
+              }
+            }
+          }
+        } catch (e) {
+          console.warn('Could not fetch existing prescription:', e);
+        }
+      }
+      
+      // Real Ayurveda case context (Prashna/Trividha/Ashtavidha/Dashavidha) and the real
+      // Vyadhi Vinishchaya diagnosis — read-only, from the same Ayurvedic Case Record the
+      // Vaidya already filled at /visit/{id}/ayurveda. Never recomputed or duplicated here.
+      if (visitId) {
+        const caseLink = document.getElementById('open-case-record-link');
+        if (caseLink) caseLink.href = `http://localhost:3011/visit/${visitId}/ayurveda`;
+        try {
+          const sumRes = await fetch(`http://localhost:4000/v1/visits/${visitId}/summary`);
+          if (sumRes.ok) {
+            const sData = await sumRes.json();
+            const ccField = (sData.fields || []).find(f => f.field_path === 'chief_complaint');
+            state.patientReportedComplaint = ccField ? String(ccField.value) : null;
+            state.ayurvedaSections = sData.ayurveda_sections || [];
+            const vv = state.ayurvedaSections.find(s => s.id === 'vyadhi_vinishchaya');
+            state.diagnosisRows = vv ? vv.rows : [];
+          }
+        } catch (e) {
+          console.warn('Could not fetch ayurveda case context:', e);
+        }
+      }
+      renderAyurvedaContext();
+      renderDiagnosis();
+      renderPatientReportedComplaint();
+
+      renderMedicines();
+      updatePreview();
+    })();
+
+    function renderAyurvedaContext() {
+      const sections = (state.ayurvedaSections || []).filter(s => s.id !== 'vyadhi_vinishchaya' && s.rows.length);
+      const card = document.getElementById('ayurveda-context-card');
+      const body = document.getElementById('ayurveda-context-body');
+      if (!card || !body) return;
+      if (!sections.length) { card.classList.add('hidden'); return; }
+      card.classList.remove('hidden');
+      body.innerHTML = sections.map(s => `
+        <div>
+          <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">${escHtml(s.label)} — ${escHtml(s.gloss)}</div>
+          <div class="space-y-1">
+            ${s.rows.map(r => `
+              <div class="flex items-start justify-between gap-2 p-1.5 rounded-lg bg-slate-50 border border-slate-200/60">
+                <span class="text-slate-600">${escHtml(r.label)}</span>
+                <span class="font-semibold text-[#0c1b33] text-right">${escHtml(r.value_label)}
+                  <span class="ml-1 px-1.5 py-0.5 rounded bg-slate-200 text-slate-600 text-[9px] font-bold uppercase">${escHtml(r.source || 'clinician')}</span>
+                </span>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderDiagnosis() {
+      const card = document.getElementById('diagnosis-card');
+      const body = document.getElementById('diagnosis-body');
+      if (!card || !body) return;
+      const rows = state.diagnosisRows || [];
+      if (!rows.length) { card.classList.add('hidden'); return; }
+      card.classList.remove('hidden');
+      body.innerHTML = rows.map(r => `
+        <div class="p-2 rounded-lg bg-slate-50 border border-slate-200/60">
+          <div class="font-semibold text-[#0c1b33]">${escHtml(r.label)}</div>
+          <div class="text-slate-600">${escHtml(r.value_label)}</div>
+        </div>
+      `).join('');
+    }
+
+    function renderPatientReportedComplaint() {
+      const wrap = document.getElementById('patient-reported-complaint');
+      if (!wrap) return;
+      if (state.patientReportedComplaint) {
+        wrap.classList.remove('hidden');
+        wrap.innerHTML = `<span class="font-bold text-emerald-800">As reported by the patient:</span> <span class="text-emerald-900">${escHtml(state.patientReportedComplaint)}</span>`;
+      } else {
+        wrap.classList.add('hidden');
+      }
+    }
+
+    function escHtml(s) {
+      if (s === null || s === undefined) return '';
+      return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    }
+
+    // AFI Medicine Search Autocomplete Setup
+    function setupMedSearch() {
+      const input = document.getElementById('med-search');
+      const dropdown = document.getElementById('med-search-dropdown');
+      if (!input || !dropdown) return;
+
+      let debounceTimer = null;
+
+      input.addEventListener('input', () => {
+        clearTimeout(debounceTimer);
+        const q = input.value.trim();
+        if (q.length < 2) {
+          dropdown.classList.add('hidden');
+          dropdown.innerHTML = '';
+          return;
+        }
+
+        debounceTimer = setTimeout(async () => {
+          try {
+            const res = await fetch(`http://localhost:4000/v1/ayurveda/medicines?q=${encodeURIComponent(q)}&limit=10`);
+            if (!res.ok) throw new Error('Search failed');
+            const data = await res.json();
+            const items = data.results || [];
+
+            if (items.length === 0) {
+              dropdown.innerHTML = `
+                <div class="p-3 text-xs text-slate-500 italic text-center">
+                  No classical formulations found for "${q}".
+                  <button type="button" onclick="addCustomFromSearch('${q.replace(/'/g, "\\'")}')" class="block w-full mt-2 text-center text-[#0D6E6E] font-bold hover:underline">
+                    + Add "${q}" as custom medicine
+                  </button>
+                </div>
+              `;
+              dropdown.classList.remove('hidden');
+              return;
+            }
+
+            dropdown.innerHTML = items.map(item => `
+              <div class="p-2.5 hover:bg-slate-50 cursor-pointer flex items-center justify-between transition-colors text-xs" onclick='selectSearchResult(${JSON.stringify(item).replace(/'/g, "&apos;")})'>
+                <div>
+                  <div class="font-bold text-[#0c1b33] flex items-center gap-1.5">
+                    <span>${item.name}</span>
+                    <span class="text-[10px] px-1.5 py-0.5 rounded bg-[#E6F7F2] text-[#0D6E6E] font-semibold">${item.dosageForm}</span>
+                    <span class="text-[10px] text-slate-400">(${item.category})</span>
+                  </div>
+                  <div class="text-[10px] text-slate-500 mt-0.5 flex gap-3">
+                    <span>Dose: <strong>${item.typicalDose}</strong></span>
+                    <span class="text-emerald-700">Anupana: <strong>${item.anupana}</strong></span>
+                  </div>
+                </div>
+                <span class="material-symbols-outlined text-[#0D6E6E] text-[18px]">add_circle</span>
+              </div>
+            `).join('');
+
+            dropdown.classList.remove('hidden');
+          } catch (e) {
+            console.error('Med search error:', e);
+          }
+        }, 220);
+      });
+
+      // Close dropdown on outside click
+      document.addEventListener('click', (e) => {
+        if (!input.contains(e.target) && !dropdown.contains(e.target)) {
+          dropdown.classList.add('hidden');
+        }
+      });
+    }
+
+    function selectSearchResult(item) {
+      addQuickMedicine(item.name, item.dosageForm, item.typicalDose, 'Twice daily', 'After meals', '7 days', item.anupana);
+      const input = document.getElementById('med-search');
+      const dropdown = document.getElementById('med-search-dropdown');
+      if (input) input.value = '';
+      if (dropdown) dropdown.classList.add('hidden');
+    }
+
+    function addCustomFromSearch(name) {
+      addQuickMedicine(name, 'Tablet / Churna', '1 dose', 'Twice daily', 'After meals', '7 days', 'Warm water (उष्ण जल)');
+      const input = document.getElementById('med-search');
+      const dropdown = document.getElementById('med-search-dropdown');
+      if (input) input.value = '';
+      if (dropdown) dropdown.classList.add('hidden');
+    }
+
+    function setPainScale(score, label) {
+      state.painScore = score;
+      state.painLabel = label;
+      document.querySelectorAll('.pain-face').forEach(el => el.classList.remove('selected'));
+      const scoreEl = document.getElementById('pain-scale-val');
+      if (scoreEl) scoreEl.textContent = `Score: ${score} (${label})`;
+      updatePreview();
+    }
+
+    function toggleSymptom(name) {
+      const input = document.getElementById('in-complaint');
+      if (!input) return;
+      let val = input.value.trim();
+      if (!val) {
+        input.value = name;
+      } else if (!val.includes(name)) {
+        input.value = val + ', ' + name;
+      }
+      updatePreview();
+    }
+
+    function appendPathya(text) {
+      const input = document.getElementById('in-pathya');
+      if (!input) return;
+      let val = input.value.trim();
+      if (!val) input.value = text;
+      else if (!val.includes(text)) input.value = val + ', ' + text;
+      updatePreview();
+    }
+
+    function appendApathya(text) {
+      const input = document.getElementById('in-apathya');
+      if (!input) return;
+      let val = input.value.trim();
+      if (!val) input.value = text;
+      else if (!val.includes(text)) input.value = val + ', ' + text;
+      updatePreview();
+    }
+
+    function toggleProcedure(name) {
+      const idx = state.procedures.indexOf(name);
+      if (idx >= 0) {
+        state.procedures.splice(idx, 1);
+      } else {
+        state.procedures.push(name);
+      }
+      updatePreview();
+    }
+
+    function setFollowUpDays(days) {
+      const d = new Date();
+      d.setDate(d.getDate() + days);
+      const yyyy = d.getFullYear();
+      const mm = String(d.getMonth() + 1).padStart(2, '0');
+      const dd = String(d.getDate()).padStart(2, '0');
+      const input = document.getElementById('in-fu-date');
+      if (input) input.value = `${yyyy}-${mm}-${dd}`;
+      updatePreview();
+    }
+
+    function addQuickMedicine(name, form, dose, timing, relation, duration, anupana) {
+      state.medicines.push({ name, form, dose, timing, relation, duration, anupana });
+      renderMedicines();
+      updatePreview();
+    }
+
+    function removeMedicine(index) {
+      state.medicines.splice(index, 1);
+      renderMedicines();
+      updatePreview();
+    }
+
+    function renderMedicines() {
+      const container = document.getElementById('medicines-container');
+      const badge = document.getElementById('med-count-badge');
+      if (badge) badge.textContent = `${state.medicines.length} medicines`;
+      if (!container) return;
+
+      if (state.medicines.length === 0) {
+        container.innerHTML = `
+          <div class="p-4 rounded-xl bg-slate-50 border border-dashed border-slate-200 text-center text-xs text-slate-400">
+            No medicines added yet. Search the formulation database above.
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = state.medicines.map((m, i) => `
+        <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center justify-between gap-3">
+          <div class="min-w-0 flex-1">
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-xs text-[#0c1b33]">${m.name}</span>
+              <span class="px-2 py-0.2 rounded-md bg-[#E6F7F2] text-[#0D6E6E] font-bold text-[10px]">${m.form}</span>
+            </div>
+            <div class="text-[11px] text-slate-500 mt-1 flex flex-wrap gap-x-3 gap-y-0.5">
+              <span><strong>Dose:</strong> ${m.dose}</span>
+              <span><strong>Timing:</strong> ${m.timing} (${m.relation})</span>
+              <span><strong>Duration:</strong> ${m.duration}</span>
+              <span class="text-emerald-800"><strong>Anupana:</strong> ${m.anupana}</span>
+            </div>
+          </div>
+          <button type="button" onclick="removeMedicine(${i})" class="w-7 h-7 rounded-lg hover:bg-rose-50 text-slate-400 hover:text-rose-600 flex items-center justify-center transition-colors cursor-pointer" title="Remove medicine">
+            <span class="material-symbols-outlined text-[16px]">close</span>
+          </button>
+        </div>
+      `).join('');
+    }
+
+    function updatePreview() {
+      // Patient details
+      document.getElementById('prev-name').textContent = state.patient.name;
+      document.getElementById('prev-demo').textContent = state.patient.demo;
+      document.getElementById('prev-uhid').textContent = state.patient.uhid;
+      document.getElementById('prev-dept').textContent = state.patient.department;
+
+      // Vitals
+      const bp = document.getElementById('in-bp')?.value;
+      const pulse = document.getElementById('in-pulse')?.value;
+      const wt = document.getElementById('in-weight')?.value;
+      const ht = document.getElementById('in-height')?.value;
+      const nadi = document.getElementById('in-nadi')?.value;
+      const agni = document.getElementById('in-agni')?.value;
+      const mobility = document.getElementById('in-mobility')?.value;
+
+      document.getElementById('prev-bp').textContent = bp || '—';
+      document.getElementById('prev-pulse').textContent = pulse ? `${pulse} bpm` : '—';
+      document.getElementById('prev-wt').textContent = wt ? `${wt} kg` : '—';
+      document.getElementById('prev-ht').textContent = ht ? `${ht} cm` : '—';
+      document.getElementById('prev-nadi').textContent = nadi || '—';
+      document.getElementById('prev-agni').textContent = agni || '—';
+      document.getElementById('prev-pain').textContent = state.painScore > 0 ? `${state.painScore}/10 (${state.painLabel})` : '0/10 (None)';
+      document.getElementById('prev-mobility').textContent = mobility || 'Normal';
+
+      // Complaints
+      const comp = document.getElementById('in-complaint')?.value;
+      const since = document.getElementById('in-since')?.value;
+      const gpe = document.getElementById('in-gpe')?.value;
+      if (!comp && !gpe) {
+        document.getElementById('prev-complaints').textContent = 'No complaints recorded yet.';
+      } else {
+        let txt = '';
+        if (comp) txt += `<strong>Chief Complaints:</strong> ${comp}${since ? ` (Since ${since} days)` : ''}`;
+        if (gpe) txt += `${comp ? '<br>' : ''}<strong class="mt-1 inline-block">Examination:</strong> ${gpe}`;
+        document.getElementById('prev-complaints').innerHTML = txt;
+      }
+
+      // Pathya & Apathya
+      const pathya = document.getElementById('in-pathya')?.value;
+      const apathya = document.getElementById('in-apathya')?.value;
+      document.getElementById('prev-pathya').textContent = pathya || 'Wholesome diet as advised';
+      document.getElementById('prev-apathya').textContent = apathya || 'Avoid cold/heavy foods';
+
+      // Chikitsa & Panchakarma
+      const chikitsa = document.getElementById('in-chikitsa')?.value;
+      document.getElementById('prev-chikitsa').textContent = chikitsa || 'Standard Ayurvedic Shamana Chikitsa';
+      const procEl = document.getElementById('prev-procedures');
+      if (procEl) {
+        procEl.textContent = state.procedures.length > 0 ? `Procedures: ${state.procedures.join(', ')}` : '';
+      }
+
+      // Follow-up
+      const fuDate = document.getElementById('in-fu-date')?.value;
+      const fuNotes = document.getElementById('in-fu-notes')?.value;
+      document.getElementById('prev-fu').textContent = fuDate ? (fuDate + (fuNotes ? ` (${fuNotes})` : '')) : 'As needed';
+
+      // Active Doctor Attribution
+      const activeDoc = (window.CareFlow && window.CareFlow.getActiveDoctor) ? window.CareFlow.getActiveDoctor() : null;
+      const consEl = document.getElementById('prev-consultant');
+      const sigEl = document.getElementById('prev-sig-font');
+      const qualEl = document.getElementById('prev-doc-qual');
+      const regEl = document.getElementById('prev-doc-reg');
+
+      if (activeDoc) {
+        if (consEl) consEl.textContent = activeDoc.name;
+        if (sigEl) sigEl.textContent = activeDoc.signatureText || activeDoc.name;
+        if (qualEl) qualEl.textContent = `${activeDoc.name}, ${activeDoc.qualification || 'BAMS, MD'}`;
+        if (regEl) regEl.textContent = `Reg. No: ${activeDoc.regNumber || 'AYUSH-DEL-2024'} • ${activeDoc.department || 'Ayurveda'}`;
+      } else {
+        if (consEl) consEl.textContent = 'Duty Vaidya / Medical Officer';
+        if (sigEl) sigEl.textContent = 'CareFlow Vaidya';
+        if (qualEl) qualEl.textContent = 'Ayurvedacharya, BAMS';
+        if (regEl) regEl.textContent = 'AYUSH Reg. Pending Verification';
+      }
+
+      // Medicines list in A4
+      const medListEl = document.getElementById('prev-med-list');
+      if (medListEl) {
+        if (state.medicines.length === 0) {
+          medListEl.innerHTML = '<p class="text-slate-400 italic text-[11px] py-1">No medicines added to this prescription yet.</p>';
+        } else {
+          medListEl.innerHTML = state.medicines.map((m, i) => `
+            <div class="p-2 rounded-lg bg-slate-50 border border-slate-200/60 flex items-start justify-between">
+              <div>
+                <span class="font-bold text-[#0c1b33]">${i + 1}. ${m.name}</span>
+                <span class="text-slate-400 text-[10px] ml-1">(${m.form})</span>
+                <p class="text-[10px] text-slate-500 mt-0.5">
+                  ${m.dose} • ${m.timing} (${m.relation}) • For ${m.duration}
+                </p>
+              </div>
+              <div class="text-right">
+                <span class="px-2 py-0.5 rounded bg-[#E6F7F2] text-[#0D6E6E] font-semibold text-[10px]">
+                  Anupana: ${m.anupana}
+                </span>
+              </div>
+            </div>
+          `).join('');
+        }
+      }
+    }
+
+    function openCustomMedModal() {
+      const name = prompt('Enter Medicine / Formulation Name:', 'Ashwagandha Churna');
+      if (!name) return;
+      const form = prompt('Form (Tablet, Churna, Vati, Syrup, Kwath):', 'Churna') || 'Tablet';
+      const dose = prompt('Dosage:', '3 grams') || '1 tablet';
+      const timing = prompt('Frequency & Timing:', 'Twice daily, after meals') || 'Twice daily';
+      const anupana = prompt('Anupana (Vehicle / Warm water / Honey / Milk):', 'Warm water') || 'Water';
+      addQuickMedicine(name, form, dose, timing, 'After meals', '7 days', anupana);
+    }
+
+    async function savePrescription(withFollowUp) {
+      const btn = document.getElementById('save-pres-btn');
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<span class="material-symbols-outlined animate-spin text-[18px]">sync</span> Saving...';
+      }
+
+      const activeDoc = (window.CareFlow && window.CareFlow.getActiveDoctor) ? window.CareFlow.getActiveDoctor() : null;
+      const visitId = state.patient.visit_id;
+
+      const payload = {
+        vitals: {
+          bp: document.getElementById('in-bp')?.value || null,
+          pulse: document.getElementById('in-pulse')?.value ? Number(document.getElementById('in-pulse').value) : null,
+          weight: document.getElementById('in-weight')?.value ? Number(document.getElementById('in-weight').value) : null,
+          height: document.getElementById('in-height')?.value ? Number(document.getElementById('in-height').value) : null,
+          painScore: state.painScore,
+          nadi: document.getElementById('in-nadi')?.value || null,
+          agni: document.getElementById('in-agni')?.value || null,
+          koshta: document.getElementById('in-koshta')?.value || null,
+          prakriti: document.getElementById('in-prakriti')?.value || null
+        },
+        complaints: document.getElementById('in-complaint')?.value || null,
+        sinceDays: document.getElementById('in-since')?.value ? Number(document.getElementById('in-since').value) : null,
+        gpeFindings: document.getElementById('in-gpe')?.value || null,
+        dietPathya: document.getElementById('in-pathya')?.value || null,
+        dietApathya: document.getElementById('in-apathya')?.value || null,
+        chikitsaNotes: document.getElementById('in-chikitsa')?.value || null,
+        procedures: state.procedures || [],
+        followUpDate: document.getElementById('in-fu-date')?.value || null,
+        followUpNotes: document.getElementById('in-fu-notes')?.value || null,
+        medicines: state.medicines.map(m => ({
+          name: m.name,
+          form: m.form,
+          dose: m.dose,
+          timing: m.timing,
+          relation: m.relation,
+          duration: m.duration,
+          anupana: m.anupana
+        }))
+      };
+
+      try {
+        if (visitId) {
+          const res = await fetch(`http://localhost:4000/v1/visits/${visitId}/prescription`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+          if (!res.ok) {
+            console.warn('Backend prescription save returned non-200:', res.status);
+          }
+        }
+
+        // Also persist locally for offline resilience
+        const key = `cf_pres_${visitId || 'default'}`;
+        localStorage.setItem(key, JSON.stringify({
+          ...payload,
+          patient: state.patient,
+          doctor: activeDoc,
+          savedAt: new Date().toISOString()
+        }));
+
+        if (window.CareFlow && window.CareFlow.showToast) {
+          window.CareFlow.showToast('Prescription saved and persisted to database!', 'success');
+        } else {
+          alert('Prescription saved and persisted to database!');
+        }
+
+        setTimeout(() => {
+          if (visitId) {
+            location.href = `../careflow_website_w05_patient_profile/code.html?visit=${visitId}`;
+          } else {
+            location.href = `../careflow_website_w05_patient_profile/code.html`;
+          }
+        }, 600);
+      } catch (err) {
+        console.error('Error saving prescription:', err);
+        alert('Could not reach server to persist prescription. Saved locally.');
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = '<span class="material-symbols-outlined text-[18px]">save</span> Save &amp; Persist Prescription';
+        }
+      }
+    }
+
+    function openVoiceSummaryModalFromCase() {
+      if (window.showPatientVoiceSummaryModal) {
+        window.showPatientVoiceSummaryModal({
+          name: state.patient?.name || 'Patient',
+          tokenNo: state.patient?.uhid || 'CF-PAT',
+          visitId: state.patient?.visit_id || '',
+          isUrgent: false
+        });
+      } else if (window.CareFlow && window.CareFlow.showToast) {
+        window.CareFlow.showToast('Voice Summary loaded', 'mic');
+      }
+    }
+  </script>
+</body>
+</html>

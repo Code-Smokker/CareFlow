@@ -200,9 +200,103 @@ model Visit {
   sessions   IntakeSession[]
   summaries  Summary[]
   ayurvedaExamFields AyurvedaExamField[]
+  vitals     Vitals?
+  prescription Prescription?
 
   @@index([department, priority(sort: Desc), tokenNo])
   @@map("visit")
+}
+
+/// One row per visit — the Vaidya's own readings, entered on the prescription/case-taking
+/// screen (doctorwebapp/careflow_website_case_taking). Never defaulted or fabricated: a field
+/// the clinician hasn't entered is NULL, and the API/UI render that as "Not recorded" rather
+/// than inventing a plausible-looking number. BMI is computed from height/weight at read time,
+/// never stored, so it can't drift from them.
+model Vitals {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  visitId         String   @unique @map("visit_id") @db.Uuid
+  visit           Visit    @relation(fields: [visitId], references: [id])
+  bp              String?
+  pulseBpm        Int?     @map("pulse_bpm")
+  temperatureC    Float?   @map("temperature_c")
+  respiratoryRate Int?     @map("respiratory_rate")
+  spo2            Int?
+  heightCm        Float?   @map("height_cm")
+  weightKg        Float?   @map("weight_kg")
+  painScore       Int?     @map("pain_score")
+  painLocation    String?  @map("pain_location")
+  mobility        String?
+  recordedBy      String?  @map("recorded_by")
+  recordedAt      DateTime @default(now()) @map("recorded_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  @@map("vitals")
+}
+
+enum PrescriptionStatus {
+  draft
+  saved
+  completed
+}
+
+/// One prescription per visit (re-saving updates it in place — a visit gets one case sheet, not
+/// a history of drafts). Every clinician-entered field here is free text or a structured list
+/// the Vaidya built; nothing is computed or suggested (CLAUDE.md rule 2 extended to treatment,
+/// per the Ayurveda case-sheet spec: CareFlow never prescribes automatically).
+model Prescription {
+  id                    String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  visitId               String              @unique @map("visit_id") @db.Uuid
+  visit                 Visit               @relation(fields: [visitId], references: [id])
+  status                PrescriptionStatus  @default(draft)
+  chiefComplaints       String?             @map("chief_complaints")
+  complaintDurationDays Int?                @map("complaint_duration_days")
+  gpeFindings           String?             @map("gpe_findings")
+  chikitsaNotes         String?             @map("chikitsa_notes")
+  pathya                String?
+  apathya               String?
+  /// Vaidya-entered procedure records (name, indication, planned date, sessions, instructions)
+  /// — a structured list, never auto-recommended (Panchakarma etc. are named only as options in
+  /// the UI, nothing here is pre-selected).
+  procedures            Json?
+  sentToLab             Boolean             @default(false) @map("sent_to_lab")
+  followUpDate          DateTime?           @map("follow_up_date")
+  followUpIntervalDays  Int?                @map("follow_up_interval_days")
+  followUpInstructions  String?             @map("follow_up_instructions")
+  recordedBy            String?             @map("recorded_by")
+  createdAt             DateTime            @default(now()) @map("created_at")
+  updatedAt             DateTime            @updatedAt @map("updated_at")
+
+  items PrescriptionItem[]
+
+  @@map("prescription")
+}
+
+/// One prescribed formulation/medicine. `dictionaryEntryId` links back to the real
+/// ayush_formulation/allopathic row the Vaidya picked from search (packages... DictionaryEntry)
+/// when the search was used; NULL for a hand-typed formulation the search didn't have — the
+/// Vaidya's dose/timing/Anupana choices are never defaulted from either path.
+model PrescriptionItem {
+  id                String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  prescriptionId    String        @map("prescription_id") @db.Uuid
+  prescription      Prescription  @relation(fields: [prescriptionId], references: [id], onDelete: Cascade)
+  dictionaryEntryId String?       @map("dictionary_entry_id") @db.Uuid
+  formulationName   String        @map("formulation_name")
+  dosageForm        String?       @map("dosage_form")
+  strength          String?
+  dose              String?
+  frequency         String?
+  timing            String?
+  duration          String?
+  route             String?
+  anupana           String?
+  instructions      String?
+  quantity          String?
+  startDate         DateTime?     @map("start_date")
+  endDate           DateTime?     @map("end_date")
+  sortOrder         Int           @default(0) @map("sort_order")
+
+  @@index([prescriptionId, sortOrder])
+  @@map("prescription_item")
 }
 
 /// `state` is the serialized interview snapshot (module id, current slot, filled values) —
